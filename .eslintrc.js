@@ -10,14 +10,18 @@ module.exports = {
   ],
   'env': {
     'es2021': true,
-    'node': true
+    'node': true,
   },
   'globals': {},
   'parserOptions': {
     'ecmaVersion': 12,
-    'sourceType': 'module'
+    'sourceType': 'module',
   },
   'rules': {
+    'comma-dangle': 'off',
+    '@typescript-eslint/comma-dangle': ['error', 'always',],
+    'space-before-function-paren': 'off',
+    '@typescript-eslint/space-before-function-paren': ['error', 'never',],
     '@typescript-eslint/type-annotation-spacing': 'error',
     'template-curly-spacing': [
       'error',
@@ -36,192 +40,192 @@ module.exports = {
     ],
     'indent': [
       'error',
-      2
+      2,
     ],
     'linebreak-style': [
       'error',
-      'unix'
+      'unix',
     ],
     'quotes': [
       'error',
-      'single'
+      'single',
     ],
     'semi': [
       'error',
-      'never'
+      'never',
     ],
     'constructor-super': [
-      'error'
+      'error',
     ],
     'for-direction': [
-      'error'
+      'error',
     ],
     'getter-return': [
-      'error'
+      'error',
     ],
     'no-async-promise-executor': [
-      'error'
+      'error',
     ],
     'no-case-declarations': [
-      'error'
+      'error',
     ],
     'no-class-assign': [
-      'error'
+      'error',
     ],
     'no-compare-neg-zero': [
-      'error'
+      'error',
     ],
     'no-cond-assign': [
-      'error'
+      'error',
     ],
     'no-const-assign': [
-      'error'
+      'error',
     ],
     'no-constant-condition': [
-      'error'
+      'error',
     ],
     'no-control-regex': [
-      'error'
+      'off',
     ],
     'no-debugger': [
-      'error'
+      'error',
     ],
     'no-delete-var': [
-      'error'
+      'error',
     ],
     'no-dupe-args': [
-      'error'
+      'error',
     ],
     'no-dupe-class-members': [
-      'error'
+      'error',
     ],
     'no-dupe-else-if': [
-      'error'
+      'error',
     ],
     'no-dupe-keys': [
-      'error'
+      'error',
     ],
     'no-duplicate-case': [
-      'error'
+      'error',
     ],
     'no-empty': [
-      'error'
+      'error',
     ],
     'no-empty-character-class': [
-      'error'
+      'error',
     ],
     'no-empty-pattern': [
-      'error'
+      'error',
     ],
     'no-ex-assign': [
-      'error'
+      'error',
     ],
     'no-extra-boolean-cast': [
-      'error'
+      'error',
     ],
     'no-extra-semi': [
-      'error'
+      'error',
     ],
     'no-fallthrough': [
-      'error'
+      'error',
     ],
     'no-func-assign': [
-      'error'
+      'error',
     ],
     'no-global-assign': [
-      'error'
+      'error',
     ],
     'no-import-assign': [
-      'error'
+      'error',
     ],
     'no-inner-declarations': [
-      'error'
+      'error',
     ],
     'no-invalid-regexp': [
-      'error'
+      'error',
     ],
     'no-irregular-whitespace': [
-      'error'
+      'error',
     ],
     'no-misleading-character-class': [
-      'error'
+      'error',
     ],
     'no-mixed-spaces-and-tabs': [
-      'error'
+      'error',
     ],
     'no-new-symbol': [
-      'error'
+      'error',
     ],
     'no-obj-calls': [
-      'error'
+      'error',
     ],
     'no-octal': [
-      'error'
+      'error',
     ],
     'no-prototype-builtins': [
-      'error'
+      'error',
     ],
     'no-redeclare': [
-      'error'
+      'error',
     ],
     'no-regex-spaces': [
-      'error'
+      'error',
     ],
     'no-self-assign': [
-      'error'
+      'error',
     ],
     'no-setter-return': [
-      'error'
+      'error',
     ],
     'no-shadow-restricted-names': [
-      'error'
+      'error',
     ],
     'no-sparse-arrays': [
-      'error'
+      'error',
     ],
     'no-this-before-super': [
-      'error'
+      'error',
     ],
     'no-undef': [
-      'error'
+      'error',
     ],
     'no-unexpected-multiline': [
-      'error'
+      'error',
     ],
     'no-unreachable': [
-      'error'
+      'error',
     ],
     'no-unsafe-finally': [
-      'error'
+      'error',
     ],
     'no-unsafe-negation': [
-      'error'
+      'error',
     ],
     'no-unused-labels': [
-      'error'
+      'error',
     ],
     'no-unused-vars': [
-      'error'
+      'error',
     ],
     'no-useless-catch': [
-      'error'
+      'error',
     ],
     'no-useless-escape': [
-      'error'
+      'error',
     ],
     'no-with': [
-      'error'
+      'error',
     ],
     'require-yield': [
-      'error'
+      'error',
     ],
     'use-isnan': [
-      'error'
+      'error',
     ],
     'valid-typeof': [
-      'error'
-    ]
+      'error',
+    ],
   },
   'settings': {},
-  'ignorePatterns': []
+  'ignorePatterns': [],
 }
