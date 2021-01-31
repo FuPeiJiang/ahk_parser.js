@@ -1,12 +1,8 @@
 import fs from 'fs'
-// import regexes from 'tokens'
+import regexes from './tokens'
 const content: string = fs.readFileSync('tests/v2var.ahk').toString().replace(/\r/g, '')
 
-// console.log(content)
-const whiteSpace = /[\t\u000B\u000C\u0020\u00A0]+/
 
-console.log(whiteSpace.test(' '))
-return
 const lines: string[] = content.split('\n')
 
 for (let i = 0, len = lines.length; i < len; i++) {
@@ -19,8 +15,12 @@ for (let i = 0, len = lines.length; i < len; i++) {
 
 
 function lineComment(line: string) {
-  line.indexOf(' ;')
-  line.search(/re/)
+  const pos = line.search(regexes.CommentSemiColon)
+  if (pos !== -1) {
+    //
+  }
+
+
 
 }
 

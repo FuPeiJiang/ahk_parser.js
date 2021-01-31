@@ -18,10 +18,12 @@ module.exports = {
     'sourceType': 'module',
   },
   'rules': {
+    'keyword-spacing': 'off',
+    '@typescript-eslint/keyword-spacing': ['error'],
     'comma-dangle': 'off',
-    '@typescript-eslint/comma-dangle': ['error', 'always',],
+    '@typescript-eslint/comma-dangle': ['error', 'always-multiline'],
     'space-before-function-paren': 'off',
-    '@typescript-eslint/space-before-function-paren': ['error', 'never',],
+    '@typescript-eslint/space-before-function-paren': ['error', 'never'],
     '@typescript-eslint/type-annotation-spacing': 'error',
     'template-curly-spacing': [
       'error',

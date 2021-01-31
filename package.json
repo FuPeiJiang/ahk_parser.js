@@ -8,7 +8,7 @@
     "typescript": "^4.1.3"
   },
   "scripts": {
-    "dev2": "ts-node-dev --respawn --transpile-only src/index.ts",
-    "dev": "ts-node-dev src/index.ts"
+    "dev": "ts-node-dev --respawn --transpile-only src/index.ts",
+    "dev2": "ts-node-dev src/index.ts"
   }
 }
