@@ -14,10 +14,13 @@ module.exports = {
   },
   'globals': {},
   'parserOptions': {
-    'ecmaVersion': 12,
     'sourceType': 'module',
   },
   'rules': {
+    'array-bracket-spacing': ['error', 'never'],
+    'object-curly-spacing': 'off',
+    '@typescript-eslint/object-curly-spacing': ['error'],
+    'no-var' : 'off',
     'keyword-spacing': 'off',
     '@typescript-eslint/keyword-spacing': ['error'],
     'comma-dangle': 'off',
@@ -168,7 +171,7 @@ module.exports = {
       'error',
     ],
     'no-redeclare': [
-      'error',
+      'off',
     ],
     'no-regex-spaces': [
       'error',
@@ -207,7 +210,7 @@ module.exports = {
       'error',
     ],
     'no-unused-vars': [
-      'error',
+      'off',
     ],
     'no-useless-catch': [
       'error',
