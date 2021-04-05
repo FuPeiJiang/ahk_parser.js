@@ -1,51 +1,32 @@
 import fs from 'fs'
-import regexes from './tokens'
-const content: string = fs.readFileSync('tests/v2var.ahk').toString().replace(/\r/g, '')
-
+import {CommentSemiColon, startingMultiLineComment, endingMultiLineComment} from './tokens'
+const d = console.debug.bind(console)
+const content: string = fs.readFileSync('tests/yolo.ahk').toString().replace(/\r/g, '')
+const lines = content.split('\n')
 // array of Object|Array
-const root: (Record<string,unknown>|unknown[])[] = []
 
-const lines: string[] = content.split('\n')
+const numberOfLines = lines.length
 
-for (let i = 0, len = lines.length; i < len; i++) {
-  var line = lines[i], error = 0
-
-  // const lineError: [string, boolean] = [lines[i], true]
-  // var error = true
-  // assignStatement(line)
-
-  var [line, error] = lineComment(lines,i,root)
-  console.log(root)
-  console.log([line, error])
-
-}
-
-// function lineComment(lineError: [string, boolean]) {
-// function lineComment(line: string, node: Object[]): [string, number] {
-function lineComment(lines: string[], i: number, node: (Record<string,unknown>|unknown[])[]): [string, number] {
-  // function lineComment(line: string, i: number, node: (Record<string,unknown>|unknown[])[]): [string, number] {
-  // function lineComment([line, error]: [string, boolean]) {
-  // console.log(lineError[0])
-  // const pos = lineError[0].search(regexes.CommentSemiColon)
-  // if (pos !== -1) {
-  // lineError[0] = lineError[0].slice(0,pos)
-  // lineError[1] = false
-  // }
-
-  const pos = line.search(regexes.CommentSemiColon)
-  if (pos !== -1) {
-    node.push({lineComment:line.slice(pos)})
-    line = line.slice(0, pos)
-    // error = 0
+let i = 0
+while (i < numberOfLines) {
+  if (startingMultiLineComment.test(lines[i])) {
+    d('MultilineComment START', l())
+    while (i < numberOfLines) {
+      if (endingMultiLineComment.test(lines[i])) {
+        d('MultilineComment END', l())
+        break
+      }
+      i++
+    }
+    i++
+    continue
+  } else if (CommentSemiColon.test(lines[i])) {
+    d('SemiColonComment', l())
+    i++
+    continue
   }
-  // const error = 345
-  return [line, error, ]
+  i++
 }
-
-
-
-function assignStatement(expr: string) {
-  const [left, right]: string[] = expr.split('-')
-  console.log(left)
-  console.log(right)
+function l() {
+  return `line ${i + 1}`
 }

@@ -1,0 +1,9 @@
+if it doesn't start with /*
+
+/*ok:=2   gewgrergreg
+p(ok)
+*/
+
+first comment that comes
+; or /*
+
