@@ -8,3 +8,7 @@ if char===';' skip rest of line
 string:
 
 if ", and if next c+1 < length, if c+1==='"'
+
+
+FUNCTION:
+  get alphaNum, if not a number like 123(), it's a function.

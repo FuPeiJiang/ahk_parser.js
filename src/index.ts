@@ -1,7 +1,8 @@
 import fs from 'fs'
-import {CommentSemiColon, startingMultiLineComment, endingMultiLineComment, whiteSpaceObj} from './tokens'
+import {CommentSemiColon, startingMultiLineComment, endingMultiLineComment, whiteSpaceObj, variableCharsObj} from './tokens'
 const d = console.debug.bind(console)
-const content: string = fs.readFileSync('tests/legal.ahk').toString().replace(/\r/g, '')
+const content: string = fs.readFileSync('tests/ahk_explorer.ahk').toString().replace(/\r/g, '')
+// const content: string = fs.readFileSync('tests/legal.ahk').toString().replace(/\r/g, '')
 // const content: string = fs.readFileSync('tests/yolo.ahk').toString().replace(/\r/g, '')
 const lines = content.split('\n')
 // array of Object|Array
@@ -23,7 +24,7 @@ while (i < numberOfLines) {
       c++
       continue
     } else if (lines[i].slice(c, c + 2) === '/*') {
-      d('MultilineComment START', l())
+      // d('MultilineComment START', l())
       i++
       // continue outer
       outer2:
@@ -35,7 +36,7 @@ while (i < numberOfLines) {
             c++
             continue
           } else if (lines[i].slice(c, c + 2) === '*/') {
-            d('MultilineComment END', l())
+            // d('MultilineComment END', l())
             i++
             break outer2
           }
@@ -46,6 +47,7 @@ while (i < numberOfLines) {
     }
     break
   }
+  outer3:
   while (c < numberOfChars) {
     if (lines[i][c] === ';') {
       // d('SemiColonComment', `${c}-END`, l())
@@ -70,7 +72,7 @@ while (i < numberOfLines) {
               } else {
                 // not a quote the string ends
                 c++
-                // d('not a quote DoubleQuotesString', `Ln ${strStartLine + 1}, Col ${strStartPos + 1} - Ln ${i + 1}, Col ${c + 1}`)
+                // d('no quote after DoubleQuotesString', `Ln ${strStartLine + 1}, Col ${strStartPos + 1} - Ln ${i + 1}, Col ${c + 1}`)
                 break outer2
               }
             } else {
@@ -82,11 +84,36 @@ while (i < numberOfLines) {
           }
           c++
         }
-        if (++i >= numberOfLines) {
-          break
+        if (++c >= numberOfChars) {
+          continue outer3
         }
         c = 0
         numberOfChars = lines[i].length
+      }
+    } else if (variableCharsObj[lines[i][c]]) {
+      // c++
+      // continue
+      const startPosFuncName = c
+      c++
+      while (c < numberOfChars) {
+        if (variableCharsObj[lines[i][c]]) {
+          c++
+          continue
+        } else if (lines[i][c] === '(') {
+          const funcName = lines[i].slice(startPosFuncName,c)
+          // d('is not a number, valid func name')
+          if (isNaN(Number(funcName))) {
+            // if (isNaN(funcName as string)) {
+            // if (isNumeric(funcName)) {
+            // d(lines[i][c - 1], char())
+            d(`FUNCTION Ln ${i + 1} Col ${startPosFuncName + 1} - Col ${c + 1}`, lines[i].slice(startPosFuncName,c))
+          }
+          c++
+          continue outer3
+        } else {
+          // letter without ( so var NOT func
+          continue outer3
+        }
       }
     }
     c++
