@@ -55,9 +55,6 @@ while (i < numberOfLines) {
       const strStartPos = c, strStartLine = i
       c++
 
-
-
-
       outer2:
       while (true) {
         while (c < numberOfChars && whiteSpaceObj[lines[i][c]]) {
@@ -95,23 +92,6 @@ while (i < numberOfLines) {
     c++
   }
   i++
-  // if (startingMultiLineComment.test(lines[i])) {
-  // d('MultilineComment START', l())
-  // while (i < numberOfLines) {
-  // if (endingMultiLineComment.test(lines[i])) {
-  // d('MultilineComment END', l())
-  // break
-  // }
-  // i++
-  // }
-  // i++
-  // continue
-  // } else if (CommentSemiColon.test(lines[i])) {
-  // d('SemiColonComment', l())
-  // i++
-  // continue
-  // }
-  // i++
 
 }
 function char() {
