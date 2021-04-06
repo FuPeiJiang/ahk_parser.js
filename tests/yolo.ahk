@@ -14,8 +14,8 @@ SetControlDelay, -1
 SetTitleMatchMode, 2
 
 currentDirSearch=
-;%appdata%\ahk_explorer_settings
-/* FileRead, favoriteFolders, %A_AppData%\ahk_explorer_settings\favoriteFolders.txt
+            ;%appdata%\ahk_explorer_settings
+        /* FileRead, favoriteFolders, %A_AppData%\ahk_explorer_settings\favoriteFolders.txt
 favoriteFolders:=StrSplit(favoriteFolders,"`n","`r")
 loadSettings() 
 */

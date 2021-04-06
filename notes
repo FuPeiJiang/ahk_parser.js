@@ -1,9 +1,10 @@
+move c past whitespaces
+
 if it doesn't start with /*
 
-/*ok:=2   gewgrergreg
-p(ok)
-*/
+if char===';' skip rest of line
 
-first comment that comes
-; or /*
 
+string:
+
+if ", and if next c+1 < length, if c+1==='"'
