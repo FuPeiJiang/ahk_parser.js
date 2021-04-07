@@ -1,7 +1,11 @@
 module.exports = {
-  root: true,
-  parser: '@typescript-eslint/parser',
-  plugins: [
+  'root': true,
+  'parser': '@typescript-eslint/parser',
+  'parserOptions': {
+    'ecmaVersion': 6,
+    'sourceType': 'module',
+  },
+  'plugins': [
     '@typescript-eslint',
   ],
   extends: [
@@ -9,18 +13,17 @@ module.exports = {
     'plugin:@typescript-eslint/recommended',
   ],
   'env': {
-    'es2021': true,
     'node': true,
   },
-  'globals': {},
-  'parserOptions': {
-    'sourceType': 'module',
-  },
   'rules': {
-    'array-bracket-spacing': ['error', 'never'],
-    'object-curly-spacing': 'off',
-    '@typescript-eslint/object-curly-spacing': ['error'],
-    'no-var' : 'off',
+    '@typescript-eslint/naming-convention': 'warn',
+    '@typescript-eslint/semi': ['error', 'never'],
+    'semi': 'off',
+    'curly': 'warn',
+    'eqeqeq': 'warn',
+    'no-throw-literal': 'warn',
+
+    'no-var': 'off',
     'keyword-spacing': 'off',
     '@typescript-eslint/keyword-spacing': ['error'],
     'comma-dangle': 'off',
@@ -54,10 +57,6 @@ module.exports = {
     'quotes': [
       'error',
       'single',
-    ],
-    'semi': [
-      'error',
-      'never',
     ],
     'constructor-super': [
       'error',
@@ -210,7 +209,7 @@ module.exports = {
       'error',
     ],
     'no-unused-vars': [
-      'off',
+      'error',
     ],
     'no-useless-catch': [
       'error',
@@ -230,7 +229,6 @@ module.exports = {
     'valid-typeof': [
       'error',
     ],
+
   },
-  'settings': {},
-  'ignorePatterns': [],
 }
