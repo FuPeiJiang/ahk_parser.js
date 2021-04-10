@@ -56,3 +56,15 @@ it seems that it's used in script tag
 <script>
   window.webpackNumbers.wordToNum('Five');
 </script>
+
+
+what if I only want the .js and NOT the .d.ts
+just like lodash and @types/lodash, I put @types/ahk_parser.js in /types/package.json
+notice that ahk_parser.js & @types/ahk_parser.js are in the same repo, but they won't be when published, because
+package.json: files: [only takes index.js], and /types/ will be it's own npm package
+
+how to use locally:
+yarn add link:../ahk_parser.js
+yarn add -D link:../ahk_parser.js/types
+
+from npm package registry: idk yet

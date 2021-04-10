@@ -6,5 +6,5 @@ dist
 coverage
 
 /index.js
-/index.d.ts
+/types/index.d.ts
 /ahk_parser.js-v*.*.*.tgz

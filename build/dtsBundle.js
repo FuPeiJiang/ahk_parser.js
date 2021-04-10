@@ -8,6 +8,6 @@ const rootDir = path.dirname(path.resolve(__dirname)) //it doesn't work without 
 dts.bundle({
   name: libraryName,
   main: `${rootDir}/src/parser/**/*.d.ts`,
-  out: `${rootDir}/index.d.ts`,
+  out: `${rootDir}/types/index.d.ts`,
   outputAsModuleFolder: true, // to use npm in-package typings
 })
