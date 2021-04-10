@@ -19,7 +19,11 @@
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only src/usage.ts",
     "dev2": "ts-node-dev src/usage.ts",
-    "package": "webpack --mode production --config build/webpack.config.js && node build/unlink_d.ts.js",
-    "test": "find ./src -name \"*.d.ts\" -delete"
+    "package": "yarn webpackProd && yarn dtsBundle && yarn unlink_d.ts",
+    "webpackProd": "webpack --mode production --config build/webpack.config.js",
+    "bundleDeclarations": "yarn declarations && yarn dtsBundle && yarn unlink_d.ts",
+    "declarations": "tsc --emitDeclarationOnly",
+    "dtsBundle": "node build/dtsBundle.js",
+    "unlink_d.ts": "node build/unlink_d.ts.js"
   }
 }

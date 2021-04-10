@@ -6,23 +6,30 @@ const libraryName = 'ahk_parser.js'
 const dts = require('dts-bundle')
 
 const path = require('path')
-const fs = require('fs')
 const rootDir = path.dirname(path.resolve(__dirname)) //it doesn't work without this
 
 /**@type {import('webpack').Configuration}*/
 const config = {
-  plugins: [
-    // https://stackoverflow.com/questions/41931610/generate-bundle-typescript-definition-file-with-webpack#answer-43041131
-    () => {
-      dts.bundle({
-        name: libraryName,
-        main: `${rootDir}/src/parser/**/*.d.ts`,
-        out: `${rootDir}/index.d.ts`,
-        removeSource: true,
-        outputAsModuleFolder: true, // to use npm in-package typings
-      })
-    },
-  ],
+  // plugins: [
+  // https://stackoverflow.com/questions/41931610/generate-bundle-typescript-definition-file-with-webpack#answer-43041131
+  // () => {
+  // dts.bundle({
+  // name: libraryName,
+  // main: `${rootDir}/src/parser/**/*.d.ts`,
+  // out: `${rootDir}/index.d.ts`,
+  // outputAsModuleFolder: true, // to use npm in-package typings
+  // })
+  // },
+  // () => {
+  // dts.bundle({
+  // name: libraryName,
+  // main: `${rootDir}/src/parser/**/*.d.ts`,
+  // out: `${rootDir}/index.d.ts`,
+  // outputAsModuleFolder: true, // to use npm in-package typings
+  // })
+  // },
+  // removeSource: true,
+  // ],
   target: 'node', // vscode extensions run in a Node.js-context 📖 -> https://webpack.js.org/configuration/node/
   mode: 'none', // this leaves the source code as close as possible to the original (when packaging we set this to 'production')
 
