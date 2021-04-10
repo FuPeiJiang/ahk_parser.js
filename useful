@@ -1,0 +1,6 @@
+which i++ made it skip line 37 ?
+find:
+i++
+replace:
+if (i===37) {console.trace()}
+i++
