@@ -1,0 +1,2 @@
+ && ./node_modules/.bin/dts-bundle-generator -o index.d.ts src/index.ts src/tokens.ts
+  --devtool hidden-source-map

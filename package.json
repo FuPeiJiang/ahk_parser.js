@@ -1,14 +1,14 @@
 {
   "name": "ahk_parser.js",
   "version": "1.0.0",
-  "main": "lib/index.js",
+  "main": "index.js",
+  "types": "index.d.ts",
+  "files": ["index.js", "index.d.ts"],
   "devDependencies": {
     "@types/node": "^14.14.22",
     "@typescript-eslint/eslint-plugin": "^4.14.1",
     "@typescript-eslint/parser": "^4.14.1",
-    "declaration-bundler-webpack-plugin": "^1.0.3",
     "dts-bundle": "^0.7.3",
-    "dts-bundle-generator": "^5.8.0",
     "eslint": "^7.18.0",
     "ts-loader": "^8.1.0",
     "ts-node-dev": "^1.1.1",
@@ -19,6 +19,7 @@
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only src/usage.ts",
     "dev2": "ts-node-dev src/usage.ts",
-    "package": "webpack --mode production --devtool hidden-source-map --config ./webpack.config.js"
+    "package": "webpack --mode production --config build/webpack.config.js && node build/unlink_d.ts.js",
+    "test": "find ./src -name \"*.d.ts\" -delete"
   }
 }

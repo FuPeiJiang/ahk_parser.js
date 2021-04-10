@@ -1,5 +1,7 @@
 import {CommentSemiColon, startingMultiLineComment, endingMultiLineComment, whiteSpaceObj, variableCharsObj} from './tokens'
+// import {whiteSpaaaaaceObj} from './usage'
 const d = console.debug.bind(console)
+// d(whiteSpaaaaaceObj)
 
 export default (content: string) => {
   const lines = content.split('\n')

@@ -1,5 +1,5 @@
 import fs from 'fs'
-import ahkParser from './index'
+import ahkParser from './parser/index'
 const d = console.debug.bind(console)
 
 const content: string = fs.readFileSync('tests/ahk_explorer.ahk').toString().replace(/\r/g, '')
@@ -7,6 +7,11 @@ const content: string = fs.readFileSync('tests/ahk_explorer.ahk').toString().rep
 // const content: string = fs.readFileSync('tests/yolo.ahk').toString().replace(/\r/g, '')
 
 const everything = ahkParser(content)
+
+type stringIndeaaaxBool = {
+  [key: string]: boolean,
+}
+export const whiteSpaaaaaceObj: stringIndeaaaxBool = {' ':true,'\t':true}
 
 type stringIndexNumber = {
   [key: string]: number,
