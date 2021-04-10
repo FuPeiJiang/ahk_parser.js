@@ -4,3 +4,7 @@ node_modules
 dist
 # don't lint nyc coverage output
 coverage
+
+/index.js
+/index.d.ts
+/ahk_parser.js-v*.*.*.tgz

@@ -12,3 +12,47 @@ if ", and if next c+1 < length, if c+1==='"'
 
 FUNCTION:
   get alphaNum, if not a number like 123(), it's a function.
+
+
+finding a *.d.ts bundler (typescript declaration files):
+  tried (didn't wor):
+    ts-loader: declaration-bundler-webpack-plugin
+      https://github.com/TypeStrong/ts-loader#declarations-dts
+      https://www.npmjs.com/package/declaration-bundler-webpack-plugin
+    dts-bundle-generator:
+      Project seems dead. dts-bundle-generator looks like an alternative. #83
+        https://github.com/TypeStrong/dts-bundle/issues/83
+      https://github.com/timocov/dts-bundle-generator
+  dts-bundle worked:
+    https://github.com/TypeStrong/dts-bundle
+
+
+src -> src/parser/ and src/usage.ts
+because I don't want usage.ts to be bundled.
+
+
+webpack.config.js -> build\webpack.config.js with build\dtsBundle.js & build\unlink_d.ts.js
+
+
+`yarn declarations`(tsc --emitDeclarationOnly) isn't needed because `yarn webpackProd` somehow produces the declaration files...
+  note the "include": ["src/parser/**/*.ts"], (in tsconfig.json) `yarn webpackProd` somehow respects that
+
+
+removed sourcemaps (I don't think I need sourcemap in prod):
+(idk what options do) https://webpack.js.org/configuration/devtool/
+removed:
+  (package.json) webpack --devtool hidden-source-map
+  (webpack.config.js) // devtool: 'nosources-source-map',
+
+
+(webpack.config.js)    
+//https://webpack.js.org/guides/author-libraries/#expose-the-library
+    library: {
+      name: 'ahkParser',
+      type: 'umd',
+},
+idk what library.name does, but I'm using camelCase because the example is `library: "webpackNumbers",`
+it seems that it's used in script tag
+<script>
+  window.webpackNumbers.wordToNum('Five');
+</script>
