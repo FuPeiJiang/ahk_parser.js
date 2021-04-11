@@ -16,6 +16,10 @@
     "webpack-cli": "^4.6.0"
   },
   "scripts": {
+    "trie4": "ts-node-dev --respawn --transpile-only src/generateTrie4.ts",
+    "trie3": "ts-node-dev --respawn --transpile-only src/generateTrie3.ts",
+    "trie2": "ts-node-dev --respawn --transpile-only src/generateTrie2.ts",
+    "trie": "ts-node-dev --respawn --transpile-only src/generateTrie.ts",
     "dev": "ts-node-dev --respawn --transpile-only src/usage.ts",
     "dev2": "ts-node-dev src/usage.ts",
     "package": "yarn webpackProd && yarn dtsBundle && yarn unlink_d.ts",
