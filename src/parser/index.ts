@@ -27,6 +27,7 @@ export default (content: string) => {
         c++
         continue
       } else if (lines[i].slice(c, c + 2) === '/*') {
+        const multiLineCommentLineStart = i, multiLineCommentColStart = c
         // d('MultilineComment START', l())
         i++
         // continue outer
@@ -39,6 +40,7 @@ export default (content: string) => {
               c++
               continue
             } else if (lines[i].slice(c, c + 2) === '*/') {
+              everything.push({type: 'MultilineComment', lineStart: multiLineCommentLineStart, colStart: multiLineCommentColStart, lineEnd: i, colEnd:c + 2})
               // d('MultilineComment END', l())
               i++
               break outer2
@@ -54,6 +56,7 @@ export default (content: string) => {
     while (c < numberOfChars) {
       if (lines[i][c] === ';') {
         // d('SemiColonComment', `${c}-END`, l())
+        // everything.push({type: 'SemiColonComment', line: i, colStart: c})
         i++
         continue outer
       } else if (lines[i][c] === '"') {
@@ -110,7 +113,7 @@ export default (content: string) => {
               // if (isNumeric(funcName)) {
               // d(lines[i][c - 1], char())
               // d(`FUNCTION Ln ${i + 1} Col ${startPosFuncName + 1} - Col ${c + 1}`, lines[i].slice(startPosFuncName,c))
-              everything.push({type: 'function', line: i, colStart:startPosFuncName, colEnd:c, name:lines[i].slice(startPosFuncName,c)})
+              // everything.push({type: 'function', line: i, colStart:startPosFuncName, colEnd:c, name:lines[i].slice(startPosFuncName,c)})
             }
             c++
             continue outer3
@@ -125,6 +128,7 @@ export default (content: string) => {
     i++
 
   }
+  d(everything)
   return everything
 
 
