@@ -4,6 +4,11 @@ const d = console.debug.bind(console)
 // d(whiteSpaaaaaceObj)
 
 export default (content: string) => {
+  // https://stackoverflow.com/questions/6784799/what-is-this-char-65279#answer-6784805
+  // https://stackoverflow.com/questions/13024978/removing-bom-characters-from-ajax-posted-string#answer-13027802
+  if (content[0] === '\ufeff') {
+    content = content.slice(1)
+  }
   const lines = content.split('\n')
   const numberOfLines = lines.length
   const everything = []

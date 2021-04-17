@@ -25,7 +25,7 @@ const funcNames = Object.keys(countOfEverything)
 for (let i = 0, len = funcNames.length; i < len; i++) {
   const occurrencesOfFunc = countOfEverything[funcNames[i]]
   if (occurrencesOfFunc === 1) {
-    console.log(funcNames[i])
+    // console.log(funcNames[i])
   }
   // if (occurrencesOfFunc > 1) {
   // console.log(funcNames[i], occurrencesOfFunc)
