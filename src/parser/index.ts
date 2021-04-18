@@ -1,4 +1,4 @@
-import {CommentSemiColon, startingMultiLineComment, endingMultiLineComment, whiteSpaceObj, variableCharsObj} from './tokens'
+import { CommentSemiColon, startingMultiLineComment, endingMultiLineComment, whiteSpaceObj, variableCharsObj } from './tokens'
 // import {whiteSpaaaaaceObj} from './usage'
 const d = console.debug.bind(console)
 // d(whiteSpaaaaaceObj)
@@ -42,7 +42,7 @@ export default (content: string) => {
 
         //if line starts with */
         if (lines[i].slice(c, c + 2) === '*/') {
-          everything.push({type: 'MultilineComment', lineStart: multiLineCommentLineStart, colStart: multiLineCommentColStart, lineEnd: i, colEnd:c + 2})
+          everything.push({ type: 'MultilineComment', lineStart: multiLineCommentLineStart, colStart: multiLineCommentColStart, lineEnd: i, colEnd: c + 2 })
           // d('MultilineComment END', l())
           break
         }
@@ -60,7 +60,51 @@ export default (content: string) => {
       // everything.push({type: 'SemiColonComment', line: i, colStart: c})
       i++
       continue lineLoop
-      /* //#double-quoted strings
+    }
+
+    //stumble upon a valid variable Char
+    if (variableCharsObj[lines[i][c]]) {
+      const startPosFuncName = c
+      c++
+
+      //skip through valid variable Chars
+      while (c < numberOfChars && variableCharsObj[lines[i][c]]) {
+        c++
+      }
+
+      //#FUNCTION
+      if (lines[i][c] === '(') {
+        const funcName = lines[i].slice(startPosFuncName, c)
+        // d('is not a number, valid func name')
+        if (isNaN(Number(funcName))) {
+          // everything.push({type: 'function', line: i, colStart:startPosFuncName, colEnd:c, name:lines[i].slice(startPosFuncName,c)})
+        }
+      } else {
+        const funcName = lines[i].slice(startPosFuncName, c)
+        d(funcName)
+        // letter without ( so var NOT func
+        // not yet implemented
+      }
+      i++
+      continue
+    }
+
+    i++
+
+  }
+  d(everything)
+  return everything
+
+
+  function char() {
+    return `${c + 1} ${l()}`
+  }
+  function l() {
+    return `line ${i + 1}`
+  }
+}
+
+/* //#double-quoted strings
       } else if (lines[i][c] === '"') {
         const strStartPos = c, strStartLine = i
         c++
@@ -98,44 +142,4 @@ export default (content: string) => {
           c = 0
           numberOfChars = lines[i].length
         } */
-      //stumble upon a valid variable Char
-    } else if (variableCharsObj[lines[i][c]]) {
-      const startPosFuncName = c
-      c++
-
-      while (c < numberOfChars && variableCharsObj[lines[i][c]]) {
-        c++
-      }
-      //skip through valid variable Chars
-
-      //#FUNCTION
-      if (lines[i][c] === '(') {
-        const funcName = lines[i].slice(startPosFuncName,c)
-        // d('is not a number, valid func name')
-        if (isNaN(Number(funcName))) {
-          // everything.push({type: 'function', line: i, colStart:startPosFuncName, colEnd:c, name:lines[i].slice(startPosFuncName,c)})
-        }
-      } else {
-        const funcName = lines[i].slice(startPosFuncName,c)
-        // d(funcName)
-        // letter without ( so var NOT func
-        // not yet implemented
-      }
-    }
-    i++
-
-  }
-  d(everything)
-  return everything
-
-
-  function char() {
-    return `${c + 1} ${l()}`
-  }
-  function l() {
-    return `line ${i + 1}`
-  }
-}
-
-
 
