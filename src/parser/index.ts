@@ -13,24 +13,24 @@ export default (content: string) => {
   const numberOfLines = lines.length
   const everything = []
   let i = 0, c = 0
+  //#multiline comments
+  //if line starts with /*
   outer:
   while (i < numberOfLines) {
     c = 0
     let numberOfChars = lines[i].length
-    // break
     const numCharsMinusOne = numberOfChars - 1
     // leave 2 chars at end
     while (c < numCharsMinusOne) {
-      // if char is whitespace
-      if (whiteSpaceObj[lines[i][c]]) {
-        // d(char())
+      //skip through whiteSpaces
+      while (c < numCharsMinusOne && whiteSpaceObj[lines[i][c]]) {
         c++
-        continue
-      } else if (lines[i].slice(c, c + 2) === '/*') {
+      }
+
+      if (lines[i].slice(c, c + 2) === '/*') {
         const multiLineCommentLineStart = i, multiLineCommentColStart = c
         // d('MultilineComment START', l())
         i++
-        // continue outer
         outer2:
         while (i < numberOfLines) {
           c = 0
@@ -49,8 +49,9 @@ export default (content: string) => {
           }
           i++
         }
+      } else {
+        break
       }
-      break
     }
     outer3:
     while (c < numberOfChars) {
