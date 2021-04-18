@@ -16,6 +16,7 @@
     "webpack-cli": "^4.6.0"
   },
   "scripts": {
+    "trie5": "ts-node-dev --respawn --transpile-only src/generateTrie5.ts",
     "trie4": "ts-node-dev --respawn --transpile-only src/generateTrie4.ts",
     "trie3": "ts-node-dev --respawn --transpile-only src/generateTrie3.ts",
     "trie2": "ts-node-dev --respawn --transpile-only src/generateTrie2.ts",
