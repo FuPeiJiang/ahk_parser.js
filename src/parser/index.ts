@@ -55,11 +55,13 @@ export default (content: string) => {
     }
     outer3:
     while (c < numberOfChars) {
+      //#semicolon comments
       if (lines[i][c] === ';') {
         // d('SemiColonComment', `${c}-END`, l())
         // everything.push({type: 'SemiColonComment', line: i, colStart: c})
         i++
         continue lineLoop
+      //#double-quoted strings
       } else if (lines[i][c] === '"') {
         const strStartPos = c, strStartLine = i
         c++
@@ -97,29 +99,28 @@ export default (content: string) => {
           c = 0
           numberOfChars = lines[i].length
         }
+      //stumble upon a valid variable Char
       } else if (variableCharsObj[lines[i][c]]) {
-        // c++
-        // continue
         const startPosFuncName = c
         c++
         while (c < numberOfChars) {
-          if (variableCharsObj[lines[i][c]]) {
+          //skip through valid variable Chars
+          while (c < numberOfChars && variableCharsObj[lines[i][c]]) {
             c++
-            continue
-          } else if (lines[i][c] === '(') {
+          }
+
+          //#FUNCTION
+          if (lines[i][c] === '(') {
             const funcName = lines[i].slice(startPosFuncName,c)
             // d('is not a number, valid func name')
             if (isNaN(Number(funcName))) {
-              // if (isNaN(funcName as string)) {
-              // if (isNumeric(funcName)) {
-              // d(lines[i][c - 1], char())
-              // d(`FUNCTION Ln ${i + 1} Col ${startPosFuncName + 1} - Col ${c + 1}`, lines[i].slice(startPosFuncName,c))
               // everything.push({type: 'function', line: i, colStart:startPosFuncName, colEnd:c, name:lines[i].slice(startPosFuncName,c)})
             }
             c++
             continue outer3
           } else {
             // letter without ( so var NOT func
+            // not yet implemented
             continue outer3
           }
         }
