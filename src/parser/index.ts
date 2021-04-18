@@ -15,7 +15,7 @@ export default (content: string) => {
   let i = 0, c = 0
   //#multiline comments
   //if line starts with /*
-  outer:
+  lineLoop:
   while (i < numberOfLines) {
     c = 0
     let numberOfChars = lines[i].length
@@ -59,7 +59,7 @@ export default (content: string) => {
         // d('SemiColonComment', `${c}-END`, l())
         // everything.push({type: 'SemiColonComment', line: i, colStart: c})
         i++
-        continue outer
+        continue lineLoop
       } else if (lines[i][c] === '"') {
         const strStartPos = c, strStartLine = i
         c++
