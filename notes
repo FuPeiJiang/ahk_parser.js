@@ -68,3 +68,29 @@ yarn add link:../ahk_parser.js
 yarn add -D link:../ahk_parser.js/types
 
 from npm package registry: idk yet
+
+REORGANIZED
+while (c < numCharsMinusOne) {
+  if (whiteSpaceObj[lines[i][c]]) {
+    c++
+    continue
+  } else if (lines[i].slice(c, c + 2) === '*/') {
+    everything.push({type: 'MultilineComment', lineStart: multiLineCommentLineStart, colStart: multiLineCommentColStart, lineEnd: i, colEnd:c + 2})
+    // d('MultilineComment END', l())
+    i++
+    break outer2
+  }
+  break
+}
+->
+//skip through whiteSpaces
+while (c < numCharsMinusOne && whiteSpaceObj[lines[i][c]]) {
+  c++
+}
+
+//if line starts with */
+if (lines[i].slice(c, c + 2) === '*/') {
+  everything.push({type: 'MultilineComment', lineStart: multiLineCommentLineStart, colStart: multiLineCommentColStart, lineEnd: i, colEnd:c + 2})
+  // d('MultilineComment END', l())
+  break
+}

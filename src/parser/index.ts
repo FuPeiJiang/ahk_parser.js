@@ -13,55 +13,54 @@ export default (content: string) => {
   const numberOfLines = lines.length
   const everything = []
   let i = 0, c = 0
-  //#multiline comments
-  //if line starts with /*
+
   lineLoop:
   while (i < numberOfLines) {
     c = 0
-    let numberOfChars = lines[i].length
-    const numCharsMinusOne = numberOfChars - 1
-    // leave 2 chars at end
-    while (c < numCharsMinusOne) {
-      //skip through whiteSpaces
-      while (c < numCharsMinusOne && whiteSpaceObj[lines[i][c]]) {
-        c++
-      }
+    const numberOfChars = lines[i].length
 
-      if (lines[i].slice(c, c + 2) === '/*') {
-        const multiLineCommentLineStart = i, multiLineCommentColStart = c
-        // d('MultilineComment START', l())
-        i++
-        outer2:
-        while (i < numberOfLines) {
-          c = 0
-          const numCharsMinusOne = lines[i].length - 1
-          while (c < numCharsMinusOne) {
-            if (whiteSpaceObj[lines[i][c]]) {
-              c++
-              continue
-            } else if (lines[i].slice(c, c + 2) === '*/') {
-              everything.push({type: 'MultilineComment', lineStart: multiLineCommentLineStart, colStart: multiLineCommentColStart, lineEnd: i, colEnd:c + 2})
-              // d('MultilineComment END', l())
-              i++
-              break outer2
-            }
-            break
-          }
-          i++
+    //skip through whiteSpaces
+    while (c < numberOfChars && whiteSpaceObj[lines[i][c]]) {
+      c++
+    }
+
+    //#multiline comments
+    //if line starts with /*
+    // leave 2 chars at end
+    const numCharsMinusOne = numberOfChars - 1
+    if (c < numCharsMinusOne && lines[i].slice(c, c + 2) === '/*') {
+      const multiLineCommentLineStart = i, multiLineCommentColStart = c
+      // d('MultilineComment START', l())
+      while (++i < numberOfLines) {
+        c = 0
+        const numCharsMinusOne = lines[i].length - 1
+
+        //skip through whiteSpaces
+        while (c < numCharsMinusOne && whiteSpaceObj[lines[i][c]]) {
+          c++
         }
-      } else {
-        break
+
+        //if line starts with */
+        if (lines[i].slice(c, c + 2) === '*/') {
+          everything.push({type: 'MultilineComment', lineStart: multiLineCommentLineStart, colStart: multiLineCommentColStart, lineEnd: i, colEnd:c + 2})
+          // d('MultilineComment END', l())
+          break
+        }
       }
     }
-    outer3:
-    while (c < numberOfChars) {
-      //#semicolon comments
-      if (lines[i][c] === ';') {
-        // d('SemiColonComment', `${c}-END`, l())
-        // everything.push({type: 'SemiColonComment', line: i, colStart: c})
-        i++
-        continue lineLoop
-      //#double-quoted strings
+    //nothing left, continue
+    if (c === numberOfChars) {
+      i++
+      continue lineLoop
+    }
+
+    //#semicolon comments
+    if (lines[i][c] === ';') {
+      // d('SemiColonComment', `${c}-END`, l())
+      // everything.push({type: 'SemiColonComment', line: i, colStart: c})
+      i++
+      continue lineLoop
+      /* //#double-quoted strings
       } else if (lines[i][c] === '"') {
         const strStartPos = c, strStartLine = i
         c++
@@ -98,34 +97,30 @@ export default (content: string) => {
           }
           c = 0
           numberOfChars = lines[i].length
-        }
+        } */
       //stumble upon a valid variable Char
-      } else if (variableCharsObj[lines[i][c]]) {
-        const startPosFuncName = c
-        c++
-        while (c < numberOfChars) {
-          //skip through valid variable Chars
-          while (c < numberOfChars && variableCharsObj[lines[i][c]]) {
-            c++
-          }
-
-          //#FUNCTION
-          if (lines[i][c] === '(') {
-            const funcName = lines[i].slice(startPosFuncName,c)
-            // d('is not a number, valid func name')
-            if (isNaN(Number(funcName))) {
-              // everything.push({type: 'function', line: i, colStart:startPosFuncName, colEnd:c, name:lines[i].slice(startPosFuncName,c)})
-            }
-            c++
-            continue outer3
-          } else {
-            // letter without ( so var NOT func
-            // not yet implemented
-            continue outer3
-          }
-        }
-      }
+    } else if (variableCharsObj[lines[i][c]]) {
+      const startPosFuncName = c
       c++
+
+      while (c < numberOfChars && variableCharsObj[lines[i][c]]) {
+        c++
+      }
+      //skip through valid variable Chars
+
+      //#FUNCTION
+      if (lines[i][c] === '(') {
+        const funcName = lines[i].slice(startPosFuncName,c)
+        // d('is not a number, valid func name')
+        if (isNaN(Number(funcName))) {
+          // everything.push({type: 'function', line: i, colStart:startPosFuncName, colEnd:c, name:lines[i].slice(startPosFuncName,c)})
+        }
+      } else {
+        const funcName = lines[i].slice(startPosFuncName,c)
+        // d(funcName)
+        // letter without ( so var NOT func
+        // not yet implemented
+      }
     }
     i++
 
