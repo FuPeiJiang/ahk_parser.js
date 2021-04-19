@@ -1,0 +1,20 @@
+only "if" remained a whiteSpace
+perhaps it's an ACTUAL if statement ? (need to test)
+
+so this is what we got: #Include and #IncludeAgain are directives... so...
+
+  "#Include":["error message", "OK
+  Error at line 15.
+
+  #Include file "C:\Users\Public\AHK\notes\tests\:=4" cannot be opened.
+
+  The program will exit.
+  "]
+  "#IncludeAgain":["error message", "OK
+  Error at line 15.
+
+  #Include file "C:\Users\Public\AHK\notes\tests\:=4" cannot be opened.
+
+  The program will exit.
+  "]
+  "If":whiteSpace
