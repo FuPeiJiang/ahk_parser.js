@@ -85,6 +85,12 @@ export default (content: string) => {
         if (isNaN(Number(funcName))) {
           // everything.push({type: 'function', line: i, colStart:startPosFuncName, colEnd:c, name:lines[i].slice(startPosFuncName,c)})
         }
+      //#METHOD OR PROPERTY
+      } else if (lines[i][c] === '.') {
+        const funcName = lines[i].slice(startPosFuncName, c)
+        if (isNaN(Number(funcName))) {
+          //
+        }
       } else {
         const validName = lines[i].slice(startPosFuncName, c)
         const idkType = typeOfValidVarName[validName.toLowerCase()]
