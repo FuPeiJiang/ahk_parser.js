@@ -93,29 +93,28 @@ export default (content: string) => {
         }
       } else {
         const validName = lines[i].slice(startPosFuncName, c)
-        const idkType = typeOfValidVarName[validName.toLowerCase()]
-        // d(idkType)
-        if (idkType) {
-          if (idkType === 1) {
-            if (whiteSpaceObj[lines[i][c]]) {
 
-              // d('isSTATEMENT whiteSpace', lines[i][c])
-              i++
-              continue
-            }
-          }
-          if (c === numberOfChars) {
+        // if EOL, it must be COMMAND
+        if (c === numberOfChars) {
 
-            d('isSTATEMENT EOL')
-            i++
-            continue
-          }
-          if (lines[i][c] === ',') {
+          d('COMMAND EOL', char())
+          i++
+          continue
+        }
 
-            d('isSTATEMENT comma', lines[i][c])
-            i++
-            continue
-          }
+        // if it has a comma, it must be COMMAND
+        if (lines[i][c] === ',') {
+
+          d('COMMAND comma', char())
+          i++
+          continue
+        }
+
+        // only declarations and "if" override assignment and ONLY when there's a whiteSpace
+        if (whiteSpaceObj[lines[i][c]] && typeOfValidVarName[validName.toLowerCase()] === 1) {
+          d('whiteSpace DECLARATION', char())
+          i++
+          continue
         }
 
         //skip through whiteSpaces
