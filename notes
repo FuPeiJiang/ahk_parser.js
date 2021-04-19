@@ -94,3 +94,160 @@ if (lines[i].slice(c, c + 2) === '*/') {
   // d('MultilineComment END', l())
   break
 }
+
+a line can start with:
+HOTKEY:
+  $^+left::
+
+can this be a var ?
+  $
+  yes
+
+  #NoEnv
+  yes, but you can't assign it like this #NoEnv :=4, you can't have a space
+
+  #include
+  same
+
+  #if
+  same
+
+  #ANYDirective
+  same
+
+  #
+  fine variable, # :=3, still works as a var
+
+  return
+  fine variable, return :=3
+
+  if
+  yes, but if :=, becomes an if statement? (not confirmed)
+
+  for
+  fine variable, for :=3, still works as a var, what a surprise
+
+  ExitApp
+  fine variable, ExitApp :=3
+
+#NoEnv is actually just a statement just like Send, ignore the # if it helps
+
+when is it incorrect to skip spaces ?
+
+I shouldn't skip spaces for:
+  function declaration
+
+#Include though
+
+NO SPACE: ASSIGNMENT
+#NoEnv:=2
+SPACE: STATEMENT
+#NoEnv :=2
+
+check if assignment
+skip spaces
+check if statement, else assignment
+
+continue Trie: IT, will tell if assignment or statement ?
+if not found in Trie: oof ?
+
+so lets fill our Trie with
+:=
+#NoEnv
+
+and setup a test
+
+oh I cannot, it only does the variable name
+I can use 2 Trie
+
+if statement:
+  if space:
+    isSTATEMENT
+  if end of line:
+    isSTATEMENT
+  if comma:
+    isSTATEMENT
+  else:
+    is FUNCTION CALL ?
+    is FUNCTION DECLARATION ?
+    is assignment ?
+
+if undefined:
+  is FUNCTION CALL ?
+  is FUNCTION DECLARATION ?
+  is assignment ?
+
+ok, it's the same pattern, good
+
+but now, the end of trie, doesn't HAVE to be a function anymore, it can just be the TYPE
+'statement'
+instead of an object
+{}
+
+in fact, this trie can be a trie of ONLY statements. what else can there be ? hOtKeys...
+#k::
+ok fiouf, hotkeys can only be one CHAR
+so
+#if::
+is impossible, I'M SPARED
+
+omg
+if :=2
+this become an ACTUAL "if statement" (not confirmed)
+
+not every statement becomes a statement if SPACE
+for ex: "for :=2" is a fine variable.
+
+if SpaceStatement:
+  if space:
+    isSTATEMENT
+  if end of line:
+    isSTATEMENT
+  if comma:
+    isSTATEMENT
+  else:
+    is FUNCTION CALL ?
+    is FUNCTION DECLARATION ?
+    is assignment ?
+
+if WeakStatement:
+  if end of line:
+    isSTATEMENT
+  if comma:
+  HMMMMMMMMM
+    for, doesn't work: FOR IS A CONTROL STATEMENT: which works with { block }
+    isSTATEMENT
+  else:
+    is FUNCTION CALL ?
+    is FUNCTION DECLARATION ?
+    is assignment ?
+
+if undefined:
+  is FUNCTION CALL ?
+  is FUNCTION DECLARATION ?
+  is assignment ?
+
+
+if trie ends at Control, it can't continue to ControlClick
+dump trie, use if (object['control']=="SpaceStatement")
+
+PLEASE, just write, REORDER AFTER
+
+if FUNCTION:
+if SpaceStatement:
+  if space:
+  if end of line:
+  if comma:
+    isSTATEMENT
+skipSpaces
+if ASSIGNMENT:
+
+else:
+  ???
+
+it's control.directives, not statement: from ahk.tmLanguage.json
+allowsamelinecomments|clipboardtimeout|commentflag|errorstdout|escapechar|hotkeyinterval|hotkeymodifiertimeout|hotstring|if|iftimeout|ifwinactive|ifwinexist|ifwinnotactive|ifwinnotexist|inputlevel|installkeybdhook|installmousehook|keyhistory|ltrim|maxhotkeysperinterval|maxmem|maxthreads|maxthreadsbuffer|maxthreadsperhotkey|menumaskkey|noenv|notrayicon|persistent|singleinstance|usehook|warn|winactivateforce
+allowsamelinecomments|clipboardtimeout|commentflag|errorstdout|escapechar|hotkeyinterval|hotkeymodifiertimeout|hotstring|if|iftimeout|ifwinactive|ifwinexist|ifwinnotactive|ifwinnotexist|inputlevel|installkeybdhook|installmousehook|keyhistory|ltrim|maxhotkeysperinterval|maxmem|maxthreads|maxthreadsbuffer|maxthreadsperhotkey|menumaskkey|noenv|notrayicon|persistent|singleinstance|usehook|warn|winactivateforce
+
+they're called #Directives in https://www.autohotkey.com/docs/commands/index.htm
+and ControlClick is a Command
