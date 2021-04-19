@@ -9,7 +9,6 @@ export default (content: string) => {
   // addToTrie('#NoEnv', () => console.log(23423))
   // addToTrie(':=', () => console.log('fwefwe\'f'))
 
-
   // https://stackoverflow.com/questions/6784799/what-is-this-char-65279#answer-6784805
   // https://stackoverflow.com/questions/13024978/removing-bom-characters-from-ajax-posted-string#answer-13027802
   if (content[0] === '\ufeff') {
@@ -18,6 +17,7 @@ export default (content: string) => {
   const lines = content.split('\n')
   const numberOfLines = lines.length
   const everything = []
+  let toFile = ''
   let i = 0, c = 0
 
   lineLoop:
@@ -93,7 +93,7 @@ export default (content: string) => {
           if (idkType === 1) {
             if (whiteSpaceObj[lines[i][c]]) {
 
-              d('isSTATEMENT whiteSpace', lines[i][c])
+              // d('isSTATEMENT whiteSpace', lines[i][c])
               i++
               continue
             }
@@ -122,7 +122,8 @@ export default (content: string) => {
         } else if (c < numberOfChars - 2 && assignmentOperators[lines[i].slice(c, c + 3)]) {
           // d('3 char assignment operator')
         } else {
-          d(validName)
+          // d(validName)
+          toFile += `\n${validName}`
         }
         // assignmentOperators[lines[i].slice(c, c + 2)]
         /*
@@ -151,6 +152,13 @@ export default (content: string) => {
 
   }
   // d(everything)
+  toFile = toFile.slice(1)
+  writeSync(toFile)
+  function writeSync(content: string) {
+    const fs = require('fs')
+    fs.writeFileSync('outputToFile.txt', content, 'utf-8')
+    console.log('readFileSync complete')
+  }
   return everything
 
 

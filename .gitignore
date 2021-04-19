@@ -8,3 +8,4 @@ coverage
 /index.js
 /types/index.d.ts
 /ahk_parser.js-v*.*.*.tgz
+outputToFile.txt

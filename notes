@@ -253,3 +253,16 @@ and ControlClick is a Command
 
 \ahk_parser.js\ahk_language\flow of control\is if assign an actual if\test38.ahk
 ;yes, `if :=4` is an actual if statement
+
+oof.
+LABELS:
+if:
+global, local, static
+hotkey
+
+ImageListID%A_Index% := IL_Create(50)
+
+METHOD CALL:
+LV_Colors.Cell(ListviewHwnd%whichSide%,row,3,color)
+
+let's deal with METHOD CALL First.
