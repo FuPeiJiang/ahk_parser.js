@@ -87,7 +87,7 @@ export default (content: string) => {
         }
       } else {
         const validName = lines[i].slice(startPosFuncName, c)
-        const idkType = typeOfValidVarName[validName]
+        const idkType = typeOfValidVarName[validName.toLowerCase()]
         // d(idkType)
         if (idkType) {
           if (idkType === 1) {
