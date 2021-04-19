@@ -1,9 +1,15 @@
-import { CommentSemiColon, startingMultiLineComment, endingMultiLineComment, whiteSpaceObj, variableCharsObj } from './tokens'
+import { CommentSemiColon, startingMultiLineComment, endingMultiLineComment, whiteSpaceObj, variableCharsObj, assignmentOperators, typeOfValidVarName } from './tokens'
 // import {whiteSpaaaaaceObj} from './usage'
 const d = console.debug.bind(console)
 // d(whiteSpaaaaaceObj)
 
 export default (content: string) => {
+  // const trie = {}
+  // const addToTrie = createAddToTrie(trie)
+  // addToTrie('#NoEnv', () => console.log(23423))
+  // addToTrie(':=', () => console.log('fwefwe\'f'))
+
+
   // https://stackoverflow.com/questions/6784799/what-is-this-char-65279#answer-6784805
   // https://stackoverflow.com/questions/13024978/removing-bom-characters-from-ajax-posted-string#answer-13027802
   if (content[0] === '\ufeff') {
@@ -80,10 +86,62 @@ export default (content: string) => {
           // everything.push({type: 'function', line: i, colStart:startPosFuncName, colEnd:c, name:lines[i].slice(startPosFuncName,c)})
         }
       } else {
-        const funcName = lines[i].slice(startPosFuncName, c)
-        d(funcName)
+        const validName = lines[i].slice(startPosFuncName, c)
+        const idkType = typeOfValidVarName[validName]
+        // d(idkType)
+        if (idkType) {
+          if (idkType === 1) {
+            if (whiteSpaceObj[lines[i][c]]) {
+
+              d('isSTATEMENT whiteSpace', lines[i][c])
+              i++
+              continue
+            }
+          }
+          if (c === numberOfChars) {
+
+            d('isSTATEMENT EOL')
+            i++
+            continue
+          }
+          if (lines[i][c] === ',') {
+
+            d('isSTATEMENT comma', lines[i][c])
+            i++
+            continue
+          }
+        }
+
+        //skip through whiteSpaces
+        while (c < numberOfChars && whiteSpaceObj[lines[i][c]]) {
+          c++
+        }
+
+        if (c < numberOfChars - 1 && assignmentOperators[lines[i].slice(c, c + 2)]) {
+          // d('2 char assignment operator')
+        } else if (c < numberOfChars - 2 && assignmentOperators[lines[i].slice(c, c + 3)]) {
+          // d('3 char assignment operator')
+        } else {
+          d(validName)
+        }
+        // assignmentOperators[lines[i].slice(c, c + 2)]
+        /*
+        c++
+        //skip through whiteSpaces
+        while (c < numberOfChars && whiteSpaceObj[lines[i][c]]) {
+          c++
+        }
+
+        if (lines[i][c] === ' ') {
+          // d(funcName)
+        }
+
+        d(lines[i].slice(startPosFuncName))
+
+
+        // d(funcName, lines[i][c])
         // letter without ( so var NOT func
-        // not yet implemented
+        // not yet implemented */
       }
       i++
       continue
@@ -92,7 +150,7 @@ export default (content: string) => {
     i++
 
   }
-  d(everything)
+  // d(everything)
   return everything
 
 
@@ -102,6 +160,23 @@ export default (content: string) => {
   function l() {
     return `line ${i + 1}`
   }
+  // function createAddToTrie(trie) {
+  // let c: number, strLenMinusOne
+  // return function addToTrie(string1, func) {
+  // c = 0, strLenMinusOne = string1.length - 1
+  // recursiveAddKey(trie)
+  // function recursiveAddKey(obj) {
+  // const letter = string1[c]
+  // if (c < strLenMinusOne) {
+  // obj[letter] = obj[letter] || {}
+  // c++
+  // recursiveAddKey(obj[letter])
+  // } else {
+  // obj[letter] = func
+  // }
+  // }
+  // }
+  // }
 }
 
 /* //#double-quoted strings
