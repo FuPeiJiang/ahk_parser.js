@@ -1,0 +1,13 @@
+#AllowSameLineComments only in ahk_docs but shouldn't be there
+
+#Requires only in ahk_docs
+#Ltrim only in AHK-Studio
+
+useless:
+tmLanguage doesn't have:
+  #include
+  #includeagain
+  #requires
+tmLanguage has:
+  #allowsamelinecomments
+
