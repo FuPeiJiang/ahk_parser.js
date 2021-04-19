@@ -1,0 +1,13 @@
+go in var_whitespace_test.ah2
+
+uncomment the one you want:
+  ; text:=FileRead("..\ahk_docs2_toTest.ahk")
+  text:=FileRead("tmLanguage.ahk")
+
+run var_whitespace_test.ah2
+
+go in test37.ahk
+
+position cursor at Ln 17, Col 1
+
+press F1

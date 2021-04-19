@@ -6,7 +6,8 @@ ListLines 0
 
 OnMessage(0x4A, "WM_COPYDATA_READ")
 
-text:=FileRead("toTest.ahk")
+; text:=FileRead("..\ahk_docs2_toTest.ahk")
+text:=FileRead("..\tmLanguage.ahk")
 arr:=StrSplit(text, "`n", "`r")
 
 ifWhiteSpaceMap:=Map()
@@ -22,8 +23,8 @@ f1::
 {
 global arr, ifWhiteSpaceMap, currentControlFlow
 
-; fileObj:=FileOpen("C:\Users\Public\AHK\notes\tests\test37.ahk", "a`n")
-; fileObj:=FileOpen("C:\Users\Public\AHK\notes\tests\test37.ahk", "rw`n")
+; fileObj:=FileOpen("test37.ahk", "a`n")
+; fileObj:=FileOpen("test37.ahk", "rw`n")
 
 ; line:=1
 ; while (line<15) {
@@ -61,10 +62,10 @@ for v in arr {
 
   SetTitleMatchMode 2
   try {
-    PID:=WinGetPID("C:\Users\Public\AHK\notes\tests\test37.ahk ahk_class AutoHotkey")
+    PID:=WinGetPID("test37.ahk ahk_class AutoHotkey")
     ProcessClose PID
   }
-  Run '"C:\Program Files\AutoHotkey\AutoHotkeyU64.exe" /CP65001 "C:\Users\Public\AHK\notes\tests\test37.ahk"'
+  Run '"C:\Program Files\AutoHotkey\AutoHotkeyU64.exe" /CP65001 "test37.ahk"'
 
   sleep 500
 

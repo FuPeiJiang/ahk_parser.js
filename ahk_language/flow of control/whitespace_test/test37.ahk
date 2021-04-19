@@ -12,8 +12,8 @@ ListLines Off
 ; #Requires only in ahk_docs
 ; #Ltrim only in AHK-Studio
 
-IfWinNotActive  :=4
-if (IfWinNotActive + 5==9)
+exitapp  :=4
+if (exitapp + 5==9)
   send_string(1) 
 else
   send_string(0) 

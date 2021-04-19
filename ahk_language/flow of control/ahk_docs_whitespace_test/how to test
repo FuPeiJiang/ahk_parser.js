@@ -1,4 +1,0 @@
-run var_whitespace_test.ah2
-go in test37.ahk
-position cursor at Ln 17, Col 1
-press F1
