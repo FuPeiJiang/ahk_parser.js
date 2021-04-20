@@ -138,37 +138,40 @@ export default (content: string) => {
           // toFile += `\n${validName}`
         }
       }
-    }
 
-    // well, it's now or never to be a label: because label can't have %
-    //#LABELS
-    if (lines[i][c] === ':') {
-
-      //skip through whiteSpaces
-      while (c < numberOfChars && whiteSpaceObj[lines[i][c]]) {
-        c++
-      }
-
-      if (c === numberOfChars) {
-        d('LABEL EOL', char())
-        i++
-        continue lineLoop
-      }
-
-      if (lines[i][c] === ';') {
-        d('LABEL SemiColonComment', char())
-        // everything.push({type: 'SemiColonComment', line: i, colStart: c})
-        i++
-        continue lineLoop
-      }
-
-      // if 2 consecutive ':' then hotkey
+      // well, it's now or never to be a label: because label can't have %
+      //#LABELS
       if (lines[i][c] === ':') {
-        d('HOTKEY validVarName', char())
-        i++
-        continue lineLoop
+
+        //skip through whiteSpaces
+        while (c < numberOfChars && whiteSpaceObj[lines[i][c]]) {
+          c++
+        }
+
+        if (c === numberOfChars) {
+          d('LABEL EOL', char())
+          i++
+          continue lineLoop
+        }
+
+        if (lines[i][c] === ';') {
+          d('LABEL SemiColonComment', char())
+          // everything.push({type: 'SemiColonComment', line: i, colStart: c})
+          i++
+          continue lineLoop
+        }
+
+        // if 2 consecutive ':' then hotkey
+        if (lines[i][c] === ':') {
+          d('HOTKEY validVarName', char())
+          i++
+          continue lineLoop
+        }
       }
+
     }
+
+
 
     i++
 
