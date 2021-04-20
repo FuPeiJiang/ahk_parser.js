@@ -149,15 +149,19 @@ export default (content: string) => {
         const funcName = lines[i].slice(startPosFuncName, c)
         // d('is not a number, valid func name')
         if (isNaN(Number(funcName))) {
-          const validName = lines[i].slice(startPosFuncName, c)
-          d(validName, 'FUNCTION CALL OR DEFINITION', char())
           // d('FUNCTION CALL OR DEFINITION', char())
           // everything.push({type: 'function', line: i, colStart:startPosFuncName, colEnd:c, name:lines[i].slice(startPosFuncName,c)})
         }
-      //#METHOD OR PROPERTY
-      } else if (lines[i][c] === '.') {
+
+        //#METHOD OR PROPERTY
+        // this is NOT a METHOD call:
+        // str.=v[key] "+" k "|"
+        // so check if the next character is a valid Var
+      } else if (lines[i][c] === '.' && variableCharsObj[lines[i][c + 1]]) {
         const funcName = lines[i].slice(startPosFuncName, c)
         if (isNaN(Number(funcName))) {
+          const validName = lines[i].slice(startPosFuncName, c)
+          d(validName, 'METHOD OR PROPERTY', char())
           // d('METHOD OR PROPERTY', char())
         }
       }

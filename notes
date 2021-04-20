@@ -314,3 +314,9 @@ global local or static: works
 
 .\found\FUNCTION CALL OR DEFINITION\unique: seems good now
 
+this is NOT a METHOD call:
+  str.=v[key] "+" k "|"
+so check if the next character is a valid Var
+
+.\found\METHOD OR PROPERTY\unique: good now
+
