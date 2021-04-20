@@ -90,16 +90,19 @@ export default (content: string) => {
         continue lineLoop
       }
 
-      // if it has a comma, it could be a hotkey, it's only NOT a hotkey if it's a valid COMMAND
-      if (lines[i][c] === ',') {
-        
-        // d('COMMAND comma', char())
-        i++
-        continue lineLoop
-      }
-
       const validName = lines[i].slice(startPosFuncName, c)
       const idkType = typeOfValidVarName[validName.toLowerCase()]
+      // if it has a comma, it could be a hotkey, it's only NOT a hotkey if it's a valid COMMAND
+      if (lines[i][c] === ',') {
+        // directive or command
+        if (idkType === 1 || idkType === 4) {
+          d(validName, 'DIRECTIVE OR COMMAND comma', char())
+          i++
+          continue lineLoop
+        }
+      }
+
+
       // only directives and "if" override assignment and ONLY when there's a whiteSpace
       if (whiteSpaceObj[lines[i][c]] && idkType) {
         if (idkType === 1) {
@@ -192,7 +195,7 @@ export default (content: string) => {
         c++
         if (c < numberOfChars && lines[i][c] === ':') {
           d('HOTKEY', char())
-        // d('HOTKEY')
+          // d('HOTKEY')
         } else {
 
         }
