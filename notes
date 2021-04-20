@@ -135,7 +135,7 @@ can this be a var ?
 when is it incorrect to skip spaces ?
 
 I shouldn't skip spaces for:
-  function declaration
+  function definition
 
 #Include though
 
@@ -169,12 +169,12 @@ if statement:
     isSTATEMENT
   else:
     is FUNCTION CALL ?
-    is FUNCTION DECLARATION ?
+    is FUNCTION DEFINITION ?
     is assignment ?
 
 if undefined:
   is FUNCTION CALL ?
-  is FUNCTION DECLARATION ?
+  is FUNCTION DEFINITION ?
   is assignment ?
 
 ok, it's the same pattern, good
@@ -207,7 +207,7 @@ if SpaceStatement:
     isSTATEMENT
   else:
     is FUNCTION CALL ?
-    is FUNCTION DECLARATION ?
+    is FUNCTION DEFINITION ?
     is assignment ?
 
 if WeakStatement:
@@ -219,12 +219,12 @@ if WeakStatement:
     isSTATEMENT
   else:
     is FUNCTION CALL ?
-    is FUNCTION DECLARATION ?
+    is FUNCTION DEFINITION ?
     is assignment ?
 
 if undefined:
   is FUNCTION CALL ?
-  is FUNCTION DECLARATION ?
+  is FUNCTION DEFINITION ?
   is assignment ?
 
 
