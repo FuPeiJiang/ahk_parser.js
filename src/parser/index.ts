@@ -161,6 +161,13 @@ export default (content: string) => {
         i++
         continue lineLoop
       }
+
+      // if 2 consecutive ':' then hotkey
+      if (lines[i][c] === ':') {
+        d('HOTKEY validVarName', char())
+        i++
+        continue lineLoop
+      }
     }
 
     i++
