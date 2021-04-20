@@ -10,15 +10,10 @@ const content: string = fs.readFileSync('tests/js html.ahk').toString().replace(
 
 const everything = ahkParser(content)
 
-type stringIndeaaaxBool = {
-  [key: string]: boolean,
-}
-export const whiteSpaaaaaceObj: stringIndeaaaxBool = {' ':true,'\t':true}
-
-type stringIndexNumber = {
+type StringIndexNumber = {
   [key: string]: number,
 }
-const countOfEverything: stringIndexNumber = {}
+const countOfEverything: StringIndexNumber = {}
 for (let i = 0, len = everything.length; i < len; i++) {
   countOfEverything[everything[i].name] = countOfEverything[everything[i].name] + 1 || 1
 }
