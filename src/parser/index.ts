@@ -90,9 +90,9 @@ export default (content: string) => {
         continue lineLoop
       }
 
-      // if it has a comma, it must be COMMAND
+      // if it has a comma, it could be a hotkey, it's only NOT a hotkey if it's a valid COMMAND
       if (lines[i][c] === ',') {
-
+        
         // d('COMMAND comma', char())
         i++
         continue lineLoop

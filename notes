@@ -360,3 +360,15 @@ msgbox,::msgbox, 4
 
 so I must check if it's a valid command
 or I can do, if invalid hotkey: it's a command ?
+
+so now I need to know WHICH COMMANDS will be a command when:
+COMMAND,::
+COMMAND ::
+I need to be REALLY careful because there are command like FileRecycleEmpty: Empties the recycle bin.
+
+I will do one thing for now: COMMAND comma test
+ima test SOME.
+
+hotkeys can have commands:
+  f3::Exitapp
+so no, hotkeys don't end with ::
