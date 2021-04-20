@@ -353,3 +353,10 @@ if ==='::'
 
 .\found\2 char assignment operator\unique: good
 
+invalid hotkey:
+msgboxx,::msgbox, 4
+good msgbox:
+msgbox,::msgbox, 4
+
+so I must check if it's a valid command
+or I can do, if invalid hotkey: it's a command ?

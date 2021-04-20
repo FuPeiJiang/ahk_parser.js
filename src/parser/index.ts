@@ -177,8 +177,6 @@ export default (content: string) => {
       if (c < numberOfChars - 1 && assignmentOperators[lines[i].slice(c, c + 2)]) {
         // d('2 char assignment operator')
       } else if (c < numberOfChars - 2 && assignmentOperators[lines[i].slice(c, c + 3)]) {
-        const validName = lines[i].slice(startPosFuncName, c)
-        d(validName, '3 char assignment operator', char())
         // d('3 char assignment operator')
       } else {
         // d(validName)
@@ -187,6 +185,22 @@ export default (content: string) => {
 
     }
 
+    //#HOTKEYS
+    //advance until ':'
+    while (c < numberOfChars) {
+      if (lines[i][c] === ':') {
+        c++
+        if (c < numberOfChars && lines[i][c] === ':') {
+          d('HOTKEY', char())
+        // d('HOTKEY')
+        } else {
+
+        }
+      } else {
+
+      }
+      c++
+    }
 
 
     i++
