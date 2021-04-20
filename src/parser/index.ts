@@ -78,65 +78,49 @@ export default (content: string) => {
         c++
       }
 
-      //#FUNCTION
-      if (lines[i][c] === '(') {
-        const funcName = lines[i].slice(startPosFuncName, c)
-        // d('is not a number, valid func name')
-        if (isNaN(Number(funcName))) {
-          // everything.push({type: 'function', line: i, colStart:startPosFuncName, colEnd:c, name:lines[i].slice(startPosFuncName,c)})
+      // if EOL, it must be COMMAND
+      if (c === numberOfChars) {
+
+        d('COMMAND EOL', char())
+        i++
+        continue lineLoop
+      }
+
+      // if it has a comma, it must be COMMAND
+      if (lines[i][c] === ',') {
+
+        d('COMMAND comma', char())
+        i++
+        continue lineLoop
+      }
+
+      const validName = lines[i].slice(startPosFuncName, c)
+      const idkType = typeOfValidVarName[validName.toLowerCase()]
+      // only directives and "if" override assignment and ONLY when there's a whiteSpace
+      if (whiteSpaceObj[lines[i][c]] && idkType) {
+        if (idkType === 1) {
+          d('whiteSpace DIRECTIVE', char())
+        } else if (idkType === 2) {
+          d('if statement', char())
+        } else if (idkType === 3) {
+          d('global local or static', char())
         }
-      //#METHOD OR PROPERTY
-      } else if (lines[i][c] === '.') {
-        const funcName = lines[i].slice(startPosFuncName, c)
-        if (isNaN(Number(funcName))) {
-          //
-        }
+        i++
+        continue lineLoop
+      }
+
+      //skip through whiteSpaces
+      while (c < numberOfChars && whiteSpaceObj[lines[i][c]]) {
+        c++
+      }
+
+      if (c < numberOfChars - 1 && assignmentOperators[lines[i].slice(c, c + 2)]) {
+        // d('2 char assignment operator')
+      } else if (c < numberOfChars - 2 && assignmentOperators[lines[i].slice(c, c + 3)]) {
+        // d('3 char assignment operator')
       } else {
-        const validName = lines[i].slice(startPosFuncName, c)
-
-        // if EOL, it must be COMMAND
-        if (c === numberOfChars) {
-
-          d('COMMAND EOL', char())
-          i++
-          continue lineLoop
-        }
-
-        // if it has a comma, it must be COMMAND
-        if (lines[i][c] === ',') {
-
-          d('COMMAND comma', char())
-          i++
-          continue lineLoop
-        }
-
-        const idkType = typeOfValidVarName[validName.toLowerCase()]
-        // only directives and "if" override assignment and ONLY when there's a whiteSpace
-        if (whiteSpaceObj[lines[i][c]] && idkType) {
-          if (idkType === 1) {
-            d('whiteSpace DIRECTIVE', char())
-          } else if (idkType === 2) {
-            d('if statement', char())
-          } else if (idkType === 3) {
-            d('global local or static', char())
-          }
-          i++
-          continue lineLoop
-        }
-
-        //skip through whiteSpaces
-        while (c < numberOfChars && whiteSpaceObj[lines[i][c]]) {
-          c++
-        }
-
-        if (c < numberOfChars - 1 && assignmentOperators[lines[i].slice(c, c + 2)]) {
-          // d('2 char assignment operator')
-        } else if (c < numberOfChars - 2 && assignmentOperators[lines[i].slice(c, c + 3)]) {
-          // d('3 char assignment operator')
-        } else {
-          // d(validName)
-          // toFile += `\n${validName}`
-        }
+        // d(validName)
+        // toFile += `\n${validName}`
       }
 
       // well, it's now or never to be a label: because label can't have %
@@ -166,6 +150,21 @@ export default (content: string) => {
           d('HOTKEY validVarName', char())
           i++
           continue lineLoop
+        }
+      }
+
+      //#FUNCTION
+      if (lines[i][c] === '(') {
+        const funcName = lines[i].slice(startPosFuncName, c)
+        // d('is not a number, valid func name')
+        if (isNaN(Number(funcName))) {
+          // everything.push({type: 'function', line: i, colStart:startPosFuncName, colEnd:c, name:lines[i].slice(startPosFuncName,c)})
+        }
+      //#METHOD OR PROPERTY
+      } else if (lines[i][c] === '.') {
+        const funcName = lines[i].slice(startPosFuncName, c)
+        if (isNaN(Number(funcName))) {
+          //
         }
       }
 
