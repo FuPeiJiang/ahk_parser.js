@@ -17,7 +17,7 @@ export default (content: string) => {
   const lines = content.split('\n')
   const numberOfLines = lines.length
   const everything = []
-  let toFile = ''
+  const toFile = ''
   let i = 0, c = 0
 
   lineLoop:
@@ -135,7 +135,7 @@ export default (content: string) => {
           // d('3 char assignment operator')
         } else {
           // d(validName)
-          toFile += `\n${validName}`
+          // toFile += `\n${validName}`
         }
       }
     }
@@ -144,7 +144,7 @@ export default (content: string) => {
 
   }
   // d(everything)
-  toFile = toFile.slice(1)
+  // toFile = toFile.slice(1)
   writeSync(toFile)
   function writeSync(content: string) {
     const fs = require('fs')
