@@ -137,27 +137,7 @@ export default (content: string) => {
           // d(validName)
           toFile += `\n${validName}`
         }
-        // assignmentOperators[lines[i].slice(c, c + 2)]
-        /*
-        c++
-        //skip through whiteSpaces
-        while (c < numberOfChars && whiteSpaceObj[lines[i][c]]) {
-          c++
-        }
-
-        if (lines[i][c] === ' ') {
-          // d(funcName)
-        }
-
-        d(lines[i].slice(startPosFuncName))
-
-
-        // d(funcName, lines[i][c])
-        // letter without ( so var NOT func
-        // not yet implemented */
       }
-      i++
-      continue
     }
 
     i++
