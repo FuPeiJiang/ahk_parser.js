@@ -212,3 +212,10 @@ winwait
 winwaitactive
 winwaitnotactive
 winwaitclose
+guicontextmenu
+guidropfiles
+fileopen
+#ltrim
+onclipboardchange
+trim
+undo

@@ -227,3 +227,4 @@ OnClipboardChange
 SetCapslockState
 Trim
 Undo
+
