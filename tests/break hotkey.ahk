@@ -24,6 +24,8 @@ msgbox %::msgbox, 4
 msgbox%::msgbox, 4
 %::msgbox, 4
 
+^`;::msgbox, 4
+#`;::msgbox, 4
 `;::msgbox, 4
 ;::msgbox, 4
 

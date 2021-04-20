@@ -398,3 +398,8 @@ why isn't this being caught as hotkey ?
 
 skip ONLY if c==0
 fixed
+
+`;:: works because currently if it start with ';' it's a comment
+AND ONLY if it start with it. so:
+  command ;fefef
+wouldn't be detected
