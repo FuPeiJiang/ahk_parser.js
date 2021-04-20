@@ -81,7 +81,7 @@ export default (content: string) => {
       // if EOL, it must be COMMAND
       if (c === numberOfChars) {
 
-        d('COMMAND EOL', char())
+        // d('COMMAND EOL', char())
         i++
         continue lineLoop
       }
@@ -89,7 +89,7 @@ export default (content: string) => {
       // if it has a comma, it must be COMMAND
       if (lines[i][c] === ',') {
 
-        d('COMMAND comma', char())
+        // d('COMMAND comma', char())
         i++
         continue lineLoop
       }
@@ -99,28 +99,14 @@ export default (content: string) => {
       // only directives and "if" override assignment and ONLY when there's a whiteSpace
       if (whiteSpaceObj[lines[i][c]] && idkType) {
         if (idkType === 1) {
-          d('whiteSpace DIRECTIVE', char())
+          // d('whiteSpace DIRECTIVE', char())
         } else if (idkType === 2) {
-          d('if statement', char())
+          // d('if statement', char())
         } else if (idkType === 3) {
-          d('global local or static', char())
+          // d('global local or static', char())
         }
         i++
         continue lineLoop
-      }
-
-      //skip through whiteSpaces
-      while (c < numberOfChars && whiteSpaceObj[lines[i][c]]) {
-        c++
-      }
-
-      if (c < numberOfChars - 1 && assignmentOperators[lines[i].slice(c, c + 2)]) {
-        // d('2 char assignment operator')
-      } else if (c < numberOfChars - 2 && assignmentOperators[lines[i].slice(c, c + 3)]) {
-        // d('3 char assignment operator')
-      } else {
-        // d(validName)
-        // toFile += `\n${validName}`
       }
 
       // well, it's now or never to be a label: because label can't have %
@@ -139,7 +125,7 @@ export default (content: string) => {
         }
 
         if (lines[i][c] === ';') {
-          d('LABEL SemiColonComment', char())
+          // d('LABEL SemiColonComment', char())
           // everything.push({type: 'SemiColonComment', line: i, colStart: c})
           i++
           continue lineLoop
@@ -147,10 +133,15 @@ export default (content: string) => {
 
         // if 2 consecutive ':' then hotkey
         if (lines[i][c] === ':') {
-          d('HOTKEY validVarName', char())
+          // d('HOTKEY validVarName', char())
           i++
           continue lineLoop
         }
+      }
+
+      //skip through % OR valid variable Chars
+      while (c < numberOfChars && lines[i][c] === '%' || variableCharsObj[lines[i][c]]) {
+        c++
       }
 
       //#FUNCTION
@@ -158,14 +149,27 @@ export default (content: string) => {
         const funcName = lines[i].slice(startPosFuncName, c)
         // d('is not a number, valid func name')
         if (isNaN(Number(funcName))) {
+          const validName = lines[i].slice(startPosFuncName, c)
+          d(validName, 'FUNCTION CALL OR DEFINITION', char())
+          // d('FUNCTION CALL OR DEFINITION', char())
           // everything.push({type: 'function', line: i, colStart:startPosFuncName, colEnd:c, name:lines[i].slice(startPosFuncName,c)})
         }
       //#METHOD OR PROPERTY
       } else if (lines[i][c] === '.') {
         const funcName = lines[i].slice(startPosFuncName, c)
         if (isNaN(Number(funcName))) {
-          //
+          // d('METHOD OR PROPERTY', char())
         }
+      }
+
+      //#VARIABLE ASSIGNMENT
+      if (c < numberOfChars - 1 && assignmentOperators[lines[i].slice(c, c + 2)]) {
+        // d('2 char assignment operator')
+      } else if (c < numberOfChars - 2 && assignmentOperators[lines[i].slice(c, c + 3)]) {
+        // d('3 char assignment operator')
+      } else {
+        // d(validName)
+        // toFile += `\n${validName}`
       }
 
     }
