@@ -119,8 +119,6 @@ export default (content: string) => {
         }
 
         if (c === numberOfChars) {
-          const validName = lines[i].slice(startPosFuncName, c)
-          d(validName, 'LABEL EOL', char())
           // d('LABEL EOL', char())
           i++
           continue lineLoop
@@ -166,8 +164,15 @@ export default (content: string) => {
         }
       }
 
+      //skip through whiteSpaces
+      while (c < numberOfChars && whiteSpaceObj[lines[i][c]]) {
+        c++
+      }
+
       //#VARIABLE ASSIGNMENT
       if (c < numberOfChars - 1 && assignmentOperators[lines[i].slice(c, c + 2)]) {
+        const validName = lines[i].slice(startPosFuncName, c)
+        d(validName, '2 char assignment operator', char())
         // d('2 char assignment operator')
       } else if (c < numberOfChars - 2 && assignmentOperators[lines[i].slice(c, c + 3)]) {
         // d('3 char assignment operator')

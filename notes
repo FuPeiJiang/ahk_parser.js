@@ -330,3 +330,26 @@ LABEL SemiColonComment: not found but tested and works:
 
 .\found\HOTKEY validVarName\unique: GOOD
 
+var can have space between assignment
+var .=
+
+but hotkey can also, oh god
+LShift & RCtrl::
+Ralt & m::
+
+fiouf label can't have spaces
+label :
+
+so I am both here and here:
+ .=
+ & RCtrl::
+
+skip spaces
+if assignment operator:
+  ok
+skip spaces OR HOTKEY stuff: &^#$ (this risks skipping everything, must limit it to line)
+if ==='::'
+  ok
+
+.\found\2 char assignment operator\unique: good
+
