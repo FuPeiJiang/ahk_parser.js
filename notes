@@ -285,3 +285,17 @@ let's do varName first, hotkeys have more special chars
 
 varName can be assignment, function, method.
 
+COMMAND EOL:
+  break
+  return
+  Exitapp
+  ToolTip
+  else
+  global
+  Else
+  Return
+  continue
+  #Persistent
+
+looks good to me
+
