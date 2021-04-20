@@ -18,3 +18,21 @@ do not want 2nd <td> in <tr>:
 
   bruh, javascript method way better.
   don't EVER try <HTML> with regex
+
+
+in merged: these where NOT in docs2
+  for
+  GuiContextMenu
+  GuiDropFiles
+  return
+  SetNumlockState
+  SetStoreCapslockMode
+  until
+  URLDownloadToFile
+  while
+  FileOpen
+  #LTrim
+  OnClipboardChange
+  SetCapslockState
+  Trim
+  Undo
