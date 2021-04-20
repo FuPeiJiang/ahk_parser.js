@@ -328,3 +328,5 @@ LABEL SemiColonComment: not found but tested and works:
 
   gsaveSettings:  LABEL SemiColonComment 16 line 161
 
+.\found\HOTKEY validVarName\unique: GOOD
+

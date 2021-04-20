@@ -1,0 +1,13 @@
+#d: HOTKEY validVarName 4 line 3000
+left: HOTKEY validVarName 6 line 3040
+right: HOTKEY validVarName 7 line 3058
+$RAlt: HOTKEY validVarName 7 line 3076
+$RCtrl: HOTKEY validVarName 8 line 3082
+$RShift: HOTKEY validVarName 9 line 3087
+$esc: HOTKEY validVarName 6 line 3138
+$backspace: HOTKEY validVarName 12 line 3283
+$up: HOTKEY validVarName 5 line 3340
+$down: HOTKEY validVarName 7 line 3433
+$enter: HOTKEY validVarName 8 line 3467
+$esc: HOTKEY validVarName 6 line 3496
+$enter: HOTKEY validVarName 8 line 3515
