@@ -9,7 +9,8 @@ ListLines Off
 
 ; #Persistentt,1
 ; #Persistent,1
-
+::
+:::
 msgboxx,::msgbox, 4
 msgbox,::msgbox, 4
 return

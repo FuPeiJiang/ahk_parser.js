@@ -190,6 +190,8 @@ export default (content: string) => {
     }
 
     //#HOTKEYS
+    //skip first character to avoid matching ::, empty hotkey, or not matching :::, colon hotkey, because it matched only the first 2
+    c++
     //advance until ':'
     while (c < numberOfChars) {
       if (lines[i][c] === ':') {
