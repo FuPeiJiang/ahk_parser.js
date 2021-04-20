@@ -15,13 +15,13 @@ export default (content: string) => {
     content = content.slice(1)
   }
   const lines = content.split('\n')
-  const numberOfLines = lines.length
+  const howManyLines = lines.length
   const everything = []
   const toFile = ''
   let i = 0, c = 0
 
   lineLoop:
-  while (i < numberOfLines) {
+  while (i < howManyLines) {
     c = 0
     const numberOfChars = lines[i].length
 
@@ -37,7 +37,7 @@ export default (content: string) => {
     if (c < numCharsMinusOne && lines[i].slice(c, c + 2) === '/*') {
       const multiLineCommentLineStart = i, multiLineCommentColStart = c
       // d('MultilineComment START', l())
-      while (++i < numberOfLines) {
+      while (++i < howManyLines) {
         c = 0
         const numCharsMinusOne = lines[i].length - 1
 
@@ -53,6 +53,10 @@ export default (content: string) => {
           break
         }
       }
+    }
+    //out of lines
+    if (i === howManyLines) {
+      break lineLoop
     }
     //nothing left, continue
     if (c === numberOfChars) {
@@ -171,10 +175,10 @@ export default (content: string) => {
 
       //#VARIABLE ASSIGNMENT
       if (c < numberOfChars - 1 && assignmentOperators[lines[i].slice(c, c + 2)]) {
-        const validName = lines[i].slice(startPosFuncName, c)
-        d(validName, '2 char assignment operator', char())
         // d('2 char assignment operator')
       } else if (c < numberOfChars - 2 && assignmentOperators[lines[i].slice(c, c + 3)]) {
+        const validName = lines[i].slice(startPosFuncName, c)
+        d(validName, '3 char assignment operator', char())
         // d('3 char assignment operator')
       } else {
         // d(validName)
