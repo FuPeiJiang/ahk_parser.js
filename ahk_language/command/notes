@@ -1,0 +1,20 @@
+do not want 2nd <td> in <tr>:
+  (</td>.*?)\n.*?<td.*?$
+  $1
+
+  ^.*?href.*?>
+
+  </a>.*?$
+
+  \n.*?<.*?$
+
+  remove <table> from top
+
+  still these left:
+    SendRaw
+    SendInput
+    SendPlay
+    SendEvent
+
+  bruh, javascript method way better.
+  don't EVER try <HTML> with regex

@@ -1,0 +1,15 @@
+ControlSend
+FileOpen
+OnClipboardChange
+SetCapslockState
+SetEnv
+SetNumlockState
+SetStoreCapslockMode
+SplashTextOn
+SplashTextOff
+Trim
+WinMinimizeAll
+WinMinimizeAll
+Undo
+WinWaitActive
+WinWaitNotActive
