@@ -45,3 +45,108 @@ invalid HOTKEY:
   Trim: because it's a function, not command
   Undo: Error: This line does not contain a recognized action.
 
+try the purple ones:
+  break
+  catch
+  continue
+  critical
+  else
+  exit
+  exitapp
+  finally
+  for
+  if
+  loop
+  return
+  switch
+  throw
+  try
+  until
+  while
+  #ltrim
+
+unique:   
+  break
+  catch
+  continue
+  critical
+  else
+  exit
+  exitapp
+  finally
+  if
+  loop
+  switch
+  throw
+  try
+
+I think else works because
+  ---------------------------
+  test39.ahk
+  ---------------------------
+  Error:  Invalid hotkey.
+
+  Specifically: ::msgbox
+
+    Line#
+    003: SendMode,Input
+    004: SetWorkingDir,%A_ScriptDir%
+    005: SetBatchLines,-1
+    007: ListLines,Off
+  --->	011: Else
+
+  The program will exit.
+  ---------------------------
+  OK   
+  ---------------------------
+VS
+  ---------------------------
+  test39.ahk
+  ---------------------------
+  Error at line 11.
+
+  Line Text: fewfwef,::msgbox
+  Error: Invalid hotkey.
+
+  The program will exit.
+  ---------------------------
+  OK   
+  ---------------------------
+finally same
+
+SURPRISINGLY, if is invalid hotkey.
+  ---------------------------
+  test39.ahk
+  ---------------------------
+  Error at line 11.
+
+  Line Text: if,::msgbox
+  Error: Invalid hotkey.
+
+  The program will exit.
+  ---------------------------
+  OK   
+  ---------------------------
+I think try works same as else:
+  ---------------------------
+  test39.ahk
+  ---------------------------
+  Error:  Invalid hotkey.
+
+  Specifically: ::msgbox
+
+    Line#
+    003: SendMode,Input
+    004: SetWorkingDir,%A_ScriptDir%
+    005: SetBatchLines,-1
+    007: ListLines,Off
+  --->	011: Try
+
+  The program will exit.
+  ---------------------------
+  OK   
+  ---------------------------
+ALL ARE NOT INVALID HOTKEY. except those mentionned.
+so invalid hotkey:
+  if
+wow, only if

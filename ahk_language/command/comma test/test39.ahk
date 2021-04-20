@@ -8,7 +8,8 @@ ListLines Off
 
 
 
-; Undo,::msgbox
+autotrim,::msgbox
+; else,::msgbox
 
 
 return

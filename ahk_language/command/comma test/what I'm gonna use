@@ -72,7 +72,6 @@ gui
 guicontrol
 guicontrolget
 hotkey
-if
 ifequal
 ifnotequal
 ifexist
