@@ -111,10 +111,10 @@ export default (content: string) => {
         }
 
         const idkType = typeOfValidVarName[validName.toLowerCase()]
-        // only declarations and "if" override assignment and ONLY when there's a whiteSpace
+        // only directives and "if" override assignment and ONLY when there's a whiteSpace
         if (whiteSpaceObj[lines[i][c]] && idkType) {
           if (idkType === 1) {
-            d('whiteSpace DECLARATION', char())
+            d('whiteSpace DIRECTIVE', char())
           } else if (idkType === 2) {
             d('if statement', char())
           } else if (idkType === 3) {
