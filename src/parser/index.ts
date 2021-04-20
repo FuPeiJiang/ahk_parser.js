@@ -64,6 +64,8 @@ export default (content: string) => {
       continue lineLoop
     }
 
+    const nonWhiteSpaceStart = c
+
     //#semicolon comments
     if (lines[i][c] === ';') {
       // d('SemiColonComment', `${c}-END`, l())
@@ -101,7 +103,6 @@ export default (content: string) => {
           continue lineLoop
         }
       }
-
 
       // only directives and "if" override assignment and ONLY when there's a whiteSpace
       if (whiteSpaceObj[lines[i][c]] && idkType) {
@@ -194,7 +195,7 @@ export default (content: string) => {
       if (lines[i][c] === ':') {
         c++
         if (c < numberOfChars && lines[i][c] === ':') {
-          d('HOTKEY', char())
+          d(lines[i].slice(nonWhiteSpaceStart,c + 1),'HOTKEY', char())
           // d('HOTKEY')
         } else {
 
