@@ -1,4 +1,4 @@
-import { CommentSemiColon, startingMultiLineComment, endingMultiLineComment, whiteSpaceObj, variableCharsObj, assignmentOperators, typeOfValidVarName } from './tokens'
+import { CommentSemiColon, startingMultiLineComment, endingMultiLineComment, whiteSpaceObj, variableCharsObj, assignmentOperators, typeOfValidVarName,whiteSpaceOverrideAssign } from './tokens'
 // import {whiteSpaaaaaceObj} from './usage'
 const d = console.debug.bind(console)
 // d(whiteSpaaaaaceObj)
@@ -94,6 +94,7 @@ export default (content: string) => {
 
       const validName = lines[i].slice(startPosFuncName, c)
       const idkType = typeOfValidVarName[validName.toLowerCase()]
+      // comma can't be assignment, so I can skip assignment
       // if it has a comma, it could be a hotkey, it's only NOT a hotkey if it's a valid COMMAND
       if (lines[i][c] === ',') {
         // directive or command
@@ -105,47 +106,71 @@ export default (content: string) => {
       }
 
       // only directives and "if" override assignment and ONLY when there's a whiteSpace
-      if (whiteSpaceObj[lines[i][c]] && idkType) {
-        if (idkType === 1) {
-          // d('whiteSpace DIRECTIVE', char())
-        } else if (idkType === 2) {
-          // d('if statement', char())
-        } else if (idkType === 3) {
-          // d('global local or static', char())
+      if (whiteSpaceObj[lines[i][c]]) {
+        if (whiteSpaceOverrideAssign[idkType]) {
+          if (idkType === 1) {
+            d(validName,'whiteSpace DIRECTIVE',char())
+          } else if (idkType === 2) {
+            d(validName,'if statement',char())
+          } else if (idkType === 3) {
+            d(validName,'global local or static',char())
+          }
+          i++
+          continue lineLoop
         }
-        i++
-        continue lineLoop
-      }
 
-      // well, it's now or never to be a label: because label can't have %
-      //#LABELS
-      if (lines[i][c] === ':') {
-        c++
         //skip through whiteSpaces
         while (c < numberOfChars && whiteSpaceObj[lines[i][c]]) {
           c++
         }
 
-        if (c === numberOfChars) {
-          // d('LABEL EOL', char())
+        //#VARIABLE ASSIGNMENT
+        if (c < numberOfChars - 1 && assignmentOperators[lines[i].slice(c,c + 2)]) {
+        // d(validName,'2 char assignment operator',char())
+        } else if (c < numberOfChars - 2 && assignmentOperators[lines[i].slice(c,c + 3)]) {
+        // d(validName,'3 char assignment operator',char())
+        }
+
+        if (idkType === 4) {
+          d(validName,'whiteSpace COMMAND',char())
           i++
           continue lineLoop
         }
 
-        if (lines[i][c] === ';') {
+      } else {
+      //labels can't have spaces
+      // well, it's now or never to be a label: because label can't have %
+      //#LABELS
+        if (lines[i][c] === ':') {
+          c++
+          //skip through whiteSpaces
+          while (c < numberOfChars && whiteSpaceObj[lines[i][c]]) {
+            c++
+          }
+
+          if (c === numberOfChars) {
+          // d('LABEL EOL', char())
+            i++
+            continue lineLoop
+          }
+
+          if (lines[i][c] === ';') {
           // d('LABEL SemiColonComment', char())
           // everything.push({type: 'SemiColonComment', line: i, colStart: c})
-          i++
-          continue lineLoop
-        }
+            i++
+            continue lineLoop
+          }
 
-        // if 2 consecutive ':' then hotkey
-        if (lines[i][c] === ':') {
+          // if 2 consecutive ':' then hotkey
+          if (lines[i][c] === ':') {
           // d('HOTKEY validVarName', char())
-          i++
-          continue lineLoop
+            i++
+            continue lineLoop
+          }
         }
       }
+
+
 
       //skip through % OR valid variable Chars
       while (c < numberOfChars && lines[i][c] === '%' || variableCharsObj[lines[i][c]]) {

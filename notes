@@ -372,3 +372,22 @@ ima test SOME.
 hotkeys can have commands:
   f3::Exitapp
 so no, hotkeys don't end with ::
+
+all this is validVarName:
+  whiteSpace directive
+  virtual skip whiteSpaces:
+    variable assignment
+  whiteSpace directive OR Command
+  hotkey
+
+well, if there was no whiteSpace, it has NO CHANCE. of being anything
+so let's start there
+
+whiteSpace:
+  directive?
+  skip spaces:
+    validVarName assignment ?
+  Command?
+hotkey
+
+whiteSpace DIRECTIVE; validVar assignment; whiteSpace COMMAND

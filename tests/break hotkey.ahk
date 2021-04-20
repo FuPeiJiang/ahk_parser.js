@@ -13,14 +13,15 @@ ListLines Off
 :::
 msgboxx,::msgbox, 4
 msgbox,::msgbox, 4
+msgbox ::msgbox, 4
 return
 ,::msgbox, 4
 #,::msgbox, 4
 
 ; this is a forced expression
-; msgbox %::msgbox, 4
+msgbox %::msgbox, 4
 ; invalid hotkey
-; msgbox%::msgbox, 4
+msgbox%::msgbox, 4
 %::msgbox, 4
 
 `;::msgbox, 4
