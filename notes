@@ -266,3 +266,18 @@ METHOD CALL:
 LV_Colors.Cell(ListviewHwnd%whichSide%,row,3,color)
 
 let's deal with METHOD CALL First.
+
+now the question is: variable assignment first, or labels and hotkeys ?
+var assignment: char==="%" or validChar[char]
+
+well, it's now or never to be a label: because label can't have %
+
+this is NOT a label
+$enter::
+$enter: ;this is a label
+
+so:
+skip whiteSpaces
+if EOL or semiColonComment
+it's a label
+

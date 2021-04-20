@@ -99,7 +99,7 @@ export default (content: string) => {
 
           d('COMMAND EOL', char())
           i++
-          continue
+          continue lineLoop
         }
 
         // if it has a comma, it must be COMMAND
@@ -107,7 +107,7 @@ export default (content: string) => {
 
           d('COMMAND comma', char())
           i++
-          continue
+          continue lineLoop
         }
 
         const idkType = typeOfValidVarName[validName.toLowerCase()]
@@ -121,7 +121,7 @@ export default (content: string) => {
             d('global local or static', char())
           }
           i++
-          continue
+          continue lineLoop
         }
 
         //skip through whiteSpaces
@@ -137,6 +137,29 @@ export default (content: string) => {
           // d(validName)
           // toFile += `\n${validName}`
         }
+      }
+    }
+
+    // well, it's now or never to be a label: because label can't have %
+    //#LABELS
+    if (lines[i][c] === ':') {
+
+      //skip through whiteSpaces
+      while (c < numberOfChars && whiteSpaceObj[lines[i][c]]) {
+        c++
+      }
+
+      if (c === numberOfChars) {
+        d('LABEL EOL', char())
+        i++
+        continue lineLoop
+      }
+
+      if (lines[i][c] === ';') {
+        d('LABEL SemiColonComment', char())
+        // everything.push({type: 'SemiColonComment', line: i, colStart: c})
+        i++
+        continue lineLoop
       }
     }
 
