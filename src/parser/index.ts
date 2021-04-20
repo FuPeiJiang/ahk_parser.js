@@ -170,53 +170,53 @@ export default (content: string) => {
         }
       }
 
+    }
 
+    //%which_something%_var:=2 is valid
+    //skip through % OR valid variable Chars
+    while (c < numberOfChars && lines[i][c] === '%' || variableCharsObj[lines[i][c]]) {
+      c++
+    }
 
-      //skip through % OR valid variable Chars
-      while (c < numberOfChars && lines[i][c] === '%' || variableCharsObj[lines[i][c]]) {
-        c++
+    //#FUNCTION
+    if (lines[i][c] === '(') {
+      const funcName = lines[i].slice(nonWhiteSpaceStart, c)
+      // d('is not a number, valid func name')
+      if (isNaN(Number(funcName))) {
+        // d('FUNCTION CALL OR DEFINITION', char())
+        // everything.push({type: 'function', line: i, colStart:startPosFuncName, colEnd:c, name:lines[i].slice(startPosFuncName,c)})
       }
 
-      //#FUNCTION
-      if (lines[i][c] === '(') {
-        const funcName = lines[i].slice(startPosFuncName, c)
-        // d('is not a number, valid func name')
-        if (isNaN(Number(funcName))) {
-          // d('FUNCTION CALL OR DEFINITION', char())
-          // everything.push({type: 'function', line: i, colStart:startPosFuncName, colEnd:c, name:lines[i].slice(startPosFuncName,c)})
-        }
-
-        //#METHOD OR PROPERTY
-        // this is NOT a METHOD call:
-        // str.=v[key] "+" k "|"
-        // so check if the next character is a valid Var
-      } else if (lines[i][c] === '.' && variableCharsObj[lines[i][c + 1]]) {
-        const funcName = lines[i].slice(startPosFuncName, c)
-        if (isNaN(Number(funcName))) {
-          // d('METHOD OR PROPERTY', char())
-        }
+      //#METHOD OR PROPERTY
+      // this is NOT a METHOD call:
+      // str.=v[key] "+" k "|"
+      // so check if the next character is a valid Var
+    } else if (lines[i][c] === '.' && variableCharsObj[lines[i][c + 1]]) {
+      const funcName = lines[i].slice(nonWhiteSpaceStart, c)
+      if (isNaN(Number(funcName))) {
+        // d('METHOD OR PROPERTY', char())
       }
+    }
 
-      //skip through whiteSpaces
-      while (c < numberOfChars && whiteSpaceObj[lines[i][c]]) {
-        c++
-      }
+    //skip through whiteSpaces
+    while (c < numberOfChars && whiteSpaceObj[lines[i][c]]) {
+      c++
+    }
 
-      //#VARIABLE ASSIGNMENT
-      if (c < numberOfChars - 1 && assignmentOperators[lines[i].slice(c, c + 2)]) {
-        // d('2 char assignment operator')
-      } else if (c < numberOfChars - 2 && assignmentOperators[lines[i].slice(c, c + 3)]) {
-        // d('3 char assignment operator')
-      } else {
-        // d(validName)
-        // toFile += `\n${validName}`
-      }
-
+    //#VARIABLE ASSIGNMENT
+    if (c < numberOfChars - 1 && assignmentOperators[lines[i].slice(c, c + 2)]) {
+      // d('2 char assignment operator')
+    } else if (c < numberOfChars - 2 && assignmentOperators[lines[i].slice(c, c + 3)]) {
+      // d('3 char assignment operator')
+    } else {
+      // d(validName)
+      // toFile += `\n${validName}`
     }
 
     //#HOTKEYS
     //skip first character to avoid matching ::, empty hotkey, or not matching :::, colon hotkey, because it matched only the first 2
-    c++
+    //skip ONLY if c is false (here would be 0)
+    c = c || 1
     //advance until ':'
     while (c < numberOfChars) {
       if (lines[i][c] === ':') {

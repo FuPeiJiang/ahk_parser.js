@@ -391,3 +391,10 @@ whiteSpace:
 hotkey
 
 whiteSpace DIRECTIVE; validVar assignment; whiteSpace COMMAND
+
+why isn't this being caught as hotkey ?
+  ; invalid hotkey
+  msgbox%::msgbox, 4
+
+skip ONLY if c==0
+fixed
