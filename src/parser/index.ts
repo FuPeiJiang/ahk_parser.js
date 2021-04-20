@@ -112,14 +112,16 @@ export default (content: string) => {
       // well, it's now or never to be a label: because label can't have %
       //#LABELS
       if (lines[i][c] === ':') {
-
+        c++
         //skip through whiteSpaces
         while (c < numberOfChars && whiteSpaceObj[lines[i][c]]) {
           c++
         }
 
         if (c === numberOfChars) {
-          d('LABEL EOL', char())
+          const validName = lines[i].slice(startPosFuncName, c)
+          d(validName, 'LABEL EOL', char())
+          // d('LABEL EOL', char())
           i++
           continue lineLoop
         }
@@ -160,8 +162,6 @@ export default (content: string) => {
       } else if (lines[i][c] === '.' && variableCharsObj[lines[i][c + 1]]) {
         const funcName = lines[i].slice(startPosFuncName, c)
         if (isNaN(Number(funcName))) {
-          const validName = lines[i].slice(startPosFuncName, c)
-          d(validName, 'METHOD OR PROPERTY', char())
           // d('METHOD OR PROPERTY', char())
         }
       }
