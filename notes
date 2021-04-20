@@ -281,3 +281,7 @@ skip whiteSpaces
 if EOL or semiColonComment
 it's a label
 
+let's do varName first, hotkeys have more special chars
+
+varName can be assignment, function, method.
+
