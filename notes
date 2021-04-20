@@ -323,3 +323,8 @@ so check if the next character is a valid Var
 fixed //#LABELS with c++: need to advance it
 .\found\LABEL EOL\unique: looks fine
 
+LABEL SemiColonComment: not found but tested and works:
+  gsaveSettings: ;labels
+
+  gsaveSettings:  LABEL SemiColonComment 16 line 161
+
