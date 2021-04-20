@@ -29,6 +29,9 @@ msgbox%::msgbox, 4
 `;::msgbox, 4
 ;::msgbox, 4
 
+LWin Up::
+LShift & RCtrl::
+<^>!::
 
 return
 
