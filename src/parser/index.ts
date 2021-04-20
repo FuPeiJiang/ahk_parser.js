@@ -215,8 +215,8 @@ export default (content: string) => {
 
     //#HOTKEYS
     //skip first character to avoid matching ::, empty hotkey, or not matching :::, colon hotkey, because it matched only the first 2
-    //skip ONLY if c is false (here would be 0)
-    c = c || 1
+    //skip ONLY if c is nonWhiteSpaceStart, which is first char
+    c = (c === nonWhiteSpaceStart) ? c + 1 : c
     //advance until ':'
     while (c < numberOfChars) {
       if (lines[i][c] === ':') {
