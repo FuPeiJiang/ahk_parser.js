@@ -36,3 +36,12 @@ in merged: these where NOT in docs2
   SetCapslockState
   Trim
   Undo
+
+invalid HOTKEY:
+  GuiContextMenu: label or function
+  GuiDropFiles: label or function
+  FileOpen: because it's a function, not command
+  OnClipboardChange: label or function
+  Trim: because it's a function, not command
+  Undo: Error: This line does not contain a recognized action.
+
