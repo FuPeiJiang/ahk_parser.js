@@ -181,9 +181,9 @@ export default (content: string) => {
 
     //#FUNCTION
     if (lines[i][c] === '(') {
-      const funcName = lines[i].slice(nonWhiteSpaceStart, c)
+      const validName = lines[i].slice(nonWhiteSpaceStart, c)
       // d('is not a number, valid func name')
-      if (isNaN(Number(funcName))) {
+      if (isNaN(Number(validName))) {
         // d('FUNCTION CALL OR DEFINITION', char())
         // everything.push({type: 'function', line: i, colStart:startPosFuncName, colEnd:c, name:lines[i].slice(startPosFuncName,c)})
       }
@@ -193,8 +193,8 @@ export default (content: string) => {
       // str.=v[key] "+" k "|"
       // so check if the next character is a valid Var
     } else if (lines[i][c] === '.' && variableCharsObj[lines[i][c + 1]]) {
-      const funcName = lines[i].slice(nonWhiteSpaceStart, c)
-      if (isNaN(Number(funcName))) {
+      const validName = lines[i].slice(nonWhiteSpaceStart, c)
+      if (isNaN(Number(validName))) {
         // d('METHOD OR PROPERTY', char())
       }
     }
@@ -266,33 +266,56 @@ export default (content: string) => {
       return false
     }
     const nonWhiteSpaceStart = c
+    let itsAVar = false
     //stumble upon a valid variable Char
     if (variableCharsObj[lines[i][c]]) {
+      itsAVar = true
       c++
       //skip through valid variable Chars
       while (c < numberOfChars && variableCharsObj[lines[i][c]]) {
         c++
       }
-      const funcName = lines[i].slice(nonWhiteSpaceStart, c)
+      validName = lines[i].slice(nonWhiteSpaceStart, c)
       if (c === numberOfChars) {
-        d(funcName, 'validName VARIABLE EOL', char())
+        d(validName, 'validName VARIABLE EOL', char())
         return true
       }
 
-      if (lines[i][c] === '.' && variableCharsObj[lines[i][c + 1]]) {
-        if (isNaN(Number(funcName))) {
-          d(funcName, 'METHOD OR PROPERTY', char())
-          return true
-        } else {
-          d(funcName, 'DECIMAL NUMBER', char())
-          return true
-        }
-      } else {
-        d(funcName, 'validName VARIABLE', char())
+      if (findMethodOrDecimal()) {
+        return true
+      }
+
+    } else if (lines[i][c] === '%') {
+      itsAVar = true
+      c++
+      //skip through % OR valid variable Chars
+      while (c < numberOfChars && lines[i][c] === '%' || variableCharsObj[lines[i][c]]) {
+        c++
+      }
+      validName = lines[i].slice(nonWhiteSpaceStart, c)
+      if (c === numberOfChars) {
+        d(validName, '%VARIABLE% EOL', char())
+        return true
+      }
+
+      if (findMethodOrDecimal()) {
         return true
       }
 
     }
+
+  }
+  function findMethodOrDecimal() {
+    if (lines[i][c] === '.' && variableCharsObj[lines[i][c + 1]]) {
+      if (isNaN(Number(validName))) {
+        d(validName, 'METHOD OR PROPERTY', char())
+        return true
+      } else {
+        d(validName, 'DECIMAL NUMBER', char())
+        return true
+      }
+    }
+    return false
   }
   function writeSync(content: string) {
     const fs = require('fs')
