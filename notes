@@ -437,6 +437,8 @@ if one validVarName:
   else:
     var
 
+skip whiteSpaces
+if EOL
 if one validVarName:
   skip until not validVarName
   if .
@@ -458,7 +460,6 @@ else if "
 else if [
 else if {
 else if ;
-else if EOL
 else:
   ???
 
