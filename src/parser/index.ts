@@ -19,7 +19,7 @@ export default (content: string) => {
   const everything = []
   const toFile = ''
 
-  let i = 0, c = 0, numberOfChars = 0, validName = '',strStartLine: number,strStartPos: number, insideContinuation = false,beforeConcat: number,nonWhiteSpaceStart: number
+  let i = 0, c = 0, numberOfChars = 0, validName = '', strStartLine: number, strStartPos: number, insideContinuation = false, beforeConcat: number, nonWhiteSpaceStart: number
 
   lineLoop:
   while (i < howManyLines) {
@@ -261,7 +261,7 @@ export default (content: string) => {
     if (insideContinuation) {
       skipThroughWhiteSpaces()
       if (c !== numberOfChars && lines[i][c] === ';') {
-        d('ILLEGAL semiColonComment insideContinuation',char())
+        d('ILLEGAL semiColonComment insideContinuation', char())
         if (endExprContinuation()) {
           return findExpression()
         }
@@ -285,7 +285,7 @@ export default (content: string) => {
     } else if (findOperators()) {
       return findExpression()
     } else if (whiteSpaceObj[lines[i][c - 1]]) {
-      const concatWhiteSpaces = lines[i].slice(beforeConcat,c)
+      const concatWhiteSpaces = lines[i].slice(beforeConcat, c)
       d(`concat "${concatWhiteSpaces}" ${concatWhiteSpaces.length}LENGHT ${char()}`)
       return findExpression()
     } else {
@@ -395,11 +395,11 @@ export default (content: string) => {
         }
         c++
         if (!findExpression()) {
-          d('ILLEGAL trailling ,',char())
+          d('ILLEGAL trailling ,', char())
         }
       }
       if (i !== arrOnWhichLine) {
-        d('ILLEGAL ]',char())
+        d('ILLEGAL ]', char())
       }
       d('] end', char())
       c++
@@ -461,13 +461,13 @@ export default (content: string) => {
           //end of string
           //to slice, the caret must be outside, or to the right of c
           c++
-          d(printString(),'String')
+          d(printString(), 'String')
           // d('end', lines[i].slice(strStartPos,c + 1))
           return true
         }
         // comment and expectMultiline
       } else if (lines[i][c] === ';' && whiteSpaceObj[lines[i][c - 1]]) {
-        d('comment when string',char())
+        d('comment when string', char())
         // d('comment and expectMultiline')
         return false
         // c++
@@ -543,7 +543,7 @@ export default (content: string) => {
       skipThroughWhiteSpaces()
       //EOL: next line
       if (c === numberOfChars) {
-      //comment: next line
+        //comment: next line
       } else if (lines[i][c] === ';' && whiteSpaceObj[lines[i][c - 1]]) {
         d('comment while skipThroughEmptyLines', char())
       } else {
@@ -571,10 +571,10 @@ export default (content: string) => {
       skipValidChar()
       d(lines[i][c])
       if (c < numberOfChars && lines[i][c] === '%') {
-        d(`${lines[i].slice(percentVarStart,c)} %VAR% ${char()}`)
+        d(`${lines[i].slice(percentVarStart, c)} %VAR% ${char()}`)
         return true
       } else {
-        d(lines[i].slice(nonWhiteSpaceStart, c),'ILLEGAL %VAR%',char())
+        d(lines[i].slice(nonWhiteSpaceStart, c), 'ILLEGAL %VAR%', char())
         return false
       }
     } else {
