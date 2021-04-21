@@ -409,26 +409,28 @@ export default (content: string) => {
       d('{ start', char())
       c++
 
-      let arrOnWhichLine: number
+      let objOnWhichLine: number
       while (true) {
-        arrOnWhichLine = i
         if (!findObjKey()) {
           d('ILLEGAL trailling ,', char())
+          break
         }
 
+        skipThroughEmptyLines()
+
+        objOnWhichLine = i
         if (lines[i][c] !== ':') {
           d('illegal obj',char())
         }
         c++ //skip :
         findExpression()
-        // skipThroughEmptyLines()
         if (lines[i][c] !== ',') {
           break
         }
         c++
       }
-      if (i !== arrOnWhichLine) {
-        d('ILLEGAL ]', char())
+      if (i !== objOnWhichLine) {
+        d('ILLEGAL }', char())
       }
       d('} end', char())
       c++
