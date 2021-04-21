@@ -11,6 +11,5 @@ ok:=%a%foo(
 ok:="
 (
 fefeffe
-"
-)
+")
 ok:="%a%foo("
