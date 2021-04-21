@@ -474,3 +474,10 @@ var:= CmdLine := ( A_IsCompiled ? "" : """" A_AhkPath """" )
 
 now let's do string concat expression ?
 
+I need to understand how operators work because whiteSpace is an operator.
+ concat operator, when there are no other operators
+
+so, I'll start with +
+var + var
+after I found a var, I check if there's an operator.
+better check for assignment first, += before +
