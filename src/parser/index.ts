@@ -224,15 +224,10 @@ export default (content: string) => {
         if (c < numberOfChars && lines[i][c] === ':') {
           d(lines[i].slice(nonWhiteSpaceStart,c + 1),'HOTKEY', char())
           // d('HOTKEY')
-        } else {
-
         }
-      } else {
-
       }
       c++
     }
-
 
     i++
 
@@ -240,14 +235,13 @@ export default (content: string) => {
   // d(everything)
   // toFile = toFile.slice(1)
   writeSync(toFile)
+  return everything
+
   function writeSync(content: string) {
     const fs = require('fs')
     fs.writeFileSync('outputToFile.txt', content, 'utf-8')
     console.log('readFileSync complete')
   }
-  return everything
-
-
   function char() {
     return `${c + 1} ${l()}`
   }
