@@ -481,7 +481,7 @@ export default (content: string) => {
     skipThroughWhiteSpaces()
     if (c !== numberOfChars && lines[i][c] === ')') {
       insideContinuation = false
-      d(`END endExprContinuation ${char()}`)
+      d(`) Expression ${char()}`)
       c++
       return true
     } else {
