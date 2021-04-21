@@ -39,7 +39,9 @@
 ; "abc"  ;Var
 ; ) Var
 
-var2:= ;comment
-(
-"abc"  ;comment
-) Var
+; var2:= ;comment
+; (
+; "abc"  ;comment
+; ) Var
+; var:= CmdLine := ( A_IsCompiled ? "" : """" A_AhkPath """" )
+var:= ""   "" """" ""

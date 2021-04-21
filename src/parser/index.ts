@@ -282,7 +282,6 @@ export default (content: string) => {
       return findExpression()
     } else if (whiteSpaceObj[lines[i][c - 1]]) {
       const concatWhiteSpaces = lines[i].slice(beforeConcat,c)
-      console.trace()
       d(`concat "${concatWhiteSpaces}" ${concatWhiteSpaces.length}LENGHT ${char()}`)
       return findExpression()
     } else {
@@ -396,7 +395,6 @@ export default (content: string) => {
       strStartPos = c, strStartLine = i
       c++
       if (findEndOfStringInLine()) {
-        c++
         return true
       } else {
         if (insideContinuation) {
