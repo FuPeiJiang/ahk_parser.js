@@ -399,22 +399,27 @@ export default (content: string) => {
   function expectMultilineParen() {
     i++
     while (i < howManyLines) {
+      c = 0
       numberOfChars = lines[i].length
       skipThroughWhiteSpaces()
       if (c === numberOfChars) {
+        d('multilineParen skip empty line')
         i++
         continue
       } else if (lines[i][c] === ';') {
-        d('multilineParent comment...')
+        d('multilineParen comment...')
         i++
         continue
       } else if (lines[i][c] === '(') {
+        d('multiLineParen START',char())
         //now continue until I find a line starting with ')'
         i++
         while (i < howManyLines) {
+          c = 0
           numberOfChars = lines[i].length
           skipThroughWhiteSpaces()
           if (c < numberOfChars && lines[i][c] === ')') {
+            d('multiLineParen END',char())
             return true
           }
           i++
@@ -422,6 +427,8 @@ export default (content: string) => {
         // how to return out of lines ???
         return false
       } else {
+        d(c, numberOfChars)
+        d('illegal', lines[i][c])
         //illegal
         return false
       }
