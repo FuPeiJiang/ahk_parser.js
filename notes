@@ -509,3 +509,5 @@ ok I'll choose the first one
 
 comparison operators ARE operators
 assignment operators are also operators...
+
+oh, NOT, AND, OR, are reserved, they can't be variables.
