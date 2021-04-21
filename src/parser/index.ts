@@ -384,18 +384,20 @@ export default (content: string) => {
       d('[ start', char())
       c++
 
-      let arrOnWhichLine: number
+      let arrOnWhichLine = i, iBak
+      // let arrOnWhichLine: number
       while (true) {
-        arrOnWhichLine = i
-        findExpression()
-        // skipThroughEmptyLines()
+        iBak = i
+        if (findExpression()) {
+          arrOnWhichLine = iBak
+        } else {
+          d('ILLEGAL trailling ,', char())
+          break
+        }
         if (lines[i][c] !== ',') {
           break
         }
         c++
-        if (!findExpression()) {
-          d('ILLEGAL trailling ,', char())
-        }
       }
       if (i !== arrOnWhichLine) {
         d('ILLEGAL ]', char())
