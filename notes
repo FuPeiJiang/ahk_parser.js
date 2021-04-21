@@ -547,3 +547,22 @@ var:=
 (
 {WHITESPACE}"abc" foo
 )
+
+I should read this https://www.autohotkey.com/docs/Scripts.htm#continuation
+
+The default behavior of a continuation section can be overridden
+by including one or more of the following options to the right
+ of the section's opening parenthesis. 
+ If more than one option is present, 
+ separate each one from the previous with a space. 
+ For example: ( LTrim Join| %.
+omg, so it's like a statement...
+
+you are an expression, you do not know that you are inside
+a continuation sequence, you don't care
+your caller function knows.
+
+what's the entry point ?
+string EOL expect continuation
+expression EOL expect continuation
+only if not already inside continuation

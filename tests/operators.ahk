@@ -8,8 +8,13 @@
   ; +3
 ; var:="abc"    foo
 ; var:=("abc"    foo   )
-var:=("abc"    foo   ("abc"    foo   ))
+; var:=("abc"    foo   ("abc"    foo   ))
 ; var:=
 ; (
 ; "abc" foo
 ; )
+Var3 := "
+(
+Same as above, except that variable references such as %Var% are not resolved.
+Instead, specify variables as follows:" Var "
+)"
