@@ -463,3 +463,6 @@ else if ;
 else:
   ???
 
+oh no, it can be an array accessor.
+var[2]
+
