@@ -228,6 +228,7 @@ export default (content: string) => {
       return
     }
     //#VARIABLE ASSIGNMENT
+    d(lines[i].slice(c,c + 3) , lines[i].slice(c,c + 2), lines[i][c])
     if (c < numberOfChars - 2 && operatorsObj[lines[i].slice(c,c + 3).toLowerCase()]) {
       d(lines[i].slice(c,c + 3),'3operator',char())
       c += 3
@@ -419,14 +420,12 @@ export default (content: string) => {
     while (i < howManyLines) {
       skipThroughWhiteSpaces()
       //maybe end of string
-      if (c === numberOfChars) {
-        i++, c = 0
-      } else if (lines[i][c] === ';' && whiteSpaceObj[lines[i][c - 1]]) {
+      if (c !== numberOfChars && lines[i][c] === ';' && whiteSpaceObj[lines[i][c - 1]]) {
         d('comment while skipThroughEmptyLines')
-        i++, c = 0
       } else {
         return true
       }
+      i++, c = 0, numberOfChars = lines[i].length
     }
     return false
   }
