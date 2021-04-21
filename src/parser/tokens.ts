@@ -19,4 +19,4 @@ export const typeOfValidVarName: stringIndexNum = {'autotrim':4,'blockinput':4,'
 //javascript key can't be number, it's automatically converted to string
 export const whiteSpaceOverrideAssign: stringIndexBool = {1:true,2:true,3:true}
 
-export const assignmentOperators: stringIndexBool = {':=':true,'+=':true,'-=':true,'*=':true,'/=':true,'//=':true,'.=':true,'|=':true,'&=':true,'^=':true,'>>=':true,'<<=':true}
+export const operatorsObj: stringIndexBool = {'**':true,'!':true,'~':true,'&':true,'*':true,'/':true,'//':true,'-':true,'+':true,'<<':true,'>>':true,'^':true,'|':true,'.':true,'~=':true,'>':true,'<':true,'>=':true,'<=':true,'=':true,'==':true,'<>':true,'!=':true,'NOT':true,'AND':true,'&&':true,'OR':true,'||':true,'?':true,':':true,':=':true,'+=':true,'-=':true,'*=':true,'/=':true,'//=':true,'.=':true,'|=':true,'&=':true,'^=':true,'>>=':true,'<<=':true}

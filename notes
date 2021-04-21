@@ -506,3 +506,6 @@ if operator:
 if assignment:
 
 ok I'll choose the first one
+
+comparison operators ARE operators
+assignment operators are also operators...

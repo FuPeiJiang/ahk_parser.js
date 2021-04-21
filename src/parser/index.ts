@@ -1,4 +1,4 @@
-import { CommentSemiColon, startingMultiLineComment, endingMultiLineComment, whiteSpaceObj, variableCharsObj, assignmentOperators, typeOfValidVarName,whiteSpaceOverrideAssign } from './tokens'
+import { CommentSemiColon, startingMultiLineComment, endingMultiLineComment, whiteSpaceObj, variableCharsObj, operatorsObj, typeOfValidVarName,whiteSpaceOverrideAssign } from './tokens'
 // import {whiteSpaaaaaceObj} from './usage'
 const d = console.debug.bind(console)
 // d(whiteSpaaaaaceObj)
@@ -118,7 +118,7 @@ export default (content: string) => {
 
         skipThroughWhiteSpaces()
 
-        if (findAssignmentOperators()) {
+        if (findOperators()) {
           findExpression()
           i++
           continue lineLoop
@@ -194,7 +194,7 @@ export default (content: string) => {
 
     skipThroughWhiteSpaces()
 
-    if (findAssignmentOperators()) {
+    if (findOperators()) {
       findExpression()
     }
 
@@ -222,15 +222,18 @@ export default (content: string) => {
   // writeSync(toFile)
   return everything
 
-  function findAssignmentOperators() {
+  function findOperators() {
     //#VARIABLE ASSIGNMENT
-    if (c < numberOfChars - 1 && assignmentOperators[lines[i].slice(c,c + 2)]) {
+    if (c < numberOfChars - 2 && operatorsObj[lines[i].slice(c,c + 3)]) {
+      d(validName,'3 char assignment operator',char())
+      c += 3
+      return true
+    } else if (c < numberOfChars - 1 && operatorsObj[lines[i].slice(c,c + 2)]) {
       // d(validName,'2 char assignment operator',char())
       c += 2
       return true
-    } else if (c < numberOfChars - 2 && assignmentOperators[lines[i].slice(c,c + 3)]) {
-      d(validName,'3 char assignment operator',char())
-      c += 3
+    } else if (c < numberOfChars && operatorsObj[lines[i][c]]) {
+      c++
       return true
     } else {
       return false
@@ -242,7 +245,7 @@ export default (content: string) => {
     skipThroughWhiteSpaces()
     if (c === numberOfChars) {
       return false
-    } else if (findAssignmentOperators()) {
+    } else if (findOperators()) {
       findExpression()
       return true
     }
