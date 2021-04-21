@@ -401,7 +401,33 @@ export default (content: string) => {
     while (i < howManyLines) {
       numberOfChars = lines[i].length
       skipThroughWhiteSpaces()
+      if (c === numberOfChars) {
+        i++
+        continue
+      } else if (lines[i][c] === ';') {
+        d('multilineParent comment...')
+        i++
+        continue
+      } else if (lines[i][c] === '(') {
+        //now continue until I find a line starting with ')'
+        i++
+        while (i < howManyLines) {
+          numberOfChars = lines[i].length
+          skipThroughWhiteSpaces()
+          if (c < numberOfChars && lines[i][c] === ')') {
+            return true
+          }
+          i++
+        }
+        // how to return out of lines ???
+        return false
+      } else {
+        //illegal
+        return false
+      }
     }
+    // how to return out of lines ???
+    return false
   }
   function skipThroughWhiteSpaces() {
     while (c < numberOfChars && whiteSpaceObj[lines[i][c]]) {

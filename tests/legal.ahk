@@ -28,6 +28,16 @@ ok:="( `;a
  hello
 )"
 
+;after one multilineParen, there may be another one..
+;continue advancing c as usual until encounter "
+ok:="
+(
+ hello
+)
+(
+  hola
+)"
+
 ok:="gergerg
 (
  hello
