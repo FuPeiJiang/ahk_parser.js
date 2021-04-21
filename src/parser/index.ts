@@ -124,7 +124,10 @@ export default (content: string) => {
           c++
         }
 
-        findAssignmentOperators()
+        if (findAssignmentOperators()) {
+          i++
+          continue lineLoop
+        }
 
         if (idkType === 4) {
           d(validName,'whiteSpace COMMAND',char())
@@ -229,10 +232,13 @@ export default (content: string) => {
     if (c < numberOfChars - 1 && assignmentOperators[lines[i].slice(c,c + 2)]) {
       d(validName,'2 char assignment operator',char())
       findExpression()
+      return true
     } else if (c < numberOfChars - 2 && assignmentOperators[lines[i].slice(c,c + 3)]) {
       d(validName,'3 char assignment operator',char())
       findExpression()
+      return true
     }
+    return false
   }
 
   function findExpression() {
