@@ -375,6 +375,7 @@ export default (content: string) => {
       findExpression()
       d(') end', char())
       c++
+      return true
     }
 
     if (lines[i][c] === '[') {
@@ -391,6 +392,7 @@ export default (content: string) => {
 
       d('] end', char())
       c++
+      return true
     }
 
   }
