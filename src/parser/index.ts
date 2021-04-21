@@ -204,7 +204,6 @@ export default (content: string) => {
       c++
     }
 
-    d(123)
     findAssignmentOperators()
 
     //#HOTKEYS
@@ -228,11 +227,10 @@ export default (content: string) => {
   }
   // d(everything)
   // toFile = toFile.slice(1)
-  writeSync(toFile)
+  // writeSync(toFile)
   return everything
 
   function findAssignmentOperators() {
-    d('called')
     //#VARIABLE ASSIGNMENT
     let found = false
     if (c < numberOfChars - 1 && assignmentOperators[lines[i].slice(c,c + 2)]) {
@@ -269,7 +267,6 @@ export default (content: string) => {
     }
     const nonWhiteSpaceStart = c
     //stumble upon a valid variable Char
-    d(234, lines[i][c])
     if (variableCharsObj[lines[i][c]]) {
       c++
       //skip through valid variable Chars
@@ -281,8 +278,10 @@ export default (content: string) => {
         const funcName = lines[i].slice(nonWhiteSpaceStart, c)
         if (isNaN(Number(funcName))) {
           d(funcName, 'METHOD OR PROPERTY', char())
+          return true
         } else {
           d(funcName, 'DECIMAL NUMBER', char())
+          return true
         }
       } else {
         //var
@@ -294,7 +293,7 @@ export default (content: string) => {
   function writeSync(content: string) {
     const fs = require('fs')
     fs.writeFileSync('outputToFile.txt', content, 'utf-8')
-    console.log('readFileSync complete')
+    // console.log('readFileSync complete')
   }
   function char() {
     return `${c + 1} ${l()}`
