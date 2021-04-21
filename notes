@@ -569,3 +569,6 @@ only if not already inside continuation
 
 my understanding is that when in continuation mode,
 strings can go multiline
+
+usually skipThroughEmptyLines() takes care of ; comments
+but I don't want in continuation section, PLUS they are illegal

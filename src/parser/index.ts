@@ -117,7 +117,10 @@ export default (content: string) => {
           continue lineLoop
         }
 
-        skipThroughWhiteSpaces()
+        if (!skipThroughEmptyLines()) {
+          //out of lines
+          continue lineLoop
+        }
 
         if (findOperators()) {
           d(`${validName} assignment whiteSpace`)
@@ -194,7 +197,10 @@ export default (content: string) => {
       }
     }
 
-    skipThroughWhiteSpaces()
+    if (!skipThroughEmptyLines()) {
+      //out of lines
+      continue lineLoop
+    }
 
     if (findOperators()) {
       d(`${validName} assignment`)
@@ -226,10 +232,6 @@ export default (content: string) => {
   return everything
 
   function findOperators() {
-    if (!skipThroughEmptyLines()) {
-      //out of lines
-      return 2
-    }
     //#VARIABLE ASSIGNMENT
     if (c < numberOfChars - 2 && operatorsObj[lines[i].slice(c, c + 3).toLowerCase()]) {
       d(lines[i].slice(c, c + 3), '3operator', char())
@@ -252,10 +254,18 @@ export default (content: string) => {
   function betweenExpression() {
     beforeConcat = c
     // d('OOOOO',lines[i][c])
-    if (!insideContinuation) {
+    if (insideContinuation) {
       skipThroughWhiteSpaces()
-
+      if (c !== numberOfChars && lines[i][c] === ';') {
+        d('ILLEGAL semiColonComment insideContinuation',char())
+        if (endExprContinuation()) {
+          return findExpression()
+        }
+      }
+    } else {
+      skipThroughEmptyLines()
     }
+
     if (!findBetween()) {
       if (insideContinuation) {
         if (endExprContinuation()) {
@@ -272,6 +282,7 @@ export default (content: string) => {
       return findExpression()
     } else if (whiteSpaceObj[lines[i][c - 1]]) {
       const concatWhiteSpaces = lines[i].slice(beforeConcat,c)
+      console.trace()
       d(`concat "${concatWhiteSpaces}" ${concatWhiteSpaces.length}LENGHT ${char()}`)
       return findExpression()
     } else {

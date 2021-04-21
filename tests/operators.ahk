@@ -26,7 +26,15 @@
 ; (
 ; "LOL
 ; )" Var
-var2:= 
+; var2:=
+; (
+; "abc"  Var
+; ) Var
+
+; var2:=12 ;+ 12
+
+;this is illegal, no comments in continuation
+var2:=
 (
-"abc"  Var
+"abc"  ;Var
 ) Var
