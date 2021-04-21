@@ -268,6 +268,10 @@ export default (content: string) => {
     skipThroughWhiteSpaces()
     //nothing left, continue
     if (c === numberOfChars) {
+      if (startContinuation()) {
+        i++
+        findExpression()
+      }
       return false
     }
     const nonWhiteSpaceStart = c
@@ -359,7 +363,6 @@ export default (content: string) => {
           endStringContinuation()
         } else {
           if (startContinuation()) {
-            insideContinuation = true
             d('stringContinuation START', char())
             endStringContinuation()
             return true
@@ -414,14 +417,15 @@ export default (content: string) => {
       numberOfChars = lines[i].length
       skipThroughWhiteSpaces()
       if (c === numberOfChars) {
-        d('stringContinuation skip empty line')
+        d('Continuation skip empty line')
         i++
         continue
       } else if (lines[i][c] === ';') {
-        d('stringContinuation comment...')
+        d('Continuation comment...')
         i++
         continue
       } else if (lines[i][c] === '(') {
+        insideContinuation = true
         return true
       } else {
         d(`illegal ${lines[i][c]} c:${c} numberOfChars:${numberOfChars}`)
