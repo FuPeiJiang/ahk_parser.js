@@ -302,6 +302,9 @@ export default (content: string) => {
 
     }
 
+    if (findDoubleQuotedString()) {
+      return true
+    }
 
   }
   function findMethodOrDecimal() {
@@ -315,6 +318,99 @@ export default (content: string) => {
       }
     }
     return false
+  }
+  function findDoubleQuotedString() {
+    let strStartPos: number, strStartLine: number
+    if (lines[i][c] === '"') {
+      strStartPos = c, strStartLine = i
+      c++
+
+      while (c < numberOfChars) {
+        //maybe end of string
+        if (lines[i][c] === '"') {
+          // "" is escapechar
+          // d(lines[i][c + 1])
+          if (c < numberOfChars - 1 && lines[i][c + 1] === '"') {
+            c += 2
+            continue
+          } else {
+            //end of string
+            //to slice, the caret must be outside, or to the right of c
+            d('end', lines[i].slice(strStartPos,c + 1))
+            return true
+          }
+          // comment and expectMultiline
+        } else if (lines[i][c] === ';' && whiteSpaceObj[lines[i][c - 1]]) {
+          
+        } else {
+          c++
+        }
+      }
+      // EOL, so expectMultiline
+
+
+      /* outer2:
+      while (i < howManyLines) {
+        numberOfChars = lines[i].length
+        while (c < numberOfChars && whiteSpaceObj[lines[i][c]]) {
+          c++
+        }
+        if (c === numberOfChars) {
+          i++
+          continue outer2
+        }
+        if (lines[i][c] === '"') {
+          if (c < numberOfChars - 1) {
+            if (lines[i][c + 1] === '"') {
+              // 2 doubleQuotes you may continue
+              c += 2
+              continue
+            } else {
+              // not a quote the string ends
+              c++
+              d(printString(), 'no quote after DoubleQuotesString', `Ln ${strStartLine + 1}, Col ${strStartPos + 1} - Ln ${i + 1}, Col ${c + 1}`)
+              break outer2
+            }
+          } else {
+            // EOL the string ends
+            c++
+            printString()
+            d(printString(), 'EOL DoubleQuotesString', `Ln ${strStartLine + 1}, Col ${strStartPos + 1} - Ln ${i + 1}, Col ${c + 1}`)
+            break outer2
+          }
+        }
+        //NOT AN ELSE, there are 2 ifs that go here
+        c++
+        if (++c >= numberOfChars) {
+          // continue outer3
+          return true
+        }
+        c = 0
+        numberOfChars = lines[i].length
+        i++
+      } */
+      return true
+    } else {
+      return false
+    }
+    function printString() {
+      if (strStartLine === i) {
+        return lines[i].slice(strStartPos, c)
+      } else {
+        d(454)
+        let strToPrint = lines[strStartLine].slice(strStartPos)
+        for (let i = strStartLine + 1; i < c; i++) {
+          console.log(i)
+        }
+        strToPrint += `\n${lines[strStartLine].slice(0,c)}`
+        return strToPrint
+      }
+      // d('no quote after DoubleQuotesString', `Ln ${strStartLine + 1}, Col ${strStartPos + 1} - Ln ${i + 1}, Col ${c + 1}`)
+
+    }
+  }
+  function expectMultilineParen() {
+
   }
   function writeSync(content: string) {
     const fs = require('fs')
@@ -345,43 +441,4 @@ export default (content: string) => {
   // }
   // }
 }
-
-/* //#double-quoted strings
-      } else if (lines[i][c] === '"') {
-        const strStartPos = c, strStartLine = i
-        c++
-
-        outer2:
-        while (true) {
-          while (c < numberOfChars && whiteSpaceObj[lines[i][c]]) {
-            c++
-          }
-          while (c < numberOfChars) {
-            if (lines[i][c] === '"') {
-              if (c + 1 < numberOfChars) {
-                if (lines[i][c + 1] === '"') {
-                  // 2 doubleQuotes you may continue
-                  c += 2
-                  continue
-                } else {
-                  // not a quote the string ends
-                  c++
-                  // d('no quote after DoubleQuotesString', `Ln ${strStartLine + 1}, Col ${strStartPos + 1} - Ln ${i + 1}, Col ${c + 1}`)
-                  break outer2
-                }
-              } else {
-                // EOL the string ends
-                c++
-                // d('EOL DoubleQuotesString', `Ln ${strStartLine + 1}, Col ${strStartPos + 1} - Ln ${i + 1}, Col ${c + 1}`)
-                break outer2
-              }
-            }
-            c++
-          }
-          if (++c >= numberOfChars) {
-            continue outer3
-          }
-          c = 0
-          numberOfChars = lines[i].length
-        } */
 

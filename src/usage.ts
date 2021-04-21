@@ -2,12 +2,12 @@ import fs from 'fs'
 import ahkParser from './parser/index'
 const d = console.debug.bind(console)
 
-const content: string = fs.readFileSync('tests/assignment expression.ahk').toString().replace(/\r/g, '')
+// const content: string = fs.readFileSync('tests/assignment expression.ahk').toString().replace(/\r/g, '')
 // const content: string = fs.readFileSync('tests/break hotkey.ahk').toString().replace(/\r/g, '')
 // const content: string = fs.readFileSync('tests/js html.ahk').toString().replace(/\r/g, '')
 // const content: string = fs.readFileSync('tests/assignment or statement.ahk').toString().replace(/\r/g, '')
 // const content: string = fs.readFileSync('tests/ahk_explorer.ahk').toString().replace(/\r/g, '')
-// const content: string = fs.readFileSync('tests/legal.ahk').toString().replace(/\r/g, '')
+const content: string = fs.readFileSync('tests/legal.ahk').toString().replace(/\r/g, '')
 // const content: string = fs.readFileSync('tests/yolo.ahk').toString().replace(/\r/g, '')
 
 const everything = ahkParser(content)
