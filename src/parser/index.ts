@@ -235,7 +235,7 @@ export default (content: string) => {
     let found = false
     if (c < numberOfChars - 1 && assignmentOperators[lines[i].slice(c,c + 2)]) {
       found = true
-      d(validName,'2 char assignment operator',char())
+      // d(validName,'2 char assignment operator',char())
       c += 2
     } else if (c < numberOfChars - 2 && assignmentOperators[lines[i].slice(c,c + 3)]) {
       found = true
@@ -265,10 +265,8 @@ export default (content: string) => {
       return false
     }
     const nonWhiteSpaceStart = c
-    let itsAVar = false
     //stumble upon a valid variable Char
-    if (variableCharsObj[lines[i][c]]) {
-      itsAVar = true
+    if (lines[i][c] === '%' || variableCharsObj[lines[i][c]]) {
       c++
       //skip through valid variable Chars
       while (c < numberOfChars && variableCharsObj[lines[i][c]]) {
@@ -280,20 +278,13 @@ export default (content: string) => {
         return true
       }
 
-      if (findMethodOrDecimal()) {
-        return true
-      }
-
-    } else if (lines[i][c] === '%') {
-      itsAVar = true
-      c++
       //skip through % OR valid variable Chars
       while (c < numberOfChars && lines[i][c] === '%' || variableCharsObj[lines[i][c]]) {
         c++
       }
       validName = lines[i].slice(nonWhiteSpaceStart, c)
       if (c === numberOfChars) {
-        d(validName, '%VARIABLE% EOL', char())
+        d(`${validName} %VARIABLE% EOL ${char()}`)
         return true
       }
 
@@ -301,7 +292,16 @@ export default (content: string) => {
         return true
       }
 
+      if (lines[i][c] === '(') {
+        d(`${validName} Function ${char()}`)
+        return true
+      } else if (lines[i][c] === '[') {
+        d(`${validName} Array/Map Access ${char()}`)
+        return true
+      }
+
     }
+
 
   }
   function findMethodOrDecimal() {
