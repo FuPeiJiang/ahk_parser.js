@@ -403,3 +403,59 @@ fixed
 AND ONLY if it start with it. so:
   command ;fefef
 wouldn't be detected
+
+now let's do assign:
+var:=expression:
+  ok:=foo:=2 + bar:=4
+  p(ok) ;6
+
+expression can be:
+  unit:
+    var:var
+    func: Substr(), Map()
+    number:123
+    string:"123"
+    object literal:{ok:45,"?":3}:
+      {string|prop : expression}
+    array:[1,2,3,"3"]:
+      [expression]
+
+decimal numbers are not method calls, because they are not validVarName 123.34() : 123 is not validVarName
+so, if . and number: it's DECIMAL, or float..
+
+Integer, Float, %Var%
+
+if one validVarName:
+  skip until not validVarName
+  if (:
+    Func
+  else if .
+    if Number:
+      DECIMAL
+    else:
+      method or prop
+  else:
+    var
+
+if one validVarName:
+  skip until not validVarName
+  if .
+    if Number:
+      DECIMAL
+    else:
+      method or prop
+  else:
+    var
+else if %
+  skip until not % OR validVarName
+  if (:
+    Func
+  if .
+    method or prop
+  else:
+    var
+else if [
+else if {
+else:
+  ???
+
