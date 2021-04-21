@@ -234,16 +234,20 @@ export default (content: string) => {
     if (found) {
       //found nothing, so skip line
       //found something, so skip line
-      if (!findExpression())
-      {
-        d('found nothing', char())
-      }
+      findExpression()
       return true
     } else {
       return false
     }
   }
 
+  function betweenExpression() {
+    skipThroughWhiteSpaces()
+    if (c === numberOfChars) {
+      return false
+    }
+    findAssignmentOperators()
+  }
   function findExpression() {
     skipThroughWhiteSpaces()
     //nothing left, continue
@@ -284,13 +288,16 @@ export default (content: string) => {
       } else if (lines[i][c] === '[') {
         d(`${validName} Array/Map Access ${char()}`)
         return true
+      } else {
+        d(`${validName} idkVariable ${char()}`)
+        betweenExpression()
       }
 
     }
 
     if (findDoubleQuotedString()) {
-      d(lines[i][c])
-      findExpression()
+      // d(lines[i][c])
+      betweenExpression()
       // return true
     }
 

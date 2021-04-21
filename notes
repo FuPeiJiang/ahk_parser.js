@@ -439,16 +439,13 @@ if one validVarName:
 
 skip whiteSpaces
 if EOL
-if one validVarName:
+if % or validVarName
   skip until not validVarName
   if .
     if Number:
       DECIMAL
     else:
       method or prop
-  else:
-    var
-else if %
   skip until not % OR validVarName
   if (:
     Func
