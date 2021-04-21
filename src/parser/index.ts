@@ -18,7 +18,7 @@ export default (content: string) => {
   const howManyLines = lines.length
   const everything = []
   const toFile = ''
-  let i = 0, c = 0, numberOfChars = 0, validName = '',strStartLine: number,strStartPos: number,insideContinuation = false
+  let i = 0, c = 0, numberOfChars = 0, validName = '',strStartLine: number,strStartPos: number, insideStringContinuation = false
 
   lineLoop:
   while (i < howManyLines) {
@@ -354,9 +354,12 @@ export default (content: string) => {
         c++
         return true
       } else {
-        if (!insideContinuation) {
-          stringContinuation()
+        if (insideStringContinuation) {
+          endStringContinuation()
+        } else {
+          startStringContinuation()
         }
+        return true
       }
 
 
@@ -398,7 +401,7 @@ export default (content: string) => {
       }
     }
   }
-  function stringContinuation() {
+  function startStringContinuation() {
     i++
     while (i < howManyLines) {
       c = 0
@@ -413,30 +416,10 @@ export default (content: string) => {
         i++
         continue
       } else if (lines[i][c] === '(') {
-        insideContinuation = true
+        insideStringContinuation = true
         d('stringContinuation START', char())
-        //now continue until I find a line starting with ')'
-        i++
-        while (i < howManyLines) {
-          c = 0, numberOfChars = lines[i].length
-          skipThroughWhiteSpaces()
-          if (c < numberOfChars && lines[i][c] === ')') {
-            d('stringContinuation END', char())
-            c++
-            insideContinuation = false
-            return findEndOfStringInLine()
-          } else if (findEndOfStringInLine()) {
-            c++
-            betweenExpression()
-            // return true
-          } else {
-            i++
-            continue
-          }
-
-        }
-        // how to return out of lines ???
-        return false
+        endStringContinuation()
+        return true
       } else {
         d(`illegal ${lines[i][c]} c:${c} numberOfChars:${numberOfChars}`)
         //illegal
@@ -445,6 +428,28 @@ export default (content: string) => {
     }
     // how to return out of lines ???
     return -1
+  }
+  function endStringContinuation() {
+    //now continue until I find a line starting with ')'
+    i++
+    while (i < howManyLines) {
+      c = 0, numberOfChars = lines[i].length
+      skipThroughWhiteSpaces()
+      if (c < numberOfChars && lines[i][c] === ')') {
+        insideStringContinuation = false
+        d('stringContinuation END', char())
+        c++
+        return findEndOfStringInLine()
+      } else if (findEndOfStringInLine()) {
+        c++
+        betweenExpression()
+        return
+        // return true
+      } else {
+        i++
+        continue
+      }
+    }
   }
   function skipThroughEmptyLines() {
     //also skip through whiteSpaces, comments

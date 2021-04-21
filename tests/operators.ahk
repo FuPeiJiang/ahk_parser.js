@@ -17,7 +17,11 @@ Var3 := "
 (
 Same as above, except that variable references such as %Var% are not resolved.
 Instead, specify variables as follows:" Var "
-)   "
+)   " Var
+; Var3 := "
+; (
+; Same as above, except that variable references such as %Var% are not resolved.
+; )   " Var
 ; var2:=
 ; (
 ; "LOL
