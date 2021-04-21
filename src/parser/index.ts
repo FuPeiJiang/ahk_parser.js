@@ -229,16 +229,27 @@ export default (content: string) => {
 
   function findAssignmentOperators() {
     //#VARIABLE ASSIGNMENT
+    let found = false
     if (c < numberOfChars - 1 && assignmentOperators[lines[i].slice(c,c + 2)]) {
+      found = true
       d(validName,'2 char assignment operator',char())
-      findExpression()
-      return true
+      c += 2
     } else if (c < numberOfChars - 2 && assignmentOperators[lines[i].slice(c,c + 3)]) {
+      found = true
       d(validName,'3 char assignment operator',char())
-      findExpression()
-      return true
+      c += 3
     }
-    return false
+    if (found) {
+      //found nothing, so skip line
+      //found something, so skip line
+      if (!findExpression())
+      {
+        d('found nothing', char())
+      }
+      return true
+    } else {
+      return false
+    }
   }
 
   function findExpression() {
@@ -249,10 +260,11 @@ export default (content: string) => {
     //nothing left, continue
     if (c === numberOfChars) {
       i++
-      return
+      return false
     }
     const nonWhiteSpaceStart = c
     //stumble upon a valid variable Char
+    d(234, lines[i][c])
     if (variableCharsObj[lines[i][c]]) {
       c++
       //skip through valid variable Chars
