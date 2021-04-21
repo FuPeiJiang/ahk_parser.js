@@ -165,6 +165,9 @@ export default (content: string) => {
             i++
             continue lineLoop
           }
+
+          c--
+
         }
       }
 
@@ -201,6 +204,7 @@ export default (content: string) => {
       c++
     }
 
+    d(123)
     findAssignmentOperators()
 
     //#HOTKEYS
@@ -228,6 +232,7 @@ export default (content: string) => {
   return everything
 
   function findAssignmentOperators() {
+    d('called')
     //#VARIABLE ASSIGNMENT
     let found = false
     if (c < numberOfChars - 1 && assignmentOperators[lines[i].slice(c,c + 2)]) {
