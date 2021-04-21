@@ -296,8 +296,13 @@ export default (content: string) => {
         d(`${validName} Array/Map Access ${char()}`)
         return true
       } else {
-        d(`${validName} idkVariable ${char()}`)
+        if (isNaN(Number(validName))) {
+          d(`${validName} idkVariable ${char()}`)
+        } else {
+          d(`${validName} Integer ${char()}`)
+        }
         betweenExpression()
+        return true
       }
 
     }

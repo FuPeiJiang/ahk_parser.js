@@ -441,18 +441,25 @@ skip whiteSpaces
 if EOL
 if % or validVarName
   skip until not validVarName
+  EOL:
+    valid var
   if .
     if Number:
       DECIMAL
     else:
       method or prop
   skip until not % OR validVarName
+  EOL:
+    %VAR%
   if (:
     Func
   if .
     method or prop
   else:
-    var
+    isNotNumber:
+      var
+    else:
+      Integer
 else if "
 else if [ array literal
 else if { object literal
