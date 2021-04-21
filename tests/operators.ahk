@@ -26,7 +26,7 @@
 ; (
 ; "LOL
 ; )" Var
-var2:=
+var2:= 
 (
-  
+"abc"  Var
 ) Var

@@ -18,7 +18,8 @@ export default (content: string) => {
   const howManyLines = lines.length
   const everything = []
   const toFile = ''
-  let i = 0, c = 0, numberOfChars = 0, validName = '',strStartLine: number,strStartPos: number, insideContinuation = false
+
+  let i = 0, c = 0, numberOfChars = 0, validName = '',strStartLine: number,strStartPos: number, insideContinuation = false,beforeConcat: number
 
   lineLoop:
   while (i < howManyLines) {
@@ -249,19 +250,39 @@ export default (content: string) => {
   }
 
   function betweenExpression() {
-    const beforeWhiteSpaces = c
+    beforeConcat = c
     // d('OOOOO',lines[i][c])
-    skipThroughWhiteSpaces()
+    if (!insideContinuation) {
+      skipThroughWhiteSpaces()
+
+    }
+    if (!findBetween()) {
+      if (insideContinuation) {
+        if (endExprContinuation()) {
+          return findExpression()
+        }
+      }
+    }
+
+  }
+  function findBetween() {
     if (c === numberOfChars) {
       return false
     } else if (findOperators()) {
       return findExpression()
     } else if (whiteSpaceObj[lines[i][c - 1]]) {
-      const concatWhiteSpaces = lines[i].slice(beforeWhiteSpaces,c)
+      const concatWhiteSpaces = lines[i].slice(beforeConcat,c)
       d(`concat "${concatWhiteSpaces}" ${concatWhiteSpaces.length}LENGHT ${char()}`)
       return findExpression()
     } else {
-      return false
+      if (insideContinuation) {
+        if (endExprContinuation()) {
+          findExpression()
+          return true
+        }
+      } else {
+        return false
+      }
     }
   }
   function findExpression() {
@@ -295,6 +316,7 @@ export default (content: string) => {
         } else {
           d(`${validName} Integer EOL ${char()}`)
         }
+        betweenExpression()
         return true
       }
 
@@ -305,6 +327,7 @@ export default (content: string) => {
       validName = lines[i].slice(nonWhiteSpaceStart, c)
       if (c === numberOfChars) {
         d(`${validName} %VARIABLE% EOL ${char()}`)
+        betweenExpression()
         return true
       }
 
@@ -333,7 +356,7 @@ export default (content: string) => {
     if (findDoubleQuotedString()) {
       // d(lines[i][c])
       betweenExpression()
-      // return true
+      return true
     }
 
     if (lines[i][c] === '(') {
@@ -400,7 +423,7 @@ export default (content: string) => {
           //end of string
           //to slice, the caret must be outside, or to the right of c
           c++
-          d('string', printString())
+          d('String', printString())
           // d('end', lines[i].slice(strStartPos,c + 1))
           return true
         }
@@ -446,6 +469,7 @@ export default (content: string) => {
     i++, c = 0, numberOfChars = lines[i].length
     skipThroughWhiteSpaces()
     if (c !== numberOfChars && lines[i][c] === ')') {
+      insideContinuation = false
       d(`END endExprContinuation ${char()}`)
       c++
       return true
