@@ -457,9 +457,10 @@ else if %
   else:
     var
 else if "
-else if [
-else if {
-else if ;
+else if [ array literal
+else if { object literal
+else if ( paren for ternary or order of operations
+else if ; ???
 else:
   ???
 
