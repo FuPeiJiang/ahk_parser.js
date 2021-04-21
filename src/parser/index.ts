@@ -289,7 +289,9 @@ export default (content: string) => {
     }
 
     if (findDoubleQuotedString()) {
-      return true
+      d(lines[i][c])
+      findExpression()
+      // return true
     }
 
   }
@@ -324,6 +326,7 @@ export default (content: string) => {
           } else {
             //end of string
             //to slice, the caret must be outside, or to the right of c
+            c++
             d('string',printString())
             // d('end', lines[i].slice(strStartPos,c + 1))
             return true
@@ -343,14 +346,14 @@ export default (content: string) => {
     }
     function printString() {
       if (strStartLine === i) {
-        return lines[i].slice(strStartPos, c + 1)
+        return lines[i].slice(strStartPos, c)
       } else {
         let strToPrint = lines[strStartLine].slice(strStartPos)
         for (let i2 = strStartLine + 1; i2 < i; i2++) {
           // console.log(lines[i2])
           strToPrint += `\n${lines[i2]}`
         }
-        strToPrint += `\n${lines[i].slice(0,c + 1)}`
+        strToPrint += `\n${lines[i].slice(0,c)}`
         return strToPrint
       }
       // d('no quote after DoubleQuotesString', `Ln ${strStartLine + 1}, Col ${strStartPos + 1} - Ln ${i + 1}, Col ${c + 1}`)
