@@ -572,3 +572,6 @@ strings can go multiline
 
 usually skipThroughEmptyLines() takes care of ; comments
 but I don't want in continuation section, PLUS they are illegal
+
+multiline comment in continuation?
+no you can't, I'm saved.
