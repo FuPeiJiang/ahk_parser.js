@@ -271,7 +271,11 @@ export default (content: string) => {
       }
       validName = lines[i].slice(nonWhiteSpaceStart, c)
       if (c === numberOfChars) {
-        d(validName, 'validName VARIABLE EOL', char())
+        if (isNaN(Number(validName))) {
+          d(`${validName} validName VARIABLE EOL ${char()}`)
+        } else {
+          d(`${validName} Integer EOL ${char()}`)
+        }
         return true
       }
 

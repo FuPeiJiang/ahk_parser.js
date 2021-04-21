@@ -442,7 +442,10 @@ if EOL
 if % or validVarName
   skip until not validVarName
   EOL:
-    valid var
+    isNotNumber:
+      valid var
+    else:
+      Integer
   if .
     if Number:
       DECIMAL
@@ -450,7 +453,7 @@ if % or validVarName
       method or prop
   skip until not % OR validVarName
   EOL:
-    %VAR%
+    %VAR% : can't be integer
   if (:
     Func
   if .
