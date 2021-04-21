@@ -119,6 +119,7 @@ export default (content: string) => {
         skipThroughWhiteSpaces()
 
         if (findOperators()) {
+          d(`${validName} assignment whiteSpace`)
           findExpression()
           i++
           continue lineLoop
@@ -195,6 +196,7 @@ export default (content: string) => {
     skipThroughWhiteSpaces()
 
     if (findOperators()) {
+      d(`${validName} assignment`)
       findExpression()
     }
 
