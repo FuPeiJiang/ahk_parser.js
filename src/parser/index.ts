@@ -48,7 +48,8 @@ export default (content: string) => {
         if (lines[i].slice(c, c + 2) === '*/') {
           everything.push({ type: 'MultilineComment', lineStart: multiLineCommentLineStart, colStart: multiLineCommentColStart, lineEnd: i, colEnd: c + 2 })
           // d('MultilineComment END', l())
-          break
+          i++
+          continue lineLoop
         }
       }
     }
