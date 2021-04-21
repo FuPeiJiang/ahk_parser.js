@@ -310,7 +310,6 @@ export default (content: string) => {
     if (lines[i][c] === '"') {
       strStartPos = c, strStartLine = i
       c++
-
       while (true) {
         //maybe end of string
         if (c === numberOfChars) {
@@ -339,48 +338,6 @@ export default (content: string) => {
           c++
         }
       }
-      // EOL, so expectMultiline
-
-
-      /* outer2:
-      while (i < howManyLines) {
-        numberOfChars = lines[i].length
-        skipThroughWhiteSpaces()
-        if (c === numberOfChars) {
-          i++
-          continue outer2
-        }
-        if (lines[i][c] === '"') {
-          if (c < numberOfChars - 1) {
-            if (lines[i][c + 1] === '"') {
-              // 2 doubleQuotes you may continue
-              c += 2
-              continue
-            } else {
-              // not a quote the string ends
-              c++
-              d(printString(), 'no quote after DoubleQuotesString', `Ln ${strStartLine + 1}, Col ${strStartPos + 1} - Ln ${i + 1}, Col ${c + 1}`)
-              break outer2
-            }
-          } else {
-            // EOL the string ends
-            c++
-            printString()
-            d(printString(), 'EOL DoubleQuotesString', `Ln ${strStartLine + 1}, Col ${strStartPos + 1} - Ln ${i + 1}, Col ${c + 1}`)
-            break outer2
-          }
-        }
-        //NOT AN ELSE, there are 2 ifs that go here
-        c++
-        if (++c >= numberOfChars) {
-          // continue outer3
-          return true
-        }
-        c = 0
-        numberOfChars = lines[i].length
-        i++
-      } */
-      // return true
     } else {
       return false
     }
