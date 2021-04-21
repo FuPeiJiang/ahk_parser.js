@@ -18,7 +18,7 @@ export default (content: string) => {
   const howManyLines = lines.length
   const everything = []
   const toFile = ''
-  let i = 0, c = 0, numberOfChars = 0
+  let i = 0, c = 0, numberOfChars = 0, validName = ''
 
   lineLoop:
   while (i < howManyLines) {
@@ -92,7 +92,7 @@ export default (content: string) => {
         continue lineLoop
       }
 
-      const validName = lines[i].slice(startPosFuncName, c)
+      validName = lines[i].slice(startPosFuncName, c)
       const idkType = typeOfValidVarName[validName.toLowerCase()]
       // comma can't be assignment, so I can skip assignment
       // if it has a comma, it could be a hotkey, it's only NOT a hotkey if it's a valid COMMAND
@@ -124,14 +124,7 @@ export default (content: string) => {
           c++
         }
 
-        //#VARIABLE ASSIGNMENT
-        if (c < numberOfChars - 1 && assignmentOperators[lines[i].slice(c,c + 2)]) {
-          d(validName,'2 char assignment operator',char())
-          findExpression()
-        } else if (c < numberOfChars - 2 && assignmentOperators[lines[i].slice(c,c + 3)]) {
-          d(validName,'3 char assignment operator',char())
-          findExpression()
-        }
+        findAssignmentOperators()
 
         if (idkType === 4) {
           d(validName,'whiteSpace COMMAND',char())
@@ -205,17 +198,7 @@ export default (content: string) => {
       c++
     }
 
-    //#VARIABLE ASSIGNMENT
-    if (c < numberOfChars - 1 && assignmentOperators[lines[i].slice(c, c + 2)]) {
-      d('2 char assignment operator')
-      findExpression()
-    } else if (c < numberOfChars - 2 && assignmentOperators[lines[i].slice(c, c + 3)]) {
-      d('3 char assignment operator')
-      findExpression()
-    } else {
-      // d(validName)
-      // toFile += `\n${validName}`
-    }
+    findAssignmentOperators()
 
     //#HOTKEYS
     //skip first character to avoid matching ::, empty hotkey, or not matching :::, colon hotkey, because it matched only the first 2
@@ -241,6 +224,17 @@ export default (content: string) => {
   writeSync(toFile)
   return everything
 
+  function findAssignmentOperators() {
+    //#VARIABLE ASSIGNMENT
+    if (c < numberOfChars - 1 && assignmentOperators[lines[i].slice(c,c + 2)]) {
+      d(validName,'2 char assignment operator',char())
+      findExpression()
+    } else if (c < numberOfChars - 2 && assignmentOperators[lines[i].slice(c,c + 3)]) {
+      d(validName,'3 char assignment operator',char())
+      findExpression()
+    }
+  }
+
   function findExpression() {
     //skip through whiteSpaces
     while (c < numberOfChars && whiteSpaceObj[lines[i][c]]) {
@@ -251,6 +245,7 @@ export default (content: string) => {
       i++
       return
     }
+    const nonWhiteSpaceStart = c
     //stumble upon a valid variable Char
     if (variableCharsObj[lines[i][c]]) {
       c++
@@ -258,6 +253,19 @@ export default (content: string) => {
       while (c < numberOfChars && variableCharsObj[lines[i][c]]) {
         c++
       }
+
+      if (lines[i][c] === '.' && variableCharsObj[lines[i][c + 1]]) {
+        const funcName = lines[i].slice(nonWhiteSpaceStart, c)
+        if (isNaN(Number(funcName))) {
+          d(funcName, 'METHOD OR PROPERTY', char())
+        } else {
+          d(funcName, 'DECIMAL NUMBER', char())
+        }
+      } else {
+        //var
+
+      }
+
     }
   }
   function writeSync(content: string) {
