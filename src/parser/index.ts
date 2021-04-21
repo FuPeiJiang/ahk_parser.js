@@ -273,9 +273,13 @@ export default (content: string) => {
       while (c < numberOfChars && variableCharsObj[lines[i][c]]) {
         c++
       }
+      const funcName = lines[i].slice(nonWhiteSpaceStart, c)
+      if (c === numberOfChars) {
+        d(funcName, 'validName VARIABLE EOL', char())
+        return true
+      }
 
       if (lines[i][c] === '.' && variableCharsObj[lines[i][c + 1]]) {
-        const funcName = lines[i].slice(nonWhiteSpaceStart, c)
         if (isNaN(Number(funcName))) {
           d(funcName, 'METHOD OR PROPERTY', char())
           return true
@@ -284,8 +288,8 @@ export default (content: string) => {
           return true
         }
       } else {
-        //var
-
+        d(funcName, 'validName VARIABLE', char())
+        return true
       }
 
     }
