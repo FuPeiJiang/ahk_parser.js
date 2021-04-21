@@ -245,7 +245,6 @@ export default (content: string) => {
       c += 2
       return true
     } else if (c < numberOfChars && operatorsObj[lines[i][c].toLowerCase()]) {
-      console.trace()
       d(lines[i][c], '1operator', char())
       c++
       return true
@@ -406,6 +405,36 @@ export default (content: string) => {
       return true
     }
 
+    if (lines[i][c] === '{') {
+      d('{ start', char())
+      c++
+
+      let arrOnWhichLine: number
+      while (true) {
+        arrOnWhichLine = i
+        if (!findObjKey()) {
+          d('ILLEGAL trailling ,', char())
+        }
+
+        if (lines[i][c] !== ':') {
+          d('illegal obj',char())
+        }
+        c++ //skip :
+        findExpression()
+        // skipThroughEmptyLines()
+        if (lines[i][c] !== ',') {
+          break
+        }
+        c++
+      }
+      if (i !== arrOnWhichLine) {
+        d('ILLEGAL ]', char())
+      }
+      d('} end', char())
+      c++
+      return true
+    }
+
   }
   function findMethodOrDecimal() {
     if (lines[i][c] === '.' && variableCharsObj[lines[i][c + 1]]) {
@@ -562,6 +591,29 @@ export default (content: string) => {
   function skipThroughWhiteSpaces() {
     while (c < numberOfChars && whiteSpaceObj[lines[i][c]]) {
       c++
+    }
+  }
+  function findObjKey() {
+    skipThroughWhiteSpaces()
+    if (variableCharsObj[lines[i][c]]) {
+      nonWhiteSpaceStart = c
+      c++
+      while (variableCharsObj[lines[i][c]]) {
+        c++
+      }
+      d(lines[i].slice(nonWhiteSpaceStart,c),'validName findObjKey',char())
+      return true
+    } else if (lines[i][c] === '(') {
+      d('( obj dyn key', char())
+      c++
+      findExpression()
+      d(') obj dyn key', char())
+      c++
+      return true
+    } else if (findDoubleQuotedString()) {
+      return true
+    } else {
+      return false
     }
   }
   function findPercentVar() {
