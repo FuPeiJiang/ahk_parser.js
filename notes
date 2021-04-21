@@ -566,3 +566,6 @@ what's the entry point ?
 string EOL expect continuation
 expression EOL expect continuation
 only if not already inside continuation
+
+my understanding is that when in continuation mode,
+strings can go multiline

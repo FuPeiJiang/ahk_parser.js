@@ -18,7 +18,7 @@ export default (content: string) => {
   const howManyLines = lines.length
   const everything = []
   const toFile = ''
-  let i = 0, c = 0, numberOfChars = 0, validName = ''
+  let i = 0, c = 0, numberOfChars = 0, validName = '',strStartLine: number,strStartPos: number,insideContinuation = false
 
   lineLoop:
   while (i < howManyLines) {
@@ -347,97 +347,104 @@ export default (content: string) => {
     return false
   }
   function findDoubleQuotedString() {
-    let strStartPos: number, strStartLine: number
     if (lines[i][c] === '"') {
       strStartPos = c, strStartLine = i
       c++
-      while (true) {
-        //maybe end of string
-        if (c === numberOfChars) {
-          expectMultilineParen()
-          c++
-        } else if (lines[i][c] === '"') {
-          // "" is escapechar
-          // d(lines[i][c + 1])
-          if (c < numberOfChars - 1 && lines[i][c + 1] === '"') {
-            c += 2
-            continue
-          } else {
-            //end of string
-            //to slice, the caret must be outside, or to the right of c
-            c++
-            d('string', printString())
-            // d('end', lines[i].slice(strStartPos,c + 1))
-            return true
-          }
-          // comment and expectMultiline
-        } else if (lines[i][c] === ';' && whiteSpaceObj[lines[i][c - 1]]) {
-          d('comment and expectMultiline')
-          expectMultilineParen()
-          c++
-          // return true
-        } else {
-          c++
+      if (findEndOfStringInLine()) {
+        c++
+        return true
+      } else {
+        if (!insideContinuation) {
+          stringContinuation()
         }
       }
+
+
     } else {
       return false
     }
-    function printString() {
-      if (strStartLine === i) {
-        return lines[i].slice(strStartPos, c)
-      } else {
-        let strToPrint = lines[strStartLine].slice(strStartPos)
-        for (let i2 = strStartLine + 1; i2 < i; i2++) {
-          // console.log(lines[i2])
-          strToPrint += `\n${lines[i2]}`
-        }
-        strToPrint += `\n${lines[i].slice(0, c)}`
-        return strToPrint
-      }
-      // d('no quote after DoubleQuotesString', `Ln ${strStartLine + 1}, Col ${strStartPos + 1} - Ln ${i + 1}, Col ${c + 1}`)
 
+  }
+  function findEndOfStringInLine() {
+    while (true) {
+      //maybe end of string
+      if (c === numberOfChars) {
+        // stringContinuation()
+        return false
+        c++
+      } else if (lines[i][c] === '"') {
+        // "" is escapechar
+        // d(lines[i][c + 1])
+        if (c < numberOfChars - 1 && lines[i][c + 1] === '"') {
+          c += 2
+          continue
+        } else {
+          //end of string
+          //to slice, the caret must be outside, or to the right of c
+          c++
+          d('string', printString())
+          // d('end', lines[i].slice(strStartPos,c + 1))
+          return true
+        }
+        // comment and expectMultiline
+      } else if (lines[i][c] === ';' && whiteSpaceObj[lines[i][c - 1]]) {
+        d('comment when string',char())
+        // d('comment and expectMultiline')
+        return false
+        // c++
+        // return true
+      } else {
+        c++
+      }
     }
   }
-  function expectMultilineParen() {
+  function stringContinuation() {
     i++
     while (i < howManyLines) {
       c = 0
       numberOfChars = lines[i].length
       skipThroughWhiteSpaces()
       if (c === numberOfChars) {
-        d('multilineParen skip empty line')
+        d('stringContinuation skip empty line')
         i++
         continue
       } else if (lines[i][c] === ';') {
-        d('multilineParen comment...')
+        d('stringContinuation comment...')
         i++
         continue
       } else if (lines[i][c] === '(') {
-        d('multiLineParen START', char())
+        insideContinuation = true
+        d('stringContinuation START', char())
         //now continue until I find a line starting with ')'
         i++
         while (i < howManyLines) {
-          c = 0
-          numberOfChars = lines[i].length
+          c = 0, numberOfChars = lines[i].length
           skipThroughWhiteSpaces()
           if (c < numberOfChars && lines[i][c] === ')') {
-            d('multiLineParen END', char())
-            return true
+            d('stringContinuation END', char())
+            c++
+            insideContinuation = false
+            return findEndOfStringInLine()
+          } else if (findEndOfStringInLine()) {
+            c++
+            betweenExpression()
+            // return true
+          } else {
+            i++
+            continue
           }
-          i++
+
         }
         // how to return out of lines ???
         return false
       } else {
-        d(c, numberOfChars)
-        d('illegal', lines[i][c])
+        d(`illegal ${lines[i][c]} c:${c} numberOfChars:${numberOfChars}`)
         //illegal
         return false
       }
     }
     // how to return out of lines ???
-    return false
+    return -1
   }
   function skipThroughEmptyLines() {
     //also skip through whiteSpaces, comments
@@ -462,6 +469,21 @@ export default (content: string) => {
     const fs = require('fs')
     fs.writeFileSync('outputToFile.txt', content, 'utf-8')
     // console.log('readFileSync complete')
+  }
+  function printString() {
+    if (strStartLine === i) {
+      return lines[i].slice(strStartPos, c)
+    } else {
+      let strToPrint = lines[strStartLine].slice(strStartPos)
+      for (let i2 = strStartLine + 1; i2 < i; i2++) {
+        // console.log(lines[i2])
+        strToPrint += `\n${lines[i2]}`
+      }
+      strToPrint += `\n${lines[i].slice(0, c)}`
+      return strToPrint
+    }
+    // d('no quote after DoubleQuotesString', `Ln ${strStartLine + 1}, Col ${strStartPos + 1} - Ln ${i + 1}, Col ${c + 1}`)
+
   }
   function char() {
     return `${c + 1} ${l()}`
