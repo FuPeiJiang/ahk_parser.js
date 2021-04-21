@@ -268,9 +268,15 @@ export default (content: string) => {
     skipThroughWhiteSpaces()
     //nothing left, continue
     if (c === numberOfChars) {
-      if (startContinuation()) {
-        i++
-        findExpression()
+      if (insideContinuation) {
+        if (endExprContinuation()) {
+          findExpression()
+        }
+      } else {
+        if (startContinuation()) {
+          i++, c = 0, numberOfChars = lines[i].length
+          findExpression()
+        }
       }
       return false
     }
@@ -435,6 +441,18 @@ export default (content: string) => {
     }
     // how to return out of lines ???
     return -1
+  }
+  function endExprContinuation() {
+    i++, c = 0, numberOfChars = lines[i].length
+    skipThroughWhiteSpaces()
+    if (c !== numberOfChars && lines[i][c] === ')') {
+      d(`END endExprContinuation ${char()}`)
+      c++
+      return true
+    } else {
+      d(`illegal in endExprContinuation ${char()}`)
+      return false
+    }
   }
   function endStringContinuation() {
     //now continue until I find a line starting with ')'

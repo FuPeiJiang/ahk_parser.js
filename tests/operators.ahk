@@ -22,7 +22,11 @@
 ; (
 ; Same as above, except that variable references such as %Var% are not resolved.
 ; )   " Var
+; var2:=
+; (
+; "LOL
+; )" Var
 var2:=
 (
-"LOL
-)" Var
+  
+) Var
