@@ -34,7 +34,12 @@
 ; var2:=12 ;+ 12
 
 ;this is illegal, no comments in continuation
-var2:=
+; var2:=
+; (
+; "abc"  ;Var
+; ) Var
+
+var2:= ;comment
 (
-"abc"  ;Var
+"abc"  ;comment
 ) Var

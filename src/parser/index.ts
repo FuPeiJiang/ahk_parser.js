@@ -299,7 +299,7 @@ export default (content: string) => {
   function findExpression() {
     skipThroughWhiteSpaces()
     //nothing left, continue
-    if (c === numberOfChars) {
+    if (c === numberOfChars || lines[i][c] === ';') {
       if (insideContinuation) {
         if (endExprContinuation()) {
           findExpression()
