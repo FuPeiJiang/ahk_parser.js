@@ -223,16 +223,21 @@ export default (content: string) => {
   return everything
 
   function findOperators() {
+    if (!skipThroughEmptyLines()) {
+      //out of lines
+      return
+    }
     //#VARIABLE ASSIGNMENT
-    if (c < numberOfChars - 2 && operatorsObj[lines[i].slice(c,c + 3)]) {
-      d(validName,'3 char assignment operator',char())
+    if (c < numberOfChars - 2 && operatorsObj[lines[i].slice(c,c + 3).toLowerCase()]) {
+      d(lines[i].slice(c,c + 3),'3operator',char())
       c += 3
       return true
-    } else if (c < numberOfChars - 1 && operatorsObj[lines[i].slice(c,c + 2)]) {
-      // d(validName,'2 char assignment operator',char())
+    } else if (c < numberOfChars - 1 && operatorsObj[lines[i].slice(c,c + 2).toLowerCase()]) {
+      d(lines[i].slice(c,c + 2),'2operator',char())
       c += 2
       return true
-    } else if (c < numberOfChars && operatorsObj[lines[i][c]]) {
+    } else if (c < numberOfChars && operatorsObj[lines[i][c].toLowerCase()]) {
+      d(lines[i][c],'1operator',char())
       c++
       return true
     } else {
@@ -407,6 +412,22 @@ export default (content: string) => {
       }
     }
     // how to return out of lines ???
+    return false
+  }
+  function skipThroughEmptyLines() {
+    //also skip through whiteSpaces, comments
+    while (i < howManyLines) {
+      skipThroughWhiteSpaces()
+      //maybe end of string
+      if (c === numberOfChars) {
+        i++, c = 0
+      } else if (lines[i][c] === ';' && whiteSpaceObj[lines[i][c - 1]]) {
+        d('comment while skipThroughEmptyLines')
+        i++, c = 0
+      } else {
+        return true
+      }
+    }
     return false
   }
   function skipThroughWhiteSpaces() {
