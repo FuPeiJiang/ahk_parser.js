@@ -119,6 +119,7 @@ export default (content: string) => {
         skipThroughWhiteSpaces()
 
         if (findAssignmentOperators()) {
+          findExpression()
           i++
           continue lineLoop
         }
@@ -193,7 +194,9 @@ export default (content: string) => {
 
     skipThroughWhiteSpaces()
 
-    findAssignmentOperators()
+    if (findAssignmentOperators()) {
+      findExpression()
+    }
 
     //#HOTKEYS
     //skip first character to avoid matching ::, empty hotkey, or not matching :::, colon hotkey, because it matched only the first 2
@@ -221,32 +224,28 @@ export default (content: string) => {
 
   function findAssignmentOperators() {
     //#VARIABLE ASSIGNMENT
-    let found = false
     if (c < numberOfChars - 1 && assignmentOperators[lines[i].slice(c,c + 2)]) {
-      found = true
       // d(validName,'2 char assignment operator',char())
       c += 2
+      return true
     } else if (c < numberOfChars - 2 && assignmentOperators[lines[i].slice(c,c + 3)]) {
-      found = true
       d(validName,'3 char assignment operator',char())
       c += 3
-    }
-    if (found) {
-      //found nothing, so skip line
-      //found something, so skip line
-      findExpression()
       return true
     } else {
       return false
     }
+
   }
 
   function betweenExpression() {
     skipThroughWhiteSpaces()
     if (c === numberOfChars) {
       return false
+    } else if (findAssignmentOperators()) {
+      findExpression()
+      return true
     }
-    findAssignmentOperators()
   }
   function findExpression() {
     skipThroughWhiteSpaces()
