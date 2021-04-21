@@ -377,6 +377,22 @@ export default (content: string) => {
       c++
     }
 
+    if (lines[i][c] === '[') {
+      d('[ start', char())
+      c++
+      findExpression()
+      while (lines[i][c] === ',') {
+        d(',', char())
+        c++
+        if (!findExpression()) {
+          d('ILLEGAL trailling ,',char())
+        }
+      }
+
+      d('] end', char())
+      c++
+    }
+
   }
   function findMethodOrDecimal() {
     if (lines[i][c] === '.' && variableCharsObj[lines[i][c + 1]]) {

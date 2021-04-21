@@ -575,3 +575,9 @@ but I don't want in continuation section, PLUS they are illegal
 
 multiline comment in continuation?
 no you can't, I'm saved.
+
+oh cool, you can't have trailing comma on arrays
+LEGAL
+var1:=[1,"2"]
+ILLEGAL
+var1:=[1,"2",]
