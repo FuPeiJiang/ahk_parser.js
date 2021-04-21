@@ -250,6 +250,7 @@ export default (content: string) => {
 
   function betweenExpression() {
     const beforeWhiteSpaces = c
+    // d('OOOOO',lines[i][c])
     skipThroughWhiteSpaces()
     if (c === numberOfChars) {
       return false
@@ -441,7 +442,6 @@ export default (content: string) => {
         c++
         return findEndOfStringInLine()
       } else if (findEndOfStringInLine()) {
-        c++
         betweenExpression()
         return
         // return true
