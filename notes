@@ -481,3 +481,31 @@ so, I'll start with +
 var + var
 after I found a var, I check if there's an operator.
 better check for assignment first, += before +
+
+what about whiteSpace?
++
+a
+operator AND whiteSpace
+operator WITHOUT whiteSpace
+concat AND whiteSpace
+
+skip whiteSpaces
+if EOL, return
+check if assignment
+check if operator
+check if whiteSpace[lines[i][c - 1]]
+
+OR
+
+check if whiteSpace[lines[i][c - 1]]:
+  skip whiteSpaces
+  if operator:
+    operator
+  if assignment:
+    assignment
+  else:
+    concat
+if operator:
+if assignment:
+
+ok I'll choose the first one
