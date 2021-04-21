@@ -18,12 +18,12 @@ export default (content: string) => {
   const howManyLines = lines.length
   const everything = []
   const toFile = ''
-  let i = 0, c = 0
+  let i = 0, c = 0, numberOfChars = 0
 
   lineLoop:
   while (i < howManyLines) {
     c = 0
-    const numberOfChars = lines[i].length
+    numberOfChars = lines[i].length
 
     //skip through whiteSpaces
     while (c < numberOfChars && whiteSpaceObj[lines[i][c]]) {
@@ -126,9 +126,11 @@ export default (content: string) => {
 
         //#VARIABLE ASSIGNMENT
         if (c < numberOfChars - 1 && assignmentOperators[lines[i].slice(c,c + 2)]) {
-        // d(validName,'2 char assignment operator',char())
+          d(validName,'2 char assignment operator',char())
+          findExpression()
         } else if (c < numberOfChars - 2 && assignmentOperators[lines[i].slice(c,c + 3)]) {
-        // d(validName,'3 char assignment operator',char())
+          d(validName,'3 char assignment operator',char())
+          findExpression()
         }
 
         if (idkType === 4) {
@@ -205,9 +207,11 @@ export default (content: string) => {
 
     //#VARIABLE ASSIGNMENT
     if (c < numberOfChars - 1 && assignmentOperators[lines[i].slice(c, c + 2)]) {
-      // d('2 char assignment operator')
+      d('2 char assignment operator')
+      findExpression()
     } else if (c < numberOfChars - 2 && assignmentOperators[lines[i].slice(c, c + 3)]) {
-      // d('3 char assignment operator')
+      d('3 char assignment operator')
+      findExpression()
     } else {
       // d(validName)
       // toFile += `\n${validName}`
@@ -237,6 +241,25 @@ export default (content: string) => {
   writeSync(toFile)
   return everything
 
+  function findExpression() {
+    //skip through whiteSpaces
+    while (c < numberOfChars && whiteSpaceObj[lines[i][c]]) {
+      c++
+    }
+    //nothing left, continue
+    if (c === numberOfChars) {
+      i++
+      return
+    }
+    //stumble upon a valid variable Char
+    if (variableCharsObj[lines[i][c]]) {
+      c++
+      //skip through valid variable Chars
+      while (c < numberOfChars && variableCharsObj[lines[i][c]]) {
+        c++
+      }
+    }
+  }
   function writeSync(content: string) {
     const fs = require('fs')
     fs.writeFileSync('outputToFile.txt', content, 'utf-8')
