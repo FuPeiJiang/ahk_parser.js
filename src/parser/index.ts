@@ -461,7 +461,7 @@ export default (content: string) => {
           //end of string
           //to slice, the caret must be outside, or to the right of c
           c++
-          d('String', printString())
+          d(printString(),'String')
           // d('end', lines[i].slice(strStartPos,c + 1))
           return true
         }
