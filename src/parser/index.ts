@@ -343,7 +343,7 @@ export default (content: string) => {
     }
     function printString() {
       if (strStartLine === i) {
-        return lines[i].slice(strStartPos, c)
+        return lines[i].slice(strStartPos, c + 1)
       } else {
         let strToPrint = lines[strStartLine].slice(strStartPos)
         for (let i2 = strStartLine + 1; i2 < i; i2++) {
