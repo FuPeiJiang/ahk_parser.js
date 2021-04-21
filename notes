@@ -464,9 +464,9 @@ if % or validVarName
     else:
       Integer
 else if "
+else if ( paren for ternary or order of operations
 else if [ array literal
 else if { object literal
-else if ( paren for ternary or order of operations
 else if ; ???
 else:
   ???
@@ -521,3 +521,29 @@ comparison operators ARE operators
 assignment operators are also operators...
 
 oh, NOT, AND, OR, are reserved, they can't be variables.
+
+I'll do paren now: 
+( expression )
+
+assignment CAN be EOL, so expect multilineParenExpr
+var:=
+(
+"abc" foo   
+)
+
+THIS DOESN'T CONCAT
+var:=
+(
+"abc" foo{WHITESPACE}
+)
+(
+"abc" foo
+)
+BUT THIS DOES
+var:=
+(
+"abc" foo
+)
+(
+{WHITESPACE}"abc" foo
+)

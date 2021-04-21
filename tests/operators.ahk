@@ -6,4 +6,10 @@
 ;+342
 ; +5
   ; +3
-var:="abc"    foo
+; var:="abc"    foo
+; var:=("abc"    foo   )
+var:=("abc"    foo   ("abc"    foo   ))
+; var:=
+; (
+; "abc" foo
+; )

@@ -325,6 +325,14 @@ export default (content: string) => {
       // return true
     }
 
+    if (lines[i][c] === '(') {
+      d('( start', char())
+      c++
+      findExpression()
+      d(') end', char())
+      c++
+    }
+
   }
   function findMethodOrDecimal() {
     if (lines[i][c] === '.' && variableCharsObj[lines[i][c + 1]]) {
