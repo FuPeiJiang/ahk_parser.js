@@ -1,4 +1,4 @@
-import { CommentSemiColon, startingMultiLineComment, endingMultiLineComment, whiteSpaceObj, variableCharsObj, operatorsObj, typeOfValidVarName,whiteSpaceOverrideAssign } from './tokens'
+import { CommentSemiColon, startingMultiLineComment, endingMultiLineComment, whiteSpaceObj, variableCharsObj, operatorsObj, typeOfValidVarName, whiteSpaceOverrideAssign } from './tokens'
 // import {whiteSpaaaaaceObj} from './usage'
 const d = console.debug.bind(console)
 // d(whiteSpaaaaaceObj)
@@ -106,11 +106,11 @@ export default (content: string) => {
       if (whiteSpaceObj[lines[i][c]]) {
         if (whiteSpaceOverrideAssign[idkType]) {
           if (idkType === 1) {
-            d(validName,'whiteSpace DIRECTIVE',char())
+            d(validName, 'whiteSpace DIRECTIVE', char())
           } else if (idkType === 2) {
-            d(validName,'if statement',char())
+            d(validName, 'if statement', char())
           } else if (idkType === 3) {
-            d(validName,'global local or static',char())
+            d(validName, 'global local or static', char())
           }
           i++
           continue lineLoop
@@ -125,36 +125,36 @@ export default (content: string) => {
         }
 
         if (idkType === 4) {
-          d(validName,'whiteSpace COMMAND',char())
+          d(validName, 'whiteSpace COMMAND', char())
           i++
           continue lineLoop
         }
 
       } else {
-      //labels can't have spaces
-      // well, it's now or never to be a label: because label can't have %
-      //#LABELS
+        //labels can't have spaces
+        // well, it's now or never to be a label: because label can't have %
+        //#LABELS
         if (lines[i][c] === ':') {
           c++
 
           skipThroughWhiteSpaces()
 
           if (c === numberOfChars) {
-          // d('LABEL EOL', char())
+            // d('LABEL EOL', char())
             i++
             continue lineLoop
           }
 
           if (lines[i][c] === ';') {
-          // d('LABEL SemiColonComment', char())
-          // everything.push({type: 'SemiColonComment', line: i, colStart: c})
+            // d('LABEL SemiColonComment', char())
+            // everything.push({type: 'SemiColonComment', line: i, colStart: c})
             i++
             continue lineLoop
           }
 
           // if 2 consecutive ':' then hotkey
           if (lines[i][c] === ':') {
-          // d('HOTKEY validVarName', char())
+            // d('HOTKEY validVarName', char())
             i++
             continue lineLoop
           }
@@ -207,7 +207,7 @@ export default (content: string) => {
       if (lines[i][c] === ':') {
         c++
         if (c < numberOfChars && lines[i][c] === ':') {
-          d(lines[i].slice(nonWhiteSpaceStart,c + 1),'HOTKEY', char())
+          d(lines[i].slice(nonWhiteSpaceStart, c + 1), 'HOTKEY', char())
           // d('HOTKEY')
         }
       }
@@ -228,17 +228,16 @@ export default (content: string) => {
       return
     }
     //#VARIABLE ASSIGNMENT
-    d(lines[i].slice(c,c + 3) , lines[i].slice(c,c + 2), lines[i][c])
-    if (c < numberOfChars - 2 && operatorsObj[lines[i].slice(c,c + 3).toLowerCase()]) {
-      d(lines[i].slice(c,c + 3),'3operator',char())
+    if (c < numberOfChars - 2 && operatorsObj[lines[i].slice(c, c + 3).toLowerCase()]) {
+      d(lines[i].slice(c, c + 3), '3operator', char())
       c += 3
       return true
-    } else if (c < numberOfChars - 1 && operatorsObj[lines[i].slice(c,c + 2).toLowerCase()]) {
-      d(lines[i].slice(c,c + 2),'2operator',char())
+    } else if (c < numberOfChars - 1 && operatorsObj[lines[i].slice(c, c + 2).toLowerCase()]) {
+      d(lines[i].slice(c, c + 2), '2operator', char())
       c += 2
       return true
     } else if (c < numberOfChars && operatorsObj[lines[i][c].toLowerCase()]) {
-      d(lines[i][c],'1operator',char())
+      d(lines[i][c], '1operator', char())
       c++
       return true
     } else {
@@ -342,7 +341,7 @@ export default (content: string) => {
             //end of string
             //to slice, the caret must be outside, or to the right of c
             c++
-            d('string',printString())
+            d('string', printString())
             // d('end', lines[i].slice(strStartPos,c + 1))
             return true
           }
@@ -368,7 +367,7 @@ export default (content: string) => {
           // console.log(lines[i2])
           strToPrint += `\n${lines[i2]}`
         }
-        strToPrint += `\n${lines[i].slice(0,c)}`
+        strToPrint += `\n${lines[i].slice(0, c)}`
         return strToPrint
       }
       // d('no quote after DoubleQuotesString', `Ln ${strStartLine + 1}, Col ${strStartPos + 1} - Ln ${i + 1}, Col ${c + 1}`)
@@ -390,7 +389,7 @@ export default (content: string) => {
         i++
         continue
       } else if (lines[i][c] === '(') {
-        d('multiLineParen START',char())
+        d('multiLineParen START', char())
         //now continue until I find a line starting with ')'
         i++
         while (i < howManyLines) {
@@ -398,7 +397,7 @@ export default (content: string) => {
           numberOfChars = lines[i].length
           skipThroughWhiteSpaces()
           if (c < numberOfChars && lines[i][c] === ')') {
-            d('multiLineParen END',char())
+            d('multiLineParen END', char())
             return true
           }
           i++
@@ -421,7 +420,7 @@ export default (content: string) => {
       skipThroughWhiteSpaces()
       //maybe end of string
       if (c !== numberOfChars && lines[i][c] === ';' && whiteSpaceObj[lines[i][c - 1]]) {
-        d('comment while skipThroughEmptyLines')
+        d('comment while skipThroughEmptyLines', char())
       } else {
         return true
       }
