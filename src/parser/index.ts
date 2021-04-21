@@ -227,7 +227,7 @@ export default (content: string) => {
   function findOperators() {
     if (!skipThroughEmptyLines()) {
       //out of lines
-      return
+      return 2
     }
     //#VARIABLE ASSIGNMENT
     if (c < numberOfChars - 2 && operatorsObj[lines[i].slice(c, c + 3).toLowerCase()]) {
@@ -249,12 +249,18 @@ export default (content: string) => {
   }
 
   function betweenExpression() {
+    const beforeWhiteSpaces = c
     skipThroughWhiteSpaces()
     if (c === numberOfChars) {
       return false
     } else if (findOperators()) {
-      findExpression()
-      return true
+      return findExpression()
+    } else if (whiteSpaceObj[lines[i][c - 1]]) {
+      const concatWhiteSpaces = lines[i].slice(beforeWhiteSpaces,c)
+      d(`concat "${concatWhiteSpaces}" ${concatWhiteSpaces.length}LENGHT ${char()}`)
+      return findExpression()
+    } else {
+      return false
     }
   }
   function findExpression() {
