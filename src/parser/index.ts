@@ -381,15 +381,23 @@ export default (content: string) => {
     if (lines[i][c] === '[') {
       d('[ start', char())
       c++
-      findExpression()
-      while (lines[i][c] === ',') {
-        d(',', char())
+
+      let arrOnWhichLine: number
+      while (true) {
+        arrOnWhichLine = i
+        findExpression()
+        // skipThroughEmptyLines()
+        if (lines[i][c] !== ',') {
+          break
+        }
         c++
         if (!findExpression()) {
           d('ILLEGAL trailling ,',char())
         }
       }
-
+      if (i !== arrOnWhichLine) {
+        d('ILLEGAL ]',char())
+      }
       d('] end', char())
       c++
       return true
@@ -528,15 +536,23 @@ export default (content: string) => {
   }
   function skipThroughEmptyLines() {
     //also skip through whiteSpaces, comments
-    while (i < howManyLines) {
+    while (true) {
       skipThroughWhiteSpaces()
-      //maybe end of string
-      if (c !== numberOfChars && lines[i][c] === ';' && whiteSpaceObj[lines[i][c - 1]]) {
+      //EOL: next line
+      if (c === numberOfChars) {
+      //comment: next line
+      } else if (lines[i][c] === ';' && whiteSpaceObj[lines[i][c - 1]]) {
         d('comment while skipThroughEmptyLines', char())
       } else {
+        //anything else, return found
         return true
       }
-      i++, c = 0, numberOfChars = lines[i].length
+      i++
+      if (i < howManyLines) {
+        c = 0, numberOfChars = lines[i].length
+      } else {
+        break
+      }
     }
     return false
   }
