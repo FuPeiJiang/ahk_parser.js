@@ -18,7 +18,7 @@ export default (content: string) => {
   const howManyLines = lines.length
   const everything = []
   const toFile = ''
-  let i = 0, c = 0, numberOfChars = 0, validName = '',strStartLine: number,strStartPos: number, insideStringContinuation = false
+  let i = 0, c = 0, numberOfChars = 0, validName = '',strStartLine: number,strStartPos: number, insideContinuation = false
 
   lineLoop:
   while (i < howManyLines) {
@@ -355,10 +355,15 @@ export default (content: string) => {
         c++
         return true
       } else {
-        if (insideStringContinuation) {
+        if (insideContinuation) {
           endStringContinuation()
         } else {
-          startStringContinuation()
+          if (startContinuation()) {
+            insideContinuation = true
+            d('stringContinuation START', char())
+            endStringContinuation()
+            return true
+          }
         }
         return true
       }
@@ -402,7 +407,7 @@ export default (content: string) => {
       }
     }
   }
-  function startStringContinuation() {
+  function startContinuation() {
     i++
     while (i < howManyLines) {
       c = 0
@@ -417,9 +422,6 @@ export default (content: string) => {
         i++
         continue
       } else if (lines[i][c] === '(') {
-        insideStringContinuation = true
-        d('stringContinuation START', char())
-        endStringContinuation()
         return true
       } else {
         d(`illegal ${lines[i][c]} c:${c} numberOfChars:${numberOfChars}`)
@@ -437,7 +439,7 @@ export default (content: string) => {
       c = 0, numberOfChars = lines[i].length
       skipThroughWhiteSpaces()
       if (c < numberOfChars && lines[i][c] === ')') {
-        insideStringContinuation = false
+        insideContinuation = false
         d('stringContinuation END', char())
         c++
         return findEndOfStringInLine()
