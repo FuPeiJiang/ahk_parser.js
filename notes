@@ -467,3 +467,6 @@ oh no, it can be an array accessor.
 var[2]
 
 valid is a subgroup of % or valid
+
+nonoononononono
+var:= CmdLine := ( A_IsCompiled ? "" : """" A_AhkPath """" )
