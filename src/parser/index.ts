@@ -25,10 +25,7 @@ export default (content: string) => {
     c = 0
     numberOfChars = lines[i].length
 
-    //skip through whiteSpaces
-    while (c < numberOfChars && whiteSpaceObj[lines[i][c]]) {
-      c++
-    }
+    skipThroughWhiteSpaces()
 
     //#multiline comments
     //if line starts with /*
@@ -119,10 +116,7 @@ export default (content: string) => {
           continue lineLoop
         }
 
-        //skip through whiteSpaces
-        while (c < numberOfChars && whiteSpaceObj[lines[i][c]]) {
-          c++
-        }
+        skipThroughWhiteSpaces()
 
         if (findAssignmentOperators()) {
           i++
@@ -141,10 +135,8 @@ export default (content: string) => {
       //#LABELS
         if (lines[i][c] === ':') {
           c++
-          //skip through whiteSpaces
-          while (c < numberOfChars && whiteSpaceObj[lines[i][c]]) {
-            c++
-          }
+
+          skipThroughWhiteSpaces()
 
           if (c === numberOfChars) {
           // d('LABEL EOL', char())
@@ -199,10 +191,7 @@ export default (content: string) => {
       }
     }
 
-    //skip through whiteSpaces
-    while (c < numberOfChars && whiteSpaceObj[lines[i][c]]) {
-      c++
-    }
+    skipThroughWhiteSpaces()
 
     findAssignmentOperators()
 
@@ -256,10 +245,7 @@ export default (content: string) => {
   }
 
   function findExpression() {
-    //skip through whiteSpaces
-    while (c < numberOfChars && whiteSpaceObj[lines[i][c]]) {
-      c++
-    }
+    skipThroughWhiteSpaces()
     //nothing left, continue
     if (c === numberOfChars) {
       return false
@@ -341,20 +327,21 @@ export default (content: string) => {
           }
           // comment and expectMultiline
         } else if (lines[i][c] === ';' && whiteSpaceObj[lines[i][c - 1]]) {
-          
+          d('comment and expectMultiline')
+          expectMultilineParen()
+          return true
         } else {
           c++
         }
       }
       // EOL, so expectMultiline
 
+      expectMultilineParen()
 
       /* outer2:
       while (i < howManyLines) {
         numberOfChars = lines[i].length
-        while (c < numberOfChars && whiteSpaceObj[lines[i][c]]) {
-          c++
-        }
+        skipThroughWhiteSpaces()
         if (c === numberOfChars) {
           i++
           continue outer2
@@ -410,7 +397,16 @@ export default (content: string) => {
     }
   }
   function expectMultilineParen() {
-
+    i++
+    while (i < howManyLines) {
+      numberOfChars = lines[i].length
+      skipThroughWhiteSpaces()
+    }
+  }
+  function skipThroughWhiteSpaces() {
+    while (c < numberOfChars && whiteSpaceObj[lines[i][c]]) {
+      c++
+    }
   }
   function writeSync(content: string) {
     const fs = require('fs')
