@@ -262,7 +262,6 @@ export default (content: string) => {
     }
     //nothing left, continue
     if (c === numberOfChars) {
-      i++
       return false
     }
     const nonWhiteSpaceStart = c
