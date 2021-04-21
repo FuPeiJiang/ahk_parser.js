@@ -437,8 +437,10 @@ if one validVarName:
   else:
     var
 
+//#unit
 skip whiteSpaces
-if EOL
+if EOL OR ;
+  Continuation stuff
 if % or validVarName
   skip until not validVarName
   EOL:
@@ -467,7 +469,6 @@ else if "
 else if ( paren for ternary or order of operations
 else if [ array literal
 else if { object literal
-else if ; ???
 else:
   ???
 
