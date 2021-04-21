@@ -311,9 +311,12 @@ export default (content: string) => {
       strStartPos = c, strStartLine = i
       c++
 
-      while (c < numberOfChars) {
+      while (true) {
         //maybe end of string
-        if (lines[i][c] === '"') {
+        if (c === numberOfChars) {
+          expectMultilineParen()
+          c++
+        } else if (lines[i][c] === '"') {
           // "" is escapechar
           // d(lines[i][c + 1])
           if (c < numberOfChars - 1 && lines[i][c + 1] === '"') {
@@ -329,14 +332,14 @@ export default (content: string) => {
         } else if (lines[i][c] === ';' && whiteSpaceObj[lines[i][c - 1]]) {
           d('comment and expectMultiline')
           expectMultilineParen()
-          return true
+          c++
+          // return true
         } else {
           c++
         }
       }
       // EOL, so expectMultiline
 
-      expectMultilineParen()
 
       /* outer2:
       while (i < howManyLines) {
@@ -376,7 +379,7 @@ export default (content: string) => {
         numberOfChars = lines[i].length
         i++
       } */
-      return true
+      // return true
     } else {
       return false
     }

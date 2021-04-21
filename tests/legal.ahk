@@ -1,32 +1,32 @@
 
-first:=""
-lol:=""""
+; first:=""
+; lol:=""""
 
-ok:="
-(
- hello
-)"
+; ok:="
+; (
+;  hello
+; )"
 
 ; "(" + (hello)
-ok:="(
-(
- hello
-)"
+; ok:="(
+; (
+;  hello
+; )"
 
-ok:="(;a
-(
- hello
-)"
-
-ok:="( ;a
-(
- hello
-)"
-
-ok:="( `;a
-(
- hello
-)"
+; ok:="(;a
+; (
+;  hello
+; )"
+; 
+; ok:="( ;a
+; (
+;  hello
+; )"
+; 
+; ok:="( `;a
+; (
+;  hello
+; )"
 
 ;after one multilineParen, there may be another one..
 ;continue advancing c as usual until encounter "
