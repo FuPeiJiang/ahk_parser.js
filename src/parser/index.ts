@@ -325,7 +325,8 @@ export default (content: string) => {
           } else {
             //end of string
             //to slice, the caret must be outside, or to the right of c
-            d('end', lines[i].slice(strStartPos,c + 1))
+            d('end',printString())
+            // d('end', lines[i].slice(strStartPos,c + 1))
             return true
           }
           // comment and expectMultiline
@@ -387,12 +388,12 @@ export default (content: string) => {
       if (strStartLine === i) {
         return lines[i].slice(strStartPos, c)
       } else {
-        d(454)
         let strToPrint = lines[strStartLine].slice(strStartPos)
-        for (let i = strStartLine + 1; i < c; i++) {
-          console.log(i)
+        for (let i2 = strStartLine + 1; i2 < i; i2++) {
+          // console.log(lines[i2])
+          strToPrint += `\n${lines[i2]}`
         }
-        strToPrint += `\n${lines[strStartLine].slice(0,c)}`
+        strToPrint += `\n${lines[i].slice(0,c + 1)}`
         return strToPrint
       }
       // d('no quote after DoubleQuotesString', `Ln ${strStartLine + 1}, Col ${strStartPos + 1} - Ln ${i + 1}, Col ${c + 1}`)
