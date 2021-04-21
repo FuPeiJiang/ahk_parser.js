@@ -43,5 +43,5 @@
 ; (
 ; "abc"  ;comment
 ; ) Var
-; var:= CmdLine := ( A_IsCompiled ? "" : """" A_AhkPath """" )
-var:= ""   "" """" ""
+var:= CmdLine := ( A_IsCompiled ? "" : """" A_AhkPath """" )
+; var:= ""   "" """" ""
