@@ -324,7 +324,7 @@ export default (content: string) => {
           } else {
             //end of string
             //to slice, the caret must be outside, or to the right of c
-            d('end',printString())
+            d('string',printString())
             // d('end', lines[i].slice(strStartPos,c + 1))
             return true
           }
