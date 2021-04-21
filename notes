@@ -581,3 +581,9 @@ LEGAL
 var1:=[1,"2"]
 ILLEGAL
 var1:=[1,"2",]
+
+findPercentVar()
+
+if (validVar)
+
+try to be linear as possible..

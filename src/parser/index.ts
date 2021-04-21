@@ -19,7 +19,7 @@ export default (content: string) => {
   const everything = []
   const toFile = ''
 
-  let i = 0, c = 0, numberOfChars = 0, validName = '',strStartLine: number,strStartPos: number, insideContinuation = false,beforeConcat: number
+  let i = 0, c = 0, numberOfChars = 0, validName = '',strStartLine: number,strStartPos: number, insideContinuation = false,beforeConcat: number,nonWhiteSpaceStart: number
 
   lineLoop:
   while (i < howManyLines) {
@@ -63,8 +63,6 @@ export default (content: string) => {
       continue lineLoop
     }
 
-    const nonWhiteSpaceStart = c
-
     //#semicolon comments
     if (lines[i][c] === ';') {
       // d('SemiColonComment', `${c}-END`, l())
@@ -73,15 +71,12 @@ export default (content: string) => {
       continue lineLoop
     }
 
+    nonWhiteSpaceStart = c
     //stumble upon a valid variable Char
     if (variableCharsObj[lines[i][c]]) {
-      const startPosFuncName = c
       c++
 
-      //skip through valid variable Chars
-      while (c < numberOfChars && variableCharsObj[lines[i][c]]) {
-        c++
-      }
+      skipValidChar()
 
       // if EOL, it must be COMMAND
       if (c === numberOfChars) {
@@ -91,7 +86,7 @@ export default (content: string) => {
         continue lineLoop
       }
 
-      validName = lines[i].slice(startPosFuncName, c)
+      validName = lines[i].slice(nonWhiteSpaceStart, c)
       const idkType = typeOfValidVarName[validName.toLowerCase()]
       // comma can't be assignment, so I can skip assignment
       // if it has a comma, it could be a hotkey, it's only NOT a hotkey if it's a valid COMMAND
@@ -174,38 +169,45 @@ export default (content: string) => {
 
     //%which_something%_var:=2 is valid
     //skip through % OR valid variable Chars
-    while (c < numberOfChars && lines[i][c] === '%' || variableCharsObj[lines[i][c]]) {
+    while (c < numberOfChars && findPercentVar() || variableCharsObj[lines[i][c]]) {
       c++
     }
-
-    //#FUNCTION
-    if (lines[i][c] === '(') {
-      const validName = lines[i].slice(nonWhiteSpaceStart, c)
-      // d('is not a number, valid func name')
-      if (isNaN(Number(validName))) {
-        // d('FUNCTION CALL OR DEFINITION', char())
-        // everything.push({type: 'function', line: i, colStart:startPosFuncName, colEnd:c, name:lines[i].slice(startPosFuncName,c)})
-      }
-
-      //#METHOD OR PROPERTY
-      // this is NOT a METHOD call:
-      // str.=v[key] "+" k "|"
-      // so check if the next character is a valid Var
-    } else if (lines[i][c] === '.' && variableCharsObj[lines[i][c + 1]]) {
-      const validName = lines[i].slice(nonWhiteSpaceStart, c)
-      if (isNaN(Number(validName))) {
-        // d('METHOD OR PROPERTY', char())
-      }
-    }
-
-    if (!skipThroughEmptyLines()) {
-      //out of lines
+    if (c === numberOfChars) {
+      d('unexpected EOL after var parsing')
       continue lineLoop
     }
+    validName = lines[i].slice(nonWhiteSpaceStart, c)
 
-    if (findOperators()) {
-      d(`${validName} assignment`)
-      findExpression()
+    if (validName) {
+      //#FUNCTION
+      if (lines[i][c] === '(') {
+        const validName = lines[i].slice(nonWhiteSpaceStart, c)
+        // d('is not a number, valid func name')
+        if (isNaN(Number(validName))) {
+          // d('FUNCTION CALL OR DEFINITION', char())
+          // everything.push({type: 'function', line: i, colStart:nonWhiteSpaceStart, colEnd:c, name:lines[i].slice(nonWhiteSpaceStart,c)})
+        }
+
+        //#METHOD OR PROPERTY
+        // this is NOT a METHOD call:
+        // str.=v[key] "+" k "|"
+        // so check if the next character is a valid Var
+      } else if (lines[i][c] === '.' && variableCharsObj[lines[i][c + 1]]) {
+        const validName = lines[i].slice(nonWhiteSpaceStart, c)
+        if (isNaN(Number(validName))) {
+          // d('METHOD OR PROPERTY', char())
+        }
+      }
+
+      if (!skipThroughEmptyLines()) {
+        //out of lines
+        continue lineLoop
+      }
+
+      if (findOperators()) {
+        d(`${validName} assignment`)
+        findExpression()
+      }
     }
 
     //#HOTKEYS
@@ -243,6 +245,7 @@ export default (content: string) => {
       c += 2
       return true
     } else if (c < numberOfChars && operatorsObj[lines[i][c].toLowerCase()]) {
+      console.trace()
       d(lines[i][c], '1operator', char())
       c++
       return true
@@ -316,10 +319,9 @@ export default (content: string) => {
     //stumble upon a valid variable Char
     if (lines[i][c] === '%' || variableCharsObj[lines[i][c]]) {
       c++
-      //skip through valid variable Chars
-      while (c < numberOfChars && variableCharsObj[lines[i][c]]) {
-        c++
-      }
+
+      skipValidChar()
+
       validName = lines[i].slice(nonWhiteSpaceStart, c)
       if (c === numberOfChars) {
         if (isNaN(Number(validName))) {
@@ -559,6 +561,29 @@ export default (content: string) => {
   }
   function skipThroughWhiteSpaces() {
     while (c < numberOfChars && whiteSpaceObj[lines[i][c]]) {
+      c++
+    }
+  }
+  function findPercentVar() {
+    const percentVarStart = c
+    if (c < numberOfChars && lines[i][c] === '%') {
+      c++
+      skipValidChar()
+      d(lines[i][c])
+      if (c < numberOfChars && lines[i][c] === '%') {
+        d(`${lines[i].slice(percentVarStart,c)} %VAR% ${char()}`)
+        return true
+      } else {
+        d(lines[i].slice(nonWhiteSpaceStart, c),'ILLEGAL %VAR%',char())
+        return false
+      }
+    } else {
+      return false
+    }
+  }
+  function skipValidChar() {
+    //skip through valid variable Chars
+    while (c < numberOfChars && variableCharsObj[lines[i][c]]) {
       c++
     }
   }
