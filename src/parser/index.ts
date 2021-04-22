@@ -742,7 +742,7 @@ export default (content: string) => {
       strStartPos = c, strStartLine = i
       c++
       //noClosing " found on the same line
-      if (!findEndOfStringInLine()) {
+      if (!findClosingQuoteInLine()) {
         //continuation wasn't resolved
         if (!recurseContinuation()) {
           //script is broken at this point but we still try to continue
@@ -758,38 +758,30 @@ export default (content: string) => {
     }
 
   }
-  function findEndOfStringInLine() {
-    while (true) {
-      //maybe end of string
-      if (c === numberOfChars) {
-        // stringContinuation()
-        return false
-        c++
-      } else if (lines[i][c] === '"') {
-        // "" is escapechar
-        // d(lines[i][c + 1])
+  //true if found closing ", false if EOL, false if found comment
+  function findClosingQuoteInLine() {
+    while (c < numberOfChars) {
+      if (lines[i][c] === '"') {
+        // if 2 consecutive: "", it's escapechar, so continue findClosingQuote
         if (c < numberOfChars - 1 && lines[i][c + 1] === '"') {
           c += 2
           continue
         } else {
-          //end of string
-          //to slice, the caret must be outside, or to the right of c
+          //this IS closing quote because not escapechar
           c++
           d(printString(), 'String')
-          // d('end', lines[i].slice(strStartPos,c + 1))
           return true
         }
-        // comment and expectMultiline
+        // semiColonComment must be preceded by whiteSpace
       } else if (lines[i][c] === ';' && whiteSpaceObj[lines[i][c - 1]]) {
-        d('comment when string', char())
-        // d('comment and expectMultiline')
+        d('semiColonComment when findClosingQuote', char())
         return false
-        // c++
-        // return true
-      } else {
-        c++
       }
+      //anything else found, next char
+      c++
     }
+    //out of chars
+    return false
   }
   function recurseContinuation(): boolean {
     if (startContinuation()) {
@@ -855,9 +847,9 @@ export default (content: string) => {
         insideContinuation = false
         d('stringContinuation END', char())
         c++
-        return findEndOfStringInLine()
+        return findClosingQuoteInLine()
         // first char isn't )
-      } else if (findEndOfStringInLine()) {
+      } else if (findClosingQuoteInLine()) {
         betweenExpression()
         return false
         // return true
