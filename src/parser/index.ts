@@ -187,21 +187,19 @@ export default (content: string) => {
           let validName = lines[i].slice(nonWhiteSpaceStart, c)
           // d('is not a number, valid func name')
           if (isNaN(Number(validName))) {
+            //#FUNCTION DEFINITION
             if (isFunctionDefinition()) {
               d(validName,'Function DEFINITION', char())
               c++
               while (true) {
                 skipThroughWhiteSpaces()
                 nonWhiteSpaceStart = c
-                // ch()
 
                 if (c === numberOfChars) {
                   d('illegal function DEFINITION: need something after (',char())
                   i++
                   continue lineLoop
                 }
-
-                // || !variableCharsObj[lines[i][c]]) {
 
                 c++
                 skipValidChar()
@@ -258,6 +256,7 @@ export default (content: string) => {
                   break
                 }
               }
+
               if (i !== exprFoundLine) {
                 d('ILLEGAL )END Function startOfLine', char())
               }
@@ -287,12 +286,15 @@ export default (content: string) => {
               i++
             }
             continue lineLoop
+          } else {
+            d('can\'t have number on startOfLine')
           }
         }
 
         //out of lines
         if (!skipThroughEmptyLines()) {break lineLoop }
 
+        //#ASSIGNMENT
         if (findOperators()) {
           d(`${validName} assignment`)
           findExpression()
@@ -302,6 +304,9 @@ export default (content: string) => {
           continue lineLoop
         }
       }
+
+      //startOfLineLoop: label END
+      //straight down or smaller loop
       if (usingStartOfLineLoop) {
         usingStartOfLineLoop = false
         continue lineLoop
@@ -320,14 +325,14 @@ export default (content: string) => {
         c++
         if (c < numberOfChars && lines[i][c] === ':') {
           d(lines[i].slice(nonWhiteSpaceStart, c + 1), 'HOTKEY', char())
-          // d('HOTKEY')
         }
       }
       c++
     }
 
+    //end of lineLoop
     i++
-
+    continue lineLoop
   }
   // d(everything)
   // toFile = toFile.slice(1)
@@ -337,20 +342,25 @@ export default (content: string) => {
   function isFunctionDefinition() {
     const iBak = i, cBak = c, numberOfCharsBak = numberOfChars
     let toReturn: boolean|number = false
+    //after next ')'
     if (skipThroughFindChar(')')) {
       c++
       if (skipThroughEmptyLines()) {
+        //is the next char '{' ?
         if (lines[i][c] === '{') {
           toReturn = true
         }
       }
     } else {
-      d('( with no closing ) isFunctionDefinition',char())
+      //haven't found closing )
+      d('haven\'t found closing ) isFunctionDefinition',char())
       toReturn = 2
     }
     i = iBak,c = cBak,numberOfChars = numberOfCharsBak
+    //default return false
     return toReturn
   }
+  //true if found, false if not found
   function findOperators() {
     //#VARIABLE ASSIGNMENT
     if (c < numberOfChars - 2 && operatorsObj[lines[i].slice(c, c + 3).toLowerCase()]) {
@@ -362,21 +372,28 @@ export default (content: string) => {
       c += 2
       return true
     } else if (c < numberOfChars && operatorsObj[lines[i][c].toLowerCase()]) {
+      //if ?, ternary, so expect :
       if (lines[i][c] === '?') {
         d('? ternary',char())
         colonDeep++, c++
         findExpression()
+        //where findExpression stopped at
         if (lines[i][c] === ':') {
           d(': ternary',char())
           colonDeep--,c++
           return true
         } else {
-          d('why is there no : after ? ternary',char())
+          //error
+          d('ERROR: why is there no : after ? ternary',char())
+          //pretend it was legal
           colonDeep--,c++
+          //I don't know what returning false does
           return false
         }
       } else if (lines[i][c] === ':') {
+        //'?' will make colonDeep true
         if (!colonDeep) {
+          //if encounter ':' in the wild BEFORE '?'
           d('unexpected :',char())
         }
         return false
@@ -390,10 +407,11 @@ export default (content: string) => {
 
   }
 
+  //true if found a between AND an expression
+  //really hard to understand
   function betweenExpression() {
     exprFoundLine = i
     beforeConcat = c
-    // d('OOOOO',lines[i][c])
     if (insideContinuation) {
       skipThroughWhiteSpaces()
       if (c !== numberOfChars && lines[i][c] === ';') {
@@ -850,6 +868,7 @@ export default (content: string) => {
       }
     }
   }
+  //true if found charToFind, false if outOfLines
   function skipThroughFindChar(charToFind: string) {
     //also skip through whiteSpaces, comments
     outer:
@@ -876,6 +895,7 @@ export default (content: string) => {
       }
     }
   }
+  //true if found anything !whiteSpace, false if outOfLines
   function skipThroughEmptyLines() {
     //also skip through whiteSpaces, comments
     while (i < howManyLines) {
