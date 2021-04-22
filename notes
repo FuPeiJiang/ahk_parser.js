@@ -658,3 +658,8 @@ I need to c++ after : , but still some concat
 fixed concat, which is printed after because it needs to know if what's after is Expr
 
 keep track of should there be a colon using colonDeep++ when obj or '?'
+
+now how to check if obj key is single var or more? not now, it's not my buisness
+keep track of an array?, always add to the newest and remove when done?
+
+no, let's do functions
