@@ -71,6 +71,14 @@ export default (content: string) => {
       continue lineLoop
     }
 
+    //#function DECLARATION END
+    if (lines[i][c] === '}') {
+      d(`} Function DEFINITION ${char()}`)
+      i++
+      continue lineLoop
+    }
+
+
     nonWhiteSpaceStart = c
     //stumble upon a valid variable Char
     if (variableCharsObj[lines[i][c]]) {
@@ -217,7 +225,7 @@ export default (content: string) => {
                 }
                 c++
                 skipThroughEmptyLines()
-                d(`{ Function startOfLine${char()}`)
+                d(`{ Function DEFINITION ${char()}`)
                 i++
                 continue lineLoop
               }
