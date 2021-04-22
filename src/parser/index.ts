@@ -458,6 +458,8 @@ export default (content: string) => {
       }
 
       if (findMethodOrDecimal()) {
+        c++
+        findMethodOrProperty()
         return true
       }
 
