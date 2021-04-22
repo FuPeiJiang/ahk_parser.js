@@ -688,3 +688,17 @@ if isFunctionDefinition() {
 } else {
  enter function call 
 }
+
+I don't want lineLoop to do c=0
+I need lineLoop to be a function because I
+want to know when it ends. to wrap } ?
+{ lineLoop 
+}
+
+I could just look for starting } in lineLoop
+oh, what about func in func ?
+Functions cannot contain functions,
+the program will exit
+
+lineLoop, which does c=0
+and startOfLine loop, which does nothing
