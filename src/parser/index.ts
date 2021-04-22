@@ -1,4 +1,4 @@
-import { CommentSemiColon, startingMultiLineComment, endingMultiLineComment, whiteSpaceObj, variableCharsObj, operatorsObj, typeOfValidVarName, whiteSpaceOverrideAssign } from './tokens'
+import { CommentSemiColon, startingMultiLineComment, endingMultiLineComment, whiteSpaceObj, variableCharsObj, operatorsObj, typeOfValidVarName, whiteSpaceOverrideAssign, propCharsObj } from './tokens'
 // import {whiteSpaaaaaceObj} from './usage'
 const d = console.debug.bind(console)
 // d(whiteSpaaaaaceObj)
@@ -296,7 +296,12 @@ export default (content: string) => {
         if (findOperators()) {
           d(`${validName} assignment`)
           findExpression()
+          c++
+          // if (findExpression()) {
           findCommentsAndEndLine()
+          // } else {
+          // }
+          // i++
           continue lineLoop
         }
       }
@@ -401,7 +406,11 @@ export default (content: string) => {
         }
       }
     } else {
-      skipThroughEmptyLines()
+      // if (c < numberOfChars && !whiteSpaceObj[lines[i][c]]) {
+      // d('illegal nonWhiteSpace at betweenExpression',char())
+      // i++;return false
+      // }
+      if (!skipThroughEmptyLines()) {return false}
     }
 
     if (!findBetween()) {
@@ -436,10 +445,12 @@ export default (content: string) => {
   }
   function findMethodOrProperty() {
     //stumble upon a valid variable Char
-    if (variableCharsObj[lines[i][c]]) {
+    if (propCharsObj[lines[i][c]]) {
       c++
 
-      skipValidChar()
+      while (c < numberOfChars && propCharsObj[lines[i][c]]) {
+        c++
+      }
 
       validName = lines[i].slice(nonWhiteSpaceStart, c)
       if (c === numberOfChars) {
@@ -542,6 +553,7 @@ export default (content: string) => {
       if (findMethodOrDecimal()) {
         c++
         findMethodOrProperty()
+        betweenExpression()
         return true
       }
 
@@ -860,7 +872,7 @@ export default (content: string) => {
       i++;return true
     }
     if (c < numberOfChars && !whiteSpaceObj[lines[i][c]]) {
-      d('illegal nonWhiteSpace at findCommentsAndEndLine')
+      d('illegal nonWhiteSpace at findCommentsAndEndLine',char())
       i++;return false
     }
     while (c < numberOfChars) {

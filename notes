@@ -715,3 +715,6 @@ skipThroughEmptyLines skip ; at start of line c === 0 || whiteSpaceObj[lines[i][
 1 AND (2 OR 3) instead of (1 AND 2) OR 3
 
 lets start methods
+
+https://www.autohotkey.com/docs/Concepts.htm#names
+# @ $
