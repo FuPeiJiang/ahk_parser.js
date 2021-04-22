@@ -19,7 +19,7 @@ export default (content: string) => {
   const everything = []
   const toFile = ''
 
-  let i = 0, c = 0, numberOfChars = 0, validName = '', strStartLine: number, strStartPos: number, insideContinuation = false, beforeConcat: number, nonWhiteSpaceStart: number, exprFoundLine = -1,colonDeep = 0
+  let i = 0, c = 0, numberOfChars = 0, validName = '', strStartLine: number, strStartPos: number, insideContinuation = false, beforeConcat: number, nonWhiteSpaceStart: number, exprFoundLine = -1,colonDeep = 0,usingStartOfLineLoop = false
 
   lineLoop:
   while (i < howManyLines) {
@@ -53,218 +53,232 @@ export default (content: string) => {
         }
       }
     }
-    //out of lines
-    if (i === howManyLines) {
-      break lineLoop
-    }
-    //nothing left, continue
-    if (c === numberOfChars) {
-      i++
-      continue lineLoop
-    }
 
-    //#semicolon comments
-    if (lines[i][c] === ';') {
-      // d('SemiColonComment', `${c}-END`, l())
-      // everything.push({type: 'SemiColonComment', line: i, colStart: c})
-      i++
-      continue lineLoop
-    }
-
-    //#function DECLARATION END
-    if (lines[i][c] === '}') {
-      d(`} Function DEFINITION ${char()}`)
-      i++
-      continue lineLoop
-    }
+    startOfLineLoop:
+    while (true) {
 
 
-    nonWhiteSpaceStart = c
-    //stumble upon a valid variable Char
-    if (variableCharsObj[lines[i][c]]) {
-      c++
-
-      skipValidChar()
-
-      // if EOL, it must be COMMAND
+      //out of lines
+      if (i === howManyLines) {
+        break lineLoop
+      }
+      //nothing left, continue
       if (c === numberOfChars) {
-
-        // d('COMMAND EOL', char())
         i++
         continue lineLoop
       }
 
-      validName = lines[i].slice(nonWhiteSpaceStart, c)
-      const idkType = typeOfValidVarName[validName.toLowerCase()]
-      // comma can't be assignment, so I can skip assignment
-      // if it has a comma, it could be a hotkey, it's only NOT a hotkey if it's a valid COMMAND
-      if (lines[i][c] === ',') {
-        // directive or command
-        if (idkType === 1 || idkType === 4) {
-          d(validName, 'DIRECTIVE OR COMMAND comma', char())
-          i++
-          continue lineLoop
-        }
+      //#semicolon comments
+      if (lines[i][c] === ';') {
+      // d('SemiColonComment', `${c}-END`, l())
+      // everything.push({type: 'SemiColonComment', line: i, colStart: c})
+        i++
+        continue lineLoop
       }
 
-      // only directives and "if" override assignment and ONLY when there's a whiteSpace
-      if (whiteSpaceObj[lines[i][c]]) {
-        if (whiteSpaceOverrideAssign[idkType]) {
-          if (idkType === 1) {
-            d(validName, 'whiteSpace DIRECTIVE', char())
-          } else if (idkType === 2) {
-            d(validName, 'if statement', char())
-          } else if (idkType === 3) {
-            d(validName, 'global local or static', char())
+      //#function DECLARATION END
+      if (lines[i][c] === '}') {
+        d(`} Function DEFINITION ${char()}`)
+        i++
+        continue lineLoop
+      }
+
+
+      nonWhiteSpaceStart = c
+      //stumble upon a valid variable Char
+      if (variableCharsObj[lines[i][c]]) {
+        c++
+
+        skipValidChar()
+
+        // if EOL, it must be COMMAND
+        if (c === numberOfChars) {
+
+          // d('COMMAND EOL', char())
+          i++
+          continue lineLoop
+        }
+
+        validName = lines[i].slice(nonWhiteSpaceStart, c)
+        const idkType = typeOfValidVarName[validName.toLowerCase()]
+        // comma can't be assignment, so I can skip assignment
+        // if it has a comma, it could be a hotkey, it's only NOT a hotkey if it's a valid COMMAND
+        if (lines[i][c] === ',') {
+        // directive or command
+          if (idkType === 1 || idkType === 4) {
+            d(validName, 'DIRECTIVE OR COMMAND comma', char())
+            i++
+            continue lineLoop
           }
-          i++
-          continue lineLoop
         }
 
-        if (!skipThroughEmptyLines()) {
+        // only directives and "if" override assignment and ONLY when there's a whiteSpace
+        if (whiteSpaceObj[lines[i][c]]) {
+          if (whiteSpaceOverrideAssign[idkType]) {
+            if (idkType === 1) {
+              d(validName, 'whiteSpace DIRECTIVE', char())
+            } else if (idkType === 2) {
+              d(validName, 'if statement', char())
+            } else if (idkType === 3) {
+              d(validName, 'global local or static', char())
+            }
+            i++
+            continue lineLoop
+          }
+
+          if (!skipThroughEmptyLines()) {
           //out of lines
-          continue lineLoop
-        }
+            continue lineLoop
+          }
 
-        if (findOperators()) {
-          d(`${validName} assignment whiteSpace`)
-          findExpression()
-          i++
-          continue lineLoop
-        }
+          if (findOperators()) {
+            d(`${validName} assignment whiteSpace`)
+            findExpression()
+            i++
+            continue lineLoop
+          }
 
-        if (idkType === 4) {
-          d(validName, 'whiteSpace COMMAND', char())
-          i++
-          continue lineLoop
-        }
+          if (idkType === 4) {
+            d(validName, 'whiteSpace COMMAND', char())
+            i++
+            continue lineLoop
+          }
 
-      } else {
+        } else {
         //labels can't have spaces
         // well, it's now or never to be a label: because label can't have %
         //#LABELS
-        if (lines[i][c] === ':') {
-          c++
+          if (lines[i][c] === ':') {
+            c++
 
-          skipThroughWhiteSpaces()
+            skipThroughWhiteSpaces()
 
-          if (c === numberOfChars) {
+            if (c === numberOfChars) {
             // d('LABEL EOL', char())
-            i++
-            continue lineLoop
-          }
+              i++
+              continue lineLoop
+            }
 
-          if (lines[i][c] === ';') {
+            if (lines[i][c] === ';') {
             // d('LABEL SemiColonComment', char())
             // everything.push({type: 'SemiColonComment', line: i, colStart: c})
-            i++
-            continue lineLoop
-          }
+              i++
+              continue lineLoop
+            }
 
-          // if 2 consecutive ':' then hotkey
-          if (lines[i][c] === ':') {
+            // if 2 consecutive ':' then hotkey
+            if (lines[i][c] === ':') {
             // d('HOTKEY validVarName', char())
-            i++
-            continue lineLoop
+              i++
+              continue lineLoop
+            }
+
+            c--
+
           }
-
-          c--
-
         }
+
       }
 
-    }
+      //%which_something%_var:=2 is valid
+      //skip through % OR valid variable Chars
+      while (c < numberOfChars && findPercentVar() || variableCharsObj[lines[i][c]]) {
+        c++
+      }
+      if (c === numberOfChars) {
+        d('unexpected EOL after var parsing')
+        continue lineLoop
+      }
+      validName = lines[i].slice(nonWhiteSpaceStart, c)
 
-    //%which_something%_var:=2 is valid
-    //skip through % OR valid variable Chars
-    while (c < numberOfChars && findPercentVar() || variableCharsObj[lines[i][c]]) {
-      c++
-    }
-    if (c === numberOfChars) {
-      d('unexpected EOL after var parsing')
-      continue lineLoop
-    }
-    validName = lines[i].slice(nonWhiteSpaceStart, c)
-
-    if (validName) {
+      if (validName) {
       //#FUNCTION
-      if (lines[i][c] === '(') {
-        let validName = lines[i].slice(nonWhiteSpaceStart, c)
-        // d('is not a number, valid func name')
-        if (isNaN(Number(validName))) {
-          if (isFunctionDefinition()) {
-            d(validName,'Function DEFINITION', char())
-            c++
-            while (true) {
-              skipThroughWhiteSpaces()
-              nonWhiteSpaceStart = c
-              // ch()
-
-              if (c === numberOfChars || !variableCharsObj[lines[i][c]]) {
-                break
-              }
+        if (lines[i][c] === '(') {
+          let validName = lines[i].slice(nonWhiteSpaceStart, c)
+          // d('is not a number, valid func name')
+          if (isNaN(Number(validName))) {
+            if (isFunctionDefinition()) {
+              d(validName,'Function DEFINITION', char())
               c++
-              skipValidChar()
+              while (true) {
+                skipThroughWhiteSpaces()
+                nonWhiteSpaceStart = c
+                // ch()
 
-              validName = lines[i].slice(nonWhiteSpaceStart,c)
-              if (validName.toLowerCase() === 'byref') {
-                skipThroughWhiteSpaces(), nonWhiteSpaceStart = c
-                if (c === numberOfChars || !variableCharsObj[lines[i][c]]) { break }
-                c++, skipValidChar(), validName = lines[i].slice(nonWhiteSpaceStart,c)
-                d(validName,'Byref Param',char())
-              } else {
-                d(validName,'Param',char())
-              }
-              skipThroughEmptyLines()
-              findBetween()
-              if (lines[i][c] !== ',') {
-                if (lines[i][c] === ')') {
-                  d(') function DEFINITION',char())
-                } else {
-                  d('illegal function DEFINITION END',char())
+                if (c === numberOfChars || !variableCharsObj[lines[i][c]]) {
+                  break
                 }
                 c++
+                skipValidChar()
+
+                validName = lines[i].slice(nonWhiteSpaceStart,c)
+                if (validName.toLowerCase() === 'byref') {
+                  skipThroughWhiteSpaces(), nonWhiteSpaceStart = c
+                  if (c === numberOfChars || !variableCharsObj[lines[i][c]]) { break }
+                  c++, skipValidChar(), validName = lines[i].slice(nonWhiteSpaceStart,c)
+                  d(validName,'Byref Param',char())
+                } else {
+                  d(validName,'Param',char())
+                }
                 skipThroughEmptyLines()
-                d(`{ Function DEFINITION ${char()}`)
-                i++
-                continue lineLoop
-              }
-              d(', Function DEFINITION',char())
-              c++
+                findBetween()
+                if (lines[i][c] !== ',') {
+                  if (lines[i][c] === ')') {
+                    d(') function DEFINITION',char())
+                  } else {
+                    d('illegal function DEFINITION END',char())
+                  }
+                  c++
+                  skipThroughEmptyLines()
+                  d(`{ Function DEFINITION ${char()}`)
+                  c++
+                  usingStartOfLineLoop = true
+                  skipThroughWhiteSpaces()
+                  continue startOfLineLoop
+                }
+                d(', Function DEFINITION',char())
+                c++
               // ch()
               // return true
-            }
-          } else {
+              }
+            } else {
             //#FUNCTION CALL
-            d(`${validName} Function startOfLine${char()}`)
-            c++
-            findExpression()
-            d(')END Function startOfLine', char())
-            i++
-            continue lineLoop
-          }
+              d(`${validName} Function startOfLine${char()}`)
+              c++
+              findExpression()
+              d(')END Function startOfLine', char())
+              i++
+              continue lineLoop
+            }
           // everything.push({type: 'function', line: i, colStart:nonWhiteSpaceStart, colEnd:c, name:lines[i].slice(nonWhiteSpaceStart,c)})
-        }
+          }
 
         //#METHOD OR PROPERTY
         // this is NOT a METHOD call:
         // str.=v[key] "+" k "|"
         // so check if the next character is a valid Var
-      } else if (lines[i][c] === '.' && variableCharsObj[lines[i][c + 1]]) {
-        const validName = lines[i].slice(nonWhiteSpaceStart, c)
-        if (isNaN(Number(validName))) {
+        } else if (lines[i][c] === '.' && variableCharsObj[lines[i][c + 1]]) {
+          const validName = lines[i].slice(nonWhiteSpaceStart, c)
+          if (isNaN(Number(validName))) {
           // d('METHOD OR PROPERTY', char())
+          }
+        }
+
+        if (!skipThroughEmptyLines()) {
+        //out of lines
+          continue lineLoop
+        }
+
+        if (findOperators()) {
+          d(`${validName} assignment`)
+          findExpression()
         }
       }
-
-      if (!skipThroughEmptyLines()) {
-        //out of lines
+      if (usingStartOfLineLoop) {
+        usingStartOfLineLoop = false
         continue lineLoop
-      }
-
-      if (findOperators()) {
-        d(`${validName} assignment`)
-        findExpression()
+      } else {
+        break startOfLineLoop
       }
     }
 

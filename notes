@@ -701,4 +701,11 @@ Functions cannot contain functions,
 the program will exit
 
 lineLoop, which does c=0
-and startOfLine loop, which does nothing
+and startOfLineLoop, which does nothing
+
+I need to make sure any continue/break becomes continue lineLoop
+
+here's how to use it:
+  usingStartOfLineLoop = true
+  skipThroughWhiteSpaces()
+  continue startOfLineLoop
