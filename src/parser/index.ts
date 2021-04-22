@@ -3,11 +3,6 @@ import { whiteSpaceObj, variableCharsObj, operatorsObj, typeOfValidVarName, whit
 const d = console.debug.bind(console)
 
 export default (content: string) => {
-  // const trie = {}
-  // const addToTrie = createAddToTrie(trie)
-  // addToTrie('#NoEnv', () => console.log(23423))
-  // addToTrie(':=', () => console.log('fwefwe\'f'))
-
   // https://stackoverflow.com/questions/6784799/what-is-this-char-65279#answer-6784805
   // https://stackoverflow.com/questions/13024978/removing-bom-characters-from-ajax-posted-string#answer-13027802
   if (content[0] === '\ufeff') {
@@ -980,22 +975,5 @@ export default (content: string) => {
   function l() {
     return `line ${i + 1}`
   }
-  // function createAddToTrie(trie) {
-  // let c: number, strLenMinusOne
-  // return function addToTrie(string1, func) {
-  // c = 0, strLenMinusOne = string1.length - 1
-  // recursiveAddKey(trie)
-  // function recursiveAddKey(obj) {
-  // const letter = string1[c]
-  // if (c < strLenMinusOne) {
-  // obj[letter] = obj[letter] || {}
-  // c++
-  // recursiveAddKey(obj[letter])
-  // } else {
-  // obj[letter] = func
-  // }
-  // }
-  // }
-  // }
 }
 
