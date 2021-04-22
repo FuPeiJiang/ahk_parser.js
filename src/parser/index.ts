@@ -283,14 +283,15 @@ export default (content: string) => {
         } else if (lines[i][c] === '.' && variableCharsObj[lines[i][c + 1]]) {
           const validName = lines[i].slice(nonWhiteSpaceStart, c)
           if (isNaN(Number(validName))) {
-          // d('METHOD OR PROPERTY', char())
+            c++
+            findMethodOrProperty()
+            i++
+            continue lineLoop
           }
         }
 
-        if (!skipThroughEmptyLines()) {
         //out of lines
-          continue lineLoop
-        }
+        if (!skipThroughEmptyLines()) {break lineLoop }
 
         if (findOperators()) {
           d(`${validName} assignment`)
@@ -431,6 +432,79 @@ export default (content: string) => {
       }
     }
   }
+  function findMethodOrProperty() {
+    //stumble upon a valid variable Char
+    if (lines[i][c] === '%' || variableCharsObj[lines[i][c]]) {
+      c++
+
+      skipValidChar()
+
+      validName = lines[i].slice(nonWhiteSpaceStart, c)
+      if (c === numberOfChars) {
+        d(`${validName} PROPERTY EOL ${char()}`)
+        betweenExpression()
+        return true
+      }
+
+      //skip through % OR valid variable Chars
+      while (c < numberOfChars && lines[i][c] === '%' || variableCharsObj[lines[i][c]]) {
+        c++
+      }
+      validName = lines[i].slice(nonWhiteSpaceStart, c)
+      if (c === numberOfChars) {
+        d(`${validName} %VARIABLE% EOL ${char()}`)
+        betweenExpression()
+        return true
+      }
+
+      if (findMethodOrDecimal()) {
+        return true
+      }
+
+      //#METHOD CALL
+      if (lines[i][c] === '(') {
+        d(`${validName} METHOD ${char()}`)
+        c++,exprFoundLine = i
+        let endsWithComma = false
+        while (true) {
+          skipThroughEmptyLines()
+          if (lines[i][c] === ',') {
+            endsWithComma = true
+            d(', CALL',char())
+            c++
+            continue
+          }
+          if (findExpression()) {
+            endsWithComma = false
+          } else {
+            if (endsWithComma) {
+              d('ILLEGAL trailling , METHOD', char())
+            }
+            break
+          }
+        }
+        if (i !== exprFoundLine) {
+          d('ILLEGAL )END METHOD', char())
+        }
+        d(')END METHOD', char())
+
+        c++
+        return true
+
+      } else if (lines[i][c] === '[') {
+        d(`${validName} Array/Map Access ${char()}`)
+        return true
+      } else {
+        if (isNaN(Number(validName))) {
+          d(`${validName} idkVariable ${char()}`)
+        } else {
+          d(`${validName} Integer ${char()}`)
+        }
+        betweenExpression()
+        return true
+      }
+    }
+  }
   function findExpression() {
     skipThroughWhiteSpaces()
     //nothing left, continue
@@ -483,7 +557,7 @@ export default (content: string) => {
       //#FUNCTION CALL
       if (lines[i][c] === '(') {
         //#FUNCTION CALL
-        d(`${validName} Function${char()}`)
+        d(`${validName} Function ${char()}`)
         c++,exprFoundLine = i
         let endsWithComma = false
         while (true) {
@@ -571,7 +645,7 @@ export default (content: string) => {
     }
 
     if (lines[i][c] === '{') {
-      d('{ start', char())
+      d('{ object', char())
       colonDeep++, c++, exprFoundLine = i
 
       while (true) {
@@ -601,7 +675,7 @@ export default (content: string) => {
       if (i !== exprFoundLine) {
         d('ILLEGAL }', char())
       }
-      d('} end', char())
+      d('} object', char())
       colonDeep--, c++
       return true
     }
