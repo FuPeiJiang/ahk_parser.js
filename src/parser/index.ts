@@ -294,14 +294,15 @@ export default (content: string) => {
 
   }
   function findBetween() {
+    const beforeConcatBak = beforeConcat, afterConcat = c, concatLineBak = i
     if (c === numberOfChars) {
       return false
     } else if (findOperators()) {
       return findExpression()
-    } else if (whiteSpaceObj[lines[i][c - 1]]) {
-      const concatWhiteSpaces = lines[i].slice(beforeConcat, c)
-      d(`concat "${concatWhiteSpaces}" ${concatWhiteSpaces.length}LENGHT ${char()}`)
-      return findExpression()
+    } else if (whiteSpaceObj[lines[i][c - 1]] && findExpression()) {
+      const concatWhiteSpaces = lines[i].slice(beforeConcatBak, afterConcat)
+      d(`concat "${concatWhiteSpaces}" ${concatWhiteSpaces.length}LENGHT ${beforeConcatBak + 1} line ${concatLineBak + 1}`)
+      return true
     } else {
       if (insideContinuation) {
         if (endExprContinuation()) {
