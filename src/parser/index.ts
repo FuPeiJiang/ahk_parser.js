@@ -283,6 +283,7 @@ export default (content: string) => {
         // so check if the next character is a valid Var
         } else if (lines[i][c] === '.' && variableCharsObj[lines[i][c + 1]]) {
           const validName = lines[i].slice(nonWhiteSpaceStart, c)
+          //can't have number on startOfLine
           if (isNaN(Number(validName))) {
             c++
             if (!findMethodOrProperty()) {
@@ -459,10 +460,15 @@ export default (content: string) => {
         return false
       }
 
-      if (findMethodOrDecimal()) {
+      if (lines[i][c] === '.') {
         c++
-        findMethodOrProperty()
-        return true
+        if (isNaN(Number(validName))) {
+          findMethodOrProperty()
+          return true
+        } else {
+          findDecimal()
+          return true
+        }
       }
 
       //#METHOD CALL
@@ -561,9 +567,13 @@ export default (content: string) => {
         return true
       }
 
-      if (findMethodOrDecimal()) {
+      if (lines[i][c] === '.') {
         c++
-        findMethodOrProperty()
+        if (isNaN(Number(validName))) {
+          findMethodOrProperty()
+        } else {
+          findDecimal()
+        }
         betweenExpression()
         return true
       }
@@ -698,17 +708,12 @@ export default (content: string) => {
     }
 
   }
-  function findMethodOrDecimal() {
-    if (lines[i][c] === '.' && variableCharsObj[lines[i][c + 1]]) {
-      if (isNaN(Number(validName))) {
-        // d(validName, 'METHOD OR PROPERTY', char())
-        return true
-      } else {
-        // d(validName, 'DECIMAL NUMBER', char())
-        return true
-      }
+  function findDecimal() {
+    while (c < numberOfChars && !isNaN(Number(lines[i][c]))) {
+      c++
     }
-    return false
+    validName = lines[i].slice(nonWhiteSpaceStart, c)
+    d(`${validName} Decimal ${char()}`)
   }
   function findDoubleQuotedString() {
     if (lines[i][c] === '"') {

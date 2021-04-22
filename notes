@@ -742,3 +742,7 @@ I think it's like a group.
 then do decimal numbers
 
 then turn continuation into an operator
+
+d(`${validName} assignment`)
+I don't need the i++ because it skips lines
+
