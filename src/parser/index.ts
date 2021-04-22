@@ -184,7 +184,7 @@ export default (content: string) => {
         const validName = lines[i].slice(nonWhiteSpaceStart, c)
         // d('is not a number, valid func name')
         if (isNaN(Number(validName))) {
-          // d('FUNCTION CALL OR DEFINITION', char())
+          d('FUNCTION CALL OR DEFINITION', char())
           // everything.push({type: 'function', line: i, colStart:nonWhiteSpaceStart, colEnd:c, name:lines[i].slice(nonWhiteSpaceStart,c)})
         }
 

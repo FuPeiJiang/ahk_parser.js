@@ -590,3 +590,18 @@ if (validVar)
 try to be linear as possible..
 
 now, function calls
+how do I know if function call or definition?
+
+foo(arg1, Byref arg2:=3) {
+}
+
+foo(arg1, Byref arg2:=3) 
+{
+}
+
+foo([1,2,3],34)
+
+this is illegal, cool
+foo(arg1, Byref arg2:=3+3) {
+
+:=number, string, bool
