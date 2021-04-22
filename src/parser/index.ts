@@ -736,23 +736,23 @@ export default (content: string) => {
       return true
     }
   }
+  //true if current char is ", false if it isn't
   function findDoubleQuotedString() {
     if (lines[i][c] === '"') {
       strStartPos = c, strStartLine = i
       c++
-      if (findEndOfStringInLine()) {
-        return true
-      } else {
+      //noClosing " found on the same line
+      if (!findEndOfStringInLine()) {
+        //continuation wasn't resolved
         if (!recurseContinuation()) {
+          //script is broken at this point but we still try to continue
           c++
           d('AS LAST RESORT: doing skipThroughEmptyLines',char())
           insideContinuation = true
           skipThroughEmptyLines()
         }
-        return true
       }
-
-
+      return true
     } else {
       return false
     }
