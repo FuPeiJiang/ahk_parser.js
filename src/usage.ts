@@ -2,8 +2,9 @@ import fs from 'fs'
 import ahkParser from './parser/index'
 const d = console.debug.bind(console)
 
+const content: string = fs.readFileSync('tests/func call.ahk').toString().replace(/\r/g, '')
 // const content: string = fs.readFileSync('tests/literal objects.ahk').toString().replace(/\r/g, '')
-const content: string = fs.readFileSync('tests/arrays.ahk').toString().replace(/\r/g, '')
+// const content: string = fs.readFileSync('tests/arrays.ahk').toString().replace(/\r/g, '')
 // const content: string = fs.readFileSync('tests/operators.ahk').toString().replace(/\r/g, '')
 // const content: string = fs.readFileSync('tests/string concat.ahk').toString().replace(/\r/g, '')
 // const content: string = fs.readFileSync('tests/assignment expression.ahk').toString().replace(/\r/g, '')

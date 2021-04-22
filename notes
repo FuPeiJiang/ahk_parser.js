@@ -588,3 +588,5 @@ findPercentVar()
 if (validVar)
 
 try to be linear as possible..
+
+now, function calls

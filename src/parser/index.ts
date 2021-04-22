@@ -349,6 +349,10 @@ export default (content: string) => {
 
       if (lines[i][c] === '(') {
         d(`${validName} Function ${char()}`)
+        c++
+        findExpression()
+        // d(')END Function', char())
+        c++
         return true
       } else if (lines[i][c] === '[') {
         d(`${validName} Array/Map Access ${char()}`)
@@ -394,7 +398,7 @@ export default (content: string) => {
           if (lines[i][c] === ',') {
             d('ILLEGAL trailling ,', char())
           } else if (lines[i][c] === ']') {
-            d('valid empty arr',char())
+            d('v`alid empty arr',char())
           } else {
             d('illegal arr1',char())
           }
