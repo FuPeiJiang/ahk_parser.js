@@ -391,7 +391,13 @@ export default (content: string) => {
         if (findExpression()) {
           arrOnWhichLine = iBak
         } else {
-          d('ILLEGAL trailling ,', char())
+          if (lines[i][c] === ',') {
+            d('ILLEGAL trailling ,', char())
+          } else if (lines[i][c] === ']') {
+            d('valid empty arr',char())
+          } else {
+            d('illegal arr1',char())
+          }
           break
         }
         if (lines[i][c] !== ',') {
