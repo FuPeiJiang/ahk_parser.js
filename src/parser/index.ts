@@ -433,7 +433,6 @@ export default (content: string) => {
       d('{ start', char())
       c++
 
-      let objOnWhichLine = i
       while (true) {
         if (!findExpression()) {
           if (lines[i][c] === ',') {
@@ -446,7 +445,6 @@ export default (content: string) => {
           break
         }
 
-        objOnWhichLine = i
         if (lines[i][c] === ':') {
           d(': object',char())
         } else {
@@ -459,7 +457,7 @@ export default (content: string) => {
         }
         c++
       }
-      if (i !== objOnWhichLine) {
+      if (i !== exprFoundLine) {
         d('ILLEGAL }', char())
       }
       d('} end', char())
