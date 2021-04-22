@@ -411,10 +411,16 @@ export default (content: string) => {
       d('{ start', char())
       c++
 
-      let objOnWhichLine: number
+      let objOnWhichLine = i
       while (true) {
         if (!findObjKey()) {
-          d('ILLEGAL trailling ,', char())
+          if (lines[i][c] === ',') {
+            d('ILLEGAL trailling ,', char())
+          } else if (lines[i][c] === '}') {
+            d('valid empty obj',char())
+          } else {
+            d('illegal obj1',char())
+          }
           break
         }
 
@@ -422,7 +428,7 @@ export default (content: string) => {
 
         objOnWhichLine = i
         if (lines[i][c] !== ':') {
-          d('illegal obj',char())
+          d('illegal obj2',char())
         }
         c++ //skip :
         findExpression()
