@@ -1,8 +1,6 @@
 import { trace } from 'console'
-import { CommentSemiColon, startingMultiLineComment, endingMultiLineComment, whiteSpaceObj, variableCharsObj, operatorsObj, typeOfValidVarName, whiteSpaceOverrideAssign, propCharsObj } from './tokens'
-// import {whiteSpaaaaaceObj} from './usage'
+import { whiteSpaceObj, variableCharsObj, operatorsObj, typeOfValidVarName, whiteSpaceOverrideAssign, propCharsObj } from './tokens'
 const d = console.debug.bind(console)
-// d(whiteSpaaaaaceObj)
 
 export default (content: string) => {
   // const trie = {}
