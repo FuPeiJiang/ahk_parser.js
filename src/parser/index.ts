@@ -447,7 +447,9 @@ export default (content: string) => {
         }
 
         objOnWhichLine = i
-        if (lines[i][c] !== ':') {
+        if (lines[i][c] === ':') {
+          d(': object',char())
+        } else {
           d('illegal obj2', char())
         }
         c++ //skip :
