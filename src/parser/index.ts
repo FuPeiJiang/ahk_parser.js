@@ -184,7 +184,20 @@ export default (content: string) => {
         const validName = lines[i].slice(nonWhiteSpaceStart, c)
         // d('is not a number, valid func name')
         if (isNaN(Number(validName))) {
-          d('FUNCTION CALL OR DEFINITION', char())
+          if (isFunctionDefinition()) {
+            d(validName,'Function DEFINITION', char())
+            // c++
+            return true
+            // continue lineLoop
+          } else {
+            //#FUNCTION CALL
+            d(`${validName} Function startOfLine${char()}`)
+            c++
+            findExpression()
+            d(')END Function startOfLine', char())
+            c++
+            continue lineLoop
+          }
           // everything.push({type: 'function', line: i, colStart:nonWhiteSpaceStart, colEnd:c, name:lines[i].slice(nonWhiteSpaceStart,c)})
         }
 
@@ -234,6 +247,22 @@ export default (content: string) => {
   // writeSync(toFile)
   return everything
 
+  function isFunctionDefinition() {
+    const iBak = i, cBak = c
+    if (skipThroughFindChar(')')) {
+      c++
+      if (skipThroughEmptyLines()) {
+        if (lines[i][c] === '{') {
+          i = iBak,c = cBak
+          return true
+        }
+      }
+    } else {
+      d('( with no closing ) isFunctionDefinition',char())
+    }
+    i = iBak,c = cBak
+    return false
+  }
   function findOperators() {
     //#VARIABLE ASSIGNMENT
     if (c < numberOfChars - 2 && operatorsObj[lines[i].slice(c, c + 3).toLowerCase()]) {
@@ -368,6 +397,7 @@ export default (content: string) => {
         return true
       }
 
+      //#FUNCTION CALL
       if (lines[i][c] === '(') {
         d(`${validName} Function ${char()}`)
         c++
@@ -600,6 +630,30 @@ export default (content: string) => {
         continue
       }
     }
+  }
+  function skipThroughFindChar(charToFind) {
+    //also skip through whiteSpaces, comments
+    outer:
+    while (true) {
+      skipThroughWhiteSpaces()
+      //EOL: next line
+      while (c < numberOfChars) {
+        if (lines[i][c] === ';' && whiteSpaceObj[lines[i][c - 1]]) {
+          d('comment while skipThroughFindChar', char())
+        } else if (lines[i][c] === charToFind) {
+          return true
+        }
+        c++
+      }
+      i++
+      if (i < howManyLines) {
+        c = 0, numberOfChars = lines[i].length
+        continue outer
+      } else {
+        break outer
+      }
+    }
+    return false
   }
   function skipThroughEmptyLines() {
     //also skip through whiteSpaces, comments
