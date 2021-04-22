@@ -186,16 +186,16 @@ export default (content: string) => {
         if (isNaN(Number(validName))) {
           if (isFunctionDefinition()) {
             d(validName,'Function DEFINITION', char())
-            // c++
+            c++
+
             return true
-            // continue lineLoop
           } else {
             //#FUNCTION CALL
             d(`${validName} Function startOfLine${char()}`)
             c++
             findExpression()
             d(')END Function startOfLine', char())
-            c++
+            i++
             continue lineLoop
           }
           // everything.push({type: 'function', line: i, colStart:nonWhiteSpaceStart, colEnd:c, name:lines[i].slice(nonWhiteSpaceStart,c)})
