@@ -285,7 +285,9 @@ export default (content: string) => {
           const validName = lines[i].slice(nonWhiteSpaceStart, c)
           if (isNaN(Number(validName))) {
             c++
-            findMethodOrProperty()
+            if (!findMethodOrProperty()) {
+              d('illegal property on startOfLine',char())
+            }
             if (i === exprFoundLine) {
               findCommentsAndEndLine()
             } else {
@@ -303,8 +305,6 @@ export default (content: string) => {
           findExpression()
           if (i === exprFoundLine) {
             findCommentsAndEndLine()
-          } else {
-            i++
           }
           continue lineLoop
         }
@@ -444,6 +444,7 @@ export default (content: string) => {
     }
   }
   function findMethodOrProperty() {
+    // true if method, false if prop
     //stumble upon a valid variable Char
     if (propCharsObj[lines[i][c]]) {
       c++
@@ -455,7 +456,7 @@ export default (content: string) => {
       validName = lines[i].slice(nonWhiteSpaceStart, c)
       if (c === numberOfChars) {
         d(`${validName} PROPERTY EOL ${char()}`)
-        return true
+        return false
       }
 
       if (findMethodOrDecimal()) {
@@ -500,7 +501,7 @@ export default (content: string) => {
 
       d(`${validName} PROPERTY ${char()}`)
       //look for comments
-      return true
+      return false
     }
   }
   function findArrayAccess() {
