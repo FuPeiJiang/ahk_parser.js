@@ -410,8 +410,7 @@ export default (content: string) => {
   //true if found a between AND an expression
   //really hard to understand
   function betweenExpression() {
-    exprFoundLine = i
-    beforeConcat = c
+    exprFoundLine = i, beforeConcat = c
     if (insideContinuation) {
       skipThroughWhiteSpaces()
       if (c !== numberOfChars && lines[i][c] === ';') {
