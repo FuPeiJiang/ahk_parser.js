@@ -605,3 +605,5 @@ this is illegal, cool
 foo(arg1, Byref arg2:=3+3) {
 
 :=number, string, bool
+
+added exprFoundLine=-1, exprFoundLine=i first thing called by betweenExpression()

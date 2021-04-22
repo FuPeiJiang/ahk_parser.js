@@ -19,7 +19,7 @@ export default (content: string) => {
   const everything = []
   const toFile = ''
 
-  let i = 0, c = 0, numberOfChars = 0, validName = '', strStartLine: number, strStartPos: number, insideContinuation = false, beforeConcat: number, nonWhiteSpaceStart: number
+  let i = 0, c = 0, numberOfChars = 0, validName = '', strStartLine: number, strStartPos: number, insideContinuation = false, beforeConcat: number, nonWhiteSpaceStart: number,exprFoundLine = -1
 
   lineLoop:
   while (i < howManyLines) {
@@ -255,6 +255,7 @@ export default (content: string) => {
   }
 
   function betweenExpression() {
+    exprFoundLine = i
     beforeConcat = c
     // d('OOOOO',lines[i][c])
     if (insideContinuation) {
@@ -388,13 +389,9 @@ export default (content: string) => {
       d('[ start', char())
       c++
 
-      let arrOnWhichLine = i, iBak
       // let arrOnWhichLine: number
       while (true) {
-        iBak = i
-        if (findExpression()) {
-          arrOnWhichLine = iBak
-        } else {
+        if (!findExpression()) {
           if (lines[i][c] === ',') {
             d('ILLEGAL trailling ,', char())
           } else if (lines[i][c] === ']') {
@@ -409,7 +406,7 @@ export default (content: string) => {
         }
         c++
       }
-      if (i !== arrOnWhichLine) {
+      if (i !== exprFoundLine) {
         d('ILLEGAL ]', char())
       }
       d('] end', char())
