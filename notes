@@ -646,3 +646,8 @@ because nothing found.
 so 1st could see :, and continue line ?
 knowing how deep probably is helpful
 
+if 1operator === '?'
+
+but it would say illegal when it sees
+: of an object...
+so let's just go with 2nd, expect a :

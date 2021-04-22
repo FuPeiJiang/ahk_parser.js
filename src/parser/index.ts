@@ -19,7 +19,7 @@ export default (content: string) => {
   const everything = []
   const toFile = ''
 
-  let i = 0, c = 0, numberOfChars = 0, validName = '', strStartLine: number, strStartPos: number, insideContinuation = false, beforeConcat: number, nonWhiteSpaceStart: number,exprFoundLine = -1
+  let i = 0, c = 0, numberOfChars = 0, validName = '', strStartLine: number, strStartPos: number, insideContinuation = false, beforeConcat: number, nonWhiteSpaceStart: number, exprFoundLine = -1, ternaryDeep = 0
 
   lineLoop:
   while (i < howManyLines) {
@@ -245,6 +245,15 @@ export default (content: string) => {
       c += 2
       return true
     } else if (c < numberOfChars && operatorsObj[lines[i][c].toLowerCase()]) {
+      if (lines[i][c] === '?') {
+        ternaryDeep++
+      } else if (lines[i][c] === ':') {
+        if (ternaryDeep) {
+          ternaryDeep--
+        } else {
+          d('illegal : no preceding ?', char())
+        }
+      }
       d(lines[i][c], '1operator', char())
       c++
       return true
@@ -395,9 +404,9 @@ export default (content: string) => {
           if (lines[i][c] === ',') {
             d('ILLEGAL trailling ,', char())
           } else if (lines[i][c] === ']') {
-            d('v`alid empty arr',char())
+            d('v`alid empty arr', char())
           } else {
-            d('illegal arr1',char())
+            d('illegal arr1', char())
           }
           break
         }
@@ -424,9 +433,9 @@ export default (content: string) => {
           if (lines[i][c] === ',') {
             d('ILLEGAL trailling ,', char())
           } else if (lines[i][c] === '}') {
-            d('valid empty obj',char())
+            d('valid empty obj', char())
           } else {
-            d('illegal obj1',char())
+            d('illegal obj1', char())
           }
           break
         }
@@ -435,7 +444,7 @@ export default (content: string) => {
 
         objOnWhichLine = i
         if (lines[i][c] !== ':') {
-          d('illegal obj2',char())
+          d('illegal obj2', char())
         }
         c++ //skip :
         findExpression()
@@ -618,7 +627,7 @@ export default (content: string) => {
       while (variableCharsObj[lines[i][c]]) {
         c++
       }
-      d(lines[i].slice(nonWhiteSpaceStart,c),'validName findObjKey',char())
+      d(lines[i].slice(nonWhiteSpaceStart, c), 'validName findObjKey', char())
       return true
     } else if (lines[i][c] === '(') {
       d('( obj dyn key', char())
