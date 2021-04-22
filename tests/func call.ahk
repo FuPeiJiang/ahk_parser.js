@@ -10,8 +10,9 @@
   ; p(4535, Byref)
 ; }
 ; d('illegal function DEFINITION: need something after (',char())
+; foo(
 foo(
-; foo()
+  ,a)
   ; ,fef)
 ; foo() {
 ; }

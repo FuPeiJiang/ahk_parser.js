@@ -711,3 +711,5 @@ here's how to use it:
   continue startOfLineLoop
 
 skipThroughEmptyLines skip ; at start of line c === 0 || whiteSpaceObj[lines[i][c - 1]]
+
+1 AND (2 OR 3) instead of (1 AND 2) OR 3

@@ -703,7 +703,7 @@ export default (content: string) => {
       //EOL: next line
       charLoop:
       while (c < numberOfChars) {
-        if (lines[i][c] === ';' && c === 1 || whiteSpaceObj[lines[i][c - 1]]) {
+        if (lines[i][c] === ';' && (c === 1 || whiteSpaceObj[lines[i][c - 1]])) {
           d('comment while skipThroughFindChar', char())
           break charLoop
         } else if (lines[i][c] === charToFind) {
@@ -728,7 +728,7 @@ export default (content: string) => {
       //EOL: next line
       if (c === numberOfChars) {
         //comment: next line
-      } else if (lines[i][c] === ';' && c === 0 || whiteSpaceObj[lines[i][c - 1]]) {
+      } else if (lines[i][c] === ';' && (c === 0 || whiteSpaceObj[lines[i][c - 1]])) {
         d('comment while skipThroughEmptyLines', char())
       } else {
         //anything else, return found
