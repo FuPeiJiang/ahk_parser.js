@@ -351,7 +351,7 @@ export default (content: string) => {
         d(`${validName} Function ${char()}`)
         c++
         findExpression()
-        // d(')END Function', char())
+        d(')END Function', char())
         c++
         return true
       } else if (lines[i][c] === '[') {
