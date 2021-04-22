@@ -181,14 +181,51 @@ export default (content: string) => {
     if (validName) {
       //#FUNCTION
       if (lines[i][c] === '(') {
-        const validName = lines[i].slice(nonWhiteSpaceStart, c)
+        let validName = lines[i].slice(nonWhiteSpaceStart, c)
         // d('is not a number, valid func name')
         if (isNaN(Number(validName))) {
           if (isFunctionDefinition()) {
             d(validName,'Function DEFINITION', char())
             c++
-            ch()
-            return true
+            while (true) {
+              skipThroughWhiteSpaces()
+              nonWhiteSpaceStart = c
+              // ch()
+
+              if (c === numberOfChars || !variableCharsObj[lines[i][c]]) {
+                break
+              }
+              c++
+              skipValidChar()
+
+              validName = lines[i].slice(nonWhiteSpaceStart,c)
+              if (validName.toLowerCase() === 'byref') {
+                skipThroughWhiteSpaces(), nonWhiteSpaceStart = c
+                if (c === numberOfChars || !variableCharsObj[lines[i][c]]) { break }
+                c++, skipValidChar(), validName = lines[i].slice(nonWhiteSpaceStart,c)
+                d(validName,'Byref Param',char())
+              } else {
+                d(validName,'Param',char())
+              }
+              skipThroughEmptyLines()
+              findBetween()
+              if (lines[i][c] !== ',') {
+                if (lines[i][c] === ')') {
+                  d(') function DEFINITION',char())
+                } else {
+                  d('illegal function DEFINITION END',char())
+                }
+                c++
+                skipThroughEmptyLines()
+                d(`{ Function startOfLine${char()}`)
+                i++
+                continue lineLoop
+              }
+              d(', Function DEFINITION',char())
+              c++
+              // ch()
+              // return true
+            }
           } else {
             //#FUNCTION CALL
             d(`${validName} Function startOfLine${char()}`)
@@ -248,19 +285,19 @@ export default (content: string) => {
   return everything
 
   function isFunctionDefinition() {
-    const iBak = i, cBak = c
+    const iBak = i, cBak = c, numberOfCharsBak = numberOfChars
     if (skipThroughFindChar(')')) {
       c++
       if (skipThroughEmptyLines()) {
         if (lines[i][c] === '{') {
-          i = iBak,c = cBak
+          i = iBak,c = cBak,numberOfChars = numberOfCharsBak
           return true
         }
       }
     } else {
       d('( with no closing ) isFunctionDefinition',char())
     }
-    i = iBak,c = cBak
+    i = iBak,c = cBak,numberOfChars = numberOfCharsBak
     return false
   }
   function findOperators() {
