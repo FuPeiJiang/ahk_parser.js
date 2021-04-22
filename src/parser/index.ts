@@ -187,7 +187,7 @@ export default (content: string) => {
           if (isFunctionDefinition()) {
             d(validName,'Function DEFINITION', char())
             c++
-
+            ch()
             return true
           } else {
             //#FUNCTION CALL
@@ -747,6 +747,9 @@ export default (content: string) => {
     }
     // d('no quote after DoubleQuotesString', `Ln ${strStartLine + 1}, Col ${strStartPos + 1} - Ln ${i + 1}, Col ${c + 1}`)
 
+  }
+  function ch() {
+    d(lines[i][c])
   }
   function char() {
     return `${c + 1} ${l()}`
