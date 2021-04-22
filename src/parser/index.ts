@@ -434,7 +434,7 @@ export default (content: string) => {
   }
   function findMethodOrProperty() {
     //stumble upon a valid variable Char
-    if (lines[i][c] === '%' || variableCharsObj[lines[i][c]]) {
+    if (variableCharsObj[lines[i][c]]) {
       c++
 
       skipValidChar()
@@ -442,18 +442,6 @@ export default (content: string) => {
       validName = lines[i].slice(nonWhiteSpaceStart, c)
       if (c === numberOfChars) {
         d(`${validName} PROPERTY EOL ${char()}`)
-        betweenExpression()
-        return true
-      }
-
-      //skip through % OR valid variable Chars
-      while (c < numberOfChars && lines[i][c] === '%' || variableCharsObj[lines[i][c]]) {
-        c++
-      }
-      validName = lines[i].slice(nonWhiteSpaceStart, c)
-      if (c === numberOfChars) {
-        d(`${validName} %VARIABLE% EOL ${char()}`)
-        betweenExpression()
         return true
       }
 
@@ -495,14 +483,11 @@ export default (content: string) => {
 
       } else if (lines[i][c] === '[') {
         d(`${validName} Array/Map Access ${char()}`)
+        //look for comments
         return true
       } else {
-        if (isNaN(Number(validName))) {
-          d(`${validName} idkVariable ${char()}`)
-        } else {
-          d(`${validName} Integer ${char()}`)
-        }
-        betweenExpression()
+        d(`${validName} PROPERTY ${char()}`)
+        //look for comments
         return true
       }
     }
