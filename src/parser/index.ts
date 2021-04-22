@@ -57,7 +57,6 @@ export default (content: string) => {
     startOfLineLoop:
     while (true) {
 
-
       //out of lines
       if (i === howManyLines) {
         break lineLoop
@@ -205,9 +204,14 @@ export default (content: string) => {
                 nonWhiteSpaceStart = c
                 // ch()
 
-                if (c === numberOfChars || !variableCharsObj[lines[i][c]]) {
-                  break
+                if (c === numberOfChars) {
+                  d('illegal function DEFINITION: need something after (',char())
+                  i++
+                  continue lineLoop
                 }
+
+                // || !variableCharsObj[lines[i][c]]) {
+
                 c++
                 skipValidChar()
 
@@ -697,7 +701,7 @@ export default (content: string) => {
       skipThroughWhiteSpaces()
       //EOL: next line
       while (c < numberOfChars) {
-        if (lines[i][c] === ';' && whiteSpaceObj[lines[i][c - 1]]) {
+        if (lines[i][c] === ';' && c === 1 || whiteSpaceObj[lines[i][c - 1]]) {
           d('comment while skipThroughFindChar', char())
         } else if (lines[i][c] === charToFind) {
           return true
@@ -721,7 +725,7 @@ export default (content: string) => {
       //EOL: next line
       if (c === numberOfChars) {
         //comment: next line
-      } else if (lines[i][c] === ';' && whiteSpaceObj[lines[i][c - 1]]) {
+      } else if (lines[i][c] === ';' && c === 0 || whiteSpaceObj[lines[i][c - 1]]) {
         d('comment while skipThroughEmptyLines', char())
       } else {
         //anything else, return found

@@ -709,3 +709,5 @@ here's how to use it:
   usingStartOfLineLoop = true
   skipThroughWhiteSpaces()
   continue startOfLineLoop
+
+skipThroughEmptyLines skip ; at start of line c === 0 || whiteSpaceObj[lines[i][c - 1]]
