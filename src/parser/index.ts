@@ -19,7 +19,7 @@ export default (content: string) => {
   const everything = []
   const toFile = ''
 
-  let i = 0, c = 0, numberOfChars = 0, validName = '', strStartLine: number, strStartPos: number, insideContinuation = false, beforeConcat: number, nonWhiteSpaceStart: number, exprFoundLine = -1, ternaryDeep = 0
+  let i = 0, c = 0, numberOfChars = 0, validName = '', strStartLine: number, strStartPos: number, insideContinuation = false, beforeConcat: number, nonWhiteSpaceStart: number, exprFoundLine = -1
 
   lineLoop:
   while (i < howManyLines) {
@@ -246,12 +246,17 @@ export default (content: string) => {
       return true
     } else if (c < numberOfChars && operatorsObj[lines[i][c].toLowerCase()]) {
       if (lines[i][c] === '?') {
-        ternaryDeep++
-      } else if (lines[i][c] === ':') {
-        if (ternaryDeep) {
-          ternaryDeep--
+        d('? ternary',char())
+        c++
+        findExpression()
+        if (lines[i][c] === ':') {
+          d(': ternary',char())
+          c++
+          return true
         } else {
-          d('illegal : no preceding ?', char())
+          d('why is there no : after ? ternary',char())
+          c++
+          return false
         }
       }
       d(lines[i][c], '1operator', char())
@@ -429,7 +434,7 @@ export default (content: string) => {
 
       let objOnWhichLine = i
       while (true) {
-        if (!findObjKey()) {
+        if (!findExpression()) {
           if (lines[i][c] === ',') {
             d('ILLEGAL trailling ,', char())
           } else if (lines[i][c] === '}') {
@@ -439,8 +444,6 @@ export default (content: string) => {
           }
           break
         }
-
-        skipThroughEmptyLines()
 
         objOnWhichLine = i
         if (lines[i][c] !== ':') {

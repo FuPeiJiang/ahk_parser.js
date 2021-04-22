@@ -651,3 +651,6 @@ if 1operator === '?'
 but it would say illegal when it sees
 : of an object...
 so let's just go with 2nd, expect a :
+
+now that : isn't operator, it's concat...
+I need to c++ after : , but still some concat
