@@ -296,6 +296,8 @@ export default (content: string) => {
         if (findOperators()) {
           d(`${validName} assignment`)
           findExpression()
+          findCommentsAndEndLine()
+          continue lineLoop
         }
       }
       if (usingStartOfLineLoop) {
@@ -508,7 +510,7 @@ export default (content: string) => {
       }
       return false
     }
-    const nonWhiteSpaceStart = c
+    nonWhiteSpaceStart = c
     //stumble upon a valid variable Char
     if (lines[i][c] === '%' || variableCharsObj[lines[i][c]]) {
       c++
@@ -538,6 +540,8 @@ export default (content: string) => {
       }
 
       if (findMethodOrDecimal()) {
+        c++
+        findMethodOrProperty()
         return true
       }
 
