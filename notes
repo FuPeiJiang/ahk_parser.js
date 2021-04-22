@@ -764,3 +764,7 @@ finds illegal char
 
 then findDoubleQuotedString should return false
 no still return true but skipThroughEmptyLines()
+
+maybe I need more abstract thinking
+after )END METHOD, it will betweenExpression
+

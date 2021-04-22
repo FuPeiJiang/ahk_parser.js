@@ -736,6 +736,8 @@ export default (content: string) => {
       } else {
         if (!recurseContinuation()) {
           c++
+          d('AS LAST RESORT: doing skipThroughEmptyLines',char())
+          insideContinuation = true
           skipThroughEmptyLines()
         }
         return true
