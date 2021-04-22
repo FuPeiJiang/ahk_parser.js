@@ -735,3 +735,8 @@ if blocked by invalid, I can flag invalid
 if blocked by valid, oof
 then I should check if still on the same line
 I mean, on the same line as last found: exprFoundLine
+
+now let's do arr/map access
+I think it's like a group.
+
+then do decimal numbers

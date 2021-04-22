@@ -8,9 +8,9 @@
 ;LEGAL
 ; var2:=a.b.c
 ; [betweenExpression]var3:=2
-var2:=a.b.c(
-  ,2)4
-var3:=2
+; var2:=a.b.c(
+  ; ,2)4
+; var3:=2
 ; ILLEGAL
 ; var1:=a.b.c [betweenExpression])ger
 ; var3:=2
@@ -30,3 +30,7 @@ var3:=2
 ; var3:=a.b.c+1
 ; lookingForArr:=[{level: delimArrArr.Length + 1, endDelim:getUntil}] ;{level, endDelim} ;to save the higher level delim if start a new Delim
 ; lookingForArr.InsertAt(1, {level:indexArr, endDelim: delimArr.endDelims[index]})
+
+group:=(
+  .2)
+; group:=(2)

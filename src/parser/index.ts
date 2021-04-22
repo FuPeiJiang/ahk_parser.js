@@ -427,18 +427,15 @@ export default (content: string) => {
     if (c === numberOfChars) {
       return false
     } else if (findOperators()) {
-      d(435345)
       return findExpression()
     } else if (whiteSpaceObj[lines[i][c - 1]] && findExpression()) {
       const concatWhiteSpaces = lines[i].slice(beforeConcatBak, afterConcat)
       d(`concat "${concatWhiteSpaces}" ${concatWhiteSpaces.length}LENGHT ${beforeConcatBak + 1} line ${concatLineBak + 1}`)
-      d(435345)
       return true
     } else {
       if (insideContinuation) {
         if (endExprContinuation()) {
           findExpression()
-          d(435345)
           return true
         }
       } else {
@@ -497,15 +494,25 @@ export default (content: string) => {
         c++
         return true
 
-      } else if (lines[i][c] === '[') {
-        d(`${validName} Array/Map Access ${char()}`)
-        //look for comments
-        return true
-      } else {
-        d(`${validName} PROPERTY ${char()}`)
-        //look for comments
-        return true
       }
+
+      if (findArrayAccess()) {return true}
+
+      d(`${validName} PROPERTY ${char()}`)
+      //look for comments
+      return true
+    }
+  }
+  function findArrayAccess() {
+    if (lines[i][c] === '[') {
+      d(`${validName} Array/Map Access ${char()}`)
+
+      d('[ ArrAccess', char())
+      c++
+      if (!betweenExpression()) {findExpression()}
+      d('] ArrAccess', char())
+      c++
+      return true
     }
   }
   function findExpression() {
@@ -590,19 +597,16 @@ export default (content: string) => {
 
         c++
         return true
-
-      } else if (lines[i][c] === '[') {
-        d(`${validName} Array/Map Access ${char()}`)
-        return true
-      } else {
-        if (isNaN(Number(validName))) {
-          d(`${validName} idkVariable ${char()}`)
-        } else {
-          d(`${validName} Integer ${char()}`)
-        }
-        betweenExpression()
-        return true
       }
+      if (findArrayAccess()) {return true}
+
+      if (isNaN(Number(validName))) {
+        d(`${validName} idkVariable ${char()}`)
+      } else {
+        d(`${validName} Integer ${char()}`)
+      }
+      betweenExpression()
+      return true
 
     }
 
@@ -617,10 +621,10 @@ export default (content: string) => {
     }
 
     if (lines[i][c] === '(') {
-      d('( start', char())
+      d('( group', char())
       c++
-      findExpression()
-      d(') end', char())
+      if (!betweenExpression()) {findExpression()}
+      d(') group', char())
       c++
       return true
     }
@@ -677,7 +681,9 @@ export default (content: string) => {
         }
         c++ //skip :
         findExpression()
-        if (lines[i][c] !== ',') {
+        if (lines[i][c] === ',') {
+          d(', object',char())
+        } else {
           break
         }
         c++
@@ -694,10 +700,10 @@ export default (content: string) => {
   function findMethodOrDecimal() {
     if (lines[i][c] === '.' && variableCharsObj[lines[i][c + 1]]) {
       if (isNaN(Number(validName))) {
-        d(validName, 'METHOD OR PROPERTY', char())
+        // d(validName, 'METHOD OR PROPERTY', char())
         return true
       } else {
-        d(validName, 'DECIMAL NUMBER', char())
+        // d(validName, 'DECIMAL NUMBER', char())
         return true
       }
     }
