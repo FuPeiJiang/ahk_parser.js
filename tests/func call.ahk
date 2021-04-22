@@ -17,9 +17,14 @@
   ; ,a)
 ; foo(
 ; ,,a)
-foo(
+; foo(
+; ,,
+; )
+
+var:=foo(
 ,,
 )
+
 ; foo(   )
 ; foo( ,  )
 ; var:={}

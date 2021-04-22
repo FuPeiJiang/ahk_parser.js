@@ -247,16 +247,9 @@ export default (content: string) => {
               }
             } else {
             //#FUNCTION CALL
-              // d(`${validName} Function startOfLine${char()}`)
-              // c++
-              // findExpression()
-              // d(')END Function startOfLine', char())
-
-
               d(`${validName} Function startOfLine${char()}`)
               c++,exprFoundLine = i
               let endsWithComma = false
-              // let arrOnWhichLine: number
               while (true) {
                 skipThroughEmptyLines()
                 if (lines[i][c] === ',') {
@@ -273,21 +266,6 @@ export default (content: string) => {
                   }
                   break
                 }
-                // if (!findExpression()) {
-                // if (lines[i][c] === ',') {
-                // d('ILLEGAL trailling ,', char())
-                // } else if (lines[i][c] === ')') {
-                // d('valid empty func startOfLine', char())
-                // } else {
-                // d('illegal func startOfLine', char())
-                // }
-                // break
-                // }
-                // if (lines[i][c] !== ',') {
-                // break
-                // }
-                // c++
-                // break
               }
               if (i !== exprFoundLine) {
                 d('ILLEGAL )END Function startOfLine', char())
@@ -506,12 +484,35 @@ export default (content: string) => {
 
       //#FUNCTION CALL
       if (lines[i][c] === '(') {
-        d(`${validName} Function ${char()}`)
-        c++
-        findExpression()
+        //#FUNCTION CALL
+        d(`${validName} Function${char()}`)
+        c++,exprFoundLine = i
+        let endsWithComma = false
+        while (true) {
+          skipThroughEmptyLines()
+          if (lines[i][c] === ',') {
+            endsWithComma = true
+            d(', CALL',char())
+            c++
+            continue
+          }
+          if (findExpression()) {
+            endsWithComma = false
+          } else {
+            if (endsWithComma) {
+              d('ILLEGAL trailling , FUNCTION', char())
+            }
+            break
+          }
+        }
+        if (i !== exprFoundLine) {
+          d('ILLEGAL )END Function', char())
+        }
         d(')END Function', char())
+
         c++
         return true
+
       } else if (lines[i][c] === '[') {
         d(`${validName} Array/Map Access ${char()}`)
         return true
