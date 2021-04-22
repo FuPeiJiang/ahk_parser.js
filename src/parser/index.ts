@@ -734,16 +734,9 @@ export default (content: string) => {
       if (findEndOfStringInLine()) {
         return true
       } else {
-        if (insideContinuation) {
-          endStringContinuation()
-        } else {
-          if (startContinuation()) {
-            d('stringContinuation START', char())
-            endStringContinuation()
-            return true
-          } else {
-            return false
-          }
+        if (!recurseContinuation()) {
+          c++
+          skipThroughEmptyLines()
         }
         return true
       }
@@ -787,6 +780,20 @@ export default (content: string) => {
       }
     }
   }
+  function recurseContinuation(): boolean {
+    if (startContinuation()) {
+      d('stringContinuation START', char())
+      //outoOfLines or (Ended and didn't find end of string)
+      if (!endStringContinuation()) {
+        if (!insideContinuation) {
+          return recurseContinuation()
+        }
+      }
+      return true
+    } else {
+      return false
+    }
+  }
   function startContinuation() {
     i++
     while (i < howManyLines) {
@@ -805,8 +812,7 @@ export default (content: string) => {
         insideContinuation = true
         return true
       } else {
-        d(`illegal ${lines[i][c]} c:${c} numberOfChars:${numberOfChars}`)
-        //illegal
+        d(`illegal ${lines[i][c]} c:${c + 1} line:${i + 1} startContinuation#765`)
         return false
       }
     }
@@ -839,9 +845,10 @@ export default (content: string) => {
         d('stringContinuation END', char())
         c++
         return findEndOfStringInLine()
+        // first char isn't )
       } else if (findEndOfStringInLine()) {
         betweenExpression()
-        return
+        return false
         // return true
       } else {
         i++

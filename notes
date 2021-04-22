@@ -746,3 +746,21 @@ then turn continuation into an operator
 d(`${validName} assignment`)
 I don't need the i++ because it skips lines
 
+when stringContinuation Ends, what does it do?
+it will try to find end of string, if it can't, then return false
+but its return value is ignored
+findDoubleQuotedString() will return true
+after betweenExpression(), ch() === '"'
+I think it will expect another continuation section
+no, it doesn't
+I will make it do so.
+if not inside and endStringContinuation returns false
+normally, when endStringContinuation returns false
+insideContinuation = false
+
+Ended and didn't find end of string
+start a new continuation section
+finds illegal char
+
+then findDoubleQuotedString should return false
+no still return true but skipThroughEmptyLines()
