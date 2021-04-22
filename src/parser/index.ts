@@ -125,10 +125,8 @@ export default (content: string) => {
             continue lineLoop
           }
 
-          if (!skipThroughEmptyLines()) {
           //out of lines
-            continue lineLoop
-          }
+          if (!skipThroughEmptyLines()) { break lineLoop }
 
           if (findOperators()) {
             d(`${validName} assignment whiteSpace`)
@@ -251,7 +249,7 @@ export default (content: string) => {
               c++,exprFoundLine = i
               let endsWithComma = false
               while (true) {
-                skipThroughEmptyLines()
+                if (!skipThroughEmptyLines()) { d('EOF Function startOfLine'); break lineLoop }
                 if (lines[i][c] === ',') {
                   endsWithComma = true
                   d(', CALL',char())
