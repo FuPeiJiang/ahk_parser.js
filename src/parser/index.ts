@@ -285,7 +285,7 @@ export default (content: string) => {
           if (isNaN(Number(validName))) {
             c++
             findMethodOrProperty()
-            i++
+            findCommentsAndEndLine()
             continue lineLoop
           }
         }
@@ -850,6 +850,23 @@ export default (content: string) => {
     while (c < numberOfChars && whiteSpaceObj[lines[i][c]]) {
       c++
     }
+  }
+  function findCommentsAndEndLine() {
+    if (c === numberOfChars) {
+      i++;return true
+    }
+    if (c < numberOfChars && !whiteSpaceObj[lines[i][c]]) {
+      d('illegal nonWhiteSpace at findCommentsAndEndLine')
+      i++;return false
+    }
+    while (c < numberOfChars) {
+      if (lines[i][c] === ';') {
+        d('semiColonComment at findCommentsAndEndLine',char())
+        i++;return true
+      }
+      c++
+    }
+    i++;return true
   }
   function findPercentVar() {
     const percentVarStart = c
