@@ -2,22 +2,25 @@ import fs from 'fs'
 import ahkParser from './parser/index'
 const d = console.debug.bind(console)
 
-// const content: string = fs.readFileSync('tests/semicolon in string.ahk').toString().replace(/\r/g, '')
-const content: string = fs.readFileSync('tests/the test1.ahk').toString().replace(/\r/g, '')
-// const content: string = fs.readFileSync('tests/func call.ahk').toString().replace(/\r/g, '')
-// const content: string = fs.readFileSync('tests/literal objects.ahk').toString().replace(/\r/g, '')
-// const content: string = fs.readFileSync('tests/arrays.ahk').toString().replace(/\r/g, '')
-// const content: string = fs.readFileSync('tests/operators.ahk').toString().replace(/\r/g, '')
-// const content: string = fs.readFileSync('tests/string concat.ahk').toString().replace(/\r/g, '')
-// const content: string = fs.readFileSync('tests/assignment expression.ahk').toString().replace(/\r/g, '')
-// const content: string = fs.readFileSync('tests/break hotkey.ahk').toString().replace(/\r/g, '')
-// const content: string = fs.readFileSync('tests/js html.ahk').toString().replace(/\r/g, '')
-// const content: string = fs.readFileSync('tests/assignment or statement.ahk').toString().replace(/\r/g, '')
-// const content: string = fs.readFileSync('tests/ahk_explorer.ahk').toString().replace(/\r/g, '')
-// const content: string = fs.readFileSync('tests/legal.ahk').toString().replace(/\r/g, '')
-// const content: string = fs.readFileSync('tests/yolo.ahk').toString().replace(/\r/g, '')
 
-const everything = ahkParser(content)
+const content: string =
+fs.readFileSync('tests/decimal.ahk')
+// fs.readFileSync('tests/semicolon in string.ahk')
+// fs.readFileSync('tests/the test1.ahk')
+// fs.readFileSync('tests/func call.ahk')
+// fs.readFileSync('tests/literal objects.ahk')
+// fs.readFileSync('tests/arrays.ahk')
+// fs.readFileSync('tests/operators.ahk')
+// fs.readFileSync('tests/string concat.ahk')
+// fs.readFileSync('tests/assignment expression.ahk')
+// fs.readFileSync('tests/break hotkey.ahk')
+// fs.readFileSync('tests/js html.ahk')
+// fs.readFileSync('tests/assignment or statement.ahk')
+// fs.readFileSync('tests/ahk_explorer.ahk')
+// fs.readFileSync('tests/legal.ahk')
+// fs.readFileSync('tests/yolo.ahk')
+
+const everything = ahkParser(content.toString().replace(/\r/g, ''))
 
 type StringIndexNumber = {
   [key: string]: number,
