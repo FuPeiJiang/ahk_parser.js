@@ -1,3 +1,4 @@
+import { trace } from 'console'
 import { CommentSemiColon, startingMultiLineComment, endingMultiLineComment, whiteSpaceObj, variableCharsObj, operatorsObj, typeOfValidVarName, whiteSpaceOverrideAssign, propCharsObj } from './tokens'
 // import {whiteSpaaaaaceObj} from './usage'
 const d = console.debug.bind(console)
@@ -285,7 +286,11 @@ export default (content: string) => {
           if (isNaN(Number(validName))) {
             c++
             findMethodOrProperty()
-            findCommentsAndEndLine()
+            if (i === exprFoundLine) {
+              findCommentsAndEndLine()
+            } else {
+              i++
+            }
             continue lineLoop
           }
         }
@@ -296,12 +301,11 @@ export default (content: string) => {
         if (findOperators()) {
           d(`${validName} assignment`)
           findExpression()
-          c++
-          // if (findExpression()) {
-          findCommentsAndEndLine()
-          // } else {
-          // }
-          // i++
+          if (i === exprFoundLine) {
+            findCommentsAndEndLine()
+          } else {
+            i++
+          }
           continue lineLoop
         }
       }
@@ -406,10 +410,6 @@ export default (content: string) => {
         }
       }
     } else {
-      // if (c < numberOfChars && !whiteSpaceObj[lines[i][c]]) {
-      // d('illegal nonWhiteSpace at betweenExpression',char())
-      // i++;return false
-      // }
       if (!skipThroughEmptyLines()) {return false}
     }
 
@@ -427,15 +427,18 @@ export default (content: string) => {
     if (c === numberOfChars) {
       return false
     } else if (findOperators()) {
+      d(435345)
       return findExpression()
     } else if (whiteSpaceObj[lines[i][c - 1]] && findExpression()) {
       const concatWhiteSpaces = lines[i].slice(beforeConcatBak, afterConcat)
       d(`concat "${concatWhiteSpaces}" ${concatWhiteSpaces.length}LENGHT ${beforeConcatBak + 1} line ${concatLineBak + 1}`)
+      d(435345)
       return true
     } else {
       if (insideContinuation) {
         if (endExprContinuation()) {
           findExpression()
+          d(435345)
           return true
         }
       } else {
@@ -848,7 +851,7 @@ export default (content: string) => {
       if (c === numberOfChars) {
         //comment: next line
       } else if (lines[i][c] === ';' && (c === 0 || whiteSpaceObj[lines[i][c - 1]])) {
-        d('comment while skipThroughEmptyLines', char())
+        // d('comment while skipThroughEmptyLines', char())
       } else {
         //anything else, return found
         return true
@@ -868,11 +871,13 @@ export default (content: string) => {
     }
   }
   function findCommentsAndEndLine() {
+    // console.trace()
+    // process.exit()
     if (c === numberOfChars) {
       i++;return true
     }
     if (c < numberOfChars && !whiteSpaceObj[lines[i][c]]) {
-      d('illegal nonWhiteSpace at findCommentsAndEndLine',char())
+      d(`ILLEGAL nonWhiteSpace '${lines[i][c]}' at findCommentsAndEndLine ${char()}`)
       i++;return false
     }
     while (c < numberOfChars) {
