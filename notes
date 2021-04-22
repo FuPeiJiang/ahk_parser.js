@@ -656,3 +656,5 @@ now that : isn't operator, it's concat...
 I need to c++ after : , but still some concat
 
 fixed concat, which is printed after because it needs to know if what's after is Expr
+
+keep track of should there be a colon using colonDeep++ when obj or '?'

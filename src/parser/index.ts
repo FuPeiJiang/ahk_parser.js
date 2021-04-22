@@ -19,7 +19,7 @@ export default (content: string) => {
   const everything = []
   const toFile = ''
 
-  let i = 0, c = 0, numberOfChars = 0, validName = '', strStartLine: number, strStartPos: number, insideContinuation = false, beforeConcat: number, nonWhiteSpaceStart: number, exprFoundLine = -1
+  let i = 0, c = 0, numberOfChars = 0, validName = '', strStartLine: number, strStartPos: number, insideContinuation = false, beforeConcat: number, nonWhiteSpaceStart: number, exprFoundLine = -1,colonDeep = 0
 
   lineLoop:
   while (i < howManyLines) {
@@ -247,17 +247,22 @@ export default (content: string) => {
     } else if (c < numberOfChars && operatorsObj[lines[i][c].toLowerCase()]) {
       if (lines[i][c] === '?') {
         d('? ternary',char())
-        c++
+        colonDeep++, c++
         findExpression()
         if (lines[i][c] === ':') {
           d(': ternary',char())
-          c++
+          colonDeep--,c++
           return true
         } else {
           d('why is there no : after ? ternary',char())
-          c++
+          colonDeep--,c++
           return false
         }
+      } else if (lines[i][c] === ':') {
+        if (!colonDeep) {
+          d('unexpected :',char())
+        }
+        return false
       }
       d(lines[i][c], '1operator', char())
       c++
@@ -431,7 +436,7 @@ export default (content: string) => {
 
     if (lines[i][c] === '{') {
       d('{ start', char())
-      c++
+      colonDeep++, c++
 
       while (true) {
         if (!findExpression()) {
@@ -461,7 +466,7 @@ export default (content: string) => {
         d('ILLEGAL }', char())
       }
       d('} end', char())
-      c++
+      colonDeep--, c++
       return true
     }
 
