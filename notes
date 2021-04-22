@@ -607,3 +607,15 @@ foo(arg1, Byref arg2:=3+3) {
 :=number, string, bool
 
 added exprFoundLine=-1, exprFoundLine=i first thing called by betweenExpression()
+
+foo:="bar"
+var2:={"4" foo:3  +3}
+p(var2) ;4bar:6
+var2:={foo:3  +3}
+p(var2) ;foo:6
+var2:={foo "4":3  +3}
+p(var2) ;bar4:6
+var2:={foo foo:3  +3}
+p(var2) ;barbar:6
+
+obj literal is dyn as long as it's not a single var
