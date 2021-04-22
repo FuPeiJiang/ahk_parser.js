@@ -312,19 +312,20 @@ export default (content: string) => {
 
   function isFunctionDefinition() {
     const iBak = i, cBak = c, numberOfCharsBak = numberOfChars
+    let toReturn: boolean|number = false
     if (skipThroughFindChar(')')) {
       c++
       if (skipThroughEmptyLines()) {
         if (lines[i][c] === '{') {
-          i = iBak,c = cBak,numberOfChars = numberOfCharsBak
-          return true
+          toReturn = true
         }
       }
     } else {
       d('( with no closing ) isFunctionDefinition',char())
+      toReturn = 2
     }
     i = iBak,c = cBak,numberOfChars = numberOfCharsBak
-    return false
+    return toReturn
   }
   function findOperators() {
     //#VARIABLE ASSIGNMENT
@@ -694,16 +695,19 @@ export default (content: string) => {
       }
     }
   }
-  function skipThroughFindChar(charToFind) {
+  function skipThroughFindChar(charToFind: string) {
     //also skip through whiteSpaces, comments
     outer:
     while (true) {
       skipThroughWhiteSpaces()
       //EOL: next line
+      charLoop:
       while (c < numberOfChars) {
         if (lines[i][c] === ';' && c === 1 || whiteSpaceObj[lines[i][c - 1]]) {
           d('comment while skipThroughFindChar', char())
+          break charLoop
         } else if (lines[i][c] === charToFind) {
+          d('found',charToFind,'at',char())
           return true
         }
         c++
@@ -713,10 +717,9 @@ export default (content: string) => {
         c = 0, numberOfChars = lines[i].length
         continue outer
       } else {
-        break outer
+        return false
       }
     }
-    return false
   }
   function skipThroughEmptyLines() {
     //also skip through whiteSpaces, comments

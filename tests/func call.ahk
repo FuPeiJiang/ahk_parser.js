@@ -11,5 +11,7 @@
 ; }
 ; d('illegal function DEFINITION: need something after (',char())
 foo(
+; foo()
+  ; ,fef)
 ; foo() {
 ; }
