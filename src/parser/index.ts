@@ -851,29 +851,6 @@ export default (content: string) => {
       c++
     }
   }
-  function findObjKey() {
-    skipThroughWhiteSpaces()
-    if (variableCharsObj[lines[i][c]]) {
-      nonWhiteSpaceStart = c
-      c++
-      while (variableCharsObj[lines[i][c]]) {
-        c++
-      }
-      d(lines[i].slice(nonWhiteSpaceStart, c), 'validName findObjKey', char())
-      return true
-    } else if (lines[i][c] === '(') {
-      d('( obj dyn key', char())
-      c++
-      findExpression()
-      d(') obj dyn key', char())
-      c++
-      return true
-    } else if (findDoubleQuotedString()) {
-      return true
-    } else {
-      return false
-    }
-  }
   function findPercentVar() {
     const percentVarStart = c
     if (c < numberOfChars && lines[i][c] === '%') {
