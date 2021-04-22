@@ -11,8 +11,21 @@
 ; }
 ; d('illegal function DEFINITION: need something after (',char())
 ; foo(
+
+; foo(
+  ; ,a
+  ; ,a)
+; foo(
+; ,,a)
 foo(
-  ,a)
+,,
+)
+; foo(   )
+; foo( ,  )
+; var:={}
+; var:={  }
+; var:=[a
+; ,b]
   ; ,fef)
 ; foo() {
 ; }

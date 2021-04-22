@@ -247,10 +247,53 @@ export default (content: string) => {
               }
             } else {
             //#FUNCTION CALL
+              // d(`${validName} Function startOfLine${char()}`)
+              // c++
+              // findExpression()
+              // d(')END Function startOfLine', char())
+
+
               d(`${validName} Function startOfLine${char()}`)
-              c++
-              findExpression()
+              c++,exprFoundLine = i
+              let endsWithComma = false
+              // let arrOnWhichLine: number
+              while (true) {
+                skipThroughEmptyLines()
+                if (lines[i][c] === ',') {
+                  endsWithComma = true
+                  d(', CALL',char())
+                  c++
+                  continue
+                }
+                if (findExpression()) {
+                  endsWithComma = false
+                } else {
+                  if (endsWithComma) {
+                    d('ILLEGAL trailling , FUNCTION startOfLine', char())
+                  }
+                  break
+                }
+                // if (!findExpression()) {
+                // if (lines[i][c] === ',') {
+                // d('ILLEGAL trailling ,', char())
+                // } else if (lines[i][c] === ')') {
+                // d('valid empty func startOfLine', char())
+                // } else {
+                // d('illegal func startOfLine', char())
+                // }
+                // break
+                // }
+                // if (lines[i][c] !== ',') {
+                // break
+                // }
+                // c++
+                // break
+              }
+              if (i !== exprFoundLine) {
+                d('ILLEGAL )END Function startOfLine', char())
+              }
               d(')END Function startOfLine', char())
+
               i++
               continue lineLoop
             }
@@ -503,13 +546,13 @@ export default (content: string) => {
       d('[ start', char())
       c++
 
-      // let arrOnWhichLine: number
+      exprFoundLine = i
       while (true) {
         if (!findExpression()) {
           if (lines[i][c] === ',') {
-            d('ILLEGAL trailling ,', char())
+            d('ILLEGAL trailling , ARRAY', char())
           } else if (lines[i][c] === ']') {
-            d('v`alid empty arr', char())
+            d('valid empty arr', char())
           } else {
             d('illegal arr1', char())
           }
@@ -530,12 +573,12 @@ export default (content: string) => {
 
     if (lines[i][c] === '{') {
       d('{ start', char())
-      colonDeep++, c++
+      colonDeep++, c++, exprFoundLine = i
 
       while (true) {
         if (!findExpression()) {
           if (lines[i][c] === ',') {
-            d('ILLEGAL trailling ,', char())
+            d('ILLEGAL trailling , OBJECT', char())
           } else if (lines[i][c] === '}') {
             d('valid empty obj', char())
           } else {
