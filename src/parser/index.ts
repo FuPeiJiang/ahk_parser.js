@@ -709,11 +709,23 @@ export default (content: string) => {
 
   }
   function findDecimal() {
-    while (c < numberOfChars && !isNaN(Number(lines[i][c]))) {
-      c++
+    if (innerDecimalFinder()) {
+      d(`${validName} Decimal ${char()}`)
+    } else {
+      d(`${validName} Illegal Decimal ${char()}`)
     }
-    validName = lines[i].slice(nonWhiteSpaceStart, c)
-    d(`${validName} Decimal ${char()}`)
+    function innerDecimalFinder() {
+      while (c < numberOfChars && !isNaN(Number(lines[i][c]))) {
+        c++
+      }
+      if (c < numberOfChars && lines[i][c] === '.') {
+        c++
+        innerDecimalFinder()
+        return false
+      }
+      validName = lines[i].slice(nonWhiteSpaceStart, c)
+      return true
+    }
   }
   function findDoubleQuotedString() {
     if (lines[i][c] === '"') {
