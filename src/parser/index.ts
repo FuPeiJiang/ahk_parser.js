@@ -39,9 +39,9 @@ export default (content: string) => {
         }
 
         //if line starts with */
-        if (lines[i].slice(c, c + 2) === '*/') {
-          everything.push({ type: 'MultilineComment', lineStart: multiLineCommentLineStart, colStart: multiLineCommentColStart, lineEnd: i, colEnd: c + 2 })
+        if (c < numCharsMinusOne && lines[i].slice(c, c + 2) === '*/') {
           // d('MultilineComment END', l())
+          // everything.push({ type: 'MultilineComment', lineStart: multiLineCommentLineStart, colStart: multiLineCommentColStart, lineEnd: i, colEnd: c + 2 })
           i++
           continue lineLoop
         }
@@ -75,7 +75,6 @@ export default (content: string) => {
         i++
         continue lineLoop
       }
-
 
       nonWhiteSpaceStart = c
       //stumble upon a valid variable Char
@@ -173,11 +172,11 @@ export default (content: string) => {
 
       //%which_something%_var:=2 is valid
       //skip through % OR valid variable Chars
-      while (c < numberOfChars && findPercentVar() || variableCharsObj[lines[i][c]]) {
+      while (c < numberOfChars && (findPercentVar() || variableCharsObj[lines[i][c]])) {
         c++
       }
       if (c === numberOfChars) {
-        d('unexpected EOL after var parsing')
+        d('unexpected EOL after var parsing',char())
         continue lineLoop
       }
       validName = lines[i].slice(nonWhiteSpaceStart, c)
@@ -550,7 +549,7 @@ export default (content: string) => {
       }
 
       //skip through % OR valid variable Chars
-      while (c < numberOfChars && lines[i][c] === '%' || variableCharsObj[lines[i][c]]) {
+      while (c < numberOfChars && (findPercentVar() || variableCharsObj[lines[i][c]])) {
         c++
       }
       validName = lines[i].slice(nonWhiteSpaceStart, c)
