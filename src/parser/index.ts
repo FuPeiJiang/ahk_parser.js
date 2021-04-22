@@ -607,9 +607,13 @@ export default (content: string) => {
     }
 
     if (findDoubleQuotedString()) {
-      // d(lines[i][c])
       betweenExpression()
       return true
+    } else {
+      if (i === howManyLines) {
+        d('findExpression OutOfLines')
+        return false
+      }
     }
 
     if (lines[i][c] === '(') {
@@ -713,6 +717,8 @@ export default (content: string) => {
             d('stringContinuation START', char())
             endStringContinuation()
             return true
+          } else {
+            return false
           }
         }
         return true
@@ -780,8 +786,10 @@ export default (content: string) => {
         return false
       }
     }
+    d('startContinuation OutOfLines')
+    trace()
     // how to return out of lines ???
-    return -1
+    return false
   }
   function endExprContinuation() {
     i++, c = 0, numberOfChars = lines[i].length
@@ -845,7 +853,7 @@ export default (content: string) => {
   }
   function skipThroughEmptyLines() {
     //also skip through whiteSpaces, comments
-    while (true) {
+    while (i < howManyLines) {
       skipThroughWhiteSpaces()
       //EOL: next line
       if (c === numberOfChars) {
@@ -860,7 +868,7 @@ export default (content: string) => {
       if (i < howManyLines) {
         c = 0, numberOfChars = lines[i].length
       } else {
-        break
+        return false
       }
     }
     return false
