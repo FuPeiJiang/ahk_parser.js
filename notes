@@ -619,3 +619,30 @@ var2:={foo foo:3  +3}
 p(var2) ;barbar:6
 
 obj literal is dyn as long as it's not a single var
+so if there's at least one betweenExpression
+
+var2:={condition ? ifTrue : ifFalse : value}
+p(var2)
+
+2 implementations possible:
+count how many ?
+and if questionMarkCount
+':' ends a ternary
+
+OR
+
+remove : from operators
+when you see a ?, expect a :
+this one is less recursive, but I'm more
+comfortable with recursion ?
+
+var:ok?no
+1st would see :, and say, illegal
+and do what ?
+
+2nd: would not see it. and the line continues
+because nothing found.
+
+so 1st could see :, and continue line ?
+knowing how deep probably is helpful
+
