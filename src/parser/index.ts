@@ -931,6 +931,7 @@ export default (content: string) => {
         }
 
         if (lines[i][c] === ':') {
+          everything.push({type: ': object', text:':',i1: i, c1:c})
           d(': object', char())
         } else {
           d('illegal obj2', char())
@@ -969,7 +970,8 @@ export default (content: string) => {
       if (i !== exprFoundLine) {
         d('ILLEGAL }', char())
       }
-      // d('} object', char())
+      d('} object', char())
+      everything.push({type: '} object', text:'}',i1: i, c1:c})
       // d(`]]]]]]]]]]]]]]]]]]]]\nMap(${mapKeysAndValuesArr.join(',')})`)
       colonDeep--, c++
       // d(']]]]]]]]]]]]]]]]]]]]\n',objStart,i,textFromPosToCurrent(objStart))
