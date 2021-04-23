@@ -362,7 +362,8 @@ export default (content: string) => {
     // const textArr = replacementText.split('\n')
     // textArr.push('test1')
     // textArr.push('TEST2')
-    const textArr = ['test1','TEST2','TESTT3','test4']
+    // const textArr = ['test1','TEST2','TESTT3','test4']
+    const textArr = ['test1']
     const replaceLength = textArr.length
     const sourceLength = i2 - i1 + 1
 
@@ -384,11 +385,14 @@ export default (content: string) => {
       return linesCopy
     }
 
+    //same replacementLines as existing
+    if (replaceLength === sourceLength) {
     //all on same line
-    if (replaceLength === 1 && sourceLength === 1) {
-      linesCopy[i1] = linesCopy[i1].slice(0,c1) + textArr[0] + linesCopy[i1].slice(c2)
-      // d(linesCopy[i1])
-      return linesCopy
+      if (sourceLength === 1) {
+        linesCopy[i1] = linesCopy[i1].slice(0,c1) + textArr[0] + linesCopy[i1].slice(c2)
+        d(linesCopy.join('\n'))
+        return linesCopy
+      }
     }
 
     //more lines than existing
@@ -451,14 +455,11 @@ export default (content: string) => {
         }
         // d(linesCopy.join('\n'))
         linesCopy[i1] = linesCopy[i1].slice(0,c1) + textArr[0]
-        d(linesCopy.join('\n'))
+        // d(linesCopy.join('\n'))
         return linesCopy
       }
     }
 
-
-    d(replaceLength, sourceLength)
-    d(rangeAndReplaceTextArr[i])
   }
 
   return everything
