@@ -26,21 +26,17 @@ export default (content: string) => {
     //#multiline comments
     //if line starts with /*
     // leave 2 chars at end
-    const numCharsMinusOne = numberOfChars - 1
-    if (c < numCharsMinusOne && lines[i].slice(c, c + 2) === '/*') {
+    if (c < numberOfChars - 1 && lines[i].slice(c, c + 2) === '/*') {
       const multiLineCommentLineStart = i, multiLineCommentColStart = c
       // d('MultilineComment START', l())
       while (++i < howManyLines) {
         c = 0
-        const numCharsMinusOne = lines[i].length - 1
+        numberOfChars = lines[i].length
 
-        //skip through whiteSpaces
-        while (c < numCharsMinusOne && whiteSpaceObj[lines[i][c]]) {
-          c++
-        }
+        skipThroughWhiteSpaces()
 
         //if line starts with */
-        if (c < numCharsMinusOne && lines[i].slice(c, c + 2) === '*/') {
+        if (c < numberOfChars - 1 && lines[i].slice(c, c + 2) === '*/') {
           // d('MultilineComment END', l())
           // everything.push({ type: 'MultilineComment', lineStart: multiLineCommentLineStart, colStart: multiLineCommentColStart, lineEnd: i, colEnd: c + 2 })
           i++
