@@ -196,7 +196,8 @@ export default (content: string) => {
           if (isNaN(Number(validName))) {
             //#FUNCTION DEFINITION
             if (isFunctionDefinition()) {
-              d(validName, 'Function DEFINITION', char())
+              // d(validName, 'Function DEFINITION', char())
+              everything.push({type: 'function definition', text:`${validName}(`,i1: i, c1:nonWhiteSpaceStart,c2:c})
               c++
               variadicAsterisk = true
               while (true) {
