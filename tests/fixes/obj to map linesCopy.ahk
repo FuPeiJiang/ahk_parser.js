@@ -1,1 +1,2 @@
-var8:={a:b} ;comment
+var8:={a
+:b} ;comment
