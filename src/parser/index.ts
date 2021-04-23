@@ -685,7 +685,7 @@ export default (content: string) => {
 
       //#METHOD CALL
       if (lines[i][c] === '(') {
-        everything.push({type: 'method', text:validName,i1: i, c1:nonWhiteSpaceStart,c2:c})
+        everything.push({type: 'method', text:`${validName}(`,i1: i, c1:nonWhiteSpaceStart,c2:c})
         d(`${validName} METHOD ${char()}`)
         c++, exprFoundLine = i
         let endsWithComma = false
@@ -886,6 +886,7 @@ export default (content: string) => {
 
     if (lines[i][c] === '{') {
       d('{ object', char())
+      everything.push({type: '{ object', text:'{',i1: i, c1:c})
       const objStart: [number, number] = [c,i]
       colonDeep++, c++, exprFoundLine = i
       let kStart: [number, number], vStart: [number, number], k: string, v: string
