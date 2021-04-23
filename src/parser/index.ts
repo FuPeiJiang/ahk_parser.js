@@ -68,7 +68,8 @@ export default (content: string) => {
 
       //#function DECLARATION END
       if (lines[i][c] === '}') {
-        d(`} Function DEFINITION ${char()}`)
+        // d(`} Function DEFINITION ${char()}`)
+        everything.push({type: '} function definition', text:'}',i1: i, c1:c})
         i++
         continue lineLoop
       }
@@ -242,7 +243,9 @@ export default (content: string) => {
                   variadicAsterisk = false
                   continue startOfLineLoop
                 }
-                d(', Function DEFINITION', char())
+                // d(', Function DEFINITION', char())
+                everything.push({type: ', function definition', text:',',i1: i, c1:c})
+
                 c++
                 // ch()
                 // return true
