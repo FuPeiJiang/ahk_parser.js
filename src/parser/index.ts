@@ -259,8 +259,8 @@ export default (content: string) => {
                 if (!skipThroughEmptyLines()) { d('EOF Function startOfLine'); break lineLoop }
                 if (lines[i][c] === ',') {
                   endsWithComma = true
-                  // d(', function CALL', char())
-                  everything.push({type: ', function', text:',',i1: i, c1:c})
+                  // d(', function CALL startOfLine', char())
+                  everything.push({type: ', function startOfLine', text:',',i1: i, c1:c})
                   c++
                   continue
                 }
@@ -823,7 +823,8 @@ export default (content: string) => {
           skipThroughEmptyLines()
           if (lines[i][c] === ',') {
             endsWithComma = true
-            d(', CALL', char())
+            // d(', function CALL', char())
+            everything.push({type: ', function', text:',',i1: i, c1:c})
             c++
             continue
           }
