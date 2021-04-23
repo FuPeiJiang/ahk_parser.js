@@ -352,85 +352,88 @@ export default (content: string) => {
   // toFile = toFile.slice(1)
   // writeSync(toFile)
 
+  return everything
+  
+  function applyRangeReplacements() {
   //reverse iterate to not change [c,i]
-  const linesCopy = lines.slice()
-  replaceRangesLoop:
-  for (let i = rangeAndReplaceTextArr.length - 1; i > -1; i--) {
-    const [[[c1,i1],[c2,i2]], replacementText] = rangeAndReplaceTextArr[i]
-    const textArr = replacementText.split('\n')
-    // const textArr = ['test1']
-    // textArr.push('test1')
-    // textArr.push('TEST2')
-    // textArr.push('TESTT3')
-    // textArr.push('test4')
-    // const textArr = ['test1','TEST2','TESTT3','test4']
-    const replaceLength = textArr.length
-    const sourceLength = i2 - i1 + 1
+    const linesCopy = lines.slice()
+    replaceRangesLoop:
+    for (let i = rangeAndReplaceTextArr.length - 1; i > -1; i--) {
+      const [[[c1,i1],[c2,i2]], replacementText] = rangeAndReplaceTextArr[i]
+      const textArr = replacementText.split('\n')
+      // const textArr = ['test1']
+      // textArr.push('test1')
+      // textArr.push('TEST2')
+      // textArr.push('TESTT3')
+      // textArr.push('test4')
+      // const textArr = ['test1','TEST2','TESTT3','test4']
+      const replaceLength = textArr.length
+      const sourceLength = i2 - i1 + 1
 
-    // d('///////////////////////////////////////////////')
-    // d('///////////////////////////////////////////////')
-    // d(linesCopy[i1].slice(0,c1))
+      // d('///////////////////////////////////////////////')
+      // d('///////////////////////////////////////////////')
+      // d(linesCopy[i1].slice(0,c1))
 
-    //nothing to replace with, not even empty string
-    // [] != [""]
-    if (!replaceLength) {
-      continue replaceRangesLoop
-    }
-
-    //nowhere to replace
-    if (sourceLength < 1) {
-      continue replaceRangesLoop
-    }
-
-    //same replacementLines as existing
-    if (replaceLength === sourceLength) {
-    //all on same line
-      if (sourceLength === 1) {
-        linesCopy[i1] = linesCopy[i1].slice(0,c1) + textArr[0] + linesCopy[i1].slice(c2)
-        // d(linesCopy.join('\n'))
-        continue replaceRangesLoop
-      } else if (sourceLength === 2) {
-        linesCopy[i1] = linesCopy[i1].slice(0,c1) + textArr[0]
-        linesCopy[i2] = textArr[1] + linesCopy[i2].slice(c2)
-        // d(linesCopy.join('\n'))
-        continue replaceRangesLoop
-      } else if (sourceLength > 2) {
-        linesCopy[i1] = linesCopy[i1].slice(0,c1) + textArr[0]
-        for (let n = 1; n < replaceLength - 1; n++) {
-          linesCopy[i1 + n] = textArr[n]
-        }
-        linesCopy[i2] = textArr[replaceLength - 1] + linesCopy[i2].slice(c2)
-        d(linesCopy.join('\n'))
+      //nothing to replace with, not even empty string
+      // [] != [""]
+      if (!replaceLength) {
         continue replaceRangesLoop
       }
-    }
 
-    //more lines than existing
-    if (replaceLength > sourceLength) {
+      //nowhere to replace
+      if (sourceLength < 1) {
+        continue replaceRangesLoop
+      }
+
+      //same replacementLines as existing
+      if (replaceLength === sourceLength) {
+        //all on same line
+        if (sourceLength === 1) {
+          linesCopy[i1] = linesCopy[i1].slice(0,c1) + textArr[0] + linesCopy[i1].slice(c2)
+          // d(linesCopy.join('\n'))
+          continue replaceRangesLoop
+        } else if (sourceLength === 2) {
+          linesCopy[i1] = linesCopy[i1].slice(0,c1) + textArr[0]
+          linesCopy[i2] = textArr[1] + linesCopy[i2].slice(c2)
+          // d(linesCopy.join('\n'))
+          continue replaceRangesLoop
+        } else if (sourceLength > 2) {
+          linesCopy[i1] = linesCopy[i1].slice(0,c1) + textArr[0]
+          for (let n = 1; n < replaceLength - 1; n++) {
+            linesCopy[i1 + n] = textArr[n]
+          }
+          linesCopy[i2] = textArr[replaceLength - 1] + linesCopy[i2].slice(c2)
+          d(linesCopy.join('\n'))
+          continue replaceRangesLoop
+        }
+      }
+
+      //more lines than existing
+      if (replaceLength > sourceLength) {
       //if source all on same line
-      if (sourceLength === 1) {
+        if (sourceLength === 1) {
         //save right slice because we gon delete it
         //I'm using i1 instead of i2 to show that they are on the same line
-        const rightSlice = linesCopy[i1].slice(c2)
-        linesCopy[i1] = linesCopy[i1].slice(0,c1) + textArr[0]
-        // DOCS: arr.splice(start, deleteCount, item1_
-        // arr[start] becomes item1
-        // what was arr[start] is now at start+1
-        // so we insert to start+1
-        for (let n = 1, len = replaceLength - 1; n < len; n++) {
+          const rightSlice = linesCopy[i1].slice(c2)
+          linesCopy[i1] = linesCopy[i1].slice(0,c1) + textArr[0]
+          // DOCS: arr.splice(start, deleteCount, item1_
+          // arr[start] becomes item1
+          // what was arr[start] is now at start+1
+          // so we insert to start+1
+          for (let n = 1, len = replaceLength - 1; n < len; n++) {
           // d('loop',n)
-          linesCopy.splice(i1 + n, 0, textArr[n])
-        }
-        // d(linesCopy[i1])
-        // d(linesCopy[i1 + 1])
-        // d(linesCopy[i1 + 2])
-        // this is the last line
-        linesCopy.splice(i1 + 1, 0, textArr[replaceLength - 1] + rightSlice)
+            linesCopy.splice(i1 + n, 0, textArr[n])
+          }
+          // d(linesCopy[i1])
+          // d(linesCopy[i1 + 1])
+          // d(linesCopy[i1 + 2])
+          // this is the last line
+          linesCopy.splice(i1 + 1, 0, textArr[replaceLength - 1] + rightSlice)
 
-        // d(linesCopy[i1])
-        // d(linesCopy[i1 + 1])
-        // d(linesCopy[i1 + 2])
-        continue replaceRangesLoop
+          // d(linesCopy[i1])
+          // d(linesCopy[i1 + 1])
+          // d(linesCopy[i1 + 2])
+          continue replaceRangesLoop
         //only 2 lines
         //startSlice and endSlice are on different lines
         //so we don't need to save rightSlice
@@ -438,77 +441,78 @@ export default (content: string) => {
         //before insert below: below would be
         //moved
         //do it in reverse
-      } else if (sourceLength === 2) {
+        } else if (sourceLength === 2) {
         // this is the last line
-        linesCopy[i2] = textArr[replaceLength - 1] + linesCopy[i2].slice(c2)
-        for (let n = 1, len = replaceLength - 1; n < len; n++) {
-          linesCopy.splice(i1 + n, 0, textArr[n])
-        }
-        // first line
-        linesCopy[i1] = linesCopy[i1].slice(0,c1) + textArr[0]
-        // d(linesCopy[i1])
-        // d(linesCopy[i1 + 1])
-        // d(linesCopy[i1 + 2])
-        continue replaceRangesLoop
+          linesCopy[i2] = textArr[replaceLength - 1] + linesCopy[i2].slice(c2)
+          for (let n = 1, len = replaceLength - 1; n < len; n++) {
+            linesCopy.splice(i1 + n, 0, textArr[n])
+          }
+          // first line
+          linesCopy[i1] = linesCopy[i1].slice(0,c1) + textArr[0]
+          // d(linesCopy[i1])
+          // d(linesCopy[i1 + 1])
+          // d(linesCopy[i1 + 2])
+          continue replaceRangesLoop
         //start replacing inbetwwn lines, then insert lines
-      } else if (sourceLength > 2){
+        } else if (sourceLength > 2){
         // this is the last line
-        linesCopy[i2] = textArr[replaceLength - 1] + linesCopy[i2].slice(c2)
-        const middlePointReplaceInsert = replaceLength - sourceLength + 1
-        //replace lines
-        for (let n = 1; n < middlePointReplaceInsert; n++) {
-          linesCopy[i1 + n] = textArr[n]
+          linesCopy[i2] = textArr[replaceLength - 1] + linesCopy[i2].slice(c2)
+          const middlePointReplaceInsert = replaceLength - sourceLength + 1
+          //replace lines
+          for (let n = 1; n < middlePointReplaceInsert; n++) {
+            linesCopy[i1 + n] = textArr[n]
+          }
+          //insert
+          for (let n = middlePointReplaceInsert, len = replaceLength - 1; n < len; n++) {
+            linesCopy.splice(i1 + n, 0, textArr[n])
+          }
+          // d(linesCopy.join('\n'))
+          linesCopy[i1] = linesCopy[i1].slice(0,c1) + textArr[0]
+          // d(linesCopy.join('\n'))
+          continue replaceRangesLoop
         }
-        //insert
-        for (let n = middlePointReplaceInsert, len = replaceLength - 1; n < len; n++) {
-          linesCopy.splice(i1 + n, 0, textArr[n])
-        }
-        // d(linesCopy.join('\n'))
-        linesCopy[i1] = linesCopy[i1].slice(0,c1) + textArr[0]
-        // d(linesCopy.join('\n'))
-        continue replaceRangesLoop
       }
-    }
 
-    //less lines than existing, remove lines
-    //replaceLength is at least 1
-    //so sourceLength must be at least 2
-    //so no "on the same line stuff"
-    if (replaceLength < sourceLength) {
+      //less lines than existing, remove lines
+      //replaceLength is at least 1
+      //so sourceLength must be at least 2
+      //so no "on the same line stuff"
+      if (replaceLength < sourceLength) {
       //lets start how does 2 become 1 line
-      if (replaceLength === 1) {
+        if (replaceLength === 1) {
         // replace the first line and remove the rest
-        linesCopy[i1] = linesCopy[i1].slice(0,c1) + textArr[0] + linesCopy[i2].slice(c2)
-        //remove line
-        //DOCS: arr.splice(start, deleteCount)
-        linesCopy.splice(i1 + 1, sourceLength - replaceLength)
-        // d(linesCopy.join('\n'))
-        continue replaceRangesLoop
+          linesCopy[i1] = linesCopy[i1].slice(0,c1) + textArr[0] + linesCopy[i2].slice(c2)
+          //remove line
+          //DOCS: arr.splice(start, deleteCount)
+          linesCopy.splice(i1 + 1, sourceLength - replaceLength)
+          // d(linesCopy.join('\n'))
+          continue replaceRangesLoop
         //how does 3 become 2 lines ? or 1 ?
         //first how does 3 become 1 line ?
-      } else if (replaceLength > 1) {
+        } else if (replaceLength > 1) {
         //first line
-        linesCopy[i1] = linesCopy[i1].slice(0,c1) + textArr[0]
-        //last line
-        linesCopy[i2] = textArr[replaceLength - 1] + linesCopy[i2].slice(c2)
-        //remove between
-        linesCopy.splice(i1 + 1,sourceLength - 2)
-        //add between
-        // d(linesCopy.join('\n'))
-        // insert
-        for (let n = 1, len = replaceLength - 1; n < len; n++) {
-          linesCopy.splice(i1 + n, 0, textArr[n])
+          linesCopy[i1] = linesCopy[i1].slice(0,c1) + textArr[0]
+          //last line
+          linesCopy[i2] = textArr[replaceLength - 1] + linesCopy[i2].slice(c2)
+          //remove between
+          linesCopy.splice(i1 + 1,sourceLength - 2)
+          //add between
+          // d(linesCopy.join('\n'))
+          // insert
+          for (let n = 1, len = replaceLength - 1; n < len; n++) {
+            linesCopy.splice(i1 + n, 0, textArr[n])
+          }
+          // d(linesCopy.join('\n'))
+          continue replaceRangesLoop
         }
-        // d(linesCopy.join('\n'))
-        continue replaceRangesLoop
+
       }
-
+      d(`This should not happen: sourceLength${sourceLength}, replaceLength${replaceLength}`)
     }
-    d(`This should not happen: sourceLength${sourceLength}, replaceLength${replaceLength}`)
+    return linesCopy
   }
-  return linesCopy
 
-  // return everything
+
 
   function textFromPosToCurrent(startPos: [number,number]) {
     const [strStartPos,strStartLine] = startPos
