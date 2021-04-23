@@ -126,12 +126,13 @@ export default (content: string) => {
           if (findOperators()) {
             d(`${validName} assignment whiteSpace`)
             findExpression()
-            i++
+            // ch()
+            // i++
             continue lineLoop
           }
 
           if (idkType === 4) {
-            d(validName, 'whiteSpace COMMAND', nonWhiteSpaceStart, lineBeforeSkip,'line')
+            d(validName, 'whiteSpace COMMAND', nonWhiteSpaceStart + 1, lineBeforeSkip + 1,'line')
             // statement can't have Expr if line changed...
             if (i === lineBeforeSkip) {
               if (validName.toLowerCase() === 'return') {
@@ -664,6 +665,7 @@ export default (content: string) => {
       if (!betweenExpression()) {findExpression()}
       d(') group', char())
       c++
+      betweenExpression()
       return true
     }
 
@@ -693,6 +695,7 @@ export default (content: string) => {
       }
       d('] end', char())
       c++
+      betweenExpression()
       return true
     }
 
@@ -731,6 +734,7 @@ export default (content: string) => {
       }
       d('} object', char())
       colonDeep--, c++
+      betweenExpression()
       return true
     }
 

@@ -794,6 +794,17 @@ skipThroughEmptyLines will skip through and go to the other return
 statement can't have Expr if line changed...
 // can't be betweenExpression() because whiteSpace := takes priority
 
+why does ; return {1:2,"1":5} loop forever when 2 is fine ?
+Integer:
+        betweenExpression()
+        return true
+        vs
+d('} object', char())
+  colonDeep--, c++
+      return true
+
+adding betweenExpression fixes it lol
+
 inBetweens*
 in
 string_getUntilWithInBetweensULTRA(Byref string, Byref getUntil, inBetweens*) {
