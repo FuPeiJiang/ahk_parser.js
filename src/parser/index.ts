@@ -362,7 +362,7 @@ export default (content: string) => {
     // const textArr = replacementText.split('\n')
     const textArr = ['test1']
     // textArr.push('test1')
-    textArr.push('TEST2')
+    // textArr.push('TEST2')
     // textArr.push('TESTT3')
     // textArr.push('test4')
     // const textArr = ['test1','TEST2','TESTT3','test4']
@@ -481,14 +481,13 @@ export default (content: string) => {
     //so no "on the same line stuff"
     if (replaceLength < sourceLength) {
       //lets start how does 2 become 1 line
-      if (sourceLength === 2) {
-        //replaceLength must be 1
-        // replace the first line and remove the 2nd line
+      if (replaceLength === 1) {
+        // replace the first line and remove the rest
         linesCopy[i1] = linesCopy[i1].slice(0,c1) + textArr[0] + linesCopy[i2].slice(c2)
         //remove line
         //DOCS: arr.splice(start, deleteCount)
-        linesCopy.splice(i2, 1)
-        // d(linesCopy.join('\n'))
+        linesCopy.splice(i1 + 1, sourceLength - replaceLength)
+        d(linesCopy.join('\n'))
         return linesCopy
         //how does 3 become 2 lines ? or 1 ?
         //first how does 3 become 1 line ?
@@ -503,11 +502,15 @@ export default (content: string) => {
           linesCopy[i1] = linesCopy[i1].slice(0,c1) + textArr[0]
           linesCopy[i1 + 1] = textArr[1] + linesCopy[i2].slice(c2)
           linesCopy.splice(i2, 1)
-          d(linesCopy.join('\n'))
+          // d(linesCopy.join('\n'))
           return linesCopy
         }
 
+      } else if (sourceLength > 3) {
+        linesCopy[i1] = linesCopy[i1].slice(0,c1) + textArr[0]
+
       }
+
     }
 
   }
