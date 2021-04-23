@@ -356,9 +356,12 @@ export default (content: string) => {
   // toFile = toFile.slice(1)
   // writeSync(toFile)
 
+  //reverse iterate to not change [c,i]
   for (let i = objectsToconvertToMap.length - 1; i > -1; i--) {
     const [[[c1,i1],[c2,i2]], replacementText] = objectsToconvertToMap[i]
     const textArr = replacementText.split('\n')
+    textArr.push('test1')
+    textArr.push('TEST2')
     const replaceLength = textArr.length
     const sourceLength = i2 - i1 + 1
 
@@ -366,9 +369,19 @@ export default (content: string) => {
     d('///////////////////////////////////////////////')
     d('///////////////////////////////////////////////')
     // d(linesCopy[i1].slice(0,c1))
-    let linesReplaced = 0
+    const linesReplaced = 0
 
-    // d([].join('') === '') //true
+
+    //nothing to replace with, not even empty string
+    // [] != [""]
+    if (!replaceLength) {
+      return linesCopy
+    }
+
+    //nowhere to replace
+    if (sourceLength < 1) {
+      return linesCopy
+    }
 
     //all on same line
     if (replaceLength === 1 && sourceLength === 1) {
@@ -377,14 +390,38 @@ export default (content: string) => {
       return linesCopy
     }
 
-    //more lines than existing, replace then push
+    //more lines than existing
     if (replaceLength > sourceLength) {
-      linesCopy[i1] = linesCopy[i1].slice(0,c1) + textArr[0]
-      linesReplaced = 1
-
-      while (linesReplaced < replaceLength && linesReplaced < sourceLength) {
+      //if source all on same line
+      if (sourceLength === 1) {
+        //save right slice because we gon delete it
+        const rightSlice = linesCopy[i1].slice(c2)
         linesCopy[i1] = linesCopy[i1].slice(0,c1) + textArr[0]
+        // DOCS: arr.splice(start, deleteCount, item1_
+        // arr[start] becomes item1
+        // what was arr[start] is now at start+1
+        // so we insert to start+1
+        for (let n = 1, len = replaceLength - 1; n < len; n++) {
+          // d('loop',n)
+          linesCopy.splice(i1 + n, 0, textArr[n])
+        }
+        d(linesCopy[i1])
+        d(linesCopy[i1 + 1])
+        d(linesCopy[i1 + 2])
+        // this is the last line
+        linesCopy.splice(i1 + 1, 0, textArr[replaceLength - 1] + rightSlice)
+
+        // d(linesCopy[i1])
+        // d(linesCopy[i1 + 1])
+        // d(linesCopy[i1 + 2])
+        return linesCopy
       }
+      // linesCopy[i1] = linesCopy[i1].slice(0,c1) + textArr[0]
+      // linesReplaced = 1
+      //
+      // while (linesReplaced < replaceLength && linesReplaced < sourceLength) {
+      // linesCopy[i1] = linesCopy[i1].slice(0,c1) + textArr[0]
+      // }
     }
 
 

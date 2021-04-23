@@ -16,6 +16,7 @@
     "webpack-cli": "^4.6.0"
   },
   "scripts": {
+    "objToMap": "ts-node-dev --respawn --transpile-only src/object_to_map.ts",
     "dev": "ts-node-dev --respawn --transpile-only src/usage.ts",
     "dev2": "ts-node-dev src/usage.ts",
     "package": "yarn webpackProd && yarn dtsBundle && yarn unlink_d.ts",
