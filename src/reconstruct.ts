@@ -67,5 +67,5 @@ function arrOrObjToString(obj) {
 function writeSync(content: string, fileName: string) {
   const fs = require('fs')
   fs.writeFileSync(fileName, `${content}`, 'utf-8')
-  console.log('readFileSync complete')
+  // console.log('readFileSync complete')
 }

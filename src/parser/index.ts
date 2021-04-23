@@ -216,10 +216,12 @@ export default (content: string) => {
 
                 validName = lines[i].slice(nonWhiteSpaceStart, c)
                 if (validName.toLowerCase() === 'byref') {
+                  everything.push({type: 'byref', text:`${validName}`,i1: i, c1:nonWhiteSpaceStart,c2:c})
                   skipThroughWhiteSpaces(), nonWhiteSpaceStart = c
                   if (c === numberOfChars || !variableCharsObj[lines[i][c]]) { break }
                   c++, skipValidChar(), validName = lines[i].slice(nonWhiteSpaceStart, c)
-                  d(validName, 'Byref Param', char())
+                  // d(validName, 'Byref Param', char())
+                  everything.push({type: 'byref param', text:`${validName}`,i1: i, c1:nonWhiteSpaceStart,c2:c})
                 } else {
                   d(validName, 'Param', char())
                 }
@@ -355,6 +357,9 @@ export default (content: string) => {
 
   return everything
 
+  function ws() {
+    d(lines[i].slice(nonWhiteSpaceStart, c))
+  }
   function applyRangeReplacements() {
   //reverse iterate to not change [c,i]
     const linesCopy = lines.slice()
