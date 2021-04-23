@@ -353,7 +353,7 @@ export default (content: string) => {
   // writeSync(toFile)
 
   return everything
-  
+
   function applyRangeReplacements() {
   //reverse iterate to not change [c,i]
     const linesCopy = lines.slice()
@@ -948,7 +948,7 @@ export default (content: string) => {
         } else {
           k = textFromPosToCurrent(kStart)
         }
-        d('=====================\n',kStart,k,'\n=====================')
+        // d('=====================\n',kStart,k,'\n=====================')
         mapKeysAndValuesArr.push(k)
 
         c++ //skip :
@@ -958,7 +958,7 @@ export default (content: string) => {
         findExpression()
 
         v = textFromPosToCurrent(vStart)
-        d('=====================\n',vStart,v,'\n=====================')
+        // d('=====================\n',vStart,v,'\n=====================')
         mapKeysAndValuesArr.push(v)
 
         if (lines[i][c] === ',') {
@@ -971,11 +971,11 @@ export default (content: string) => {
       if (i !== exprFoundLine) {
         d('ILLEGAL }', char())
       }
-      d('} object', char())
-      d(`]]]]]]]]]]]]]]]]]]]]\nMap(${mapKeysAndValuesArr.join(',')})`)
+      // d('} object', char())
+      // d(`]]]]]]]]]]]]]]]]]]]]\nMap(${mapKeysAndValuesArr.join(',')})`)
       colonDeep--, c++
-      d(']]]]]]]]]]]]]]]]]]]]\n',objStart,i,textFromPosToCurrent(objStart))
-      rangeAndReplaceTextArr.push([[objStart,[c,i]],`Map(${mapKeysAndValuesArr.join(',')})`])
+      // d(']]]]]]]]]]]]]]]]]]]]\n',objStart,i,textFromPosToCurrent(objStart))
+      // rangeAndReplaceTextArr.push([[objStart,[c,i]],`Map(${mapKeysAndValuesArr.join(',')})`])
       // objectsToconvertToMap.push({range:[objStart,[c,i]],textArr:mapKeysAndValuesArr})
       betweenExpression()
       return true
