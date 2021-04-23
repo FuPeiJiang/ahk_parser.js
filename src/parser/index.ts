@@ -363,8 +363,8 @@ export default (content: string) => {
     const textArr = ['test1']
     // textArr.push('test1')
     textArr.push('TEST2')
-    textArr.push('TESTT3')
-    textArr.push('test4')
+    // textArr.push('TESTT3')
+    // textArr.push('test4')
     // const textArr = ['test1','TEST2','TESTT3','test4']
     const replaceLength = textArr.length
     const sourceLength = i2 - i1 + 1
@@ -487,26 +487,11 @@ export default (content: string) => {
         //remove line
         //DOCS: arr.splice(start, deleteCount)
         linesCopy.splice(i1 + 1, sourceLength - replaceLength)
-        d(linesCopy.join('\n'))
+        // d(linesCopy.join('\n'))
         return linesCopy
         //how does 3 become 2 lines ? or 1 ?
         //first how does 3 become 1 line ?
-      } else if (sourceLength === 3) {
-        if (replaceLength === 1) {
-          linesCopy[i1] = linesCopy[i1].slice(0,c1) + textArr[0] + linesCopy[i2].slice(c2)
-          linesCopy.splice(i1 + 1, 2)
-          // d(linesCopy.join('\n'))
-          return linesCopy
-          //replaceLength must be 2
-        } else {
-          linesCopy[i1] = linesCopy[i1].slice(0,c1) + textArr[0]
-          linesCopy[i1 + 1] = textArr[1] + linesCopy[i2].slice(c2)
-          linesCopy.splice(i2, 1)
-          // d(linesCopy.join('\n'))
-          return linesCopy
-        }
-
-      } else if (replaceLength > 2) {
+      } else if (replaceLength > 1) {
         //first line
         linesCopy[i1] = linesCopy[i1].slice(0,c1) + textArr[0]
         //last line
@@ -520,8 +505,7 @@ export default (content: string) => {
           linesCopy.splice(i1 + n, 0, textArr[n])
         }
         // d(linesCopy.join('\n'))
-        // linesCopy[i1] = linesCopy[i1].slice(0,c1) + textArr[0]
-
+        return linesCopy
       }
 
     }
