@@ -787,6 +787,12 @@ in betweenExpression(): if findBetween(), return true
 betweenExpression() will skipLines, so no need i++
 
 return Expression
+I don't want return Expr to be recognized as concat
+why does findExprMatch the one on the next line ?
+oof
+skipThroughEmptyLines will skip through and go to the other return
+statement can't have Expr if line changed...
+// can't be betweenExpression() because whiteSpace := takes priority
 
 inBetweens*
 in

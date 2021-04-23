@@ -86,7 +86,8 @@ export default (content: string) => {
         // if EOL, it must be COMMAND
         if (c === numberOfChars) {
 
-          // d('COMMAND EOL', char())
+          validName = lines[i].slice(nonWhiteSpaceStart, c)
+          d(validName, 'COMMAND EOL', char())
           i++
           continue lineLoop
         }
@@ -98,7 +99,7 @@ export default (content: string) => {
         if (lines[i][c] === ',') {
         // directive or command
           if (idkType === 1 || idkType === 4) {
-            d(validName, 'DIRECTIVE OR COMMAND comma', char())
+            d(validName, 'comma DIRECTIVE OR COMMAND', char())
             i++
             continue lineLoop
           }
@@ -118,7 +119,8 @@ export default (content: string) => {
             continue lineLoop
           }
 
-          //out of lines
+          const lineBeforeSkip = i
+
           if (!skipThroughEmptyLines()) { break lineLoop }
 
           if (findOperators()) {
@@ -129,8 +131,14 @@ export default (content: string) => {
           }
 
           if (idkType === 4) {
-            d(validName, 'whiteSpace COMMAND', char())
-            i++
+            d(validName, 'whiteSpace COMMAND', nonWhiteSpaceStart, lineBeforeSkip,'line')
+            // statement can't have Expr if line changed...
+            if (i === lineBeforeSkip) {
+              if (validName.toLowerCase() === 'return') {
+                // can't be betweenExpression() because whiteSpace := takes priority
+                findExpression()
+              }
+            }
             continue lineLoop
           }
 
@@ -433,25 +441,33 @@ export default (content: string) => {
     }
 
   }
+  //no lines are skipped
   function findBetween() {
     const beforeConcatBak = beforeConcat, afterConcat = c, concatLineBak = i
     if (c === numberOfChars) {
       return false
-    } else if (findOperators()) {
+    }
+
+    if (findOperators()) {
       return findExpression()
-    } else if (whiteSpaceObj[lines[i][c - 1]] && findExpression()) {
+    }
+
+    //look for concat, if no operators found
+    //if the next thing is expr, it is a concat
+    // if char before is whiteSpace concat
+    if (whiteSpaceObj[lines[i][c - 1]] && findExpression()) {
       const concatWhiteSpaces = lines[i].slice(beforeConcatBak, afterConcat)
       d(`concat "${concatWhiteSpaces}" ${concatWhiteSpaces.length}LENGHT ${beforeConcatBak + 1} line ${concatLineBak + 1}`)
       return true
-    } else {
-      if (insideContinuation) {
-        if (endExprContinuation()) {
-          findExpression()
-          return true
-        }
-      } else {
-        return false
+    }
+
+    if (insideContinuation) {
+      if (endExprContinuation()) {
+        findExpression()
+        return true
       }
+    } else {
+      return false
     }
   }
   function findMethodOrProperty() {
@@ -622,6 +638,7 @@ export default (content: string) => {
       if (findArrayAccess()) {return true}
 
       if (isNaN(Number(validName))) {
+        trace()
         d(`${validName} idkVariable ${char()}`)
       } else {
         d(`${validName} Integer ${char()}`)
