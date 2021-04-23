@@ -28,3 +28,4 @@ fs.readFileSync('tests/fixes/obj to map linesCopy.ahk')
 // fs.readFileSync('tests/yolo.ahk')
 
 const lines = ahkParser(content.toString().replace(/\r/g, ''))
+d(lines.join('\n'))

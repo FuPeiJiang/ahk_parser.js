@@ -359,10 +359,10 @@ export default (content: string) => {
   //reverse iterate to not change [c,i]
   for (let i = rangeAndReplaceTextArr.length - 1; i > -1; i--) {
     const [[[c1,i1],[c2,i2]], replacementText] = rangeAndReplaceTextArr[i]
-    // const textArr = replacementText.split('\n')
-    const textArr = ['test1']
+    const textArr = replacementText.split('\n')
+    // const textArr = ['test1']
     // textArr.push('test1')
-    textArr.push('TEST2')
+    // textArr.push('TEST2')
     // textArr.push('TESTT3')
     // textArr.push('test4')
     // const textArr = ['test1','TEST2','TESTT3','test4']
@@ -373,8 +373,6 @@ export default (content: string) => {
     d('///////////////////////////////////////////////')
     d('///////////////////////////////////////////////')
     // d(linesCopy[i1].slice(0,c1))
-    const linesReplaced = 0
-
 
     //nothing to replace with, not even empty string
     // [] != [""]
@@ -509,7 +507,7 @@ export default (content: string) => {
       }
 
     }
-
+    d(`This should not happen: sourceLength${sourceLength}, replaceLength${replaceLength}`)
   }
 
   return everything
