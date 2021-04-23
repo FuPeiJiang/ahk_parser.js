@@ -1177,13 +1177,13 @@ export default (content: string) => {
     return false
   }
   function skipThroughWhiteSpaces() {
-    const beforeSkipSpaces = c
+    const c1 = c
     while (c < numberOfChars && whiteSpaceObj[lines[i][c]]) {
       c++
     }
-    const text = lines[i].slice(beforeSkipSpaces,c)
+    const text = lines[i].slice(c1,c)
     if (text) {
-      everything.push({type: 'whiteSpaces', text:text,i1: i, c1: beforeSkipSpaces,c2:c})
+      everything.push({type: 'whiteSpaces', text:text,i1: i, c1: c1,c2:c})
     }
   }
   function findCommentsAndEndLine() {
@@ -1223,12 +1223,15 @@ export default (content: string) => {
     }
   }
   function findSingleVar() {
+    const c1 = c
     if (c < numberOfChars && propCharsObj[lines[i][c]]) {
       c++
       //skip through valid variable Chars
       while (c < numberOfChars && propCharsObj[lines[i][c]]) {
         c++
       }
+      const text = lines[i].slice(c1,c)
+      everything.push({type: 'singleVar', text:text,i1: i, c1: c1,c2:c})
       return true
     }
     return false
