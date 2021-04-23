@@ -13,7 +13,7 @@ export default (content: string) => {
   const everything = []
   const toFile = ''
 
-  let i = 0, c = 0, numberOfChars = 0, validName = '', strStartLine: number, strStartPos: number, insideContinuation = false, beforeConcat: number, nonWhiteSpaceStart: number, exprFoundLine = -1,colonDeep = 0,usingStartOfLineLoop = false, variadicAsterisk = false
+  let i = 0, c = 0, numberOfChars = 0, validName = '', strStartLine: number, strStartPos: number, insideContinuation = false, beforeConcat: number, nonWhiteSpaceStart: number, exprFoundLine = -1,colonDeep = 0,usingStartOfLineLoop = false, variadicAsterisk = false, lineBeforeSkip = 0
 
   lineLoop:
   while (i < howManyLines) {
@@ -138,7 +138,9 @@ export default (content: string) => {
               if (validName.toLowerCase() === 'return') {
                 // can't be betweenExpression() because whiteSpace := takes priority
                 findExpression()
+                continue lineLoop
               }
+              i++
             }
             continue lineLoop
           }
@@ -436,6 +438,7 @@ export default (content: string) => {
         }
       }
     } else {
+      lineBeforeSkip = i
       if (!skipThroughEmptyLines()) {return false}
     }
 
@@ -464,7 +467,7 @@ export default (content: string) => {
     //look for concat, if no operators found
     //if the next thing is expr, it is a concat
     // if char before is whiteSpace concat
-    if (whiteSpaceObj[lines[i][c - 1]] && findExpression()) {
+    if (i === lineBeforeSkip && whiteSpaceObj[lines[i][c - 1]] && findExpression()) {
       const concatWhiteSpaces = lines[i].slice(beforeConcatBak, afterConcat)
       d(`concat "${concatWhiteSpaces}" ${concatWhiteSpaces.length}LENGHT ${beforeConcatBak + 1} line ${concatLineBak + 1}`)
       return true

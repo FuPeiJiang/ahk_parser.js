@@ -56,4 +56,3 @@ string_getUntilWithInBetweensULTRA(Byref string, Byref getUntil, inBetweens*) {
     }
 
 }
-delimArr.ignoreTimes[index]-=1

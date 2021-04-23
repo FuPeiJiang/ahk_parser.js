@@ -814,3 +814,13 @@ a(b,inBetweens *) {
 YES IT IS
 
 use variadicAsterisk = false
+
+in string_getUntilWithInBetweensULTRA:
+valid empty arr 19 line 2
+] end 19 line 2
+for idkVariable 8 line 4
+
+concat error only if indented
+let's go in betweenExpression()
+
+concat ONLY if i === lineBeforeSkip
