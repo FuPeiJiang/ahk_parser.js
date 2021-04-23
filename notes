@@ -883,3 +883,7 @@ or I could just modify it directly and advance c and i
 easy method
 
 no, always do it the hard way
+
+do not everything.push when Searching for function definition
+do not skipThroughWhiteSpaces() when skipThroughFindChar(')')
+do not skipThroughWhiteSpaces() when skipThroughEmptyLines()

@@ -1139,7 +1139,9 @@ export default (content: string) => {
     //also skip through whiteSpaces, comments
     outer:
     while (true) {
-      skipThroughWhiteSpaces()
+      while (c < numberOfChars && whiteSpaceObj[lines[i][c]]) {
+        c++
+      }
       //EOL: next line
       charLoop:
       while (c < numberOfChars) {
@@ -1165,7 +1167,9 @@ export default (content: string) => {
   function skipThroughEmptyLines() {
     //also skip through whiteSpaces, comments
     while (i < howManyLines) {
-      skipThroughWhiteSpaces()
+      while (c < numberOfChars && whiteSpaceObj[lines[i][c]]) {
+        c++
+      }
       //EOL: next line
       if (c === numberOfChars) {
         //comment: next line
@@ -1191,6 +1195,7 @@ export default (content: string) => {
     }
     const text = lines[i].slice(c1,c)
     if (text) {
+      // d(`WHITESPACES '${text}'`)
       everything.push({type: 'whiteSpaces', text:text,i1: i, c1: c1,c2:c})
     }
   }
