@@ -4,6 +4,7 @@ const d = console.debug.bind(console)
 
 
 const content: string =
+fs.readFileSync('tests/obj singlevar or not.ahk')
 // fs.readFileSync('tests/fixes/ILLEGAL nonWhiteSpace.ahk')
 // fs.readFileSync('tests/fixes/return looping forever.ahk')
 // fs.readFileSync('tests/fix concat wrong line.ahk')
@@ -14,7 +15,7 @@ const content: string =
 // fs.readFileSync('tests/semicolon in string.ahk')
 // fs.readFileSync('tests/the test1.ahk')
 // fs.readFileSync('tests/func call.ahk')
-fs.readFileSync('tests/literal objects.ahk')
+// fs.readFileSync('tests/literal objects.ahk')
 // fs.readFileSync('tests/arrays.ahk')
 // fs.readFileSync('tests/operators.ahk')
 // fs.readFileSync('tests/string concat.ahk')

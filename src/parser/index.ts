@@ -889,17 +889,47 @@ export default (content: string) => {
       colonDeep++, c++, exprFoundLine = i
       let kStart: [number, number], vStart: [number, number], k: string, v: string
       const mapKeysAndValuesArr = []
+      let singleVar: boolean, afterSingleVar: number,beforeSkipSpaces: number,afterSkipSpaces: number,afterFindExpression: number, haventFoundSingleVar: boolean
       while (true) {
         kStart = [c,i]
-        if (!findExpression()) {
-          if (lines[i][c] === ',') {
-            d('ILLEGAL trailling , OBJECT', char())
-          } else if (lines[i][c] === '}') {
-            d('valid empty obj', char())
-          } else {
-            d('illegal obj1', char())
+        singleVar = true
+
+        beforeSkipSpaces = c
+        skipThroughWhiteSpaces()
+        afterSkipSpaces = c
+
+        //skipSpaces
+        // skip though propCharsObj
+        // if found expression:
+        // (another propCharsObj or anything)
+        // it not NOT a singleVar anymore
+        haventFoundSingleVar = true
+        if (c < numberOfChars && propCharsObj[lines[i][c]]) {
+          haventFoundSingleVar = false
+          c++
+          //skip through valid variable Chars
+          while (c < numberOfChars && propCharsObj[lines[i][c]]) {
+            c++
           }
-          break
+        }
+
+        afterSingleVar = c
+
+        if (findExpression()) {
+          singleVar = false
+        } else {
+          afterFindExpression = c
+          // if haven't expression, it is only illegal if haventFoundSingleVar, which is a valid key
+          if (haventFoundSingleVar) {
+            if (lines[i][c] === ',') {
+              d('ILLEGAL trailling , OBJECT', char())
+            } else if (lines[i][c] === '}') {
+              d('valid empty obj', char())
+            } else {
+              d('illegal obj1', char())
+            }
+            break
+          }
         }
 
         if (lines[i][c] === ':') {
@@ -908,7 +938,16 @@ export default (content: string) => {
           d('illegal obj2', char())
         }
 
-        k = textFromPosToCurrent(kStart)
+        if (singleVar) {
+          k = `${lines[i].slice(beforeSkipSpaces,afterSkipSpaces )
+          }"${
+            lines[i].slice(afterSkipSpaces,afterSingleVar)
+          }"${
+            lines[i].slice(afterSingleVar,afterFindExpression)}`
+          d('k',k)
+        } else {
+          k = textFromPosToCurrent(kStart)
+        }
         d('=====================\n',kStart,k,'\n=====================')
         mapKeysAndValuesArr.push(k)
 

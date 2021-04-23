@@ -857,3 +857,18 @@ now I want to convert object to Map()
 
 works, cool, now need quotes for singleVar
 can Map keys be numbers ? YES
+
+which chars are allowed as string key ? in v1
+12 is a number, it's != "12":value
+
+ahk_language\string keys chars allowed in obj.ahk
+so it's propCharsObj in tokens.ts
+
+skipSpaces
+skip though propCharsObj
+if found expression:
+  (another propCharsObj or anything)
+  it not NOT a singleVar anymore
+
+if haven't expression, it is only illegal if haventFoundSingleVar, which is a valid key
+
