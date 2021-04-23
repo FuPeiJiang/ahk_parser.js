@@ -1,0 +1,1 @@
+                                delimArr.ignoreTimes[index]-=1

@@ -839,3 +839,16 @@ endDelims.Push METHOD 31 line 12
 //a method can actually be assigned... property too
 //if prop and no assignment
 illegal property on startOfLine
+
+delimArr.ignoreTimes Array/Map Access 53 line 44
+[ ArrAccess 53 line 44
+index idkVariable 59 line 44
+] ArrAccess 59 line 44
+ILLEGAL nonWhiteSpace '-' at findCommentsAndEndLine 60 line 44
+} Function DEFINITION 29 line 45
+
+
+if (!betweenExpression() && isProp) {
+  instead of 
+if (isProp && !betweenExpression()) {
+because short-circuit

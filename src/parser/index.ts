@@ -296,7 +296,7 @@ export default (content: string) => {
             }
             //a method can actually be assigned... property too
             //if prop and no assignment
-            if (isProp && !betweenExpression()) {
+            if (!betweenExpression() && isProp) {
               d('illegal property on startOfLine',char())
             }
             if (i === exprFoundLine) {
