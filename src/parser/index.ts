@@ -685,6 +685,7 @@ export default (content: string) => {
 
       //#METHOD CALL
       if (lines[i][c] === '(') {
+        everything.push({type: 'method', text:validName,i1: i, c1:nonWhiteSpaceStart,c2:c})
         d(`${validName} METHOD ${char()}`)
         c++, exprFoundLine = i
         let endsWithComma = false
