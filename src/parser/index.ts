@@ -776,7 +776,8 @@ export default (content: string) => {
         if (isNaN(Number(validName))) {
           d(`${validName} validName VARIABLE EOL ${char()}`)
         } else {
-          d(`${validName} Integer EOL ${char()}`)
+          // d(`${validName} Integer EOL ${char()}`)
+          everything.push({type: 'Integer', text:validName,i1: i, c1:nonWhiteSpaceStart ,c2:c})
         }
         betweenExpression()
         return true
@@ -841,7 +842,8 @@ export default (content: string) => {
         // d(`${validName} idkVariable ${char()}`)
         everything.push({type: 'idkVariable', text:validName,i1: i, c1:nonWhiteSpaceStart ,c2:c})
       } else {
-        d(`${validName} Integer ${char()}`)
+        // d(`${validName} Integer ${char()}`)
+        everything.push({type: 'Integer', text:validName,i1: i, c1:nonWhiteSpaceStart ,c2:c})
       }
       betweenExpression()
       return true
