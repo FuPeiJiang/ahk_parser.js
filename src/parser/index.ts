@@ -737,10 +737,12 @@ export default (content: string) => {
     if (lines[i][c] === '[') {
       d(`${validName} Array/Map Access ${char()}`)
 
-      d('[ ArrAccess', char())
+      // d('[ ArrAccess', char())
+      everything.push({type: '[ ArrAccess', text:'[',i1: i, c1:c})
       c++
       if (!betweenExpression()) { findExpression() }
-      d('] ArrAccess', char())
+      // d('] ArrAccess', char())
+      everything.push({type: '] ArrAccess', text:']',i1: i, c1:c})
       c++
       return true
     }
