@@ -13,7 +13,7 @@ export default (content: string) => {
   const everything = []
   const toFile = ''
 
-  let i = 0, c = 0, numberOfChars = 0, validName = '', strStartLine: number, strStartPos: number, insideContinuation = false, beforeConcat: number, nonWhiteSpaceStart: number, exprFoundLine = -1,colonDeep = 0,usingStartOfLineLoop = false
+  let i = 0, c = 0, numberOfChars = 0, validName = '', strStartLine: number, strStartPos: number, insideContinuation = false, beforeConcat: number, nonWhiteSpaceStart: number, exprFoundLine = -1,colonDeep = 0,usingStartOfLineLoop = false, variadicAsterisk = false
 
   lineLoop:
   while (i < howManyLines) {
@@ -200,6 +200,7 @@ export default (content: string) => {
             if (isFunctionDefinition()) {
               d(validName,'Function DEFINITION', char())
               c++
+              variadicAsterisk = true
               while (true) {
                 skipThroughWhiteSpaces()
                 nonWhiteSpaceStart = c
@@ -207,6 +208,7 @@ export default (content: string) => {
                 if (c === numberOfChars) {
                   d('illegal function DEFINITION: need something after (',char())
                   i++
+                  variadicAsterisk = false
                   continue lineLoop
                 }
 
@@ -236,6 +238,7 @@ export default (content: string) => {
                   c++
                   usingStartOfLineLoop = true
                   skipThroughWhiteSpaces()
+                  variadicAsterisk = false
                   continue startOfLineLoop
                 }
                 d(', Function DEFINITION',char())
@@ -405,6 +408,11 @@ export default (content: string) => {
           d('unexpected :',char())
         }
         return false
+        //for variadic function definition
+      } else if (variadicAsterisk && lines[i][c] === '*') {
+        d('variadic* Argument', char())
+        c++
+        return true
       }
       d(lines[i][c], '1operator', char())
       c++
@@ -639,7 +647,6 @@ export default (content: string) => {
       if (findArrayAccess()) {return true}
 
       if (isNaN(Number(validName))) {
-        trace()
         d(`${validName} idkVariable ${char()}`)
       } else {
         d(`${validName} Integer ${char()}`)

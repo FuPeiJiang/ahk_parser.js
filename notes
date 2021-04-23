@@ -808,4 +808,9 @@ adding betweenExpression fixes it lol
 inBetweens*
 in
 string_getUntilWithInBetweensULTRA(Byref string, Byref getUntil, inBetweens*) {
+is this legal ?
+a(b,inBetweens *) {
+}
+YES IT IS
 
+use variadicAsterisk = false
