@@ -561,11 +561,13 @@ export default (content: string) => {
   function findOperators() {
     //#VARIABLE ASSIGNMENT
     if (c < numberOfChars - 2 && operatorsObj[lines[i].slice(c, c + 3).toLowerCase()]) {
-      d(lines[i].slice(c, c + 3), '3operator', char())
+      // d(lines[i].slice(c, c + 3), '3operator', char())
+      everything.push({type: '3operator', text:lines[i].slice(c, c + 3),i1: i, c1:c ,c2:c + 3})
       c += 3
       return true
     } else if (c < numberOfChars - 1 && operatorsObj[lines[i].slice(c, c + 2).toLowerCase()]) {
-      d(lines[i].slice(c, c + 2), '2operator', char())
+      // d(lines[i].slice(c, c + 2), '2operator', char())
+      everything.push({type: '2operator', text:lines[i].slice(c, c + 2),i1: i, c1:c ,c2:c + 2})
       c += 2
       return true
     } else if (c < numberOfChars && operatorsObj[lines[i][c].toLowerCase()]) {
@@ -599,7 +601,8 @@ export default (content: string) => {
         c++
         return true
       }
-      d(lines[i][c], '1operator', char())
+      // d(lines[i][c], '1operator', char())
+      everything.push({type: '1operator', text:lines[i][c],i1: i, c1:c})
       c++
       return true
     } else {
