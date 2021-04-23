@@ -290,8 +290,13 @@ export default (content: string) => {
           //can't have number on startOfLine
           if (isNaN(Number(validName))) {
             c++
-            findMethodOrProperty()
-            if (!betweenExpression()) {
+            let isProp = false
+            if (!findMethodOrProperty()) {
+              isProp = true
+            }
+            //a method can actually be assigned... property too
+            //if prop and no assignment
+            if (isProp && !betweenExpression()) {
               d('illegal property on startOfLine',char())
             }
             if (i === exprFoundLine) {

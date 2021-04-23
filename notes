@@ -825,7 +825,17 @@ let's go in betweenExpression()
 
 concat ONLY if i === lineBeforeSkip
 
+#TODO
   return 
   +2
   is LEGAL, but it's NOT
   an assignment
+
+] ArrAccess 41 line 11
+)END METHOD 42 line 11
+illegal property on startOfLine 17 line 12
+endDelims.Push METHOD 31 line 12
+
+//a method can actually be assigned... property too
+//if prop and no assignment
+illegal property on startOfLine
