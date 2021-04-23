@@ -14,7 +14,11 @@ fs.readFileSync('tests/fixes/obj in obj.ahk')
 // fs.readFileSync('tests/string_getUntilWithInBetweensULTRA.ahk')
 
 const everything = ahkParser(content.toString().replace(/\r/g, ''))
-d(everything)
+let reconstructed = ''
+for (let i = 0, len = everything.length; i < len; i++) {
+  reconstructed += everything[i].text
+}
+console.log(reconstructed)
 
 function writeSync(content: string) {
   const fs = require('fs')

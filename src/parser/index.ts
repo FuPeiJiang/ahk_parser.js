@@ -922,6 +922,7 @@ export default (content: string) => {
           if (haventFoundSingleVar) {
             if (lines[i][c] === ',') {
               d('ILLEGAL trailling , OBJECT', char())
+              everything.push({type: ', object', text:',',i1: i, c1:c})
             } else if (lines[i][c] === '}') {
               d('valid empty obj', char())
             } else {
