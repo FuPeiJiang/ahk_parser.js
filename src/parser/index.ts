@@ -138,7 +138,6 @@ export default (content: string) => {
               if (validName.toLowerCase() === 'return') {
                 // can't be betweenExpression() because whiteSpace := takes priority
                 findExpression()
-                continue lineLoop
               }
               i++
             }

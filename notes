@@ -824,3 +824,8 @@ concat error only if indented
 let's go in betweenExpression()
 
 concat ONLY if i === lineBeforeSkip
+
+  return 
+  +2
+  is LEGAL, but it's NOT
+  an assignment
