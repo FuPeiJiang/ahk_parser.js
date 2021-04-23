@@ -5,4 +5,5 @@
 
 
 var8:={a
-:b,c:d} ;comment
+:b
+,c:d} ;comment

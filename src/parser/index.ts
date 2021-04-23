@@ -488,8 +488,15 @@ export default (content: string) => {
         //remove line
         //DOCS: arr.splice(start, deleteCount)
         linesCopy.splice(i2, 1)
-        d(linesCopy.join('\n'))
-        return
+        // d(linesCopy.join('\n'))
+        return linesCopy
+        //how does 3 become 2 lines ? or 1 ?
+        //first how does 3 become 1 line ?
+      } else if (sourceLength === 3 && replaceLength === 1) {
+        linesCopy[i1] = linesCopy[i1].slice(0,c1) + textArr[0] + linesCopy[i2].slice(c2)
+        linesCopy.splice(i1 + 1, 2)
+        // d(linesCopy.join('\n'))
+        return linesCopy
       }
     }
 
