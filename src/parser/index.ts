@@ -735,7 +735,8 @@ export default (content: string) => {
   }
   function findArrayAccess() {
     if (lines[i][c] === '[') {
-      d(`${validName} Array/Map Access ${char()}`)
+      // d(`${validName} ArrAccess ${char()}`)
+      everything.push({type: 'ArrAccess', text:validName,i1: i, c1:nonWhiteSpaceStart ,c2:c})
 
       // d('[ ArrAccess', char())
       everything.push({type: '[ ArrAccess', text:'[',i1: i, c1:c})
