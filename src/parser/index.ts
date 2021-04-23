@@ -359,9 +359,10 @@ export default (content: string) => {
   //reverse iterate to not change [c,i]
   for (let i = objectsToconvertToMap.length - 1; i > -1; i--) {
     const [[[c1,i1],[c2,i2]], replacementText] = objectsToconvertToMap[i]
-    const textArr = replacementText.split('\n')
-    textArr.push('test1')
-    textArr.push('TEST2')
+    // const textArr = replacementText.split('\n')
+    // textArr.push('test1')
+    // textArr.push('TEST2')
+    const textArr = ['test1','TEST2','TESTT3']
     const replaceLength = textArr.length
     const sourceLength = i2 - i1 + 1
 
@@ -395,6 +396,7 @@ export default (content: string) => {
       //if source all on same line
       if (sourceLength === 1) {
         //save right slice because we gon delete it
+        //I'm using i1 instead of i2 to show that they are on the same line
         const rightSlice = linesCopy[i1].slice(c2)
         linesCopy[i1] = linesCopy[i1].slice(0,c1) + textArr[0]
         // DOCS: arr.splice(start, deleteCount, item1_
@@ -415,13 +417,25 @@ export default (content: string) => {
         // d(linesCopy[i1 + 1])
         // d(linesCopy[i1 + 2])
         return linesCopy
+        //startSlice and endSlice are on different lines
+        //so we don't need to save rightSlice
+        //but we don't want to insert above
+        //before insert below: below would be
+        //moved
+        //do it in reverse
+      } else {
+        // this is the last line
+        linesCopy[i2] = textArr[replaceLength - 1] + linesCopy[i2].slice(c2)
+        for (let n = 1, len = replaceLength - 1; n < len; n++) {
+          linesCopy.splice(i1 + n, 0, textArr[n])
+        }
+        // first line
+        linesCopy[i1] = linesCopy[i1].slice(0,c1) + textArr[0]
+        // d(linesCopy[i1])
+        // d(linesCopy[i1 + 1])
+        // d(linesCopy[i1 + 2])
+        return linesCopy
       }
-      // linesCopy[i1] = linesCopy[i1].slice(0,c1) + textArr[0]
-      // linesReplaced = 1
-      //
-      // while (linesReplaced < replaceLength && linesReplaced < sourceLength) {
-      // linesCopy[i1] = linesCopy[i1].slice(0,c1) + textArr[0]
-      // }
     }
 
 
