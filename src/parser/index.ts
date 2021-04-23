@@ -296,7 +296,7 @@ export default (content: string) => {
         //#ASSIGNMENT
         if (findOperators()) {
           d(`${validName} assignment`)
-          findExpression()
+          if (!betweenExpression()) {findExpression()}
           if (i === exprFoundLine) {
             findCommentsAndEndLine()
           }
