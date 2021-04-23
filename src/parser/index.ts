@@ -783,11 +783,14 @@ export default (content: string) => {
     //out of chars
     return false
   }
+
+  //true if legal, false if illegal startContinuation: which expects (
   function recurseContinuation(): boolean {
     if (startContinuation()) {
       d('stringContinuation START', char())
       //outoOfLines or (Ended and didn't find end of string)
       if (!endStringContinuation()) {
+        //only startContinuation if not already inside one
         if (!insideContinuation) {
           return recurseContinuation()
         }
@@ -821,7 +824,6 @@ export default (content: string) => {
     }
     d('startContinuation OutOfLines')
     trace()
-    // how to return out of lines ???
     return false
   }
   function endExprContinuation() {
@@ -837,26 +839,30 @@ export default (content: string) => {
       return false
     }
   }
+
+
   function endStringContinuation() {
     //now continue until I find a line starting with ')'
     i++
     while (i < howManyLines) {
       c = 0, numberOfChars = lines[i].length
       skipThroughWhiteSpaces()
+      //true if found line starting with ) AND closingQuote on the same line
       if (c < numberOfChars && lines[i][c] === ')') {
         insideContinuation = false
         d('stringContinuation END', char())
         c++
+        //if ) and no ", return false to start another continuation
         return findClosingQuoteInLine()
-        // first char isn't )
+        //if found closing " first, expect expression
+        // " var
+        // but continuation didn't end, IDK what happens
       } else if (findClosingQuoteInLine()) {
         betweenExpression()
         return false
         // return true
-      } else {
-        i++
-        continue
       }
+      i++
     }
   }
   //true if found charToFind, false if outOfLines
