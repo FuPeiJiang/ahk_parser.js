@@ -417,13 +417,14 @@ export default (content: string) => {
         // d(linesCopy[i1 + 1])
         // d(linesCopy[i1 + 2])
         return linesCopy
+        //only 2 lines
         //startSlice and endSlice are on different lines
         //so we don't need to save rightSlice
         //but we don't want to insert above
         //before insert below: below would be
         //moved
         //do it in reverse
-      } else {
+      } else if (sourceLength === 2) {
         // this is the last line
         linesCopy[i2] = textArr[replaceLength - 1] + linesCopy[i2].slice(c2)
         for (let n = 1, len = replaceLength - 1; n < len; n++) {
