@@ -12,7 +12,7 @@ export default (content: string) => {
   const howManyLines = lines.length
   const everything = []
   const toFile = ''
-  const objectsToconvertToMap: [[[number, number],[number, number]], string][] = []
+  const rangeAndReplaceTextArr: [[[number, number],[number, number]], string][] = []
 
   let i = 0, c = 0, numberOfChars = 0, validName = '', strStartLine: number, strStartPos: number, insideContinuation = false, beforeConcat: number, nonWhiteSpaceStart: number, exprFoundLine = -1, colonDeep = 0, usingStartOfLineLoop = false, variadicAsterisk = false, lineBeforeSkip = 0
 
@@ -357,8 +357,8 @@ export default (content: string) => {
   // writeSync(toFile)
 
   //reverse iterate to not change [c,i]
-  for (let i = objectsToconvertToMap.length - 1; i > -1; i--) {
-    const [[[c1,i1],[c2,i2]], replacementText] = objectsToconvertToMap[i]
+  for (let i = rangeAndReplaceTextArr.length - 1; i > -1; i--) {
+    const [[[c1,i1],[c2,i2]], replacementText] = rangeAndReplaceTextArr[i]
     // const textArr = replacementText.split('\n')
     // textArr.push('test1')
     // textArr.push('TEST2')
@@ -407,9 +407,9 @@ export default (content: string) => {
           // d('loop',n)
           linesCopy.splice(i1 + n, 0, textArr[n])
         }
-        d(linesCopy[i1])
-        d(linesCopy[i1 + 1])
-        d(linesCopy[i1 + 2])
+        // d(linesCopy[i1])
+        // d(linesCopy[i1 + 1])
+        // d(linesCopy[i1 + 2])
         // this is the last line
         linesCopy.splice(i1 + 1, 0, textArr[replaceLength - 1] + rightSlice)
 
@@ -458,7 +458,7 @@ export default (content: string) => {
 
 
     d(replaceLength, sourceLength)
-    d(objectsToconvertToMap[i])
+    d(rangeAndReplaceTextArr[i])
   }
 
   return everything
@@ -885,7 +885,7 @@ export default (content: string) => {
       d(`]]]]]]]]]]]]]]]]]]]]\nMap(${mapKeysAndValuesArr.join(',')})`)
       colonDeep--, c++
       d(']]]]]]]]]]]]]]]]]]]]\n',objStart,i,textFromPosToCurrent(objStart))
-      objectsToconvertToMap.push([[objStart,[c,i]],`Map(${mapKeysAndValuesArr.join(',')})`])
+      rangeAndReplaceTextArr.push([[objStart,[c,i]],`Map(${mapKeysAndValuesArr.join(',')})`])
       // objectsToconvertToMap.push({range:[objStart,[c,i]],textArr:mapKeysAndValuesArr})
       betweenExpression()
       return true
