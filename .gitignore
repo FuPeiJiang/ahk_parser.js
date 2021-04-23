@@ -9,3 +9,4 @@ coverage
 /types/index.d.ts
 /ahk_parser.js-v*.*.*.tgz
 outputToFile.txt
+objectConvertedToMap.ahk

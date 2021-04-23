@@ -357,6 +357,8 @@ export default (content: string) => {
   // writeSync(toFile)
 
   //reverse iterate to not change [c,i]
+  const linesCopy = lines.slice()
+  replaceRangesLoop:
   for (let i = rangeAndReplaceTextArr.length - 1; i > -1; i--) {
     const [[[c1,i1],[c2,i2]], replacementText] = rangeAndReplaceTextArr[i]
     const textArr = replacementText.split('\n')
@@ -369,20 +371,19 @@ export default (content: string) => {
     const replaceLength = textArr.length
     const sourceLength = i2 - i1 + 1
 
-    const linesCopy = lines.slice()
-    d('///////////////////////////////////////////////')
-    d('///////////////////////////////////////////////')
+    // d('///////////////////////////////////////////////')
+    // d('///////////////////////////////////////////////')
     // d(linesCopy[i1].slice(0,c1))
 
     //nothing to replace with, not even empty string
     // [] != [""]
     if (!replaceLength) {
-      return linesCopy
+      continue replaceRangesLoop
     }
 
     //nowhere to replace
     if (sourceLength < 1) {
-      return linesCopy
+      continue replaceRangesLoop
     }
 
     //same replacementLines as existing
@@ -391,12 +392,12 @@ export default (content: string) => {
       if (sourceLength === 1) {
         linesCopy[i1] = linesCopy[i1].slice(0,c1) + textArr[0] + linesCopy[i1].slice(c2)
         // d(linesCopy.join('\n'))
-        return linesCopy
+        continue replaceRangesLoop
       } else if (sourceLength === 2) {
         linesCopy[i1] = linesCopy[i1].slice(0,c1) + textArr[0]
         linesCopy[i2] = textArr[1] + linesCopy[i2].slice(c2)
         // d(linesCopy.join('\n'))
-        return linesCopy
+        continue replaceRangesLoop
       } else if (sourceLength > 2) {
         linesCopy[i1] = linesCopy[i1].slice(0,c1) + textArr[0]
         for (let n = 1; n < replaceLength - 1; n++) {
@@ -404,7 +405,7 @@ export default (content: string) => {
         }
         linesCopy[i2] = textArr[replaceLength - 1] + linesCopy[i2].slice(c2)
         d(linesCopy.join('\n'))
-        return linesCopy
+        continue replaceRangesLoop
       }
     }
 
@@ -433,7 +434,7 @@ export default (content: string) => {
         // d(linesCopy[i1])
         // d(linesCopy[i1 + 1])
         // d(linesCopy[i1 + 2])
-        return linesCopy
+        continue replaceRangesLoop
         //only 2 lines
         //startSlice and endSlice are on different lines
         //so we don't need to save rightSlice
@@ -452,7 +453,7 @@ export default (content: string) => {
         // d(linesCopy[i1])
         // d(linesCopy[i1 + 1])
         // d(linesCopy[i1 + 2])
-        return linesCopy
+        continue replaceRangesLoop
         //start replacing inbetwwn lines, then insert lines
       } else if (sourceLength > 2){
         // this is the last line
@@ -469,7 +470,7 @@ export default (content: string) => {
         // d(linesCopy.join('\n'))
         linesCopy[i1] = linesCopy[i1].slice(0,c1) + textArr[0]
         // d(linesCopy.join('\n'))
-        return linesCopy
+        continue replaceRangesLoop
       }
     }
 
@@ -486,7 +487,7 @@ export default (content: string) => {
         //DOCS: arr.splice(start, deleteCount)
         linesCopy.splice(i1 + 1, sourceLength - replaceLength)
         // d(linesCopy.join('\n'))
-        return linesCopy
+        continue replaceRangesLoop
         //how does 3 become 2 lines ? or 1 ?
         //first how does 3 become 1 line ?
       } else if (replaceLength > 1) {
@@ -503,14 +504,15 @@ export default (content: string) => {
           linesCopy.splice(i1 + n, 0, textArr[n])
         }
         // d(linesCopy.join('\n'))
-        return linesCopy
+        continue replaceRangesLoop
       }
 
     }
     d(`This should not happen: sourceLength${sourceLength}, replaceLength${replaceLength}`)
   }
+  return linesCopy
 
-  return everything
+  // return everything
 
   function textFromPosToCurrent(startPos: [number,number]) {
     const [strStartPos,strStartLine] = startPos
