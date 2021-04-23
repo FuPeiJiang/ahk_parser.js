@@ -362,9 +362,9 @@ export default (content: string) => {
     // const textArr = replacementText.split('\n')
     const textArr = ['test1']
     // textArr.push('test1')
-    textArr.push('TEST2')
-    textArr.push('TESTT3')
-    textArr.push('test4')
+    // textArr.push('TEST2')
+    // textArr.push('TESTT3')
+    // textArr.push('test4')
     // const textArr = ['test1','TEST2','TESTT3','test4']
     const replaceLength = textArr.length
     const sourceLength = i2 - i1 + 1
@@ -472,6 +472,24 @@ export default (content: string) => {
         linesCopy[i1] = linesCopy[i1].slice(0,c1) + textArr[0]
         // d(linesCopy.join('\n'))
         return linesCopy
+      }
+    }
+
+    //less lines than existing, remove lines
+    //replaceLength is at least 1
+    //so sourceLength must be at least 2
+    //so no "on the same line stuff"
+    if (replaceLength < sourceLength) {
+      //lets start how does 2 become 1 line
+      if (sourceLength === 2) {
+        //replaceLength must be 1
+        // replace the first line and remove the 2nd line
+        linesCopy[i1] = linesCopy[i1].slice(0,c1) + textArr[0] + linesCopy[i2].slice(c2)
+        //remove line
+        //DOCS: arr.splice(start, deleteCount)
+        linesCopy.splice(i2, 1)
+        d(linesCopy.join('\n'))
+        return
       }
     }
 
