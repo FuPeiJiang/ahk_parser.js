@@ -4,7 +4,9 @@ const d = console.debug.bind(console)
 
 
 const content: string =
-fs.readFileSync('tests/decimal.ahk')
+fs.readFileSync('tests/ArrAccess.ahk')
+// fs.readFileSync('tests/string_getUntilWithInBetweensULTRA.ahk')
+// fs.readFileSync('tests/decimal.ahk')
 // fs.readFileSync('tests/semicolon in string.ahk')
 // fs.readFileSync('tests/the test1.ahk')
 // fs.readFileSync('tests/func call.ahk')

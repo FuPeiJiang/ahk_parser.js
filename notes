@@ -773,3 +773,22 @@ I must reorganize my code now..
 what's the difference between betweenExpression() AND findBetween()
 findDoubleQuotedString() is hard to understand
 
+delimArr.ignoreTimes[index]-=1
+property, property->ArrAccess can be followed by betweenExpression()
+first
+a.b-=1
+if (!findMethodOrProperty()) {
+  d('illegal property on startOfLine',char())
+}
+// true if method, false if prop
+illegal property on startOfLine
+ONLY if no betweenExpression()
+in betweenExpression(): if findBetween(), return true
+betweenExpression() will skipLines, so no need i++
+
+return Expression
+
+inBetweens*
+in
+string_getUntilWithInBetweensULTRA(Byref string, Byref getUntil, inBetweens*) {
+

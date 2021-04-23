@@ -277,13 +277,12 @@ export default (content: string) => {
           //can't have number on startOfLine
           if (isNaN(Number(validName))) {
             c++
-            if (!findMethodOrProperty()) {
+            findMethodOrProperty()
+            if (!betweenExpression()) {
               d('illegal property on startOfLine',char())
             }
             if (i === exprFoundLine) {
               findCommentsAndEndLine()
-            } else {
-              i++
             }
             continue lineLoop
           } else {
@@ -423,7 +422,9 @@ export default (content: string) => {
       if (!skipThroughEmptyLines()) {return false}
     }
 
-    if (!findBetween()) {
+    if (findBetween()) {
+      return true
+    } else {
       if (insideContinuation) {
         if (endExprContinuation()) {
           return findExpression()
