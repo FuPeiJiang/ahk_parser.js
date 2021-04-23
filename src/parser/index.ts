@@ -573,12 +573,14 @@ export default (content: string) => {
     } else if (c < numberOfChars && operatorsObj[lines[i][c].toLowerCase()]) {
       //if ?, ternary, so expect :
       if (lines[i][c] === '?') {
-        d('? ternary', char())
+        // d('? ternary', char())
+        everything.push({type: '? ternary', text:'?',i1: i, c1:c})
         colonDeep++, c++
         findExpression()
         //where findExpression stopped at
         if (lines[i][c] === ':') {
-          d(': ternary', char())
+          // d(': ternary', char())
+          everything.push({type: ': ternary', text:':',i1: i, c1:c})
           colonDeep--, c++
           return true
         } else {
@@ -597,7 +599,8 @@ export default (content: string) => {
         return false
         //for variadic function definition
       } else if (variadicAsterisk && lines[i][c] === '*') {
-        d('variadic* Argument', char())
+        // d('* variadic Argument', char())
+        everything.push({type: '* variadic Argument', text:'*',i1: i, c1:c})
         c++
         return true
       }
