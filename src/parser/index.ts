@@ -707,9 +707,10 @@ export default (content: string) => {
           }
         }
         if (i !== exprFoundLine) {
-          d('ILLEGAL )END METHOD', char())
+          d('ILLEGAL ) METHOD', char())
         }
-        d(')END METHOD', char())
+        d(') METHOD', char())
+        everything.push({type: ') method', text:')',i1: i, c1:c})
 
         c++
         return true
