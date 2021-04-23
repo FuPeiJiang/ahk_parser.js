@@ -186,7 +186,7 @@ export default (content: string) => {
         c++
       }
       if (c === numberOfChars) {
-        d('unexpected EOL after var parsing',char())
+        d('illegal: unexpected EOL after var parsing',char())
         continue lineLoop
       }
       validName = lines[i].slice(nonWhiteSpaceStart, c)
@@ -304,7 +304,7 @@ export default (content: string) => {
             }
             continue lineLoop
           } else {
-            d('can\'t have number on startOfLine')
+            d('illegal: can\'t have number on startOfLine')
           }
         }
 
@@ -370,7 +370,7 @@ export default (content: string) => {
       }
     } else {
       //haven't found closing )
-      d('haven\'t found closing ) isFunctionDefinition',char())
+      d('illegal: haven\'t found closing ) isFunctionDefinition',char())
       toReturn = 2
     }
     i = iBak,c = cBak,numberOfChars = numberOfCharsBak
@@ -400,8 +400,7 @@ export default (content: string) => {
           colonDeep--,c++
           return true
         } else {
-          //error
-          d('ERROR: why is there no : after ? ternary',char())
+          d('illegal: why is there no : after ? ternary',char())
           //pretend it was legal
           colonDeep--,c++
           //I don't know what returning false does
@@ -411,7 +410,7 @@ export default (content: string) => {
         //'?' will make colonDeep true
         if (!colonDeep) {
           //if encounter ':' in the wild BEFORE '?'
-          d('unexpected :',char())
+          d('illegal: unexpected :',char())
         }
         return false
         //for variadic function definition
