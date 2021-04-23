@@ -362,7 +362,7 @@ export default (content: string) => {
     // const textArr = replacementText.split('\n')
     // textArr.push('test1')
     // textArr.push('TEST2')
-    const textArr = ['test1','TEST2','TESTT3']
+    const textArr = ['test1','TEST2','TESTT3','test4']
     const replaceLength = textArr.length
     const sourceLength = i2 - i1 + 1
 
@@ -435,6 +435,23 @@ export default (content: string) => {
         // d(linesCopy[i1])
         // d(linesCopy[i1 + 1])
         // d(linesCopy[i1 + 2])
+        return linesCopy
+        //start replacing inbetwwn lines, then insert lines
+      } else if (sourceLength > 2){
+        // this is the last line
+        linesCopy[i2] = textArr[replaceLength - 1] + linesCopy[i2].slice(c2)
+        const middlePointReplaceInsert = replaceLength - sourceLength + 1
+        //replace lines
+        for (let n = 1; n < middlePointReplaceInsert; n++) {
+          linesCopy[i1 + n] = textArr[n]
+        }
+        //insert
+        for (let n = middlePointReplaceInsert, len = replaceLength - 1; n < len; n++) {
+          linesCopy.splice(i1 + n, 0, textArr[n])
+        }
+        // d(linesCopy.join('\n'))
+        linesCopy[i1] = linesCopy[i1].slice(0,c1) + textArr[0]
+        d(linesCopy.join('\n'))
         return linesCopy
       }
     }
