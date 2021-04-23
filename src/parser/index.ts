@@ -13,7 +13,7 @@ export default (content: string) => {
   const everything = []
   const toFile = ''
 
-  let i = 0, c = 0, numberOfChars = 0, validName = '', strStartLine: number, strStartPos: number, insideContinuation = false, beforeConcat: number, nonWhiteSpaceStart: number, exprFoundLine = -1,colonDeep = 0,usingStartOfLineLoop = false, variadicAsterisk = false, lineBeforeSkip = 0
+  let i = 0, c = 0, numberOfChars = 0, validName = '', strStartLine: number, strStartPos: number, insideContinuation = false, beforeConcat: number, nonWhiteSpaceStart: number, exprFoundLine = -1, colonDeep = 0, usingStartOfLineLoop = false, variadicAsterisk = false, lineBeforeSkip = 0
 
   lineLoop:
   while (i < howManyLines) {
@@ -63,8 +63,8 @@ export default (content: string) => {
 
       //#semicolon comments
       if (lines[i][c] === ';') {
-      // d('SemiColonComment', `${c}-END`, l())
-      // everything.push({type: 'SemiColonComment', line: i, colStart: c})
+        // d('SemiColonComment', `${c}-END`, l())
+        // everything.push({type: 'SemiColonComment', line: i, colStart: c})
         i++
         continue lineLoop
       }
@@ -97,7 +97,7 @@ export default (content: string) => {
         // comma can't be assignment, so I can skip assignment
         // if it has a comma, it could be a hotkey, it's only NOT a hotkey if it's a valid COMMAND
         if (lines[i][c] === ',') {
-        // directive or command
+          // directive or command
           if (idkType === 1 || idkType === 4) {
             d(validName, 'comma DIRECTIVE OR COMMAND', char())
             i++
@@ -132,7 +132,7 @@ export default (content: string) => {
           }
 
           if (idkType === 4) {
-            d(validName, 'whiteSpace COMMAND', nonWhiteSpaceStart + 1, lineBeforeSkip + 1,'line')
+            d(validName, 'whiteSpace COMMAND', nonWhiteSpaceStart + 1, lineBeforeSkip + 1, 'line')
             // statement can't have Expr if line changed...
             if (i === lineBeforeSkip) {
               if (validName.toLowerCase() === 'return') {
@@ -145,30 +145,30 @@ export default (content: string) => {
           }
 
         } else {
-        //labels can't have spaces
-        // well, it's now or never to be a label: because label can't have %
-        //#LABELS
+          //labels can't have spaces
+          // well, it's now or never to be a label: because label can't have %
+          //#LABELS
           if (lines[i][c] === ':') {
             c++
 
             skipThroughWhiteSpaces()
 
             if (c === numberOfChars) {
-            // d('LABEL EOL', char())
+              // d('LABEL EOL', char())
               i++
               continue lineLoop
             }
 
             if (lines[i][c] === ';') {
-            // d('LABEL SemiColonComment', char())
-            // everything.push({type: 'SemiColonComment', line: i, colStart: c})
+              // d('LABEL SemiColonComment', char())
+              // everything.push({type: 'SemiColonComment', line: i, colStart: c})
               i++
               continue lineLoop
             }
 
             // if 2 consecutive ':' then hotkey
             if (lines[i][c] === ':') {
-            // d('HOTKEY validVarName', char())
+              // d('HOTKEY validVarName', char())
               i++
               continue lineLoop
             }
@@ -186,20 +186,20 @@ export default (content: string) => {
         c++
       }
       if (c === numberOfChars) {
-        d('illegal: unexpected EOL after var parsing',char())
+        d('illegal: unexpected EOL after var parsing', char())
         continue lineLoop
       }
       validName = lines[i].slice(nonWhiteSpaceStart, c)
 
       if (validName) {
-      //#FUNCTION
+        //#FUNCTION
         if (lines[i][c] === '(') {
           let validName = lines[i].slice(nonWhiteSpaceStart, c)
           // d('is not a number, valid func name')
           if (isNaN(Number(validName))) {
             //#FUNCTION DEFINITION
             if (isFunctionDefinition()) {
-              d(validName,'Function DEFINITION', char())
+              d(validName, 'Function DEFINITION', char())
               c++
               variadicAsterisk = true
               while (true) {
@@ -207,7 +207,7 @@ export default (content: string) => {
                 nonWhiteSpaceStart = c
 
                 if (c === numberOfChars) {
-                  d('illegal function DEFINITION: need something after (',char())
+                  d('illegal function DEFINITION: need something after (', char())
                   i++
                   variadicAsterisk = false
                   continue lineLoop
@@ -216,22 +216,22 @@ export default (content: string) => {
                 c++
                 skipValidChar()
 
-                validName = lines[i].slice(nonWhiteSpaceStart,c)
+                validName = lines[i].slice(nonWhiteSpaceStart, c)
                 if (validName.toLowerCase() === 'byref') {
                   skipThroughWhiteSpaces(), nonWhiteSpaceStart = c
                   if (c === numberOfChars || !variableCharsObj[lines[i][c]]) { break }
-                  c++, skipValidChar(), validName = lines[i].slice(nonWhiteSpaceStart,c)
-                  d(validName,'Byref Param',char())
+                  c++, skipValidChar(), validName = lines[i].slice(nonWhiteSpaceStart, c)
+                  d(validName, 'Byref Param', char())
                 } else {
-                  d(validName,'Param',char())
+                  d(validName, 'Param', char())
                 }
                 skipThroughEmptyLines()
                 findBetween()
                 if (lines[i][c] !== ',') {
                   if (lines[i][c] === ')') {
-                    d(') function DEFINITION',char())
+                    d(') function DEFINITION', char())
                   } else {
-                    d('illegal function DEFINITION END',char())
+                    d('illegal function DEFINITION END', char())
                   }
                   c++
                   skipThroughEmptyLines()
@@ -242,21 +242,21 @@ export default (content: string) => {
                   variadicAsterisk = false
                   continue startOfLineLoop
                 }
-                d(', Function DEFINITION',char())
+                d(', Function DEFINITION', char())
                 c++
-              // ch()
-              // return true
+                // ch()
+                // return true
               }
             } else {
-            //#FUNCTION CALL
+              //#FUNCTION CALL
               d(`${validName} Function startOfLine${char()}`)
-              c++,exprFoundLine = i
+              c++, exprFoundLine = i
               let endsWithComma = false
               while (true) {
                 if (!skipThroughEmptyLines()) { d('EOF Function startOfLine'); break lineLoop }
                 if (lines[i][c] === ',') {
                   endsWithComma = true
-                  d(', CALL',char())
+                  d(', CALL', char())
                   c++
                   continue
                 }
@@ -278,13 +278,13 @@ export default (content: string) => {
               i++
               continue lineLoop
             }
-          // everything.push({type: 'function', line: i, colStart:nonWhiteSpaceStart, colEnd:c, name:lines[i].slice(nonWhiteSpaceStart,c)})
+            // everything.push({type: 'function', line: i, colStart:nonWhiteSpaceStart, colEnd:c, name:lines[i].slice(nonWhiteSpaceStart,c)})
           }
 
-        //#METHOD OR PROPERTY
-        // this is NOT a METHOD call:
-        // str.=v[key] "+" k "|"
-        // so check if the next character is a valid Var
+          //#METHOD OR PROPERTY
+          // this is NOT a METHOD call:
+          // str.=v[key] "+" k "|"
+          // so check if the next character is a valid Var
         } else if (lines[i][c] === '.' && variableCharsObj[lines[i][c + 1]]) {
           const validName = lines[i].slice(nonWhiteSpaceStart, c)
           //can't have number on startOfLine
@@ -297,7 +297,7 @@ export default (content: string) => {
             //a method can actually be assigned... property too
             //if prop and no assignment
             if (!betweenExpression() && isProp) {
-              d('illegal property on startOfLine',char())
+              d('illegal property on startOfLine', char())
             }
             if (i === exprFoundLine) {
               findCommentsAndEndLine()
@@ -309,12 +309,12 @@ export default (content: string) => {
         }
 
         //out of lines
-        if (!skipThroughEmptyLines()) {break lineLoop }
+        if (!skipThroughEmptyLines()) { break lineLoop }
 
         //#ASSIGNMENT
         if (findOperators()) {
           d(`${validName} assignment`)
-          if (!betweenExpression()) {findExpression()}
+          if (!betweenExpression()) { findExpression() }
           if (i === exprFoundLine) {
             findCommentsAndEndLine()
           }
@@ -358,7 +358,7 @@ export default (content: string) => {
 
   function isFunctionDefinition() {
     const iBak = i, cBak = c, numberOfCharsBak = numberOfChars
-    let toReturn: boolean|number = false
+    let toReturn: boolean | number = false
     //after next ')'
     if (skipThroughFindChar(')')) {
       c++
@@ -370,10 +370,10 @@ export default (content: string) => {
       }
     } else {
       //haven't found closing )
-      d('illegal: haven\'t found closing ) isFunctionDefinition',char())
+      d('illegal: haven\'t found closing ) isFunctionDefinition', char())
       toReturn = 2
     }
-    i = iBak,c = cBak,numberOfChars = numberOfCharsBak
+    i = iBak, c = cBak, numberOfChars = numberOfCharsBak
     //default return false
     return toReturn
   }
@@ -391,18 +391,18 @@ export default (content: string) => {
     } else if (c < numberOfChars && operatorsObj[lines[i][c].toLowerCase()]) {
       //if ?, ternary, so expect :
       if (lines[i][c] === '?') {
-        d('? ternary',char())
+        d('? ternary', char())
         colonDeep++, c++
         findExpression()
         //where findExpression stopped at
         if (lines[i][c] === ':') {
-          d(': ternary',char())
-          colonDeep--,c++
+          d(': ternary', char())
+          colonDeep--, c++
           return true
         } else {
-          d('illegal: why is there no : after ? ternary',char())
+          d('illegal: why is there no : after ? ternary', char())
           //pretend it was legal
-          colonDeep--,c++
+          colonDeep--, c++
           //I don't know what returning false does
           return false
         }
@@ -410,7 +410,7 @@ export default (content: string) => {
         //'?' will make colonDeep true
         if (!colonDeep) {
           //if encounter ':' in the wild BEFORE '?'
-          d('illegal: unexpected :',char())
+          d('illegal: unexpected :', char())
         }
         return false
         //for variadic function definition
@@ -442,7 +442,7 @@ export default (content: string) => {
       }
     } else {
       lineBeforeSkip = i
-      if (!skipThroughEmptyLines()) {return false}
+      if (!skipThroughEmptyLines()) { return false }
     }
 
     if (findBetween()) {
@@ -515,13 +515,13 @@ export default (content: string) => {
       //#METHOD CALL
       if (lines[i][c] === '(') {
         d(`${validName} METHOD ${char()}`)
-        c++,exprFoundLine = i
+        c++, exprFoundLine = i
         let endsWithComma = false
         while (true) {
           skipThroughEmptyLines()
           if (lines[i][c] === ',') {
             endsWithComma = true
-            d(', CALL',char())
+            d(', CALL', char())
             c++
             continue
           }
@@ -544,7 +544,7 @@ export default (content: string) => {
 
       }
 
-      if (findArrayAccess()) {return true}
+      if (findArrayAccess()) { return true }
 
       d(`${validName} PROPERTY ${char()}`)
       //look for comments
@@ -557,7 +557,7 @@ export default (content: string) => {
 
       d('[ ArrAccess', char())
       c++
-      if (!betweenExpression()) {findExpression()}
+      if (!betweenExpression()) { findExpression() }
       d('] ArrAccess', char())
       c++
       return true
@@ -623,13 +623,13 @@ export default (content: string) => {
       if (lines[i][c] === '(') {
         //#FUNCTION CALL
         d(`${validName} Function ${char()}`)
-        c++,exprFoundLine = i
+        c++, exprFoundLine = i
         let endsWithComma = false
         while (true) {
           skipThroughEmptyLines()
           if (lines[i][c] === ',') {
             endsWithComma = true
-            d(', CALL',char())
+            d(', CALL', char())
             c++
             continue
           }
@@ -650,7 +650,7 @@ export default (content: string) => {
         c++
         return true
       }
-      if (findArrayAccess()) {return true}
+      if (findArrayAccess()) { return true }
 
       if (isNaN(Number(validName))) {
         d(`${validName} idkVariable ${char()}`)
@@ -675,7 +675,7 @@ export default (content: string) => {
     if (lines[i][c] === '(') {
       d('( group', char())
       c++
-      if (!betweenExpression()) {findExpression()}
+      if (!betweenExpression()) { findExpression() }
       d(') group', char())
       c++
       betweenExpression()
@@ -729,14 +729,14 @@ export default (content: string) => {
         }
 
         if (lines[i][c] === ':') {
-          d(': object',char())
+          d(': object', char())
         } else {
           d('illegal obj2', char())
         }
         c++ //skip :
         findExpression()
         if (lines[i][c] === ',') {
-          d(', object',char())
+          d(', object', char())
         } else {
           break
         }
@@ -782,7 +782,7 @@ export default (content: string) => {
         if (!recurseContinuation()) {
           //script is broken at this point but we still try to continue
           c++
-          d('AS LAST RESORT: doing skipThroughEmptyLines',char())
+          d('AS LAST RESORT: doing skipThroughEmptyLines', char())
           insideContinuation = true
           skipThroughEmptyLines()
         }
@@ -913,7 +913,7 @@ export default (content: string) => {
           d('comment while skipThroughFindChar', char())
           break charLoop
         } else if (lines[i][c] === charToFind) {
-          d('found',charToFind,'at',char())
+          d('found', charToFind, 'at', char())
           return true
         }
         c++
@@ -959,20 +959,20 @@ export default (content: string) => {
     // console.trace()
     // process.exit()
     if (c === numberOfChars) {
-      i++;return true
+      i++; return true
     }
     if (c < numberOfChars && !whiteSpaceObj[lines[i][c]]) {
       d(`ILLEGAL nonWhiteSpace '${lines[i][c]}' at findCommentsAndEndLine ${char()}`)
-      i++;return false
+      i++; return false
     }
     while (c < numberOfChars) {
       if (lines[i][c] === ';') {
-        d('semiColonComment at findCommentsAndEndLine',char())
-        i++;return true
+        d('semiColonComment at findCommentsAndEndLine', char())
+        i++; return true
       }
       c++
     }
-    i++;return true
+    i++; return true
   }
   function findPercentVar() {
     const percentVarStart = c
