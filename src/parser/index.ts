@@ -685,8 +685,8 @@ export default (content: string) => {
 
       //#METHOD CALL
       if (lines[i][c] === '(') {
+        // d(`${validName} METHOD ${char()}`)
         everything.push({type: 'method', text:`${validName}(`,i1: i, c1:nonWhiteSpaceStart,c2:c})
-        d(`${validName} METHOD ${char()}`)
         c++, exprFoundLine = i
         let endsWithComma = false
         while (true) {
@@ -709,7 +709,7 @@ export default (content: string) => {
         if (i !== exprFoundLine) {
           d('ILLEGAL ) METHOD', char())
         }
-        d(') METHOD', char())
+        // d(') METHOD', char())
         everything.push({type: ') method', text:')',i1: i, c1:c})
 
         c++
@@ -826,7 +826,7 @@ export default (content: string) => {
       if (findArrayAccess()) { return true }
 
       if (isNaN(Number(validName))) {
-        d(`${validName} idkVariable ${char()}`)
+        // d(`${validName} idkVariable ${char()}`)
         everything.push({type: 'idkVariable', text:validName,i1: i, c1:nonWhiteSpaceStart ,c2:c})
       } else {
         d(`${validName} Integer ${char()}`)
@@ -887,7 +887,7 @@ export default (content: string) => {
     }
 
     if (lines[i][c] === '{') {
-      d('{ object', char())
+      // d('{ object', char())
       everything.push({type: '{ object', text:'{',i1: i, c1:c})
       const objStart: [number, number] = [c,i]
       colonDeep++, c++, exprFoundLine = i
@@ -933,8 +933,8 @@ export default (content: string) => {
         }
 
         if (lines[i][c] === ':') {
+          // d(': object', char())
           everything.push({type: ': object', text:':',i1: i, c1:c})
-          d(': object', char())
         } else {
           d('illegal obj2', char())
         }
@@ -963,7 +963,7 @@ export default (content: string) => {
         mapKeysAndValuesArr.push(v)
 
         if (lines[i][c] === ',') {
-          d(', object', char())
+          // d(', object', char())
           everything.push({type: ', object', text:',',i1: i, c1:c})
         } else {
           break
@@ -973,7 +973,7 @@ export default (content: string) => {
       if (i !== exprFoundLine) {
         d('ILLEGAL }', char())
       }
-      d('} object', char())
+      // d('} object', char())
       everything.push({type: '} object', text:'}',i1: i, c1:c})
       // d(`]]]]]]]]]]]]]]]]]]]]\nMap(${mapKeysAndValuesArr.join(',')})`)
       colonDeep--, c++
