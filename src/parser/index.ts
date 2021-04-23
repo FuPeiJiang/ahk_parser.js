@@ -904,13 +904,9 @@ export default (content: string) => {
         // (another propCharsObj or anything)
         // it not NOT a singleVar anymore
         haventFoundSingleVar = true
-        if (c < numberOfChars && propCharsObj[lines[i][c]]) {
+
+        if (findSingleVar()) {
           haventFoundSingleVar = false
-          c++
-          //skip through valid variable Chars
-          while (c < numberOfChars && propCharsObj[lines[i][c]]) {
-            c++
-          }
         }
 
         afterSingleVar = c
@@ -944,7 +940,7 @@ export default (content: string) => {
             lines[i].slice(afterSkipSpaces,afterSingleVar)
           }"${
             lines[i].slice(afterSingleVar,afterFindExpression)}`
-          d('k',k)
+          // d('k',k)
         } else {
           k = textFromPosToCurrent(kStart)
         }
@@ -1181,8 +1177,13 @@ export default (content: string) => {
     return false
   }
   function skipThroughWhiteSpaces() {
+    const beforeSkipSpaces = c
     while (c < numberOfChars && whiteSpaceObj[lines[i][c]]) {
       c++
+    }
+    const text = lines[i].slice(beforeSkipSpaces,c)
+    if (text) {
+      everything.push({type: 'whiteSpaces', text:text,i1: i, c1: beforeSkipSpaces,c2:c})
     }
   }
   function findCommentsAndEndLine() {
@@ -1220,6 +1221,17 @@ export default (content: string) => {
     } else {
       return false
     }
+  }
+  function findSingleVar() {
+    if (c < numberOfChars && propCharsObj[lines[i][c]]) {
+      c++
+      //skip through valid variable Chars
+      while (c < numberOfChars && propCharsObj[lines[i][c]]) {
+        c++
+      }
+      return true
+    }
+    return false
   }
   function skipValidChar() {
     //skip through valid variable Chars
