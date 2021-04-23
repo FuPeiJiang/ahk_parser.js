@@ -12,6 +12,7 @@ export default (content: string) => {
   const howManyLines = lines.length
   const everything = []
   const toFile = ''
+  const objectsToconvertToMap: [[[number, number],[number, number]], string][] = []
 
   let i = 0, c = 0, numberOfChars = 0, validName = '', strStartLine: number, strStartPos: number, insideContinuation = false, beforeConcat: number, nonWhiteSpaceStart: number, exprFoundLine = -1, colonDeep = 0, usingStartOfLineLoop = false, variadicAsterisk = false, lineBeforeSkip = 0
 
@@ -354,8 +355,58 @@ export default (content: string) => {
   // d(everything)
   // toFile = toFile.slice(1)
   // writeSync(toFile)
+
+  for (let i = objectsToconvertToMap.length - 1; i > -1; i--) {
+    const [[[c1,i1],[c2,i2]], replacementText] = objectsToconvertToMap[i]
+    const textArr = replacementText.split('\n')
+    const replaceLength = textArr.length
+    const sourceLength = i2 - i1 + 1
+
+    const linesCopy = lines.slice()
+    d('///////////////////////////////////////////////')
+    d('///////////////////////////////////////////////')
+    // d(linesCopy[i1].slice(0,c1))
+    let linesReplaced = 0
+
+    // d([].join('') === '') //true
+
+    //all on same line
+    if (replaceLength === 1 && sourceLength === 1) {
+      linesCopy[i1] = linesCopy[i1].slice(0,c1) + textArr[0] + linesCopy[i1].slice(c2)
+      // d(linesCopy[i1])
+      return linesCopy
+    }
+
+    //more lines than existing, replace then push
+    if (replaceLength > sourceLength) {
+      linesCopy[i1] = linesCopy[i1].slice(0,c1) + textArr[0]
+      linesReplaced = 1
+
+      while (linesReplaced < replaceLength && linesReplaced < sourceLength) {
+        linesCopy[i1] = linesCopy[i1].slice(0,c1) + textArr[0]
+      }
+    }
+
+
+    d(replaceLength, sourceLength)
+    d(objectsToconvertToMap[i])
+  }
+
   return everything
 
+  function textFromPosToCurrent(startPos: [number,number]) {
+    const [strStartPos,strStartLine] = startPos
+    if (strStartLine === i) {
+      return lines[i].slice(strStartPos, c)
+    } else {
+      let strToPrint = lines[strStartLine].slice(strStartPos)
+      for (let i2 = strStartLine + 1; i2 < i; i2++) {
+        strToPrint += `\n${lines[i2]}`
+      }
+      strToPrint += `\n${lines[i].slice(0, c)}`
+      return strToPrint
+    }
+  }
   function isFunctionDefinition() {
     const iBak = i, cBak = c, numberOfCharsBak = numberOfChars
     let toReturn: boolean | number = false
@@ -714,9 +765,12 @@ export default (content: string) => {
 
     if (lines[i][c] === '{') {
       d('{ object', char())
+      const objStart: [number, number] = [c,i]
       colonDeep++, c++, exprFoundLine = i
-
+      let kStart: [number, number], vStart: [number, number], k: string, v: string
+      const mapKeysAndValuesArr = []
       while (true) {
+        kStart = [c,i]
         if (!findExpression()) {
           if (lines[i][c] === ',') {
             d('ILLEGAL trailling , OBJECT', char())
@@ -733,8 +787,21 @@ export default (content: string) => {
         } else {
           d('illegal obj2', char())
         }
+
+        k = textFromPosToCurrent(kStart)
+        d('=====================\n',kStart,k,'\n=====================')
+        mapKeysAndValuesArr.push(k)
+
         c++ //skip :
+
+        vStart = [c,i]
+
         findExpression()
+
+        v = textFromPosToCurrent(vStart)
+        d('=====================\n',vStart,v,'\n=====================')
+        mapKeysAndValuesArr.push(v)
+
         if (lines[i][c] === ',') {
           d(', object', char())
         } else {
@@ -746,7 +813,11 @@ export default (content: string) => {
         d('ILLEGAL }', char())
       }
       d('} object', char())
+      d(`]]]]]]]]]]]]]]]]]]]]\nMap(${mapKeysAndValuesArr.join(',')})`)
       colonDeep--, c++
+      d(']]]]]]]]]]]]]]]]]]]]\n',objStart,i,textFromPosToCurrent(objStart))
+      objectsToconvertToMap.push([[objStart,[c,i]],`Map(${mapKeysAndValuesArr.join(',')})`])
+      // objectsToconvertToMap.push({range:[objStart,[c,i]],textArr:mapKeysAndValuesArr})
       betweenExpression()
       return true
     }

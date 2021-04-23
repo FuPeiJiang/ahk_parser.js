@@ -852,3 +852,5 @@ if (!betweenExpression() && isProp) {
   instead of 
 if (isProp && !betweenExpression()) {
 because short-circuit
+
+now I want to convert object to Map()

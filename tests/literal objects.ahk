@@ -6,7 +6,7 @@
 ; var8:={ (var)
 ; : 345
 ; ,}
-; var8:={}
+var8:={}
 ; var8:={,}
 ; var8:={
   ; ,}    
@@ -18,5 +18,5 @@
 ; : 99 
 ; :3  
 ; +3}
-var:=condition:ifTrue?ifFalse
+; var:=condition:ifTrue?ifFalse
 ; var:=condition?ifTrue:ifFalse
