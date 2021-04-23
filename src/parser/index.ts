@@ -827,6 +827,7 @@ export default (content: string) => {
 
       if (isNaN(Number(validName))) {
         d(`${validName} idkVariable ${char()}`)
+        everything.push({type: 'idkVariable', text:validName,i1: i, c1:nonWhiteSpaceStart ,c2:c})
       } else {
         d(`${validName} Integer ${char()}`)
       }
