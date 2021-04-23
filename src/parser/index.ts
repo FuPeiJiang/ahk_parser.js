@@ -363,6 +363,8 @@ export default (content: string) => {
     const textArr = ['test1']
     // textArr.push('test1')
     textArr.push('TEST2')
+    textArr.push('TESTT3')
+    textArr.push('test4')
     // const textArr = ['test1','TEST2','TESTT3','test4']
     const replaceLength = textArr.length
     const sourceLength = i2 - i1 + 1
@@ -395,6 +397,14 @@ export default (content: string) => {
       } else if (sourceLength === 2) {
         linesCopy[i1] = linesCopy[i1].slice(0,c1) + textArr[0]
         linesCopy[i2] = textArr[1] + linesCopy[i2].slice(c2)
+        // d(linesCopy.join('\n'))
+        return linesCopy
+      } else if (sourceLength > 2) {
+        linesCopy[i1] = linesCopy[i1].slice(0,c1) + textArr[0]
+        for (let n = 1; n < replaceLength - 1; n++) {
+          linesCopy[i1 + n] = textArr[n]
+        }
+        linesCopy[i2] = textArr[replaceLength - 1] + linesCopy[i2].slice(c2)
         d(linesCopy.join('\n'))
         return linesCopy
       }
