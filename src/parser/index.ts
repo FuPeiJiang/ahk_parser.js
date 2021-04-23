@@ -275,9 +275,10 @@ export default (content: string) => {
               }
 
               if (i !== exprFoundLine) {
-                d('ILLEGAL )END Function startOfLine', char())
+                d('ILLEGAL ) function startOfLine', char())
               }
-              d(')END Function startOfLine', char())
+              // d(') function startOfLine', char())
+              everything.push({type: ') function startOfLine', text:')',i1: i, c1:c})
 
               i++
               continue lineLoop
@@ -838,9 +839,10 @@ export default (content: string) => {
           }
         }
         if (i !== exprFoundLine) {
-          d('ILLEGAL )END Function', char())
+          d('ILLEGAL ) function', char())
         }
-        d(')END Function', char())
+        // d(') function', char())
+        everything.push({type: ') function', text:')',i1: i, c1:c})
 
         c++
         return true
