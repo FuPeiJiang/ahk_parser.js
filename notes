@@ -872,3 +872,6 @@ if found expression:
 
 if haven't expression, it is only illegal if haventFoundSingleVar, which is a valid key
 
+NO, it doesn't work for obj in obj
+omg, and thinking about arr in arr
+we'll have to construct it with pieces, let's play legos
