@@ -224,19 +224,22 @@ export default (content: string) => {
                   // d(validName, 'Byref Param', char())
                   everything.push({type: 'byref param', text:`${validName}`,i1: i, c1:nonWhiteSpaceStart,c2:c})
                 } else {
-                  d(validName, 'Param', char())
+                  // d(validName, 'Param', char())
+                  everything.push({type: 'Param', text:validName,i1: i, c1:nonWhiteSpaceStart, c2:c})
                 }
                 skipThroughEmptyLines()
                 findBetween()
                 if (lines[i][c] !== ',') {
                   if (lines[i][c] === ')') {
-                    d(') function DEFINITION', char())
+                    // d(') function DEFINITION', char())
+                    everything.push({type: ') function DEFINITION', text:')',i1: i, c1:c})
                   } else {
                     d('illegal function DEFINITION END', char())
                   }
                   c++
                   skipThroughEmptyLines()
-                  d(`{ Function DEFINITION ${char()}`)
+                  // d(`{ Function DEFINITION ${char()}`)
+                  everything.push({type: '} function DEFINITION', text:'}',i1: i, c1:c})
                   c++
                   usingStartOfLineLoop = true
                   skipThroughWhiteSpaces()
