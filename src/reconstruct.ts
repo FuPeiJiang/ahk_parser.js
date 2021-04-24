@@ -4,7 +4,8 @@ const d = console.debug.bind(console)
 
 
 const content: string =
-fs.readFileSync('tests/fixes/concat.ahk')
+fs.readFileSync('tests/ahk_explorer.ahk')
+// fs.readFileSync('tests/fixes/concat.ahk')
 // fs.readFileSync('tests/fixes/assignment.ahk')
 // fs.readFileSync('tests/fixes/obj in obj.ahk')
 // fs.readFileSync('tests/fixes/obj to map linesCopy.ahk')

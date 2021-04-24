@@ -1068,3 +1068,10 @@ first, mute:
   stringContinuation START
   stringContinuation END
   concat
+
+ahk_explorer:
+oof, spams:
+illegal function DEFINITION END 34 line 25
+
+ILLEGAL nonWhiteSpace ',' at findCommentsAndEndLine 9 line 18
+illegal function DEFINITION END 1 line 23

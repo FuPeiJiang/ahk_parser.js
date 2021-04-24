@@ -111,6 +111,9 @@ export default (content: string) => {
           // directive or command
           if (idkType === 1 || idkType === 4) {
             d(validName, 'comma DIRECTIVE OR COMMAND', char())
+            const text = lines[i].slice(nonWhiteSpaceStart, numberOfChars)
+            everything.push({type: 'comma DIRECTIVE OR COMMAND', text:text,i1: i, c1:nonWhiteSpaceStart, c2:numberOfChars})
+            everything.push({type: 'newLine comma DIRECTIVE OR COMMAND', text:'\n',i1: i, c1:c})
             i++
             continue lineLoop
           }
@@ -268,6 +271,7 @@ export default (content: string) => {
                     everything.push({type: ') function DEFINITION', text:')',i1: i, c1:c})
                   } else {
                     d('illegal function DEFINITION END', char())
+                    return everything
                   }
                   c++
                   skipThroughEmptyLines()
