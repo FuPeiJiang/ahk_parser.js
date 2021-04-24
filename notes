@@ -1029,3 +1029,29 @@ lineBeforeSkip -> lineWhereCanConcat
 
 let's try set lineWhereCanConcat when found assignment operator
 works
+
+now continuations
+
+challenges:
+
+var:="hello"
+m:="
+(
+inside
+)" var
+p(m)
+
+let's set lineWhereCanConcat when " ends
+works
+
+oh remember to remove lineWhereCanConcat assignments from bEfOre
+
+m:="
+(
+inside
+) var
+(
+inside2
+)"
+
+

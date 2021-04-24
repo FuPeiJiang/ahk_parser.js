@@ -1139,7 +1139,7 @@ export default (content: string) => {
           continue
         } else {
           //this IS closing quote because not escapechar
-          c++
+          c++, lineWhereCanConcat = i
           d(printString(), 'String')
           return true
         }

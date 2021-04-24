@@ -1,3 +1,4 @@
-v:=
-+=a b
-. a b
+m:="
+(
+inside
+)" var
