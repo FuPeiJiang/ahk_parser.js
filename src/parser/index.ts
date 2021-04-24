@@ -138,6 +138,13 @@ export default (content: string) => {
             everything.splice(everything.length - 2,0,{type: 'assignment whiteSpace', text:validName,i1: validNameLine, c1:nonWhiteSpaceStart ,c2:validNameEnd})
             findExpression()
 
+            if (!betweenExpression()) { findExpression() }
+            if (i === exprFoundLine) {
+              findCommentsAndEndLine()
+            } else {
+              usingStartOfLineLoop = true
+              continue startOfLineLoop
+            }
             continue lineLoop
           }
 

@@ -4,7 +4,7 @@ string_getUntilWithInBetweensULTRA(Byref string, Byref getUntil, inBetweens*) {
     for                                index, delimArr in inBetweens {
 
         startDelims := []
-        endDelims := []
+      endDelims := []
         ignoreTimes := []
         for index, delim in delimArr {
             if isObject(delim) {
