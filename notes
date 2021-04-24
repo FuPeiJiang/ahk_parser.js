@@ -1026,3 +1026,6 @@ v:=a b
 works
 
 lineBeforeSkip -> lineWhereCanConcat
+
+let's try set lineWhereCanConcat when found assignment operator
+works

@@ -635,16 +635,15 @@ export default (content: string) => {
   //true if found, false if not found
   function findOperators() {
     //#VARIABLE ASSIGNMENT
+    let toReturn = true
     if (c < numberOfChars - 2 && operatorsObj[lines[i].slice(c, c + 3).toLowerCase()]) {
       // d(lines[i].slice(c, c + 3), '3operator', char())
       everything.push({type: '3operator', text:lines[i].slice(c, c + 3),i1: i, c1:c ,c2:c + 3})
       c += 3
-      return true
     } else if (c < numberOfChars - 1 && operatorsObj[lines[i].slice(c, c + 2).toLowerCase()]) {
       // d(lines[i].slice(c, c + 2), '2operator', char())
       everything.push({type: '2operator', text:lines[i].slice(c, c + 2),i1: i, c1:c ,c2:c + 2})
       c += 2
-      return true
     } else if (c < numberOfChars && operatorsObj[lines[i][c].toLowerCase()]) {
       //if ?, ternary, so expect :
       if (lines[i][c] === '?') {
@@ -657,13 +656,11 @@ export default (content: string) => {
           // d(': ternary', char())
           everything.push({type: ': ternary', text:':',i1: i, c1:c})
           colonDeep--, c++
-          return true
         } else {
           d('illegal: why is there no : after ? ternary', char())
           //pretend it was legal
-          colonDeep--, c++
+          colonDeep--, c++, toReturn = false
           //I don't know what returning false does
-          return false
         }
       } else if (lines[i][c] === ':') {
         //'?' will make colonDeep true
@@ -671,21 +668,21 @@ export default (content: string) => {
           //if encounter ':' in the wild BEFORE '?'
           d('illegal: unexpected :', char())
         }
-        return false
+        toReturn = false
         //for variadic function definition
       } else if (variadicAsterisk && lines[i][c] === '*') {
         // d('* variadic Argument', char())
         everything.push({type: '* variadic Argument', text:'*',i1: i, c1:c})
         c++
-        return true
       }
       // d(lines[i][c], '1operator', char())
       everything.push({type: '1operator', text:lines[i][c],i1: i, c1:c})
       c++
-      return true
     } else {
       return false
     }
+    lineWhereCanConcat = i
+    return toReturn
 
   }
 
