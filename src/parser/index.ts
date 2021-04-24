@@ -302,6 +302,8 @@ export default (content: string) => {
               // d(') function startOfLine', char())
               everything.push({type: ') function startOfLine', text:')',i1: i, c1:c})
 
+              c++
+              everything.push({type: 'newline ) function startOfLine', text:'\n',i1: i, c1:c})
               i++
               continue lineLoop
             }
