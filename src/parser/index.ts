@@ -54,6 +54,7 @@ export default (content: string) => {
       }
       //nothing left, continue
       if (c === numberOfChars) {
+        everything.push({type: 'newLine startOfLineLoop', text:'\n',i1: i, c1:c})
         i++
         continue lineLoop
       }
