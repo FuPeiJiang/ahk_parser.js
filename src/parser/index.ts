@@ -145,6 +145,8 @@ export default (content: string) => {
                 const text = lines[i].slice(nonWhiteSpaceStart, numberOfChars)
                 everything.push({type: 'command', text:text,i1: i, c1:nonWhiteSpaceStart ,c2:numberOfChars})
               }
+              // untested c, i
+              everything.push({type: 'newLine command', text:'\n',i1: i, c1:c})
               i++
             }
             continue lineLoop
@@ -248,7 +250,7 @@ export default (content: string) => {
                   c++
                   skipThroughEmptyLines()
                   // d(`{ Function DEFINITION ${char()}`)
-                  everything.push({type: '} function DEFINITION', text:'}',i1: i, c1:c})
+                  everything.push({type: '{ function DEFINITION', text:'{',i1: i, c1:c})
                   c++
                   usingStartOfLineLoop = true
                   skipThroughWhiteSpaces()
