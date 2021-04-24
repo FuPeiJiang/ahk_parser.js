@@ -63,6 +63,9 @@ export default (content: string) => {
       if (lines[i][c] === ';') {
         // d('SemiColonComment', `${c}-END`, l())
         // everything.push({type: 'SemiColonComment', line: i, colStart: c})
+        const text = lines[i].slice(c,numberOfChars)
+        everything.push({type: 'SemiColonComment', text:text,i1: i, c1:c, c2:numberOfChars})
+        everything.push({type: 'newLine SemiColonComment', text:'\n',i1: i, c1:c})
         i++
         continue lineLoop
       }
