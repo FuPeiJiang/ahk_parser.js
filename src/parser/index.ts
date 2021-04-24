@@ -1256,21 +1256,27 @@ export default (content: string) => {
   function findCommentsAndEndLine() {
     // console.trace()
     // process.exit()
-    if (c === numberOfChars) {
-      i++; return true
-    }
-    if (c < numberOfChars && !whiteSpaceObj[lines[i][c]]) {
-      d(`ILLEGAL nonWhiteSpace '${lines[i][c]}' at findCommentsAndEndLine ${char()}`)
-      i++; return false
-    }
-    while (c < numberOfChars) {
-      if (lines[i][c] === ';') {
-        d('semiColonComment at findCommentsAndEndLine', char())
-        i++; return true
+    let toReturn = true
+    dummyLoop:
+    while (true) {
+      if (c === numberOfChars) {
+        break dummyLoop
       }
-      c++
+      if (c < numberOfChars && !whiteSpaceObj[lines[i][c]]) {
+        d(`ILLEGAL nonWhiteSpace '${lines[i][c]}' at findCommentsAndEndLine ${char()}`)
+        toReturn = false; break dummyLoop
+      }
+      while (c < numberOfChars) {
+        if (lines[i][c] === ';') {
+          d('semiColonComment at findCommentsAndEndLine', char())
+          break dummyLoop
+        }
+        c++
+      }
+      break dummyLoop
     }
-    i++; return true
+    everything.push({type: 'newLine findCommentsAndEndLine', text:'\n',i1: i, c1:c})
+    i++; return toReturn
   }
   function findPercentVar() {
     const percentVarStart = c
