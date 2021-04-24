@@ -926,3 +926,42 @@ concat "" 0LENGHT 7 line 7
 concat " " 1LENGHT 12 line 9
 concat "" 0LENGHT 9 line 9
 ILLEGAL nonWhiteSpace ',' at findCommentsAndEndLine 18 line 9
+
+shouldn't concat when it's on different lines
+betweenExpression() shouldn't set lineBeforeSkip = i
+because it doesn't know.
+
+well I can rename lineBeforeSkip to lineWhereCanConcat
+
+
+but now I get
+ILLEGAL nonWhiteSpace 'i' at findCommentsAndEndLine 13 line 9
+ 13 line 9: it's before 'index'
+    for                                index, delimArr in inBetweens {
+for is 'command', that's good
+findCommentsAndEndLine() should NOT be called on the line of 'for'
+when 'command', a line should've been skipped, trace() to see which one came first
+                if (i === 3) {
+                  d(345345)
+                  trace()
+                }
+'command' came first
+
+NO, I got the wrong for, this is the right one:
+{type:'idkVariable', text:'for', i1:8, c1:8, c2:11},
+for should NOT be idkVariable
+
+if (!betweenExpression()) { findExpression() }
+WHY was this called ?
+
+{type:'] Array', text:']', i1:7, c1:24},
+why after '] Array', it went to line 134?
+well, no, it was line 134 that called findExpression that simplify returned, so it came back
+that's fine
+
+{type:'emptyLines' i2:8
+then what called this ?
+it was probably called by findExpression() at 'for'
+it seems that this hhas been called twice
+omg it IS called twice, WHYYYYYY : line 139..
+I forgot to remove the og findExpression() when pasting from 'assignment' to 'assignment whiteSpace'

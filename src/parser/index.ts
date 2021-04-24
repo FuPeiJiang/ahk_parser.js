@@ -136,7 +136,6 @@ export default (content: string) => {
           if (findOperators()) {
             // d(`${validName} assignment whiteSpace`)
             everything.splice(everything.length - 2,0,{type: 'assignment whiteSpace', text:validName,i1: validNameLine, c1:nonWhiteSpaceStart ,c2:validNameEnd})
-            findExpression()
 
             if (!betweenExpression()) { findExpression() }
             if (i === exprFoundLine) {
@@ -159,6 +158,7 @@ export default (content: string) => {
                 everything.splice(everything.length - 1,0,{type: 'return', text:validName,i1: validNameLine, c1:nonWhiteSpaceStart ,c2:validNameEnd})
                 findExpression()
               } else {
+
                 everything.splice(everything.length - 1,0,{type: 'command', text:validName,i1: validNameLine, c1:nonWhiteSpaceStart ,c2:validNameEnd})
                 const text = lines[validNameLine].slice(c, numberOfChars)
                 everything.push({type: 'command to EOL', text:text,i1: validNameLine, c1:c ,c2:numberOfChars})
@@ -690,7 +690,6 @@ export default (content: string) => {
         }
       }
     } else {
-      lineBeforeSkip = i
       if (!skipThroughEmptyLines()) { return false }
     }
 
@@ -721,6 +720,8 @@ export default (content: string) => {
     // if char before is whiteSpace concat
     if (i === lineBeforeSkip && whiteSpaceObj[lines[i][c - 1]] && findExpression()) {
       const concatWhiteSpaces = lines[i].slice(beforeConcatBak, afterConcat)
+      // trace()
+      // process.exit()
       d(`concat "${concatWhiteSpaces}" ${concatWhiteSpaces.length}LENGHT ${beforeConcatBak + 1} line ${concatLineBak + 1}`)
       return true
     }
@@ -973,6 +974,9 @@ export default (content: string) => {
         d('ILLEGAL ] Array', char())
       }
       // d('] Array', char())
+      if (i === 7) {
+        trace()
+      }
       everything.push({type: '] Array', text:']',i1: i, c1:c})
       c++
       betweenExpression()
@@ -1272,6 +1276,9 @@ export default (content: string) => {
         //anything else, return found
         const text = textFromPosToCurrent([c1,i1])
         if (text) {
+          // if (i === 8) {
+          // trace()
+          // }
           everything.push({type: 'emptyLines', text:text,i1:i1, c1: c1,i2:i,c2:c})
         }
         return true
