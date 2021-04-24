@@ -1226,7 +1226,9 @@ export default (content: string) => {
       } else {
         //anything else, return found
         const text = textFromPosToCurrent([c1,i1])
-        everything.push({type: 'emptyLines', text:text,i1: i, c1: c1,c2:c})
+        if (text) {
+          everything.push({type: 'emptyLines', text:text,i1: i, c1: c1,c2:c})
+        }
         return true
       }
       i++
