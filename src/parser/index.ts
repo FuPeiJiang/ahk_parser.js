@@ -91,6 +91,8 @@ export default (content: string) => {
         }
 
         validName = lines[i].slice(nonWhiteSpaceStart, c)
+        const validNameEnd = c,validNameLine = i
+
         const idkType = typeOfValidVarName[validName.toLowerCase()]
         // comma can't be assignment, so I can skip assignment
         // if it has a comma, it could be a hotkey, it's only NOT a hotkey if it's a valid COMMAND
@@ -122,7 +124,8 @@ export default (content: string) => {
           if (!skipThroughEmptyLines()) { break lineLoop }
 
           if (findOperators()) {
-            d(`${validName} assignment whiteSpace`)
+            // d(`${validName} assignment whiteSpace`)
+            everything.splice(everything.length - 1,0,{type: 'assignment whiteSpace', text:validName,i1: validNameLine, c1:nonWhiteSpaceStart ,c2:validNameEnd})
             findExpression()
 
             continue lineLoop
@@ -321,7 +324,7 @@ export default (content: string) => {
         //#ASSIGNMENT
         if (findOperators()) {
           // d(`${validName} assignment`)
-          everything.splice(everything.length - 1,0,{type: 'idkVariable', text:validName,i1: validNameLine, c1:nonWhiteSpaceStart ,c2:validNameEnd})
+          everything.splice(everything.length - 1,0,{type: 'assignment', text:validName,i1: validNameLine, c1:nonWhiteSpaceStart ,c2:validNameEnd})
 
           if (!betweenExpression()) { findExpression() }
           if (i === exprFoundLine) {
