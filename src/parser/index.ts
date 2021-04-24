@@ -882,7 +882,9 @@ export default (content: string) => {
     }
 
     if (lines[i][c] === '[') {
-      d('[ start', char())
+      // d('[ Array', char())
+      everything.push({type: '[ Array', text:'[',i1: i, c1:c})
+
       c++
 
       exprFoundLine = i
@@ -903,9 +905,10 @@ export default (content: string) => {
         c++
       }
       if (i !== exprFoundLine) {
-        d('ILLEGAL ]', char())
+        d('ILLEGAL ] Array', char())
       }
-      d('] end', char())
+      // d('] Array', char())
+      everything.push({type: '] Array', text:']',i1: i, c1:c})
       c++
       betweenExpression()
       return true
