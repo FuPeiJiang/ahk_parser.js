@@ -922,3 +922,7 @@ we want startOfLineLoop instead
 let's just copy what we have from 'assignment' to 'assignment whiteSpace'
 works
 
+concat "" 0LENGHT 7 line 7
+concat " " 1LENGHT 12 line 9
+concat "" 0LENGHT 9 line 9
+ILLEGAL nonWhiteSpace ',' at findCommentsAndEndLine 18 line 9
