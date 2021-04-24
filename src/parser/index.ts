@@ -571,12 +571,32 @@ export default (content: string) => {
     //after next ')'
     if (skipThroughFindChar(')')) {
       c++
-      if (skipThroughEmptyLines()) {
+      // if (skipThroughEmptyLines()) {
+      iCantDirectlyReturn:
+      while (i < howManyLines) {
+        while (c < numberOfChars && whiteSpaceObj[lines[i][c]]) {
+          c++
+        }
+        if (c === numberOfChars) {
+          //comment: next line
+        } else if (lines[i][c] === ';' && (c === 0 || whiteSpaceObj[lines[i][c - 1]])) {
+          // d('comment while skipThroughEmptyLines', char())
+        } else {
         //is the next char '{' ?
-        if (lines[i][c] === '{') {
-          toReturn = true
+          if (lines[i][c] === '{') {
+            toReturn = true
+            break iCantDirectlyReturn
+          }
+        }
+        i++
+        if (i < howManyLines) {
+          c = 0, numberOfChars = lines[i].length
+        } else {
+          break iCantDirectlyReturn
         }
       }
+
+      // }
     } else {
       //haven't found closing )
       d('illegal: haven\'t found closing ) isFunctionDefinition', char())

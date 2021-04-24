@@ -898,3 +898,6 @@ const validNameEnd = c,validNameLine = i
 'end of lineLoop' never happens
 
 findCommentsAndEndLine() after '} function definition'
+
+isFunctionDefinition() use it's own version of skipThroughEmptyLines()
+without everything.push()
