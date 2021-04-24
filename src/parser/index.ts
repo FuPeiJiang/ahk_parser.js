@@ -86,7 +86,9 @@ export default (content: string) => {
         if (c === numberOfChars) {
 
           validName = lines[i].slice(nonWhiteSpaceStart, c)
-          d(validName, 'COMMAND EOL', char())
+          // d(validName, 'COMMAND EOL', char())
+          everything.push({type: 'command EOL', text:validName,i1: i, c1:nonWhiteSpaceStart, c2:c})
+          everything.push({type: 'newLine command EOL', text:'\n',i1: i, c1:c})
           i++
           continue lineLoop
         }
@@ -133,7 +135,7 @@ export default (content: string) => {
           }
 
           if (idkType === 4) {
-            d(validName, 'whiteSpace COMMAND', nonWhiteSpaceStart + 1, lineBeforeSkip + 1, 'line')
+            // d(validName, 'whiteSpace COMMAND', nonWhiteSpaceStart + 1, lineBeforeSkip + 1, 'line')
             // statement can't have Expr if line changed...
             if (i === lineBeforeSkip) {
 
