@@ -1,7 +1,4 @@
 m:="
 (
 inside
-) var
-(
-inside2
-)"
+)" var
