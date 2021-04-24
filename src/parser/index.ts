@@ -148,11 +148,13 @@ export default (content: string) => {
 
               if (validName.toLowerCase() === 'return') {
                 // can't be betweenExpression() because whiteSpace := takes priority
-                everything.push({type: 'return', text:validName,i1: validNameLine, c1:nonWhiteSpaceStart ,c2:validNameEnd})
+                // everything.push({type: 'return', text:validName,i1: validNameLine, c1:nonWhiteSpaceStart ,c2:validNameEnd})
+                everything.splice(everything.length - 1,0,{type: 'return', text:validName,i1: validNameLine, c1:nonWhiteSpaceStart ,c2:validNameEnd})
                 findExpression()
               } else {
-                const text = lines[i].slice(nonWhiteSpaceStart, numberOfChars)
-                everything.push({type: 'command', text:text,i1: i, c1:nonWhiteSpaceStart ,c2:numberOfChars})
+                everything.splice(everything.length - 1,0,{type: 'command', text:validName,i1: validNameLine, c1:nonWhiteSpaceStart ,c2:validNameEnd})
+                const text = lines[validNameLine].slice(c, numberOfChars)
+                everything.push({type: 'command to EOL', text:text,i1: validNameLine, c1:c ,c2:numberOfChars})
               }
               // untested c, i
               everything.push({type: 'newLine command', text:'\n',i1: i, c1:c})
@@ -967,9 +969,6 @@ export default (content: string) => {
       everything.push({type: '] Array', text:']',i1: i, c1:c})
       c++
       betweenExpression()
-      if (everythingPushCounter === 2) {
-        trace()
-      }
       return true
     }
 
@@ -1269,6 +1268,7 @@ export default (content: string) => {
           everything.push({type: 'emptyLines', text:text,i1:i1, c1: c1,i2:i,c2:c})
           everythingPushCounter++
           if (everythingPushCounter === 3) {
+            ch()
             trace()
           }
         }

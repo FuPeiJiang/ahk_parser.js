@@ -1,7 +1,7 @@
 string_getUntilWithInBetweensULTRA(Byref string, Byref getUntil, inBetweens*) {
     delimArrArr:=[]
 
-    for index, delimArr in inBetweens {
+    for                                index, delimArr in inBetweens {
 
         startDelims := []
         endDelims := []

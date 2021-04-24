@@ -901,3 +901,10 @@ findCommentsAndEndLine() after '} function definition'
 
 isFunctionDefinition() use it's own version of skipThroughEmptyLines()
 without everything.push()
+
+somehow for is skipped and skipThroughEmptyLines() is catching what's between for and index. is IS working correctly.
+for                                index
+so it's checking for whiteSpace assignment
+if found assignment, it needs to keep the whiteSpaces found, it's inserting at 2nd last
+but we don't want the whiteSpace between for and ... do we ?. do we ?
+we do
