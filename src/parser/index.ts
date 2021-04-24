@@ -15,7 +15,7 @@ export default (content: string) => {
   const rangeAndReplaceTextArr: [[[number, number],[number, number]], string][] = []
 
   let i = 0, c = 0, numberOfChars = 0, validName = '', strStartLine: number, strStartPos: number, insideContinuation = false, beforeConcat: number, nonWhiteSpaceStart: number, exprFoundLine = -1, colonDeep = 0, usingStartOfLineLoop = false, variadicAsterisk = false, lineBeforeSkip = 0
-
+  let everythingPushCounter = 0
   lineLoop:
   while (i < howManyLines) {
     c = 0
@@ -348,6 +348,9 @@ export default (content: string) => {
           if (!betweenExpression()) { findExpression() }
           if (i === exprFoundLine) {
             findCommentsAndEndLine()
+          } else {
+            usingStartOfLineLoop = true
+            continue startOfLineLoop
           }
           continue lineLoop
         }
@@ -964,6 +967,9 @@ export default (content: string) => {
       everything.push({type: '] Array', text:']',i1: i, c1:c})
       c++
       betweenExpression()
+      if (everythingPushCounter === 2) {
+        trace()
+      }
       return true
     }
 
@@ -1260,7 +1266,11 @@ export default (content: string) => {
         //anything else, return found
         const text = textFromPosToCurrent([c1,i1])
         if (text) {
-          everything.push({type: 'emptyLines', text:text,i1: i, c1: c1,c2:c})
+          everything.push({type: 'emptyLines', text:text,i1:i1, c1: c1,i2:i,c2:c})
+          everythingPushCounter++
+          if (everythingPushCounter === 3) {
+            trace()
+          }
         }
         return true
       }
