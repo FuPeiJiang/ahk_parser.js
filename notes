@@ -894,3 +894,5 @@ so instead of push, splice so that it is second last
 
 I also need to save these positions
 const validNameEnd = c,validNameLine = i
+
+'end of lineLoop' never happens

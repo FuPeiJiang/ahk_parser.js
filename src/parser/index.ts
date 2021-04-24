@@ -360,6 +360,9 @@ export default (content: string) => {
     }
 
     //end of lineLoop
+    d('end of lineLoop')
+    // ch()
+    // everything.push({type: 'end of lineLoop', text:'\n',i1: i, c1:c})
     i++
     continue lineLoop
   }
