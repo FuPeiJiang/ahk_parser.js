@@ -136,9 +136,14 @@ export default (content: string) => {
             d(validName, 'whiteSpace COMMAND', nonWhiteSpaceStart + 1, lineBeforeSkip + 1, 'line')
             // statement can't have Expr if line changed...
             if (i === lineBeforeSkip) {
+
               if (validName.toLowerCase() === 'return') {
                 // can't be betweenExpression() because whiteSpace := takes priority
+                everything.push({type: 'return', text:validName,i1: validNameLine, c1:nonWhiteSpaceStart ,c2:validNameEnd})
                 findExpression()
+              } else {
+                const text = lines[i].slice(nonWhiteSpaceStart, numberOfChars)
+                everything.push({type: 'command', text:text,i1: i, c1:nonWhiteSpaceStart ,c2:numberOfChars})
               }
               i++
             }
@@ -374,7 +379,7 @@ export default (content: string) => {
   return everything
 
   function ws() {
-    d(lines[i].slice(nonWhiteSpaceStart, c))
+    d(`\`${lines[i].slice(nonWhiteSpaceStart, c)}\``)
   }
   function applyRangeReplacements() {
   //reverse iterate to not change [c,i]

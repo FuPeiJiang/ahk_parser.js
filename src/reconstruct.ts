@@ -21,6 +21,7 @@ for (let i = 0, len = everything.length; i < len; i++) {
   reconstructed += everything[i].text
 }
 d(reconstructed)
+writeSync(reconstructed,'reconstructed.ahk')
 writeSync(arrOrObjToString(everything),'everything.txt')
 
 function arrOrObjToString(obj) {
