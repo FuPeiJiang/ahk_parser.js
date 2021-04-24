@@ -114,10 +114,13 @@ export default (content: string) => {
             if (idkType === 1) {
               d(validName, 'whiteSpace DIRECTIVE', char())
             } else if (idkType === 2) {
-              d(validName, 'if statement', char())
+              // d(validName, 'if statement', char())
             } else if (idkType === 3) {
               d(validName, 'global local or static', char())
             }
+            const text = lines[i].slice(nonWhiteSpaceStart, numberOfChars)
+            everything.push({type: 'directive', text:text,i1: i, c1:nonWhiteSpaceStart, c2:numberOfChars})
+            everything.push({type: 'newLine directive', text:'\n',i1: i, c1:c})
             i++
             continue lineLoop
           }
