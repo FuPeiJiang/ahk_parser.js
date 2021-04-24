@@ -896,7 +896,7 @@ export default (content: string) => {
           if (lines[i][c] === ',') {
             d('ILLEGAL trailling , ARRAY', char())
           } else if (lines[i][c] === ']') {
-            d('valid empty arr', char())
+            // d('valid empty arr', char())
           } else {
             d('illegal arr1', char())
           }
@@ -955,7 +955,7 @@ export default (content: string) => {
             if (lines[i][c] === ',') {
               d('ILLEGAL trailling , OBJECT', char())
             } else if (lines[i][c] === '}') {
-              d('valid empty obj', char())
+              // d('valid empty obj', char())
             } else {
               d('illegal obj1', char())
             }
@@ -1179,7 +1179,7 @@ export default (content: string) => {
           d('comment while skipThroughFindChar', char())
           break charLoop
         } else if (lines[i][c] === charToFind) {
-          d('found', charToFind, 'at', char())
+          // d('found', charToFind, 'at', char())
           return true
         }
         c++
