@@ -14,7 +14,7 @@ export default (content: string) => {
   const toFile = ''
   const rangeAndReplaceTextArr: [[[number, number],[number, number]], string][] = []
 
-  let i = 0, c = 0, numberOfChars = 0, validName = '', strStartLine: number, strStartPos: number, insideContinuation = false, beforeConcat: number, nonWhiteSpaceStart: number, exprFoundLine = -1, colonDeep = 0, usingStartOfLineLoop = false, variadicAsterisk = false, lineBeforeSkip = 0
+  let i = 0, c = 0, numberOfChars = 0, validName = '', strStartLine: number, strStartPos: number, insideContinuation = false, beforeConcat: number, nonWhiteSpaceStart: number, exprFoundLine = -1, colonDeep = 0, usingStartOfLineLoop = false, variadicAsterisk = false, lineWhereCanConcat = 0
   let everythingPushCounter: number; everythingPushCounter = 0
   lineLoop:
   while (i < howManyLines) {
@@ -730,7 +730,7 @@ export default (content: string) => {
     //look for concat, if no operators found
     //if the next thing is expr, it is a concat
     // if char before is whiteSpace concat
-    if (i === lineBeforeSkip && whiteSpaceObj[lines[i][c - 1]] && findExpression()) {
+    if (i === lineWhereCanConcat && whiteSpaceObj[lines[i][c - 1]] && findExpression()) {
       const concatWhiteSpaces = lines[concatLineBak].slice(beforeConcatBak, afterConcat)
       // trace()
       // process.exit()

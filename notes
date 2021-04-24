@@ -1024,3 +1024,5 @@ lines[i]->lines[concatLineBak]
 
 v:=a b
 works
+
+lineBeforeSkip -> lineWhereCanConcat
