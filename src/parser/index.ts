@@ -1201,6 +1201,7 @@ export default (content: string) => {
   }
   //true if found anything !whiteSpace, false if outOfLines
   function skipThroughEmptyLines() {
+    const c1 = c, i1 = i
     //also skip through whiteSpaces, comments
     while (i < howManyLines) {
       while (c < numberOfChars && whiteSpaceObj[lines[i][c]]) {
@@ -1213,6 +1214,8 @@ export default (content: string) => {
         // d('comment while skipThroughEmptyLines', char())
       } else {
         //anything else, return found
+        const text = textFromPosToCurrent([c1,i1])
+        everything.push({type: 'emptyLines', text:text,i1: i, c1: c1,c2:c})
         return true
       }
       i++

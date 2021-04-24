@@ -4,7 +4,7 @@ const d = console.debug.bind(console)
 
 
 const content: string =
-fs.readFileSync('tests/fixes/assignment.ahk')
+// fs.readFileSync('tests/fixes/assignment.ahk')
 // fs.readFileSync('tests/fixes/obj in obj.ahk')
 // fs.readFileSync('tests/fixes/obj to map linesCopy.ahk')
 // fs.readFileSync('tests/fixes/ILLEGAL nonWhiteSpace.ahk')
@@ -12,7 +12,7 @@ fs.readFileSync('tests/fixes/assignment.ahk')
 // fs.readFileSync('tests/fix concat wrong line.ahk')
 // fs.readFileSync('tests/Variadic Function.ahk')
 // fs.readFileSync('tests/ArrAccess.ahk')
-// fs.readFileSync('tests/string_getUntilWithInBetweensULTRA.ahk')
+fs.readFileSync('tests/string_getUntilWithInBetweensULTRA.ahk')
 
 const everything = ahkParser(content.toString().replace(/\r/g, ''))
 // d(everything)
