@@ -42,7 +42,7 @@ var:=fekfoekf.a
                     for index, startDelim in delimArr.startDelims {
                         if (char == startDelim) {
                             if (delimArr.ignoreTimes[index]) {
-                                delimArr.ignoreTimes[index]-=1
+                                delimArr.ignoreTimes[index]  -=1
                             } else {
                                 lookingForArr.InsertAt(1, {level:indexArr, endDelim: delimArr.endDelims[index]})
                             }

@@ -135,7 +135,7 @@ export default (content: string) => {
 
           if (findOperators()) {
             // d(`${validName} assignment whiteSpace`)
-            everything.splice(everything.length - 1,0,{type: 'assignment whiteSpace', text:validName,i1: validNameLine, c1:nonWhiteSpaceStart ,c2:validNameEnd})
+            everything.splice(everything.length - 2,0,{type: 'assignment whiteSpace', text:validName,i1: validNameLine, c1:nonWhiteSpaceStart ,c2:validNameEnd})
             findExpression()
 
             continue lineLoop
