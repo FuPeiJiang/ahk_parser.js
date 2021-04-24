@@ -9,7 +9,7 @@ string_getUntilWithInBetweensULTRA(Byref string, Byref getUntil, inBetweens*) {
         for index, delim in delimArr {
             if isObject(delim) {
                 startDelims.Push(delim[1])
-                endDelims.Push(delim[2])
+      endDelims.Push(delim[2])
                 ignoreTimes.Push(delim[3])
 
             } else {

@@ -339,6 +339,9 @@ export default (content: string) => {
             }
             if (i === exprFoundLine) {
               findCommentsAndEndLine()
+            } else {
+              usingStartOfLineLoop = true
+              continue startOfLineLoop
             }
             continue lineLoop
           } else {
@@ -792,7 +795,6 @@ export default (content: string) => {
         }
         // d(') METHOD', char())
         everything.push({type: ') method', text:')',i1: i, c1:c})
-
         c++
         return true
 
@@ -974,9 +976,7 @@ export default (content: string) => {
         d('ILLEGAL ] Array', char())
       }
       // d('] Array', char())
-      if (i === 7) {
-        trace()
-      }
+
       everything.push({type: '] Array', text:']',i1: i, c1:c})
       c++
       betweenExpression()

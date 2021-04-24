@@ -965,3 +965,24 @@ it was probably called by findExpression() at 'for'
 it seems that this hhas been called twice
 omg it IS called twice, WHYYYYYY : line 139..
 I forgot to remove the og findExpression() when pasting from 'assignment' to 'assignment whiteSpace'
+
+      endDelims.Push(delim[2])
+becomes
+            endDelims.Push(delim[2])
+indentation doubled again..
+
+        everything.push({type: ') method', text:')',i1: i, c1:c})
+        if (i === 11) {
+          trace()
+        }
+line 340
+i === exprFoundLine needs to be true I think
+
+let's try
+            if (i === exprFoundLine || i === 12) {
+NO, it's this it needs
+else {
+            usingStartOfLineLoop = true
+            continue startOfLineLoop
+          }
+
