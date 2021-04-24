@@ -1062,3 +1062,9 @@ var is not detected as variable, that's good
 nothing breaks, I'm done
 
 now reconstruct it
+
+time to test it against final boss: ahk_explorer
+first, mute:
+  stringContinuation START
+  stringContinuation END
+  concat

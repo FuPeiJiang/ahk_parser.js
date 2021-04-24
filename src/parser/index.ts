@@ -729,9 +729,7 @@ export default (content: string) => {
     // if char before is whiteSpace concat
     if (i === lineWhereCanConcat && whiteSpaceObj[lines[i][c - 1]] && findExpression()) {
       const concatWhiteSpaces = lines[concatLineBak].slice(beforeConcatBak, afterConcat)
-      // trace()
-      // process.exit()
-      d(`concat "${concatWhiteSpaces}" ${concatWhiteSpaces.length}LENGHT ${beforeConcatBak + 1} line ${concatLineBak + 1}`)
+      // d(`concat "${concatWhiteSpaces}" ${concatWhiteSpaces.length}LENGHT ${beforeConcatBak + 1} line ${concatLineBak + 1}`)
       return true
     }
 
@@ -1162,7 +1160,7 @@ export default (content: string) => {
   //true if legal, false if illegal startContinuation: which expects (
   function recurseContinuation(): boolean {
     if (startContinuation()) {
-      d('stringContinuation START', char())
+      // d('stringContinuation START', char())
       //outoOfLines or (Ended and didn't find end of string)
       if (!endStringContinuation()) {
         //only startContinuation if not already inside one
@@ -1225,7 +1223,7 @@ export default (content: string) => {
       //true if found line starting with ) AND closingQuote on the same line
       if (c < numberOfChars && lines[i][c] === ')') {
         insideContinuation = false
-        d('stringContinuation END', char())
+        // d('stringContinuation END', char())
         c++
         //if ) and no ", return false to start another continuation
         return findClosingQuoteInLine()
