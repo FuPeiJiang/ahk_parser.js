@@ -197,7 +197,7 @@ export default (content: string) => {
           if (isNaN(Number(validName))) {
             //#FUNCTION DEFINITION
             if (isFunctionDefinition()) {
-              d(`${validName}( function( DEFINITION ${char()}`)
+              // d(`${validName}( function( DEFINITION ${char()}`)
               everything.push({type: 'function( definition', text:`${validName}(`,i1: i, c1:nonWhiteSpaceStart,c2:c + 1})
               c++
               variadicAsterisk = true
@@ -247,12 +247,10 @@ export default (content: string) => {
                 everything.push({type: ', function definition', text:',',i1: i, c1:c})
 
                 c++
-                // ch()
-                // return true
               }
             } else {
               //#FUNCTION CALL
-              d(`${validName}( function( startOfLine ${char()}`)
+              // d(`${validName}( function( startOfLine ${char()}`)
               everything.push({type: 'function( startOfLine', text:`${validName}(`,i1: i, c1:nonWhiteSpaceStart ,c2:c + 1})
               c++, exprFoundLine = i
               let endsWithComma = false
@@ -284,7 +282,7 @@ export default (content: string) => {
               i++
               continue lineLoop
             }
-            // everything.push({type: 'function', line: i, colStart:nonWhiteSpaceStart, colEnd:c, name:lines[i].slice(nonWhiteSpaceStart,c)})
+
           }
 
           //#METHOD OR PROPERTY
@@ -818,7 +816,7 @@ export default (content: string) => {
       //#FUNCTION CALL
       if (lines[i][c] === '(') {
         //#FUNCTION CALL
-        d(`${validName}( function ${char()}`)
+        // d(`${validName}( function ${char()}`)
         everything.push({type: 'function(', text:`${validName}(`,i1: i, c1:nonWhiteSpaceStart ,c2:c + 1})
         c++, exprFoundLine = i
         let endsWithComma = false
