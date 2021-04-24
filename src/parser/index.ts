@@ -731,7 +731,7 @@ export default (content: string) => {
     //if the next thing is expr, it is a concat
     // if char before is whiteSpace concat
     if (i === lineBeforeSkip && whiteSpaceObj[lines[i][c - 1]] && findExpression()) {
-      const concatWhiteSpaces = lines[i].slice(beforeConcatBak, afterConcat)
+      const concatWhiteSpaces = lines[concatLineBak].slice(beforeConcatBak, afterConcat)
       // trace()
       // process.exit()
       d(`concat "${concatWhiteSpaces}" ${concatWhiteSpaces.length}LENGHT ${beforeConcatBak + 1} line ${concatLineBak + 1}`)

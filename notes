@@ -1014,3 +1014,13 @@ adding a newline on i1:59 = line 60 would result in 61 lines
 
 so if (i1 + 1 === howManyLines && text === '\n')
 remove line
+
+fix concat
+
+TypeError: Cannot read property 'slice' of undefined
+line 734:      const concatWhiteSpaces = lines[i].slice(beforeConcatBak, afterConcat)
+the slice needs to happen in the past.
+lines[i]->lines[concatLineBak]
+
+v:=a b
+works
