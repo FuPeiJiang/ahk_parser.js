@@ -1140,7 +1140,11 @@ export default (content: string) => {
         } else {
           //this IS closing quote because not escapechar
           c++, lineWhereCanConcat = i
-          d(printString(), 'String')
+          // strStartPos, strStartLine
+          const text = textFromPosToCurrent([strStartPos,strStartLine])
+          // d(text === printString(), 'String')
+          // d(printString(), 'String')
+          everything.push({type: 'String', text:text,i1:strStartLine, c1: strStartPos,i2:i,c2:c})
           return true
         }
         // semiColonComment must be preceded by whiteSpace
