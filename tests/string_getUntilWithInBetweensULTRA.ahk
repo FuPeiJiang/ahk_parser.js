@@ -26,6 +26,7 @@ string_getUntilWithInBetweensULTRA(Byref string, Byref getUntil, inBetweens*) {
     loop StrLen(string) {
         char:=SubStr(string, a_index, 1)
 fekfoekf()
+var:=fekfoekf.a
         ;resolve, lookingForArr[1].level increases
         if (char == lookingForArr[1].endDelim) {
             lookingForArr.RemoveAt(1)

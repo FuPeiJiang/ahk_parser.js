@@ -696,7 +696,8 @@ export default (content: string) => {
 
       validName = lines[i].slice(nonWhiteSpaceStart, c)
       if (c === numberOfChars) {
-        d(`${validName} PROPERTY EOL ${char()}`)
+        // d(`${validName} PROPERTY EOL ${char()}`)
+        everything.push({type: 'property EOL', text:validName,i1: i, c1:nonWhiteSpaceStart ,c2:c})
         return false
       }
 
@@ -748,7 +749,8 @@ export default (content: string) => {
 
       if (findArrayAccess()) { return true }
 
-      d(`${validName} PROPERTY ${char()}`)
+      // d(`${validName} PROPERTY ${char()}`)
+      everything.push({type: 'property', text:validName,i1: i, c1:nonWhiteSpaceStart ,c2:c})
       //look for comments
       return false
     }
