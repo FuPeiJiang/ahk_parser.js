@@ -75,7 +75,11 @@ export default (content: string) => {
         // d(`} Function DEFINITION ${char()}`)
         everything.push({type: '} function definition', text:'}',i1: i, c1:c})
         c++
-        findCommentsAndEndLine()
+        const text = lines[i].slice(c, numberOfChars)
+        everything.push({type: '} function definition to EOL', text:text,i1: i, c1:c ,c2:numberOfChars})
+        everything.push({type: 'newLine } function definition', text:'\n',i1: i, c1:c})
+        i++
+        // findCommentsAndEndLine()
         continue lineLoop
       }
 

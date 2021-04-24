@@ -986,3 +986,11 @@ else {
             continue startOfLineLoop
           }
 
+now, the only thing missing is the } else.
+I want to ignore that for now.
+
+let's take line 15: i=14
+
+// findCommentsAndEndLine() is called
+replace it with '} function definition to EOL'
+now it's identical, except for a newline in the end idk why
