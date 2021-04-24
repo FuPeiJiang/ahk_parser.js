@@ -408,6 +408,11 @@ export default (content: string) => {
   // toFile = toFile.slice(1)
   // writeSync(toFile)
 
+  const lastIndex = everything.length - 1, lastEverything = everything[lastIndex]
+  if (lastEverything.i1 + 1 === howManyLines && lastEverything.text === '\n') {
+    everything.splice(lastIndex, 1)
+  }
+
   return everything
 
   function ws() {

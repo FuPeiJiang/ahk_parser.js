@@ -994,3 +994,23 @@ let's take line 15: i=14
 // findCommentsAndEndLine() is called
 replace it with '} function definition to EOL'
 now it's identical, except for a newline in the end idk why
+
+there shouldn't be 'newLine startOfLineLoop'
+lets just check in the end, if illegal i1
+
+{type:'newLine startOfLineLoop', text:'
+', i1:59, c1:0},
+]
+
+      //nothing left, continue
+      if (c === numberOfChars) {
+        everything.push({type: 'newLine startOfLineLoop', text:'\n',i1: i, c1:c})
+        i++
+        continue lineLoop
+      }
+
+there are 60 lines total
+adding a newline on i1:59 = line 60 would result in 61 lines
+
+so if (i1 + 1 === howManyLines && text === '\n')
+remove line
