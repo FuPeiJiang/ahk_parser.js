@@ -1054,4 +1054,9 @@ inside
 inside2
 )"
 
-
+var is not detected as variable, that's good
+[
+{type:'assignment', text:'m', i1:0, c1:0, c2:1},
+{type:'2operator', text:':=', i1:0, c1:1, c2:3},
+]
+nothing breaks, I'm done
