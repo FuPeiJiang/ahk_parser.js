@@ -896,3 +896,5 @@ I also need to save these positions
 const validNameEnd = c,validNameLine = i
 
 'end of lineLoop' never happens
+
+findCommentsAndEndLine() after '} function definition'

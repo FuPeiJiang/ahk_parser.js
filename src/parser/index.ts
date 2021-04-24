@@ -70,7 +70,8 @@ export default (content: string) => {
       if (lines[i][c] === '}') {
         // d(`} Function DEFINITION ${char()}`)
         everything.push({type: '} function definition', text:'}',i1: i, c1:c})
-        i++
+        c++
+        findCommentsAndEndLine()
         continue lineLoop
       }
 
