@@ -887,3 +887,10 @@ no, always do it the hard way
 do not everything.push when Searching for function definition
 do not skipThroughWhiteSpaces() when skipThroughFindChar(')')
 do not skipThroughWhiteSpaces() when skipThroughEmptyLines()
+
+validName needs to first check if there WAS an assignment operator
+ before saying that YES, this was an assignment
+so instead of push, splice so that it is second last
+
+I also need to save these positions
+const validNameEnd = c,validNameLine = i

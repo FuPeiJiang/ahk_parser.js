@@ -124,8 +124,7 @@ export default (content: string) => {
           if (findOperators()) {
             d(`${validName} assignment whiteSpace`)
             findExpression()
-            // ch()
-            // i++
+
             continue lineLoop
           }
 
@@ -188,6 +187,7 @@ export default (content: string) => {
         continue lineLoop
       }
       validName = lines[i].slice(nonWhiteSpaceStart, c)
+      const validNameEnd = c,validNameLine = i
 
       if (validName) {
         //#FUNCTION
@@ -320,7 +320,9 @@ export default (content: string) => {
 
         //#ASSIGNMENT
         if (findOperators()) {
-          d(`${validName} assignment`)
+          // d(`${validName} assignment`)
+          everything.splice(everything.length - 1,0,{type: 'idkVariable', text:validName,i1: validNameLine, c1:nonWhiteSpaceStart ,c2:validNameEnd})
+
           if (!betweenExpression()) { findExpression() }
           if (i === exprFoundLine) {
             findCommentsAndEndLine()
@@ -785,7 +787,8 @@ export default (content: string) => {
       validName = lines[i].slice(nonWhiteSpaceStart, c)
       if (c === numberOfChars) {
         if (isNaN(Number(validName))) {
-          d(`${validName} validName VARIABLE EOL ${char()}`)
+          // d(`${validName} validName VARIABLE EOL ${char()}`)
+          everything.push({type: 'validName VARIABLE EOL', text:validName,i1: i, c1:nonWhiteSpaceStart ,c2:c})
         } else {
           // d(`${validName} Integer EOL ${char()}`)
           everything.push({type: 'Integer', text:validName,i1: i, c1:nonWhiteSpaceStart ,c2:c})
