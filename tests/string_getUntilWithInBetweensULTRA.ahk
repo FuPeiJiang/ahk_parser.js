@@ -25,7 +25,7 @@ string_getUntilWithInBetweensULTRA(Byref string, Byref getUntil, inBetweens*) {
     lookingForArr:=[{level: delimArrArr.Length + 1, endDelim:getUntil}] ;{level, endDelim} ;to save the higher level delim if start a new Delim
     loop StrLen(string) {
         char:=SubStr(string, a_index, 1)
-
+fekfoekf()
         ;resolve, lookingForArr[1].level increases
         if (char == lookingForArr[1].endDelim) {
             lookingForArr.RemoveAt(1)

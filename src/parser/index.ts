@@ -197,8 +197,8 @@ export default (content: string) => {
           if (isNaN(Number(validName))) {
             //#FUNCTION DEFINITION
             if (isFunctionDefinition()) {
-              // d(validName, 'Function DEFINITION', char())
-              everything.push({type: 'function definition', text:`${validName}(`,i1: i, c1:nonWhiteSpaceStart,c2:c})
+              d(`${validName}( function( DEFINITION ${char()}`)
+              everything.push({type: 'function( definition', text:`${validName}(`,i1: i, c1:nonWhiteSpaceStart,c2:c + 1})
               c++
               variadicAsterisk = true
               while (true) {
@@ -252,7 +252,8 @@ export default (content: string) => {
               }
             } else {
               //#FUNCTION CALL
-              d(`${validName} Function startOfLine${char()}`)
+              d(`${validName}( function( startOfLine ${char()}`)
+              everything.push({type: 'function( startOfLine', text:`${validName}(`,i1: i, c1:nonWhiteSpaceStart ,c2:c + 1})
               c++, exprFoundLine = i
               let endsWithComma = false
               while (true) {
@@ -702,8 +703,8 @@ export default (content: string) => {
 
       //#METHOD CALL
       if (lines[i][c] === '(') {
-        // d(`${validName} METHOD ${char()}`)
-        everything.push({type: 'method', text:`${validName}(`,i1: i, c1:nonWhiteSpaceStart,c2:c})
+        // d(`${validName}( METHOD( ${char()}`)
+        everything.push({type: 'method(', text:`${validName}(`,i1: i, c1:nonWhiteSpaceStart,c2:c + 1})
         c++, exprFoundLine = i
         let endsWithComma = false
         while (true) {
@@ -817,7 +818,8 @@ export default (content: string) => {
       //#FUNCTION CALL
       if (lines[i][c] === '(') {
         //#FUNCTION CALL
-        d(`${validName} Function ${char()}`)
+        d(`${validName}( function ${char()}`)
+        everything.push({type: 'function(', text:`${validName}(`,i1: i, c1:nonWhiteSpaceStart ,c2:c + 1})
         c++, exprFoundLine = i
         let endsWithComma = false
         while (true) {
