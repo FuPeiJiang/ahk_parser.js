@@ -1136,3 +1136,10 @@ a=b
 (
  c ;comment2     
 )
+
+this works:
+a=b     
+    ;comment1
+(
+ c ;comment2     
+)                   d ;comment3

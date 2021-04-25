@@ -738,15 +738,54 @@ export default (content: string) => {
         }
 
         if (lines[i][c] === ')') {
-          const text = lines[i].slice(c1,c)
-          if (text) {
-            everything.push({type: 'whiteSpaces before ) resolveV1Continuation', text:text,i1: i, c1: c1,c2:c})
+          const whiteSpacesText = lines[i].slice(c1,c)
+          if (whiteSpacesText) {
+            everything.push({type: 'whiteSpaces before ) resolveV1Continuation', text:whiteSpacesText,i1: i, c1: c1,c2:c})
           }
 
           d(') resolveV1Continuation')
           everything.push({type: ') resolveV1Continuation', text:')',i1: i, c1:c})
 
           c++
+
+          let foundComment = false
+          v1ExpressionC1 = c, cNotWhiteSpace = c - 1
+          while (c < numberOfChars) {
+            if (lines[i][c] === ';') {
+              if (whiteSpaceObj[lines[i][c - 1]]) {
+                foundComment = true
+                break
+              }
+            } else if (findPercentVarV1Expression()) {
+              c++; v1ExpressionC1 = c; continue
+            }
+
+            if (!whiteSpaceObj[lines[i][c]]) {
+              cNotWhiteSpace = c
+            }
+            c++
+          }
+          const cEndOfV1Expression = cNotWhiteSpace + 1
+          const text = lines[i].slice(v1ExpressionC1,cEndOfV1Expression)
+          d(text, 'v1String')
+          everything.push({type: 'v1String', text:text,i1: i, c1:v1ExpressionC1 ,c2:cEndOfV1Expression})
+
+          const endingWhiteSpaces = lines[i].slice(cEndOfV1Expression, c)
+          d('endingWhiteSpaces v1Expression', `\`${endingWhiteSpaces}\` ${endingWhiteSpaces.length}LENGTH`)
+          if (endingWhiteSpaces) {
+            everything.push({type: 'endingWhiteSpaces v1Expression', text:endingWhiteSpaces,i1: i, c1:cEndOfV1Expression ,c2:c})
+          }
+
+          if (foundComment) {
+            const commentToEOL = lines[i].slice(c,numberOfChars)
+            d(commentToEOL,'SemiColonComment findV1Expression')
+            everything.push({type: 'SemiColonComment findV1Expression', text:commentToEOL,i1: i, c1:c ,c2:numberOfChars})
+          }
+
+          i++
+          if (i < howManyLines) {
+            c = 0, numberOfChars = lines[i].length
+          }
           return true
         }
 
