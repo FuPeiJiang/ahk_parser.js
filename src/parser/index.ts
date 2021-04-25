@@ -374,6 +374,9 @@ export default (content: string) => {
             d('illegal: can\'t have number on startOfLine')
           }
         } else if (lines[i][c] === '[') {
+          if (!isNaN(Number(validName))) {
+            d('illegal ArrAccess on startOfLine: can\'t ArrAcess on Integer', validName)
+          }
           lineWhereCanConcat = i
           endArrAccess()
           recurseBetweenExpression()
