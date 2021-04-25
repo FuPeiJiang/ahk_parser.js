@@ -14,7 +14,7 @@ export default (content: string) => {
   const toFile = ''
   const rangeAndReplaceTextArr: [[[number, number],[number, number]], string][] = []
 
-  let i = 0, c = 0, numberOfChars = 0, validName = '', strStartLine: number, strStartPos: number, insideContinuation = false, beforeConcat: number, nonWhiteSpaceStart: number, exprFoundLine = -1, colonDeep = 0, usingStartOfLineLoop = false, variadicAsterisk = false, lineWhereCanConcat = 0,v1ExpressionC1: number,cNotWhiteSpace: number,percentVarStart: number
+  let i = 0, c = 0, numberOfChars = 0, validName = '', strStartLine: number, strStartPos: number, insideContinuation = false, beforeConcat: number, nonWhiteSpaceStart: number, exprFoundLine = -1, colonDeep = 0, usingStartOfLineLoop = false, variadicAsterisk = false, lineWhereCanConcat = -1,v1ExpressionC1: number,cNotWhiteSpace: number,percentVarStart: number
   let everythingPushCounter: number; everythingPushCounter = 0
   lineLoop:
   while (i < howManyLines) {
@@ -159,7 +159,7 @@ export default (content: string) => {
             everything.splice(everything.length - 2,0,{type: 'assignment whiteSpace', text:validName,i1: validNameLine, c1:nonWhiteSpaceStart ,c2:validNameEnd})
 
             if (!recurseBetweenExpression()) { findExpression() }
-            if (i === exprFoundLine) {
+            if (i === lineWhereCanConcat) {
               findCommentsAndEndLine()
             } else {
               usingStartOfLineLoop = true
@@ -306,7 +306,8 @@ export default (content: string) => {
               //#FUNCTION CALL
               // d(`${validName}( function( startOfLine ${char()}`)
               everything.push({type: 'function( startOfLine', text:`${validName}(`,i1: i, c1:nonWhiteSpaceStart ,c2:c + 1})
-              c++, exprFoundLine = i
+              c++
+              // exprFoundLine = i
               let endsWithComma = false
               while (true) {
                 if (!skipThroughEmptyLines()) { d('EOF Function startOfLine'); break lineLoop }
@@ -327,7 +328,7 @@ export default (content: string) => {
                 }
               }
 
-              if (i !== exprFoundLine) {
+              if (i !== lineWhereCanConcat) {
                 d('ILLEGAL ) function startOfLine', char())
               }
               // d(') function startOfLine', char())
@@ -359,7 +360,7 @@ export default (content: string) => {
             if (!recurseBetweenExpression() && isProp) {
               d('illegal property on startOfLine', char())
             }
-            if (i === exprFoundLine) {
+            if (i === lineWhereCanConcat) {
               findCommentsAndEndLine()
             } else {
               usingStartOfLineLoop = true
@@ -393,7 +394,7 @@ export default (content: string) => {
           everything.splice(everything.length - 1,0,{type: 'assignment', text:validName,i1: validNameLine, c1:nonWhiteSpaceStart ,c2:validNameEnd})
 
           if (!recurseBetweenExpression()) { findExpression() }
-          if (i === exprFoundLine) {
+          if (i === lineWhereCanConcat) {
             findCommentsAndEndLine()
           } else {
             usingStartOfLineLoop = true
@@ -891,7 +892,8 @@ export default (content: string) => {
   //true if found a between AND an expression
   //really hard to understand
   function betweenExpression() {
-    exprFoundLine = i, beforeConcat = c
+    // exprFoundLine = i
+    beforeConcat = c
     if (insideContinuation) {
       skipThroughWhiteSpaces()
       if (c !== numberOfChars && lines[i][c] === ';') {
@@ -980,7 +982,8 @@ export default (content: string) => {
       if (lines[i][c] === '(') {
         // d(`${validName}( METHOD( ${char()}`)
         everything.push({type: 'method(', text:`${validName}(`,i1: i, c1:nonWhiteSpaceStart,c2:c + 1})
-        c++, exprFoundLine = i
+        c++
+        // exprFoundLine = i
         let endsWithComma = false
         while (true) {
           skipThroughEmptyLines()
@@ -1000,7 +1003,7 @@ export default (content: string) => {
             break
           }
         }
-        if (i !== exprFoundLine) {
+        if (i !== lineWhereCanConcat) {
           d('ILLEGAL ) METHOD', char())
         }
         // d(') METHOD', char())
@@ -1102,7 +1105,8 @@ export default (content: string) => {
         //#FUNCTION CALL
         // d(`${validName}( function ${char()}`)
         everything.push({type: 'function(', text:`${validName}(`,i1: i, c1:nonWhiteSpaceStart ,c2:c + 1})
-        c++, exprFoundLine = i
+        c++
+        //exprFoundLine = i
         let endsWithComma = false
         while (true) {
           skipThroughEmptyLines()
@@ -1122,7 +1126,7 @@ export default (content: string) => {
             break
           }
         }
-        if (i !== exprFoundLine) {
+        if (i !== lineWhereCanConcat) {
           d('ILLEGAL ) function', char())
         }
         // d(') function', char())
@@ -1172,7 +1176,7 @@ export default (content: string) => {
 
       c++
 
-      exprFoundLine = i
+      // exprFoundLine = i
       while (true) {
         if (!findExpression()) {
           if (lines[i][c] === ',') {
@@ -1189,7 +1193,7 @@ export default (content: string) => {
         }
         c++
       }
-      if (i !== exprFoundLine) {
+      if (i !== lineWhereCanConcat) {
         d('ILLEGAL ] Array', char())
       }
       // d('] Array', char())
@@ -1204,7 +1208,8 @@ export default (content: string) => {
       // d('{ object', char())
       everything.push({type: '{ object', text:'{',i1: i, c1:c})
       const objStart: [number, number] = [c,i]
-      colonDeep++, c++, exprFoundLine = i
+      colonDeep++, c++
+      //exprFoundLine = i
       let kStart: [number, number], vStart: [number, number], k: string, v: string
       const mapKeysAndValuesArr = []
       let singleVar: boolean, afterSingleVar: number,beforeSkipSpaces: number,afterSkipSpaces: number,afterFindExpression: number, haventFoundSingleVar: boolean
@@ -1284,7 +1289,7 @@ export default (content: string) => {
         }
         c++
       }
-      if (i !== exprFoundLine) {
+      if (i !== lineWhereCanConcat) {
         d('ILLEGAL }', char())
       }
       // d('} object', char())
@@ -1535,6 +1540,8 @@ export default (content: string) => {
       }
       if (c < numberOfChars && !whiteSpaceObj[lines[i][c]]) {
         d(`ILLEGAL nonWhiteSpace '${lines[i][c]}' at findCommentsAndEndLine ${char()}`)
+        // trace()
+        // process.exit()
         toReturn = false; break dummyLoop
       }
       while (c < numberOfChars) {
