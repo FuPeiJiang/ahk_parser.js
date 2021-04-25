@@ -380,9 +380,11 @@ export default (content: string) => {
           everything.push({type: '= v1Assignment', text:'=',i1: i, c1:c})
           c++
           findV1Expression()
-          everything.push({type: 'newLine v1Assignment', text:'\n',i1: i, c1:c})
-          i++
-          continue lineLoop
+          // everything.push({type: 'newLine v1Assignment', text:'\n',i1: i, c1:c})
+          // i++
+          // continue lineLoop
+          usingStartOfLineLoop = true
+          continue startOfLineLoop
         }
 
         //#ASSIGNMENT
@@ -729,7 +731,34 @@ export default (content: string) => {
       everything.push({type: 'SemiColonComment findV1Expression', text:commentToEOL,i1: i, c1:c ,c2:numberOfChars})
     }
 
+    //now expect continuation
+
+    resolveV1Continuation()
+
     return true
+  }
+  function resolveV1Continuation() {
+
+    if (!skipThroughEmptyLines()) {
+      d('startContinuation OutOfLines')
+      // trace()
+      return false
+    }
+
+    if (lines[i][c] === undefined) {
+      d('this shouldn\'t happen resolveV1Continuation lines[i][c] === undefined')
+    }
+
+    if (lines[i][c] === '(') {
+      insideContinuation = true
+      return true
+    } else {
+
+
+      return false
+    }
+
+
   }
   //true if found, false if not found
   function findOperators() {
@@ -1294,7 +1323,7 @@ export default (content: string) => {
         return false
       }
     }
-    d('startContinuation OutOfLines')
+    d('illegal: startContinuation OutOfLines')
     trace()
     return false
   }

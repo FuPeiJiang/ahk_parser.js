@@ -1105,5 +1105,15 @@ clear variable:
 var=
 
 continuation:
-trim?
-comment?
+rtrimmed, not ltrimmed
+no semiColonComments, ; are literal
+
+a=b     
+(
+ c ;comment
+)                   d ;comment
+
+d is rtrimmed, not ltrimmed, but comments are allowed
+
+always check if continuation section when v1Assignment
+
