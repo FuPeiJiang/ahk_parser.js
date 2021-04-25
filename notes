@@ -1117,3 +1117,7 @@ d is rtrimmed, not ltrimmed, but comments are allowed
 
 always check if continuation section when v1Assignment
 
+saving this test:
+a=ol%var%lo`%      ;comment
+a=ol%var1%lo`%%var2%      ;comment
+

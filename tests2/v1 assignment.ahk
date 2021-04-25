@@ -1,2 +1,1 @@
-a=b
-c=d
+a=ol%var1%lo`%%var2%      ;comment

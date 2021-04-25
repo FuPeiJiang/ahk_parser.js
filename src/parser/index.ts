@@ -14,7 +14,7 @@ export default (content: string) => {
   const toFile = ''
   const rangeAndReplaceTextArr: [[[number, number],[number, number]], string][] = []
 
-  let i = 0, c = 0, numberOfChars = 0, validName = '', strStartLine: number, strStartPos: number, insideContinuation = false, beforeConcat: number, nonWhiteSpaceStart: number, exprFoundLine = -1, colonDeep = 0, usingStartOfLineLoop = false, variadicAsterisk = false, lineWhereCanConcat = 0
+  let i = 0, c = 0, numberOfChars = 0, validName = '', strStartLine: number, strStartPos: number, insideContinuation = false, beforeConcat: number, nonWhiteSpaceStart: number, exprFoundLine = -1, colonDeep = 0, usingStartOfLineLoop = false, variadicAsterisk = false, lineWhereCanConcat = 0,v1ExpressionC1: number,cNotWhiteSpace: number,percentVarStart: number
   let everythingPushCounter: number; everythingPushCounter = 0
   lineLoop:
   while (i < howManyLines) {
@@ -668,45 +668,16 @@ export default (content: string) => {
   function findV1Expression() {
 
     skipThroughWhiteSpaces()
-    let c1 = c, cNotWhiteSpace = c - 1, foundComment = false, percentVarStart
+    let foundComment = false
+    v1ExpressionC1 = c, cNotWhiteSpace = c - 1
     while (c < numberOfChars) {
       if (lines[i][c] === ';') {
         if (whiteSpaceObj[lines[i][c - 1]]) {
           foundComment = true
           break
         }
-      } else if (lines[i][c] === '%') {
-        if (lines[i][c - 1] === '`') {
-          d('literal % in findV1Expression')
-        } else {
-          const cEndOfV1Expression = cNotWhiteSpace + 1
-          const text = lines[i].slice(c1,cEndOfV1Expression)
-          d(text, 'v1String')
-          everything.push({type: 'v1String', text:text,i1: i, c1:c1 ,c2:cEndOfV1Expression})
-
-
-          everything.push({type: '%START %Var%', text:'%',i1: i, c1:c})
-          c++
-
-          percentVarStart = c
-          if (!(c < numberOfChars && variableCharsObj[lines[i][c]])) {
-            d('illegal empty %VAR%')
-          }
-          //skip through valid variable Chars
-          while (c < numberOfChars && variableCharsObj[lines[i][c]]) {
-            c++
-          }
-          const percentVar = lines[i].slice(percentVarStart,c)
-          d('percentVar====',percentVar)
-          everything.push({type: 'percentVar v1Expression', text:percentVar,i1: i, c1:percentVarStart ,c2:c})
-
-          if (lines[i][c] !== '%') {
-            d('illegal %VAR% in v1Expression',char())
-          }
-          everything.push({type: 'END% %Var%', text:lines[i][c],i1: i, c1:c})
-          // the loop will c++ for me
-          c++; c1 = c; continue
-        }
+      } else if (findPercentVarV1Expression()) {
+        c++; v1ExpressionC1 = c; continue
       }
 
       if (!whiteSpaceObj[lines[i][c]]) {
@@ -715,9 +686,9 @@ export default (content: string) => {
       c++
     }
     const cEndOfV1Expression = cNotWhiteSpace + 1
-    const text = lines[i].slice(c1,cEndOfV1Expression)
+    const text = lines[i].slice(v1ExpressionC1,cEndOfV1Expression)
     d(text, 'v1String')
-    everything.push({type: 'v1String', text:text,i1: i, c1:c1 ,c2:cEndOfV1Expression})
+    everything.push({type: 'v1String', text:text,i1: i, c1:v1ExpressionC1 ,c2:cEndOfV1Expression})
 
     const endingWhiteSpaces = lines[i].slice(cEndOfV1Expression, c)
     d('endingWhiteSpaces v1Expression', `\`${endingWhiteSpaces}\` ${endingWhiteSpaces.length}LENGTH`)
@@ -740,7 +711,7 @@ export default (content: string) => {
   function resolveV1Continuation() {
 
     if (!skipThroughEmptyLines()) {
-      d('startContinuation OutOfLines')
+      // d('v1Continuation OutOfLines')
       // trace()
       return false
     }
@@ -751,6 +722,29 @@ export default (content: string) => {
 
     if (lines[i][c] === '(') {
       insideContinuation = true
+
+      v1ExpressionC1 = c, cNotWhiteSpace = c - 1
+      while (c < numberOfChars) {
+        if (findPercentVarV1Expression()) {
+          c++; v1ExpressionC1 = c; continue
+        }
+
+        if (!whiteSpaceObj[lines[i][c]]) {
+          cNotWhiteSpace = c
+        }
+        c++
+      }
+      const cEndOfV1Expression = cNotWhiteSpace + 1
+      const text = lines[i].slice(v1ExpressionC1,cEndOfV1Expression)
+      d(text, 'v1String')
+      everything.push({type: 'v1String', text:text,i1: i, c1:v1ExpressionC1 ,c2:cEndOfV1Expression})
+
+      const endingWhiteSpaces = lines[i].slice(cEndOfV1Expression, c)
+      d('endingWhiteSpaces v1Expression', `\`${endingWhiteSpaces}\` ${endingWhiteSpaces.length}LENGTH`)
+      if (endingWhiteSpaces) {
+        everything.push({type: 'endingWhiteSpaces v1Expression', text:endingWhiteSpaces,i1: i, c1:cEndOfV1Expression ,c2:c})
+      }
+
       return true
     } else {
 
@@ -1461,6 +1455,41 @@ export default (content: string) => {
     }
     everything.push({type: 'newLine findCommentsAndEndLine', text:'\n',i1: i, c1:c})
     i++; return toReturn
+  }
+  function findPercentVarV1Expression() {
+    if (lines[i][c] === '%') {
+      if (lines[i][c - 1] === '`') {
+        d('literal % in findV1Expression')
+      } else {
+        const cEndOfV1Expression = cNotWhiteSpace + 1
+        const text = lines[i].slice(v1ExpressionC1,cEndOfV1Expression)
+        d(text, 'v1String')
+        everything.push({type: 'v1String', text:text,i1: i, c1:v1ExpressionC1 ,c2:cEndOfV1Expression})
+
+
+        everything.push({type: '%START %Var%', text:'%',i1: i, c1:c})
+        c++
+
+        percentVarStart = c
+        if (!(c < numberOfChars && variableCharsObj[lines[i][c]])) {
+          d('illegal empty %VAR%')
+        }
+        //skip through valid variable Chars
+        while (c < numberOfChars && variableCharsObj[lines[i][c]]) {
+          c++
+        }
+        const percentVar = lines[i].slice(percentVarStart,c)
+        d('percentVar====',percentVar)
+        everything.push({type: 'percentVar v1Expression', text:percentVar,i1: i, c1:percentVarStart ,c2:c})
+
+        if (lines[i][c] !== '%') {
+          d('illegal %VAR% in v1Expression',char())
+        }
+        everything.push({type: 'END% %Var%', text:lines[i][c],i1: i, c1:c})
+        return true
+      }
+    }
+    return false
   }
   function findPercentVar() {
     const percentVarStart = c
