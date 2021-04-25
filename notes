@@ -1080,3 +1080,14 @@ FileRead shouldn't be idkVar..
 oh no, the dreaded v1 assignment
 currentDirSearch=
 
+var=
+only for strings and %var% I guess
+I should do a findV1Expr
+a!==b is actually illegal.
+a======b would assign '=====b' to a
+
+so I should check before 'whitespace assignment' and 'assignment'
+
+a=b
+a=;
+a= ;

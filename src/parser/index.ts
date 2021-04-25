@@ -110,7 +110,7 @@ export default (content: string) => {
         if (lines[i][c] === ',') {
           // directive or command
           if (idkType === 1 || idkType === 4) {
-            d(validName, 'comma DIRECTIVE OR COMMAND', char())
+            // d(validName, 'comma DIRECTIVE OR COMMAND', char())
             const text = lines[i].slice(nonWhiteSpaceStart, numberOfChars)
             everything.push({type: 'comma DIRECTIVE OR COMMAND', text:text,i1: i, c1:nonWhiteSpaceStart, c2:numberOfChars})
             everything.push({type: 'newLine comma DIRECTIVE OR COMMAND', text:'\n',i1: i, c1:c})
@@ -360,6 +360,9 @@ export default (content: string) => {
         //out of lines
         if (!skipThroughEmptyLines()) { break lineLoop }
 
+        //#v1 expression
+        findV1Expression()
+
         //#ASSIGNMENT
         if (findOperators()) {
           // d(`${validName} assignment`)
@@ -412,9 +415,11 @@ export default (content: string) => {
   // toFile = toFile.slice(1)
   // writeSync(toFile)
 
-  const lastIndex = everything.length - 1, lastEverything = everything[lastIndex]
-  if (lastEverything.i1 + 1 === howManyLines && lastEverything.text === '\n') {
-    everything.splice(lastIndex, 1)
+  if (everything.length) {
+    const lastIndex = everything.length - 1, lastEverything = everything[lastIndex]
+    if (lastEverything.i1 + 1 === howManyLines && lastEverything.text === '\n') {
+      everything.splice(lastIndex, 1)
+    }
   }
 
   return everything
@@ -635,6 +640,29 @@ export default (content: string) => {
     i = iBak, c = cBak, numberOfChars = numberOfCharsBak
     //default return false
     return toReturn
+  }
+  function findV1Expression() {
+    if (c < numberOfChars && lines[i][c] === '=') {
+      c++
+      const c1 = c
+      while (c < numberOfChars) {
+        if (lines[i][c] === ';') {
+          if (whiteSpaceObj[lines[i][c - 1]]) {
+            d('comment in findV1Expression')
+          }
+        } else if (lines[i][c] === '%') {
+          if (lines[i][c - 1] === '`') {
+            d('literal % in findV1Expression')
+          } else {
+            d('%VAR% in findV1Expression')
+          }
+        }
+        c++
+      }
+      const text = lines[i].slice(c1,c)
+      d(text, 'v1Expression')
+      return true
+    }
   }
   //true if found, false if not found
   function findOperators() {
