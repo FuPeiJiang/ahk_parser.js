@@ -123,7 +123,7 @@ export default (content: string) => {
         if (whiteSpaceObj[lines[i][c]]) {
           if (whiteSpaceOverrideAssign[idkType]) {
             if (idkType === 1) {
-              d(validName, 'whiteSpace DIRECTIVE', char())
+              // d(validName, 'whiteSpace DIRECTIVE', char())
             } else if (idkType === 2) {
               // d(validName, 'if statement', char())
             } else if (idkType === 3) {
@@ -687,11 +687,11 @@ export default (content: string) => {
     }
     const cEndOfV1Expression = cNotWhiteSpace + 1
     const text = lines[i].slice(v1ExpressionC1,cEndOfV1Expression)
-    d(text, 'v1String')
+    // d(text, 'v1String')
     everything.push({type: 'v1String', text:text,i1: i, c1:v1ExpressionC1 ,c2:cEndOfV1Expression})
 
     const endingWhiteSpaces = lines[i].slice(cEndOfV1Expression, c)
-    d('endingWhiteSpaces v1Expression', `\`${endingWhiteSpaces}\` ${endingWhiteSpaces.length}LENGTH`)
+    // d('endingWhiteSpaces v1Expression', `\`${endingWhiteSpaces}\` ${endingWhiteSpaces.length}LENGTH`)
     if (endingWhiteSpaces) {
       everything.push({type: 'endingWhiteSpaces v1Expression', text:endingWhiteSpaces,i1: i, c1:cEndOfV1Expression ,c2:c})
     }
@@ -765,11 +765,11 @@ export default (content: string) => {
           }
           const cEndOfV1Expression = cNotWhiteSpace + 1
           const text = lines[i].slice(v1ExpressionC1,cEndOfV1Expression)
-          d(text, 'v1String')
+          // d(text, 'v1String')
           everything.push({type: 'v1String', text:text,i1: i, c1:v1ExpressionC1 ,c2:cEndOfV1Expression})
 
           const endingWhiteSpaces = lines[i].slice(cEndOfV1Expression, c)
-          d('endingWhiteSpaces v1Expression', `\`${endingWhiteSpaces}\` ${endingWhiteSpaces.length}LENGTH`)
+          // d('endingWhiteSpaces v1Expression', `\`${endingWhiteSpaces}\` ${endingWhiteSpaces.length}LENGTH`)
           if (endingWhiteSpaces) {
             everything.push({type: 'endingWhiteSpaces v1Expression', text:endingWhiteSpaces,i1: i, c1:cEndOfV1Expression ,c2:c})
           }
@@ -804,11 +804,11 @@ export default (content: string) => {
         }
         const cEndOfV1Expression = cNotWhiteSpace + 1
         const text = lines[i].slice(v1ExpressionC1,cEndOfV1Expression)
-        d(text, 'v1String')
+        // d(text, 'v1String')
         everything.push({type: 'v1String', text:text,i1: i, c1:v1ExpressionC1 ,c2:cEndOfV1Expression})
 
         const endingWhiteSpaces = lines[i].slice(cEndOfV1Expression, c)
-        d('endingWhiteSpaces v1Expression', `\`${endingWhiteSpaces}\` ${endingWhiteSpaces.length}LENGTH`)
+        // d('endingWhiteSpaces v1Expression', `\`${endingWhiteSpaces}\` ${endingWhiteSpaces.length}LENGTH`)
         if (endingWhiteSpaces) {
           everything.push({type: 'endingWhiteSpaces v1Expression', text:endingWhiteSpaces,i1: i, c1:cEndOfV1Expression ,c2:c})
         }
@@ -1543,7 +1543,7 @@ export default (content: string) => {
       } else {
         const cEndOfV1Expression = cNotWhiteSpace + 1
         const text = lines[i].slice(v1ExpressionC1,cEndOfV1Expression)
-        d(text, 'v1String')
+        // d(text, 'v1String')
         everything.push({type: 'v1String', text:text,i1: i, c1:v1ExpressionC1 ,c2:cEndOfV1Expression})
 
 
