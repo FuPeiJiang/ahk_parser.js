@@ -709,7 +709,6 @@ export default (content: string) => {
     return true
   }
   function resolveV1Continuation() {
-
     if (!skipThroughEmptyLines()) {
       // d('v1Continuation OutOfLines')
       // trace()
@@ -782,10 +781,15 @@ export default (content: string) => {
             everything.push({type: 'SemiColonComment findV1Expression', text:commentToEOL,i1: i, c1:c ,c2:numberOfChars})
           }
 
+          // expect another one
+          everything.push({type: 'newline after ) resolveV1Continuation', text:'\n',i1: i, c1:numberOfChars})
           i++
           if (i < howManyLines) {
             c = 0, numberOfChars = lines[i].length
           }
+          d(3453453,lines[i])
+          resolveV1Continuation()
+
           return true
         }
 

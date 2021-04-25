@@ -3,3 +3,6 @@ a=b
 (
  c ;comment2     
 )                   d ;comment3
+(
+ e ;comment4     
+)                   f ;comment5
