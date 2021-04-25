@@ -1094,3 +1094,5 @@ a= ;
 
 it seems that whiteSpaces are trimmed
 ima just set cNotWhiteSpace
+
+now let's do %VAR%

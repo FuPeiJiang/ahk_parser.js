@@ -1,3 +1,1 @@
-a=;ok;
-a=   abfewfc     ;comment
-a= ;
+a=ol%var%lo`%      ;comment

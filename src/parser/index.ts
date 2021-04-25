@@ -652,8 +652,7 @@ export default (content: string) => {
   function findV1Expression() {
 
     skipThroughWhiteSpaces()
-    const c1 = c
-    let cNotWhiteSpace = c - 1, foundComment = false
+    let c1 = c, cNotWhiteSpace = c - 1, foundComment = false, percentVarStart
     while (c < numberOfChars) {
       if (lines[i][c] === ';') {
         if (whiteSpaceObj[lines[i][c - 1]]) {
@@ -664,7 +663,33 @@ export default (content: string) => {
         if (lines[i][c - 1] === '`') {
           d('literal % in findV1Expression')
         } else {
-          d('%VAR% in findV1Expression')
+          const cEndOfV1Expression = cNotWhiteSpace + 1
+          const text = lines[i].slice(c1,cEndOfV1Expression)
+          d(text, 'v1String')
+          everything.push({type: 'v1String', text:text,i1: i, c1:c1 ,c2:cEndOfV1Expression})
+
+
+          everything.push({type: '%START %Var%', text:'%',i1: i, c1:c})
+          c++
+
+          percentVarStart = c
+          if (!(c < numberOfChars && variableCharsObj[lines[i][c]])) {
+            d('illegal empty %VAR%')
+          }
+          //skip through valid variable Chars
+          while (c < numberOfChars && variableCharsObj[lines[i][c]]) {
+            c++
+          }
+          const percentVar = lines[i].slice(percentVarStart,c)
+          d('percentVar====',percentVar)
+          everything.push({type: 'percentVar v1Expression', text:percentVar,i1: i, c1:percentVarStart ,c2:c})
+
+          if (lines[i][c] !== '%') {
+            d('illegal %VAR% in v1Expression',char())
+          }
+          everything.push({type: 'END% %Var%', text:lines[i][c],i1: i, c1:c})
+          // the loop will c++ for me
+          c++; c1 = c; continue
         }
       }
 
@@ -675,8 +700,8 @@ export default (content: string) => {
     }
     const cEndOfV1Expression = cNotWhiteSpace + 1
     const text = lines[i].slice(c1,cEndOfV1Expression)
-    d(text, 'v1Expression')
-    everything.push({type: 'v1Expression', text:text,i1: i, c1:c1 ,c2:cEndOfV1Expression})
+    d(text, 'v1String')
+    everything.push({type: 'v1String', text:text,i1: i, c1:c1 ,c2:cEndOfV1Expression})
 
     const endingWhiteSpaces = lines[i].slice(cEndOfV1Expression, c)
     d('endingWhiteSpaces v1Expression', `\`${endingWhiteSpaces}\` ${endingWhiteSpaces.length}LENGTH`)
