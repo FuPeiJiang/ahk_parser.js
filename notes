@@ -1202,3 +1202,14 @@ to do:
   instead of 
   %whichSide %VAR% 34 line 42 #988
   and everything.push %VAR% instead of the whole assignment?
+
+ILLEGAL ) METHOD 25 line 111
+
+arr[a b]
+can concat a WITH b
+arr[a b] c
+can't concat arr[a b] WITH c
+
+omg I'm saved, you CAN.
+arr[a b] c
+is LEGAL

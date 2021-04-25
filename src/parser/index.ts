@@ -354,6 +354,8 @@ export default (content: string) => {
           if (isNaN(Number(validName))) {
             c++
             let isProp = false
+
+            // lineWhereCanConcat = i
             if (!findMethodOrProperty()) {
               isProp = true
             }
@@ -972,11 +974,10 @@ export default (content: string) => {
       if (lines[i][c] === '.') {
         c++
         if (isNaN(Number(validName))) {
-          findMethodOrProperty()
-          return true
+          return findMethodOrProperty()
         } else {
           findDecimal()
-          return true
+          return false
         }
       }
 
