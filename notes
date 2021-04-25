@@ -1155,3 +1155,6 @@ a=b
 )                   f ;comment5
 
 findExpression() if out of lines: 'illegal empty assignment'
+
+loadSettings( shouldn't be a function definition
+found ) at 14 line 20

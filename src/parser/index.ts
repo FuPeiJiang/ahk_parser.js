@@ -640,12 +640,12 @@ export default (content: string) => {
           //comment: next line
         } else if (lines[i][c] === ';' && (c === 0 || whiteSpaceObj[lines[i][c - 1]])) {
           // d('comment while skipThroughEmptyLines', char())
-        } else {
+        } else if (lines[i][c] === '{') {
         //is the next char '{' ?
-          if (lines[i][c] === '{') {
-            toReturn = true
-            break iCantDirectlyReturn
-          }
+          toReturn = true
+          break iCantDirectlyReturn
+        } else {
+          break iCantDirectlyReturn
         }
         i++
         if (i < howManyLines) {
