@@ -361,7 +361,10 @@ export default (content: string) => {
         if (!skipThroughEmptyLines()) { break lineLoop }
 
         //#v1 expression
-        findV1Expression()
+        if (findV1Expression()) {
+          i++
+          continue lineLoop
+        }
 
         //#ASSIGNMENT
         if (findOperators()) {
@@ -642,13 +645,20 @@ export default (content: string) => {
     return toReturn
   }
   function findV1Expression() {
+
     if (c < numberOfChars && lines[i][c] === '=') {
       c++
+      skipThroughWhiteSpaces()
       const c1 = c
+      let cNotWhiteSpace = c - 1
       while (c < numberOfChars) {
         if (lines[i][c] === ';') {
           if (whiteSpaceObj[lines[i][c - 1]]) {
-            d('comment in findV1Expression')
+            const text = lines[i].slice(c1,cNotWhiteSpace + 1)
+            d(text, 'v1Expression')
+            const commentToEOL = lines[i].slice(c,numberOfChars)
+            d(commentToEOL,'comment in findV1Expression')
+            return true
           }
         } else if (lines[i][c] === '%') {
           if (lines[i][c - 1] === '`') {
@@ -656,6 +666,10 @@ export default (content: string) => {
           } else {
             d('%VAR% in findV1Expression')
           }
+        }
+
+        if (!whiteSpaceObj[lines[i][c]]) {
+          cNotWhiteSpace = c
         }
         c++
       }

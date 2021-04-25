@@ -1,1 +1,3 @@
-a====b
+a=;ok;
+a=   abfewfc ;comment
+a= ;

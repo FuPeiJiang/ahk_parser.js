@@ -1091,3 +1091,6 @@ so I should check before 'whitespace assignment' and 'assignment'
 a=b
 a=;
 a= ;
+
+it seems that whiteSpaces are trimmed
+ima just set cNotWhiteSpace
