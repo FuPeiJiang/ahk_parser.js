@@ -350,55 +350,52 @@ export default (content: string) => {
           // so check if the next character is a valid Var
         } else if (lines[i][c] === '.' && variableCharsObj[lines[i][c + 1]]) {
           //can't have number on startOfLine
-          if (isNaN(Number(validName))) {
-            everything.push({type: 'property startOfLine', text:validName,i1: i, c1:nonWhiteSpaceStart ,c2:c})
-
-            c++
-
-            everything.push({type: '. property startOfLine', text:'.',i1: i, c1:c})
-            let isProp = false
-
-            // if (!findMethodOrProperty()) {
-            // }
-
-            //if not number and not property EOL
-            if (skipProperties()) {
-            //#METHOD CALL
-              if (lines[i][c] === '(') {
-                lineWhereCanConcat = i
-                everything.push({type: 'method( startOfLine', text:`${validName}(`,i1: i, c1:propertyC1,c2:c + 1})
-                c++
-                endMethodCall()
-              } else if (lines[i][c] === '[') {
-                lineWhereCanConcat = i
-                everything.push({type: 'ArrAccess', text:validName,i1: i, c1:propertyC1 ,c2:c})
-                everything.push({type: '[ Array startOfLine', text:'[',i1: i, c1:c})
-                endArrAccess()
-              } else {
-                everything.push({type: 'property ending at startOfLine', text:validName,i1: i, c1:propertyC1 ,c2:c})
-                isProp = true
-              }
-            } else {
-              isProp = true
-            }
-
-
-
-            //a method can actually be assigned... property too
-            //if prop and no assignment
-            if (!recurseBetweenExpression() && isProp) {
-              d('illegal property on startOfLine', char())
-            }
-            if (i === lineWhereCanConcat) {
-              findCommentsAndEndLine()
-            } else {
-              usingStartOfLineLoop = true
-              continue startOfLineLoop
-            }
-            continue lineLoop
-          } else {
+          if (!isNaN(Number(validName))) {
             d('illegal: can\'t have number on startOfLine')
           }
+          everything.push({type: 'property startOfLine', text:validName,i1: i, c1:nonWhiteSpaceStart ,c2:c})
+
+          c++
+
+          everything.push({type: '. property startOfLine', text:'.',i1: i, c1:c})
+          let isProp = false
+
+          // if (!findMethodOrProperty()) {
+          // }
+
+          //if not number and not property EOL
+          if (skipProperties()) {
+            //#METHOD CALL
+            if (lines[i][c] === '(') {
+              lineWhereCanConcat = i
+              everything.push({type: 'method( startOfLine', text:`${validName}(`,i1: i, c1:propertyC1,c2:c + 1})
+              c++
+              endMethodCall()
+            } else if (lines[i][c] === '[') {
+              lineWhereCanConcat = i
+              everything.push({type: 'ArrAccess', text:validName,i1: i, c1:propertyC1 ,c2:c})
+              everything.push({type: '[ Array startOfLine', text:'[',i1: i, c1:c})
+              endArrAccess()
+            } else {
+              everything.push({type: 'property ending at startOfLine', text:validName,i1: i, c1:propertyC1 ,c2:c})
+              isProp = true
+            }
+          } else {
+            isProp = true
+          }
+
+          //a method can actually be assigned... property too
+          //if prop and no assignment
+          if (!recurseBetweenExpression() && isProp) {
+            d('illegal property on startOfLine', char())
+          }
+          if (i === lineWhereCanConcat) {
+            findCommentsAndEndLine()
+          } else {
+            usingStartOfLineLoop = true
+            continue startOfLineLoop
+          }
+          continue lineLoop
         } else if (lines[i][c] === '[') {
           if (!isNaN(Number(validName))) {
             d('illegal ArrAccess on startOfLine: can\'t ArrAcess on Integer', validName)
