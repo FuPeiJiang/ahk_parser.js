@@ -1153,3 +1153,5 @@ a=b
 (
  e ;comment4     
 )                   f ;comment5
+
+findExpression() if out of lines: 'illegal empty assignment'

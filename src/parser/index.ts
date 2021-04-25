@@ -1024,6 +1024,12 @@ export default (content: string) => {
     }
   }
   function findExpression() {
+
+    if (i === howManyLines) {
+      d('illegal empty assignment',char())
+      return false
+    }
+
     skipThroughWhiteSpaces()
     //nothing left, continue
     if (c === numberOfChars || lines[i][c] === ';') {
