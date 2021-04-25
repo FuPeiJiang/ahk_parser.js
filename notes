@@ -1213,3 +1213,9 @@ can't concat arr[a b] WITH c
 omg I'm saved, you CAN.
 arr[a b] c
 is LEGAL
+
+321[index] should be illegal
+but still do it
+just if (!isNaN) {
+  tell it's illegal
+}

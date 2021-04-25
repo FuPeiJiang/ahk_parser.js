@@ -303,7 +303,7 @@ export default (content: string) => {
                 c++
               }
             } else {
-              //#FUNCTION CALL
+              //#FUNCTION CALL startOfLine
               // d(`${validName}( function( startOfLine ${char()}`)
               lineWhereCanConcat = i
 
@@ -349,7 +349,6 @@ export default (content: string) => {
           // str.=v[key] "+" k "|"
           // so check if the next character is a valid Var
         } else if (lines[i][c] === '.' && variableCharsObj[lines[i][c + 1]]) {
-          const validName = lines[i].slice(nonWhiteSpaceStart, c)
           //can't have number on startOfLine
           if (isNaN(Number(validName))) {
             c++
@@ -374,6 +373,17 @@ export default (content: string) => {
           } else {
             d('illegal: can\'t have number on startOfLine')
           }
+        } else if (lines[i][c] === '[') {
+          lineWhereCanConcat = i
+          endArrAccess()
+          recurseBetweenExpression()
+          if (i === lineWhereCanConcat) {
+            findCommentsAndEndLine()
+          } else {
+            usingStartOfLineLoop = true
+            continue startOfLineLoop
+          }
+          continue lineLoop
         }
 
         //out of lines
@@ -1026,18 +1036,21 @@ export default (content: string) => {
   }
   function findArrayAccess() {
     if (lines[i][c] === '[') {
-      // d(`${validName} ArrAccess ${char()}`)
-      everything.push({type: 'ArrAccess', text:validName,i1: i, c1:nonWhiteSpaceStart ,c2:c})
-
-      // d('[ ArrAccess', char())
-      everything.push({type: '[ ArrAccess', text:'[',i1: i, c1:c})
-      c++
-      if (!recurseBetweenExpression()) { findExpression() }
-      // d('] ArrAccess', char())
-      everything.push({type: '] ArrAccess', text:']',i1: i, c1:c})
-      c++
+      endArrAccess()
       return true
     }
+  }
+  function endArrAccess() {
+    // d(`${validName} ArrAccess ${char()}`)
+    everything.push({type: 'ArrAccess', text:validName,i1: i, c1:nonWhiteSpaceStart ,c2:c})
+
+    // d('[ ArrAccess', char())
+    everything.push({type: '[ ArrAccess', text:'[',i1: i, c1:c})
+    c++
+    if (!recurseBetweenExpression()) { findExpression() }
+    // d('] ArrAccess', char())
+    everything.push({type: '] ArrAccess', text:']',i1: i, c1:c})
+    c++
   }
   function findExpression() {
 
