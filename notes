@@ -1166,3 +1166,13 @@ or it to be called recursively by another function
 if (!recurseBetweenExpression()) { findExpression() }
 replace ALL betweenExpression() with recurseBetweenExpression
 lol works
+
+ahk_explorer:
+illegal l c:1 line:20 startContinuation#765
+
+favoriteFolders:=StrSplit(favoriteFolders,"`n","`r")
+loadSettings()
+
+so after ') function'
+
+recurseBetweenExpression() shouldn't call findExpression()

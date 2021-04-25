@@ -885,7 +885,6 @@ export default (content: string) => {
       }
       return true
     } else {
-      findExpression()
       return false
     }
   }
@@ -1128,7 +1127,6 @@ export default (content: string) => {
         }
         // d(') function', char())
         everything.push({type: ') function', text:')',i1: i, c1:c})
-
         c++
         return true
       }
@@ -1407,6 +1405,8 @@ export default (content: string) => {
         return true
       } else {
         d(`illegal ${lines[i][c]} c:${c + 1} line:${i + 1} startContinuation#765`)
+        // trace()
+        // d(everything)
         return false
       }
     }
