@@ -1100,3 +1100,10 @@ now let's do %VAR%
 whiteSpace v1Assignment
 
 continuation section tomorrow.
+
+clear variable:
+var=
+
+continuation:
+trim?
+comment?
