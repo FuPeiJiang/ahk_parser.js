@@ -361,7 +361,12 @@ export default (content: string) => {
         if (!skipThroughEmptyLines()) { break lineLoop }
 
         //#v1 expression
-        if (findV1Expression()) {
+        if (c < numberOfChars && lines[i][c] === '=') {
+          everything.push({type: 'var at v1Assignment', text:validName,i1: i, c1:nonWhiteSpaceStart ,c2:c})
+          everything.push({type: '= v1Assignment', text:'=',i1: i, c1:c})
+          c++
+          findV1Expression()
+          everything.push({type: 'newLine v1Assignment', text:'\n',i1: i, c1:c})
           i++
           continue lineLoop
         }
@@ -646,37 +651,46 @@ export default (content: string) => {
   }
   function findV1Expression() {
 
-    if (c < numberOfChars && lines[i][c] === '=') {
-      c++
-      skipThroughWhiteSpaces()
-      const c1 = c
-      let cNotWhiteSpace = c - 1
-      while (c < numberOfChars) {
-        if (lines[i][c] === ';') {
-          if (whiteSpaceObj[lines[i][c - 1]]) {
-            const text = lines[i].slice(c1,cNotWhiteSpace + 1)
-            d(text, 'v1Expression')
-            const commentToEOL = lines[i].slice(c,numberOfChars)
-            d(commentToEOL,'comment in findV1Expression')
-            return true
-          }
-        } else if (lines[i][c] === '%') {
-          if (lines[i][c - 1] === '`') {
-            d('literal % in findV1Expression')
-          } else {
-            d('%VAR% in findV1Expression')
-          }
+    skipThroughWhiteSpaces()
+    const c1 = c
+    let cNotWhiteSpace = c - 1, foundComment = false
+    while (c < numberOfChars) {
+      if (lines[i][c] === ';') {
+        if (whiteSpaceObj[lines[i][c - 1]]) {
+          foundComment = true
+          break
         }
-
-        if (!whiteSpaceObj[lines[i][c]]) {
-          cNotWhiteSpace = c
+      } else if (lines[i][c] === '%') {
+        if (lines[i][c - 1] === '`') {
+          d('literal % in findV1Expression')
+        } else {
+          d('%VAR% in findV1Expression')
         }
-        c++
       }
-      const text = lines[i].slice(c1,c)
-      d(text, 'v1Expression')
-      return true
+
+      if (!whiteSpaceObj[lines[i][c]]) {
+        cNotWhiteSpace = c
+      }
+      c++
     }
+    const cEndOfV1Expression = cNotWhiteSpace + 1
+    const text = lines[i].slice(c1,cEndOfV1Expression)
+    d(text, 'v1Expression')
+    everything.push({type: 'v1Expression', text:text,i1: i, c1:c1 ,c2:cEndOfV1Expression})
+
+    const endingWhiteSpaces = lines[i].slice(cEndOfV1Expression, c)
+    d('endingWhiteSpaces v1Expression', `\`${endingWhiteSpaces}\` ${endingWhiteSpaces.length}LENGTH`)
+    if (endingWhiteSpaces) {
+      everything.push({type: 'endingWhiteSpaces v1Expression', text:endingWhiteSpaces,i1: i, c1:cEndOfV1Expression ,c2:c})
+    }
+
+    if (foundComment) {
+      const commentToEOL = lines[i].slice(c,numberOfChars)
+      d(commentToEOL,'SemiColonComment findV1Expression')
+      everything.push({type: 'SemiColonComment findV1Expression', text:commentToEOL,i1: i, c1:c ,c2:numberOfChars})
+    }
+
+    return true
   }
   //true if found, false if not found
   function findOperators() {
