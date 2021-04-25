@@ -6,3 +6,4 @@ a=b
 (
  e ;comment4     
 )                   f ;comment5
+var1:=5

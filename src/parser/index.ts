@@ -720,7 +720,6 @@ export default (content: string) => {
     }
 
     if (lines[i][c] === '(') {
-      insideContinuation = true
       // d('( resolveV1Continuation')
       everything.push({type: '( resolveV1Continuation', text:'(',i1: i, c1:c})
       c++
@@ -787,7 +786,6 @@ export default (content: string) => {
           if (i < howManyLines) {
             c = 0, numberOfChars = lines[i].length
           }
-          d(3453453,lines[i])
           resolveV1Continuation()
 
           return true
