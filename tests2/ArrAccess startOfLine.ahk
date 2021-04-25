@@ -1,2 +1,3 @@
-321[a b] c
-fewf[a b] c
+a.b()
+a.b.c
+a.b.c  

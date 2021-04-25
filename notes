@@ -1219,3 +1219,18 @@ but still do it
 just if (!isNaN) {
   tell it's illegal
 }
+
+to do meh:
+123.2 += 1 is legal
+
+you can only do lineWhereCanConcat=i, if it's a METHOD, you CANNOT if it's a PROPERTY
+so I need a way to..
+
+ArrayAccess too...
+I mean a.b[index]
+
+I need a function to know isMethodOrArrAcess
+then I can do the rest of logic ?
+but how does the rest of logic know if method or ArrAccess ?
+
+no, I can just make a logic that returns when not validName and not .

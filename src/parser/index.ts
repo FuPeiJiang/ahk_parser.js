@@ -14,7 +14,7 @@ export default (content: string) => {
   const toFile = ''
   const rangeAndReplaceTextArr: [[[number, number],[number, number]], string][] = []
 
-  let i = 0, c = 0, numberOfChars = 0, validName = '', strStartLine: number, strStartPos: number, insideContinuation = false, beforeConcat: number, nonWhiteSpaceStart: number, exprFoundLine = -1, colonDeep = 0, usingStartOfLineLoop = false, variadicAsterisk = false, lineWhereCanConcat = -1,v1ExpressionC1: number,cNotWhiteSpace: number,percentVarStart: number
+  let i = 0, c = 0, numberOfChars = 0, validName = '', strStartLine: number, strStartPos: number, insideContinuation = false, beforeConcat: number, nonWhiteSpaceStart: number, exprFoundLine = -1, colonDeep = 0, usingStartOfLineLoop = false, variadicAsterisk = false, lineWhereCanConcat = -1,v1ExpressionC1: number,cNotWhiteSpace: number,percentVarStart: number, propertyC1: number
   let everythingPushCounter: number; everythingPushCounter = 0
   lineLoop:
   while (i < howManyLines) {
@@ -351,13 +351,39 @@ export default (content: string) => {
         } else if (lines[i][c] === '.' && variableCharsObj[lines[i][c + 1]]) {
           //can't have number on startOfLine
           if (isNaN(Number(validName))) {
+            everything.push({type: 'property startOfLine', text:validName,i1: i, c1:nonWhiteSpaceStart ,c2:c})
+
             c++
+
+            everything.push({type: '. property startOfLine', text:'.',i1: i, c1:c})
             let isProp = false
 
-            // lineWhereCanConcat = i
-            if (!findMethodOrProperty()) {
+            // if (!findMethodOrProperty()) {
+            // }
+
+            //if not number and not property EOL
+            if (skipProperties()) {
+            //#METHOD CALL
+              if (lines[i][c] === '(') {
+                lineWhereCanConcat = i
+                everything.push({type: 'method( startOfLine', text:`${validName}(`,i1: i, c1:propertyC1,c2:c + 1})
+                c++
+                endMethodCall()
+              } else if (lines[i][c] === '[') {
+                lineWhereCanConcat = i
+                everything.push({type: 'ArrAccess', text:validName,i1: i, c1:propertyC1 ,c2:c})
+                everything.push({type: '[ Array startOfLine', text:'[',i1: i, c1:c})
+                endArrAccess()
+              } else {
+                everything.push({type: 'property ending at startOfLine', text:validName,i1: i, c1:propertyC1 ,c2:c})
+                isProp = true
+              }
+            } else {
               isProp = true
             }
+
+
+
             //a method can actually be assigned... property too
             //if prop and no assignment
             if (!recurseBetweenExpression() && isProp) {
@@ -967,66 +993,49 @@ export default (content: string) => {
       return false
     }
   }
+
+  //true if not number and not property EOL
+  function skipProperties() {
+    propertyC1 = c
+
+    while (c < numberOfChars && propCharsObj[lines[i][c]]) {
+      c++
+    }
+
+    validName = lines[i].slice(propertyC1, c)
+    if (c === numberOfChars) {
+      // d(`${validName} PROPERTY EOL ${char()}`)
+      everything.push({type: 'property EOL', text:validName,i1: i, c1:propertyC1 ,c2:c})
+      return false
+    }
+
+    if (lines[i][c] === '.') {
+      if (isNaN(Number(validName))) {
+        everything.push({type: 'property', text:validName,i1: i, c1:propertyC1 ,c2:c})
+        c++
+        everything.push({type: '. property', text:'.',i1: i, c1:c})
+        return skipProperties()
+      } else {
+        c++
+        findDecimal()
+        return false
+      }
+    }
+
+    return true
+  }
   function findMethodOrProperty() {
     // true if method, false if prop
     //stumble upon a valid variable Char
-    if (propCharsObj[lines[i][c]]) {
-      c++
-
-      while (c < numberOfChars && propCharsObj[lines[i][c]]) {
-        c++
-      }
-
-      validName = lines[i].slice(nonWhiteSpaceStart, c)
-      if (c === numberOfChars) {
-        // d(`${validName} PROPERTY EOL ${char()}`)
-        everything.push({type: 'property EOL', text:validName,i1: i, c1:nonWhiteSpaceStart ,c2:c})
-        return false
-      }
-
-      if (lines[i][c] === '.') {
-        c++
-        if (isNaN(Number(validName))) {
-          return findMethodOrProperty()
-        } else {
-          findDecimal()
-          return false
-        }
-      }
-
+    if (skipProperties()) {
       //#METHOD CALL
       if (lines[i][c] === '(') {
         // d(`${validName}( METHOD( ${char()}`)
         everything.push({type: 'method(', text:`${validName}(`,i1: i, c1:nonWhiteSpaceStart,c2:c + 1})
         c++
         // exprFoundLine = i
-        let endsWithComma = false
-        while (true) {
-          skipThroughEmptyLines()
-          if (lines[i][c] === ',') {
-            endsWithComma = true
-            // d(', method CALL', char())
-            everything.push({type: ', method', text:',',i1: i, c1:c})
-            c++
-            continue
-          }
-          if (findExpression()) {
-            endsWithComma = false
-          } else {
-            if (endsWithComma) {
-              d('ILLEGAL trailling , METHOD', char())
-            }
-            break
-          }
-        }
-        if (i !== lineWhereCanConcat) {
-          d('ILLEGAL ) METHOD', char())
-        }
-        // d(') METHOD', char())
-        everything.push({type: ') method', text:')',i1: i, c1:c})
-        c++
+        endMethodCall()
         return true
-
       }
 
       if (findArrayAccess()) { return true }
@@ -1036,6 +1045,34 @@ export default (content: string) => {
       //look for comments
       return false
     }
+
+  }
+  function endMethodCall() {
+    let endsWithComma = false
+    while (true) {
+      skipThroughEmptyLines()
+      if (lines[i][c] === ',') {
+        endsWithComma = true
+        // d(', method CALL', char())
+        everything.push({type: ', method', text:',',i1: i, c1:c})
+        c++
+        continue
+      }
+      if (findExpression()) {
+        endsWithComma = false
+      } else {
+        if (endsWithComma) {
+          d('ILLEGAL trailling , METHOD', char())
+        }
+        break
+      }
+    }
+    if (i !== lineWhereCanConcat) {
+      d('ILLEGAL ) METHOD', char())
+    }
+    // d(') METHOD', char())
+    everything.push({type: ') method', text:')',i1: i, c1:c})
+    c++
   }
   function findArrayAccess() {
     if (lines[i][c] === '[') {
