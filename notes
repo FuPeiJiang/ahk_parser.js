@@ -1121,3 +1121,18 @@ saving this test:
 a=ol%var%lo`%      ;comment
 a=ol%var1%lo`%%var2%      ;comment
 
+a=b     
+    ;comment1
+(
+ c ;comment2
+)                   d ;comment3
+(
+ c ;comment4
+)     
+
+this works:
+a=b     
+    ;comment1
+(
+ c ;comment2     
+)

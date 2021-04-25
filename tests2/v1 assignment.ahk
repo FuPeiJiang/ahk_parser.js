@@ -1,1 +1,5 @@
-a=ol%var1%lo`%%var2%      ;comment
+a=b     
+    ;comment1
+(
+ c ;comment2     
+)

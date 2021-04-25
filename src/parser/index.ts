@@ -722,28 +722,58 @@ export default (content: string) => {
 
     if (lines[i][c] === '(') {
       insideContinuation = true
+      // d('( resolveV1Continuation')
+      everything.push({type: '( resolveV1Continuation', text:'(',i1: i, c1:c})
+      c++
+      const text = lines[i].slice(c, numberOfChars)
+      everything.push({type: '( resolveV1Continuation', text:text,i1: i, c1:c ,c2:numberOfChars})
 
-      v1ExpressionC1 = c, cNotWhiteSpace = c - 1
-      while (c < numberOfChars) {
-        if (findPercentVarV1Expression()) {
-          c++; v1ExpressionC1 = c; continue
+      while (++i < howManyLines) {
+        everything.push({type: 'newline resolveV1Continuation', text:'\n',i1: i, c1:numberOfChars})
+        c = 0, numberOfChars = lines[i].length
+
+        const c1 = c
+        while (c < numberOfChars && whiteSpaceObj[lines[i][c]]) {
+          c++
         }
 
-        if (!whiteSpaceObj[lines[i][c]]) {
-          cNotWhiteSpace = c
-        }
-        c++
-      }
-      const cEndOfV1Expression = cNotWhiteSpace + 1
-      const text = lines[i].slice(v1ExpressionC1,cEndOfV1Expression)
-      d(text, 'v1String')
-      everything.push({type: 'v1String', text:text,i1: i, c1:v1ExpressionC1 ,c2:cEndOfV1Expression})
+        if (lines[i][c] === ')') {
+          const text = lines[i].slice(c1,c)
+          if (text) {
+            everything.push({type: 'whiteSpaces before ) resolveV1Continuation', text:text,i1: i, c1: c1,c2:c})
+          }
 
-      const endingWhiteSpaces = lines[i].slice(cEndOfV1Expression, c)
-      d('endingWhiteSpaces v1Expression', `\`${endingWhiteSpaces}\` ${endingWhiteSpaces.length}LENGTH`)
-      if (endingWhiteSpaces) {
-        everything.push({type: 'endingWhiteSpaces v1Expression', text:endingWhiteSpaces,i1: i, c1:cEndOfV1Expression ,c2:c})
+          d(') resolveV1Continuation')
+          everything.push({type: ') resolveV1Continuation', text:')',i1: i, c1:c})
+
+          c++
+          return true
+        }
+
+        v1ExpressionC1 = 0, cNotWhiteSpace = -1
+        while (c < numberOfChars) {
+          if (findPercentVarV1Expression()) {
+            c++; v1ExpressionC1 = c; continue
+          }
+
+          if (!whiteSpaceObj[lines[i][c]]) {
+            cNotWhiteSpace = c
+          }
+          c++
+        }
+        const cEndOfV1Expression = cNotWhiteSpace + 1
+        const text = lines[i].slice(v1ExpressionC1,cEndOfV1Expression)
+        d(text, 'v1String')
+        everything.push({type: 'v1String', text:text,i1: i, c1:v1ExpressionC1 ,c2:cEndOfV1Expression})
+
+        const endingWhiteSpaces = lines[i].slice(cEndOfV1Expression, c)
+        d('endingWhiteSpaces v1Expression', `\`${endingWhiteSpaces}\` ${endingWhiteSpaces.length}LENGTH`)
+        if (endingWhiteSpaces) {
+          everything.push({type: 'endingWhiteSpaces v1Expression', text:endingWhiteSpaces,i1: i, c1:cEndOfV1Expression ,c2:c})
+        }
+
       }
+
 
       return true
     } else {
