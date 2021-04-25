@@ -244,104 +244,104 @@ export default (content: string) => {
         if (lines[i][c] === '(') {
           let validName = lines[i].slice(nonWhiteSpaceStart, c)
           // d('is not a number, valid func name')
-          if (isNaN(Number(validName))) {
-            //#FUNCTION DEFINITION
-            if (isFunctionDefinition()) {
-              // d(`${validName}( function( DEFINITION ${char()}`)
-              everything.push({type: 'function( definition', text:`${validName}(`,i1: i, c1:nonWhiteSpaceStart,c2:c + 1})
+          if (!isNaN(Number(validName))) {
+            d('illegal function call on startOfLine: Integer',validName,'cannot be called')
+          }
+          //#FUNCTION DEFINITION
+          if (isFunctionDefinition()) {
+            // d(`${validName}( function( DEFINITION ${char()}`)
+            everything.push({type: 'function( definition', text:`${validName}(`,i1: i, c1:nonWhiteSpaceStart,c2:c + 1})
+            c++
+            variadicAsterisk = true
+            while (true) {
+              skipThroughWhiteSpaces()
+              nonWhiteSpaceStart = c
+
+              if (c === numberOfChars) {
+                d('illegal function DEFINITION: need something after (', char())
+                i++
+                variadicAsterisk = false
+                continue lineLoop
+              }
+
               c++
-              variadicAsterisk = true
-              while (true) {
-                skipThroughWhiteSpaces()
-                nonWhiteSpaceStart = c
+              skipValidChar()
 
-                if (c === numberOfChars) {
-                  d('illegal function DEFINITION: need something after (', char())
-                  i++
-                  variadicAsterisk = false
-                  continue lineLoop
-                }
-
-                c++
-                skipValidChar()
-
-                validName = lines[i].slice(nonWhiteSpaceStart, c)
-                if (validName.toLowerCase() === 'byref') {
-                  everything.push({type: 'byref', text:`${validName}`,i1: i, c1:nonWhiteSpaceStart,c2:c})
-                  skipThroughWhiteSpaces(), nonWhiteSpaceStart = c
-                  if (c === numberOfChars || !variableCharsObj[lines[i][c]]) { break }
-                  c++, skipValidChar(), validName = lines[i].slice(nonWhiteSpaceStart, c)
-                  // d(validName, 'Byref Param', char())
-                  everything.push({type: 'byref param', text:`${validName}`,i1: i, c1:nonWhiteSpaceStart,c2:c})
+              validName = lines[i].slice(nonWhiteSpaceStart, c)
+              if (validName.toLowerCase() === 'byref') {
+                everything.push({type: 'byref', text:`${validName}`,i1: i, c1:nonWhiteSpaceStart,c2:c})
+                skipThroughWhiteSpaces(), nonWhiteSpaceStart = c
+                if (c === numberOfChars || !variableCharsObj[lines[i][c]]) { break }
+                c++, skipValidChar(), validName = lines[i].slice(nonWhiteSpaceStart, c)
+                // d(validName, 'Byref Param', char())
+                everything.push({type: 'byref param', text:`${validName}`,i1: i, c1:nonWhiteSpaceStart,c2:c})
+              } else {
+                // d(validName, 'Param', char())
+                everything.push({type: 'Param', text:validName,i1: i, c1:nonWhiteSpaceStart, c2:c})
+              }
+              skipThroughEmptyLines()
+              findBetween()
+              if (lines[i][c] !== ',') {
+                if (lines[i][c] === ')') {
+                  // d(') function DEFINITION', char())
+                  everything.push({type: ') function DEFINITION', text:')',i1: i, c1:c})
                 } else {
-                  // d(validName, 'Param', char())
-                  everything.push({type: 'Param', text:validName,i1: i, c1:nonWhiteSpaceStart, c2:c})
+                  d('illegal function DEFINITION END', char())
+                  return everything
                 }
+                c++
                 skipThroughEmptyLines()
-                findBetween()
-                if (lines[i][c] !== ',') {
-                  if (lines[i][c] === ')') {
-                    // d(') function DEFINITION', char())
-                    everything.push({type: ') function DEFINITION', text:')',i1: i, c1:c})
-                  } else {
-                    d('illegal function DEFINITION END', char())
-                    return everything
-                  }
-                  c++
-                  skipThroughEmptyLines()
-                  // d(`{ Function DEFINITION ${char()}`)
-                  everything.push({type: '{ function DEFINITION', text:'{',i1: i, c1:c})
-                  c++
-                  usingStartOfLineLoop = true
-                  skipThroughWhiteSpaces()
-                  variadicAsterisk = false
-                  continue startOfLineLoop
-                }
-                // d(', Function DEFINITION', char())
-                everything.push({type: ', function definition', text:',',i1: i, c1:c})
-
+                // d(`{ Function DEFINITION ${char()}`)
+                everything.push({type: '{ function DEFINITION', text:'{',i1: i, c1:c})
                 c++
+                usingStartOfLineLoop = true
+                skipThroughWhiteSpaces()
+                variadicAsterisk = false
+                continue startOfLineLoop
               }
-            } else {
-              //#FUNCTION CALL startOfLine
-              // d(`${validName}( function( startOfLine ${char()}`)
-              lineWhereCanConcat = i
-
-              everything.push({type: 'function( startOfLine', text:`${validName}(`,i1: i, c1:nonWhiteSpaceStart ,c2:c + 1})
-              c++
-              // exprFoundLine = i
-              let endsWithComma = false
-              while (true) {
-                if (!skipThroughEmptyLines()) { d('EOF Function startOfLine'); break lineLoop }
-                if (lines[i][c] === ',') {
-                  endsWithComma = true
-                  // d(', function CALL startOfLine', char())
-                  everything.push({type: ', function startOfLine', text:',',i1: i, c1:c})
-                  c++
-                  continue
-                }
-                if (findExpression()) {
-                  endsWithComma = false
-                } else {
-                  if (endsWithComma) {
-                    d('ILLEGAL trailling , FUNCTION startOfLine', char())
-                  }
-                  break
-                }
-              }
-
-              if (i !== lineWhereCanConcat) {
-                d('ILLEGAL ) function startOfLine', char())
-              }
-              // d(') function startOfLine', char())
-              everything.push({type: ') function startOfLine', text:')',i1: i, c1:c})
+              // d(', Function DEFINITION', char())
+              everything.push({type: ', function definition', text:',',i1: i, c1:c})
 
               c++
-              everything.push({type: 'newline ) function startOfLine', text:'\n',i1: i, c1:c})
-              i++
-              continue lineLoop
+            }
+          } else {
+            //#FUNCTION CALL startOfLine
+            // d(`${validName}( function( startOfLine ${char()}`)
+            lineWhereCanConcat = i
+
+            everything.push({type: 'function( startOfLine', text:`${validName}(`,i1: i, c1:nonWhiteSpaceStart ,c2:c + 1})
+            c++
+            // exprFoundLine = i
+            let endsWithComma = false
+            while (true) {
+              if (!skipThroughEmptyLines()) { d('EOF Function startOfLine'); break lineLoop }
+              if (lines[i][c] === ',') {
+                endsWithComma = true
+                // d(', function CALL startOfLine', char())
+                everything.push({type: ', function startOfLine', text:',',i1: i, c1:c})
+                c++
+                continue
+              }
+              if (findExpression()) {
+                endsWithComma = false
+              } else {
+                if (endsWithComma) {
+                  d('ILLEGAL trailling , FUNCTION startOfLine', char())
+                }
+                break
+              }
             }
 
+            if (i !== lineWhereCanConcat) {
+              d('ILLEGAL ) function startOfLine', char())
+            }
+            // d(') function startOfLine', char())
+            everything.push({type: ') function startOfLine', text:')',i1: i, c1:c})
+
+            c++
+            everything.push({type: 'newline ) function startOfLine', text:'\n',i1: i, c1:c})
+            i++
+            continue lineLoop
           }
 
           //#METHOD OR PROPERTY
