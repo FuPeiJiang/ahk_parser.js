@@ -1,1 +1,1 @@
-a=ol%var%lo`%      ;comment
+a        =ol%var%lo`%      ;comment

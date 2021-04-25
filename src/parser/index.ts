@@ -140,6 +140,20 @@ export default (content: string) => {
 
           if (!skipThroughEmptyLines()) { break lineLoop }
 
+
+          //#whiteSpace v1 expression
+          if (c < numberOfChars && lines[i][c] === '=') {
+            everything.splice(everything.length - 2,0,{type: 'var at whiteSpace v1Assignment', text:validName,i1: i, c1:nonWhiteSpaceStart ,c2:c})
+            everything.push({type: '= whiteSpace v1Assignment', text:'=',i1: i, c1:c})
+            c++
+            findV1Expression()
+            everything.push({type: 'newLine whiteSpace v1Assignment', text:'\n',i1: i, c1:c})
+            i++
+            continue lineLoop
+          }
+
+
+          //#whiteSpace ASSIGNMENT
           if (findOperators()) {
             // d(`${validName} assignment whiteSpace`)
             everything.splice(everything.length - 2,0,{type: 'assignment whiteSpace', text:validName,i1: validNameLine, c1:nonWhiteSpaceStart ,c2:validNameEnd})
