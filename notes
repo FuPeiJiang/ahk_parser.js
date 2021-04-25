@@ -1188,3 +1188,10 @@ i === exprFoundLine shouldn't be true
 
 shouldn't it be lineWhereCanConcat ?
 replace exprFoundLine with lineWhereCanConcat
+
+ILLEGAL ) function startOfLine 14 line 20
+        if (i !== lineWhereCanConcat) {
+          d('ILLEGAL ) function', char())
+        }
+
+'function( startOfLine' should do lineWhereCanConcat=i

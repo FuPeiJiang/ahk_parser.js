@@ -305,6 +305,8 @@ export default (content: string) => {
             } else {
               //#FUNCTION CALL
               // d(`${validName}( function( startOfLine ${char()}`)
+              lineWhereCanConcat = i
+
               everything.push({type: 'function( startOfLine', text:`${validName}(`,i1: i, c1:nonWhiteSpaceStart ,c2:c + 1})
               c++
               // exprFoundLine = i
