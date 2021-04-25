@@ -1195,3 +1195,10 @@ ILLEGAL ) function startOfLine 14 line 20
         }
 
 'function( startOfLine' should do lineWhereCanConcat=i
+
+to do:
+  fix findPercentVar()
+  whichSide %VAR% 34 line 42 #988
+  instead of 
+  %whichSide %VAR% 34 line 42 #988
+  and everything.push %VAR% instead of the whole assignment?

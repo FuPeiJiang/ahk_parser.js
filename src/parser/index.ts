@@ -1598,9 +1598,8 @@ export default (content: string) => {
     if (c < numberOfChars && lines[i][c] === '%') {
       c++
       skipValidChar()
-      d(lines[i][c])
       if (c < numberOfChars && lines[i][c] === '%') {
-        d(`${lines[i].slice(percentVarStart, c)} %VAR% ${char()}`)
+        // d(`${lines[i].slice(percentVarStart, c)} %VAR% ${char()} #988`)
         return true
       } else {
         d(lines[i].slice(nonWhiteSpaceStart, c), 'ILLEGAL %VAR%', char())
