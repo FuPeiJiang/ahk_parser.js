@@ -924,7 +924,7 @@ export default (content: string) => {
       // const concatWhiteSpaces = lines[concatLineBak].slice(beforeConcatBak, afterConcat)
       // d(`concat "${concatWhiteSpaces}" ${concatWhiteSpaces.length}LENGHT ${beforeConcatBak + 1} line ${concatLineBak + 1}`)
       // I just have to replace the last whiteSpace with concat
-      everything[everything.length - 1].type = 'concat'
+      everything[everything.length - 2].type = 'concat'
       // everything.push({type: 'concat', text:concatWhiteSpaces,i1: concatLineBak, c1: beforeConcatBak,c2:afterConcat})
       return true
     }
