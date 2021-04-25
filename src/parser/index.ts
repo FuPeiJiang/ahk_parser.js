@@ -158,7 +158,7 @@ export default (content: string) => {
             // d(`${validName} assignment whiteSpace`)
             everything.splice(everything.length - 2,0,{type: 'assignment whiteSpace', text:validName,i1: validNameLine, c1:nonWhiteSpaceStart ,c2:validNameEnd})
 
-            if (!betweenExpression()) { findExpression() }
+            if (!recurseBetweenExpression()) { findExpression() }
             if (i === exprFoundLine) {
               findCommentsAndEndLine()
             } else {
@@ -356,7 +356,7 @@ export default (content: string) => {
             }
             //a method can actually be assigned... property too
             //if prop and no assignment
-            if (!betweenExpression() && isProp) {
+            if (!recurseBetweenExpression() && isProp) {
               d('illegal property on startOfLine', char())
             }
             if (i === exprFoundLine) {
@@ -392,7 +392,7 @@ export default (content: string) => {
           // d(`${validName} assignment`)
           everything.splice(everything.length - 1,0,{type: 'assignment', text:validName,i1: validNameLine, c1:nonWhiteSpaceStart ,c2:validNameEnd})
 
-          if (!betweenExpression()) { findExpression() }
+          if (!recurseBetweenExpression()) { findExpression() }
           if (i === exprFoundLine) {
             findCommentsAndEndLine()
           } else {
@@ -878,7 +878,17 @@ export default (content: string) => {
     return toReturn
 
   }
-
+  function recurseBetweenExpression() {
+    if (betweenExpression()) {
+      while (betweenExpression()) {
+        //lol
+      }
+      return true
+    } else {
+      findExpression()
+      return false
+    }
+  }
   //true if found a between AND an expression
   //really hard to understand
   function betweenExpression() {
@@ -914,7 +924,8 @@ export default (content: string) => {
     }
 
     if (findOperators()) {
-      return findExpression()
+      findExpression()
+      return true
     }
 
     //look for concat, if no operators found
@@ -1016,7 +1027,7 @@ export default (content: string) => {
       // d('[ ArrAccess', char())
       everything.push({type: '[ ArrAccess', text:'[',i1: i, c1:c})
       c++
-      if (!betweenExpression()) { findExpression() }
+      if (!recurseBetweenExpression()) { findExpression() }
       // d('] ArrAccess', char())
       everything.push({type: '] ArrAccess', text:']',i1: i, c1:c})
       c++
@@ -1061,7 +1072,7 @@ export default (content: string) => {
           // d(`${validName} Integer EOL ${char()}`)
           everything.push({type: 'Integer', text:validName,i1: i, c1:nonWhiteSpaceStart ,c2:c})
         }
-        betweenExpression()
+        recurseBetweenExpression()
         return true
       }
 
@@ -1072,7 +1083,7 @@ export default (content: string) => {
       validName = lines[i].slice(nonWhiteSpaceStart, c)
       if (c === numberOfChars) {
         d(`${validName} %VARIABLE% EOL ${char()}`)
-        betweenExpression()
+        recurseBetweenExpression()
         return true
       }
 
@@ -1083,7 +1094,7 @@ export default (content: string) => {
         } else {
           findDecimal()
         }
-        betweenExpression()
+        recurseBetweenExpression()
         return true
       }
 
@@ -1130,13 +1141,13 @@ export default (content: string) => {
         // d(`${validName} Integer ${char()}`)
         everything.push({type: 'Integer', text:validName,i1: i, c1:nonWhiteSpaceStart ,c2:c})
       }
-      betweenExpression()
+      recurseBetweenExpression()
       return true
 
     }
 
     if (findDoubleQuotedString()) {
-      betweenExpression()
+      recurseBetweenExpression()
       return true
     } else {
       if (i === howManyLines) {
@@ -1146,12 +1157,14 @@ export default (content: string) => {
     }
 
     if (lines[i][c] === '(') {
-      d('( group', char())
+      // d('( group', char())
+      everything.push({type: '( group', text:'(',i1: i, c1:c})
       c++
-      if (!betweenExpression()) { findExpression() }
-      d(') group', char())
+      if (!recurseBetweenExpression()) { findExpression() }
+      // d(') group', char())
+      everything.push({type: ') group', text:')',i1: i, c1:c})
       c++
-      betweenExpression()
+      recurseBetweenExpression()
       return true
     }
 
@@ -1185,7 +1198,7 @@ export default (content: string) => {
 
       everything.push({type: '] Array', text:']',i1: i, c1:c})
       c++
-      betweenExpression()
+      recurseBetweenExpression()
       return true
     }
 
@@ -1283,7 +1296,7 @@ export default (content: string) => {
       // d(']]]]]]]]]]]]]]]]]]]]\n',objStart,i,textFromPosToCurrent(objStart))
       // rangeAndReplaceTextArr.push([[objStart,[c,i]],`Map(${mapKeysAndValuesArr.join(',')})`])
       // objectsToconvertToMap.push({range:[objStart,[c,i]],textArr:mapKeysAndValuesArr})
-      betweenExpression()
+      recurseBetweenExpression()
       return true
     }
 
@@ -1433,7 +1446,7 @@ export default (content: string) => {
         // " var
         // but continuation didn't end, IDK what happens
       } else if (findClosingQuoteInLine()) {
-        betweenExpression()
+        recurseBetweenExpression()
         return false
         // return true
       }

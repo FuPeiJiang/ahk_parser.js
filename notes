@@ -1158,3 +1158,11 @@ findExpression() if out of lines: 'illegal empty assignment'
 
 loadSettings( shouldn't be a function definition
 found ) at 14 line 20
+
+after 261, + is found, so not looking for any other
+I need betweenExpression itself to be recursive ?
+or it to be called recursively by another function
+
+if (!recurseBetweenExpression()) { findExpression() }
+replace ALL betweenExpression() with recurseBetweenExpression
+lol works
