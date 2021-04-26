@@ -1237,3 +1237,14 @@ no, I can just make a logic that returns when not validName and not .
 
 to do:
 'Integer part of Decimal startOfLine', I'm not really parsing Decimal anymore, the error handling would be crazy
+
+ILLEGAL nonWhiteSpace '3' at findCommentsAndEndLine 31 line 177
+        editPos:=[textSize[1]+30, 50]
+it's the 3 after +
+        editPos:=[textSize[1]]
++30 wasn't captured ?
+
+      if (findArrayAccess()) {
+        recurseBetweenExpression()
+        return true
+      }

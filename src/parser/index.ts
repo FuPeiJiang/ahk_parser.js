@@ -1186,7 +1186,10 @@ export default (content: string) => {
         c++
         return true
       }
-      if (findArrayAccess()) { return true }
+      if (findArrayAccess()) {
+        recurseBetweenExpression()
+        return true
+      }
 
       if (isNaN(Number(validName))) {
         // d(`${validName} idkVariable ${char()}`)
