@@ -1270,3 +1270,19 @@ obj:={}
 obj.ok:="34535"
 obj.ok=34535
 p(obj)
+
+this dissapeard:
+FileRead, favoriteFolders, %A_AppData%\ahk_explorer_settings\favoriteFolders.txt
+it's a 'comma DIRECTIVE OR COMMAND'
+
+RegRead, v, HKCU\Software\Microsoft\Windows\CurrentVersion\Explorer\User Shell Folders, % FOLDERID_Downloads
+is still there though
+
+it comes after
+currentDirSearch  =
+;%appdata%\ahk_explorer_settings
+
+after
+{type:'newLine whiteSpace v1Assignment', text:'
+', i1:17, c1:0},
+

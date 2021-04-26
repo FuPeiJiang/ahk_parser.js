@@ -148,9 +148,8 @@ export default (content: string) => {
             everything.push({type: '= whiteSpace v1Assignment', text:'=',i1: i, c1:c})
             c++
             findV1Expression()
-            everything.push({type: 'newLine whiteSpace v1Assignment', text:'\n',i1: i, c1:c})
-            i++
-            continue lineLoop
+            usingStartOfLineLoop = true
+            continue startOfLineLoop
           }
 
 
