@@ -1295,3 +1295,8 @@ but 'assignment whiteSpace' is only for validVar, not %VAR%
           //'assignment' can also contain whiteSpace
           //because this only catches validVar, not %VAR%
           // so whiteSpace %VAR% will be caught by 'assignment'
+
+//#LABELS
+//can't be :=
+if (lines[i][c] === ':' && lines[i][c + 1] !== '=') {
+

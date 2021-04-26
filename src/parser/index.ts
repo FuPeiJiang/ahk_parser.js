@@ -196,30 +196,37 @@ export default (content: string) => {
           }
 
         } else {
+
           //labels can't have spaces
           // well, it's now or never to be a label: because label can't have %
           //#LABELS
-          if (lines[i][c] === ':') {
+          //can't be :=
+          if (lines[i][c] === ':' && lines[i][c + 1] !== '=') {
             c++
-
+            const text = lines[i].slice(nonWhiteSpaceStart,c)
+            everything.push({type: 'label:', text:text,i1: i, c1:nonWhiteSpaceStart ,c2:c})
             skipThroughWhiteSpaces()
 
             if (c === numberOfChars) {
               // d('LABEL EOL', char())
+              everything.push({type: 'newLine label', text:'\n',i1: i, c1:c})
               i++
               continue lineLoop
             }
 
             if (lines[i][c] === ';') {
-              // d('LABEL SemiColonComment', char())
-              // everything.push({type: 'SemiColonComment', line: i, colStart: c})
+              const commentToEOL = lines[i].slice(c,numberOfChars)
+              // d(commentToEOL,'SemiColonComment label')
+              everything.push({type: 'SemiColonComment label', text:commentToEOL,i1: i, c1:c ,c2:numberOfChars})
+
+              everything.push({type: 'newLine label', text:'\n',i1: i, c1:c})
               i++
               continue lineLoop
             }
 
             // if 2 consecutive ':' then hotkey
             if (lines[i][c] === ':') {
-              // d('HOTKEY validVarName', char())
+              d('HOTKEY validVarName', char())
               i++
               continue lineLoop
             }
@@ -238,6 +245,7 @@ export default (content: string) => {
       }
       if (c === numberOfChars) {
         d('illegal: unexpected EOL after var parsing', char())
+        i++
         continue lineLoop
       }
       validName = lines[i].slice(nonWhiteSpaceStart, c)

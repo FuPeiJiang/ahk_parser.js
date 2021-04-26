@@ -4,7 +4,8 @@ const d = console.debug.bind(console)
 
 
 const content: string =
-fs.readFileSync('tests2/where to splice.ahk')
+fs.readFileSync('tests2/labels.ahk')
+// fs.readFileSync('tests2/where to splice.ahk')
 // fs.readFileSync('tests2/function definition with no param.ahk')
 // fs.readFileSync('tests2/method after assignment.ahk')
 // fs.readFileSync('tests2/ArrAccess startOfLine.ahk')
