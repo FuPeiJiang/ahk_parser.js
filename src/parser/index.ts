@@ -1157,6 +1157,7 @@ export default (content: string) => {
       validName = lines[i].slice(nonWhiteSpaceStart, c)
       if (c === numberOfChars) {
         d(`${validName} %VARIABLE% EOL ${char()}`)
+        everything.push({type: '%VARIABLE% EOL', text:validName,i1: i, c1:nonWhiteSpaceStart ,c2:c})
         recurseBetweenExpression()
         return true
       }
