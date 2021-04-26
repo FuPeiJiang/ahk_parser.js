@@ -84,6 +84,9 @@ export default (content: string) => {
       }
 
       nonWhiteSpaceStart = c
+      const validNameStart = c
+      const spliceStartIndex = everything.length
+
       //stumble upon a valid variable Char
       if (variableCharsObj[lines[i][c]]) {
         c++
@@ -140,8 +143,6 @@ export default (content: string) => {
 
           if (!skipThroughEmptyLines()) { break lineLoop }
 
-          const spliceStartIndex = everything.length - 1
-
           //#whiteSpace v1 expression
           if (c < numberOfChars && lines[i][c] === '=') {
             everything.splice(spliceStartIndex,0,{type: 'var at whiteSpace v1Assignment', text:validName,i1: i, c1:nonWhiteSpaceStart ,c2:c})
@@ -154,11 +155,14 @@ export default (content: string) => {
 
 
           //#whiteSpace ASSIGNMENT
-          if (findOperators()) {
-            // d(`${validName} assignment whiteSpace`)
-            everything.splice(spliceStartIndex,0,{type: 'assignment whiteSpace', text:validName,i1: validNameLine, c1:nonWhiteSpaceStart ,c2:validNameEnd})
+          //'assignment' can also contain whiteSpace
+          //because this only catches validVar, not %VAR%
+          // so whiteSpace %VAR% will be caught by 'assignment'
+          if (recurseBetweenExpression()) {
+            const assignedTo = lines[validNameLine].slice(validNameStart,validNameEnd)
+            // d(`${assignedTo} assignment whiteSpace`)
+            everything.splice(spliceStartIndex,0,{type: 'assignment whiteSpace', text:assignedTo,i1: validNameLine, c1:validNameStart ,c2:validNameEnd})
 
-            if (!recurseBetweenExpression()) { findExpression() }
             if (i === lineWhereCanConcat) {
               findCommentsAndEndLine()
             } else {
@@ -426,8 +430,6 @@ export default (content: string) => {
         //out of lines
         if (!skipThroughEmptyLines()) { break lineLoop }
 
-        const spliceStartIndex = everything.length
-
         //#v1 expression
         if (c < numberOfChars && lines[i][c] === '=') {
           everything.push({type: 'var at v1Assignment', text:validName,i1: i, c1:nonWhiteSpaceStart ,c2:c})
@@ -442,11 +444,11 @@ export default (content: string) => {
         }
 
         //#ASSIGNMENT
-        if (findOperators()) {
-          // d(`${validName} assignment`)
-          everything.splice(spliceStartIndex,0,{type: 'assignment', text:validName,i1: validNameLine, c1:nonWhiteSpaceStart ,c2:validNameEnd})
+        if (recurseBetweenExpression()) {
+          const assignedTo = lines[validNameLine].slice(validNameStart,validNameEnd)
+          // d(`${assignedTo} assignment`)
+          everything.splice(spliceStartIndex,0,{type: 'assignment', text:assignedTo,i1: validNameLine, c1:validNameStart ,c2:validNameEnd})
 
-          if (!recurseBetweenExpression()) { findExpression() }
           if (i === lineWhereCanConcat) {
             findCommentsAndEndLine()
           } else {
@@ -1573,9 +1575,9 @@ export default (content: string) => {
         //anything else, return found
         const text = textFromPosToCurrent([c1,i1])
         if (text) {
-          // if (i === 8) {
-          // trace()
-          // }
+        // if (i === 8) {
+        // trace()
+        // }
           everything.push({type: 'emptyLines', text:text,i1:i1, c1: c1,i2:i,c2:c})
         }
         return true

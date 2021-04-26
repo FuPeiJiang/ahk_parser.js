@@ -1286,3 +1286,12 @@ after
 {type:'newLine whiteSpace v1Assignment', text:'
 ', i1:17, c1:0},
 
+a%b%      := c
+a      := c
+{type:'assignment', text:'a%b%', i1:0, c1:0, c2:4},
+it should be 'assignment whiteSpace'
+but 'assignment whiteSpace' is only for validVar, not %VAR%
+
+          //'assignment' can also contain whiteSpace
+          //because this only catches validVar, not %VAR%
+          // so whiteSpace %VAR% will be caught by 'assignment'
