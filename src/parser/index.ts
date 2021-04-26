@@ -350,10 +350,12 @@ export default (content: string) => {
           // so check if the next character is a valid Var
         } else if (lines[i][c] === '.' && variableCharsObj[lines[i][c + 1]]) {
           //can't have number on startOfLine
-          if (!isNaN(Number(validName))) {
+          if (isNaN(Number(validName))) {
+            everything.push({type: 'obj with property startOfLine', text:validName,i1: i, c1:nonWhiteSpaceStart ,c2:c})
+          } else {
+            everything.push({type: 'Integer part of Decimal startOfLine', text:validName,i1: i, c1:nonWhiteSpaceStart ,c2:c})
             d('illegal: can\'t have number on startOfLine')
           }
-          everything.push({type: 'property startOfLine', text:validName,i1: i, c1:nonWhiteSpaceStart ,c2:c})
 
           c++
 
@@ -1007,16 +1009,10 @@ export default (content: string) => {
     }
 
     if (lines[i][c] === '.') {
-      if (isNaN(Number(validName))) {
-        everything.push({type: 'property', text:validName,i1: i, c1:propertyC1 ,c2:c})
-        c++
-        everything.push({type: '. property', text:'.',i1: i, c1:c})
-        return skipProperties()
-      } else {
-        c++
-        findDecimal()
-        return false
-      }
+      everything.push({type: 'property', text:validName,i1: i, c1:propertyC1 ,c2:c})
+      c++
+      everything.push({type: '. property', text:'.',i1: i, c1:c})
+      return skipProperties()
     }
 
     return true
@@ -1143,12 +1139,15 @@ export default (content: string) => {
       }
 
       if (lines[i][c] === '.') {
-        c++
+
         if (isNaN(Number(validName))) {
-          findMethodOrProperty()
+          everything.push({type: 'obj with property', text:validName,i1: i, c1:nonWhiteSpaceStart ,c2:c})
         } else {
-          findDecimal()
+          everything.push({type: 'Integer part of Decimal', text:validName,i1: i, c1:nonWhiteSpaceStart ,c2:c})
         }
+        c++
+        everything.push({type: '. property', text:'.',i1: i, c1:c})
+        findMethodOrProperty()
         recurseBetweenExpression()
         return true
       }

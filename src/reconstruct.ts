@@ -4,7 +4,8 @@ const d = console.debug.bind(console)
 
 
 const content: string =
-fs.readFileSync('tests2/ArrAccess startOfLine.ahk')
+fs.readFileSync('tests2/method after assignment.ahk')
+// fs.readFileSync('tests2/ArrAccess startOfLine.ahk')
 // fs.readFileSync('tests2/method call.ahk')
 // fs.readFileSync('tests2/not not.ahk')
 // fs.readFileSync('tests2/v1 assignment.ahk')

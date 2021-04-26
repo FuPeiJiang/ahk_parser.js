@@ -1234,3 +1234,6 @@ then I can do the rest of logic ?
 but how does the rest of logic know if method or ArrAccess ?
 
 no, I can just make a logic that returns when not validName and not .
+
+to do:
+'Integer part of Decimal startOfLine', I'm not really parsing Decimal anymore, the error handling would be crazy
