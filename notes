@@ -1300,3 +1300,15 @@ but 'assignment whiteSpace' is only for validVar, not %VAR%
 //can't be :=
 if (lines[i][c] === ':' && lines[i][c + 1] !== '=') {
 
+bug:
+a:=(b=1) ? 2 : 1
+gives
+a:=(b=1) ? 2 :1
+AND
+a:=(b=1) ? 2 :   1
+gives
+a:=(b=1) ? 2 :  1
+
+ternary colon:
+recurseBetweenExpression()
+if (i === howManyLines) {return false}

@@ -907,7 +907,8 @@ export default (content: string) => {
         // d('? ternary', char())
         everything.push({type: '? ternary', text:'?',i1: i, c1:c})
         colonDeep++, c++
-        findExpression()
+        recurseBetweenExpression()
+        if (i === howManyLines) {return false}
         //where findExpression stopped at
         if (lines[i][c] === ':') {
           // d(': ternary', char())
@@ -931,10 +932,11 @@ export default (content: string) => {
         // d('* variadic Argument', char())
         everything.push({type: '* variadic Argument', text:'*',i1: i, c1:c})
         c++
-      }
+      } else {
       // d(lines[i][c], '1operator', char())
-      everything.push({type: '1operator', text:lines[i][c],i1: i, c1:c})
-      c++
+        everything.push({type: '1operator', text:lines[i][c],i1: i, c1:c})
+        c++
+      }
     } else {
       return false
     }
