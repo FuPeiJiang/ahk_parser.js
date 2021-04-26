@@ -70,7 +70,7 @@ export default (content: string) => {
         continue lineLoop
       }
 
-      //#function DECLARATION END
+      //#function DEFINITION END
       if (lines[i][c] === '}') {
         // d(`} Function DEFINITION ${char()}`)
         everything.push({type: '} function definition', text:'}',i1: i, c1:c})
@@ -253,6 +253,7 @@ export default (content: string) => {
             everything.push({type: 'function( definition', text:`${validName}(`,i1: i, c1:nonWhiteSpaceStart,c2:c + 1})
             c++
             variadicAsterisk = true
+            breakThisWhenParenEnd:
             while (true) {
               skipThroughWhiteSpaces()
               nonWhiteSpaceStart = c
@@ -264,46 +265,54 @@ export default (content: string) => {
                 continue lineLoop
               }
 
-              c++
               skipValidChar()
-
               validName = lines[i].slice(nonWhiteSpaceStart, c)
-              if (validName.toLowerCase() === 'byref') {
-                everything.push({type: 'byref', text:`${validName}`,i1: i, c1:nonWhiteSpaceStart,c2:c})
-                skipThroughWhiteSpaces(), nonWhiteSpaceStart = c
-                if (c === numberOfChars || !variableCharsObj[lines[i][c]]) { break }
-                c++, skipValidChar(), validName = lines[i].slice(nonWhiteSpaceStart, c)
-                // d(validName, 'Byref Param', char())
-                everything.push({type: 'byref param', text:`${validName}`,i1: i, c1:nonWhiteSpaceStart,c2:c})
+
+              if (lines[i][c] === ')') {
+                // d('function definition with no param')
+                break breakThisWhenParenEnd
               } else {
-                // d(validName, 'Param', char())
-                everything.push({type: 'Param', text:validName,i1: i, c1:nonWhiteSpaceStart, c2:c})
+                if (validName.toLowerCase() === 'byref') {
+                  everything.push({type: 'byref', text:`${validName}`,i1: i, c1:nonWhiteSpaceStart,c2:c})
+                  skipThroughWhiteSpaces(), nonWhiteSpaceStart = c
+                  if (c === numberOfChars || !variableCharsObj[lines[i][c]]) { break }
+                  c++, skipValidChar(), validName = lines[i].slice(nonWhiteSpaceStart, c)
+                  // d(validName, 'Byref Param', char())
+                  everything.push({type: 'byref param', text:`${validName}`,i1: i, c1:nonWhiteSpaceStart,c2:c})
+                } else {
+                  // d(validName, 'Param', char())
+                  everything.push({type: 'Param', text:validName,i1: i, c1:nonWhiteSpaceStart, c2:c})
+                }
+                skipThroughEmptyLines()
+                findBetween()
+
               }
-              skipThroughEmptyLines()
-              findBetween()
+
               if (lines[i][c] !== ',') {
                 if (lines[i][c] === ')') {
                   // d(') function DEFINITION', char())
-                  everything.push({type: ') function DEFINITION', text:')',i1: i, c1:c})
+                  break breakThisWhenParenEnd
                 } else {
                   d('illegal function DEFINITION END', char())
                   return everything
                 }
-                c++
-                skipThroughEmptyLines()
-                // d(`{ Function DEFINITION ${char()}`)
-                everything.push({type: '{ function DEFINITION', text:'{',i1: i, c1:c})
-                c++
-                usingStartOfLineLoop = true
-                skipThroughWhiteSpaces()
-                variadicAsterisk = false
-                continue startOfLineLoop
               }
               // d(', Function DEFINITION', char())
               everything.push({type: ', function definition', text:',',i1: i, c1:c})
 
               c++
             }
+            //after break breakThisWhenParenEnd
+            everything.push({type: ') function DEFINITION', text:')',i1: i, c1:c})
+            c++
+            skipThroughEmptyLines()
+            // d(`{ Function DEFINITION ${char()}`)
+            everything.push({type: '{ function DEFINITION', text:'{',i1: i, c1:c})
+            c++
+            usingStartOfLineLoop = true
+            skipThroughWhiteSpaces()
+            variadicAsterisk = false
+            continue startOfLineLoop
           } else {
             //#FUNCTION CALL startOfLine
             // d(`${validName}( function( startOfLine ${char()}`)
