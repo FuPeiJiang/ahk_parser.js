@@ -1255,3 +1255,18 @@ illegal function DEFINITION END 1 line 368
 'function definition with no param'
 
 illegal R c:9 line:837 startContinuation#765
+
+oh no
+arr[1] = v1Expression
+I'm scared
+fiouf, it is legal but it doesn't assign
+
+arr:=[1,2,3]
+arr[1] = v1Expressionfeff
+; p(arr)
+
+and THIS is illegal:
+obj:={}
+obj.ok:="34535"
+obj.ok=34535
+p(obj)

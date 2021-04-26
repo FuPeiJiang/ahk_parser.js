@@ -13,7 +13,7 @@ SetControlDelay, -1
 #MaxThreadsPerHotkey, 4
 SetTitleMatchMode, 2
 
-currentDirSearch=
+currentDirSearch  =
 ;%appdata%\ahk_explorer_settings
 FileRead, favoriteFolders, %A_AppData%\ahk_explorer_settings\favoriteFolders.txt
 favoriteFolders:=StrSplit(favoriteFolders,"`n","`r")

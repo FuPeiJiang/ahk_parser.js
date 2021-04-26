@@ -140,10 +140,11 @@ export default (content: string) => {
 
           if (!skipThroughEmptyLines()) { break lineLoop }
 
+          const spliceStartIndex = everything.length - 1
 
           //#whiteSpace v1 expression
           if (c < numberOfChars && lines[i][c] === '=') {
-            everything.splice(everything.length - 2,0,{type: 'var at whiteSpace v1Assignment', text:validName,i1: i, c1:nonWhiteSpaceStart ,c2:c})
+            everything.splice(spliceStartIndex,0,{type: 'var at whiteSpace v1Assignment', text:validName,i1: i, c1:nonWhiteSpaceStart ,c2:c})
             everything.push({type: '= whiteSpace v1Assignment', text:'=',i1: i, c1:c})
             c++
             findV1Expression()
@@ -156,7 +157,7 @@ export default (content: string) => {
           //#whiteSpace ASSIGNMENT
           if (findOperators()) {
             // d(`${validName} assignment whiteSpace`)
-            everything.splice(everything.length - 2,0,{type: 'assignment whiteSpace', text:validName,i1: validNameLine, c1:nonWhiteSpaceStart ,c2:validNameEnd})
+            everything.splice(spliceStartIndex,0,{type: 'assignment whiteSpace', text:validName,i1: validNameLine, c1:nonWhiteSpaceStart ,c2:validNameEnd})
 
             if (!recurseBetweenExpression()) { findExpression() }
             if (i === lineWhereCanConcat) {
@@ -176,11 +177,11 @@ export default (content: string) => {
               if (validName.toLowerCase() === 'return') {
                 // can't be betweenExpression() because whiteSpace := takes priority
                 // everything.push({type: 'return', text:validName,i1: validNameLine, c1:nonWhiteSpaceStart ,c2:validNameEnd})
-                everything.splice(everything.length - 1,0,{type: 'return', text:validName,i1: validNameLine, c1:nonWhiteSpaceStart ,c2:validNameEnd})
+                everything.splice(spliceStartIndex,0,{type: 'return', text:validName,i1: validNameLine, c1:nonWhiteSpaceStart ,c2:validNameEnd})
                 findExpression()
               } else {
 
-                everything.splice(everything.length - 1,0,{type: 'command', text:validName,i1: validNameLine, c1:nonWhiteSpaceStart ,c2:validNameEnd})
+                everything.splice(spliceStartIndex,0,{type: 'command', text:validName,i1: validNameLine, c1:nonWhiteSpaceStart ,c2:validNameEnd})
                 const text = lines[validNameLine].slice(c, numberOfChars)
                 everything.push({type: 'command to EOL', text:text,i1: validNameLine, c1:c ,c2:numberOfChars})
               }
@@ -426,6 +427,8 @@ export default (content: string) => {
         //out of lines
         if (!skipThroughEmptyLines()) { break lineLoop }
 
+        const spliceStartIndex = everything.length
+
         //#v1 expression
         if (c < numberOfChars && lines[i][c] === '=') {
           everything.push({type: 'var at v1Assignment', text:validName,i1: i, c1:nonWhiteSpaceStart ,c2:c})
@@ -442,7 +445,7 @@ export default (content: string) => {
         //#ASSIGNMENT
         if (findOperators()) {
           // d(`${validName} assignment`)
-          everything.splice(everything.length - 1,0,{type: 'assignment', text:validName,i1: validNameLine, c1:nonWhiteSpaceStart ,c2:validNameEnd})
+          everything.splice(spliceStartIndex,0,{type: 'assignment', text:validName,i1: validNameLine, c1:nonWhiteSpaceStart ,c2:validNameEnd})
 
           if (!recurseBetweenExpression()) { findExpression() }
           if (i === lineWhereCanConcat) {
