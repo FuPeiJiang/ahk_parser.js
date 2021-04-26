@@ -1248,3 +1248,5 @@ it's the 3 after +
         recurseBetweenExpression()
         return true
       }
+
+ILLEGAL nonWhiteSpace ']' at findCommentsAndEndLine 45 line 178

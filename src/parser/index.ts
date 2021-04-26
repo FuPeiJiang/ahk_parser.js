@@ -1184,6 +1184,7 @@ export default (content: string) => {
         // d(') function', char())
         everything.push({type: ') function', text:')',i1: i, c1:c})
         c++
+        recurseBetweenExpression()
         return true
       }
       if (findArrayAccess()) {
