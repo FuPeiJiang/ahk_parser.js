@@ -1240,7 +1240,9 @@ export default (content: string) => {
           }
           break
         }
-        if (lines[i][c] !== ',') {
+        if (lines[i][c] === ',') {
+          everything.push({type: ', ARRAY', text:',',i1: i, c1:c})
+        } else {
           break
         }
         c++
