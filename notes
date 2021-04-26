@@ -1253,3 +1253,5 @@ ILLEGAL nonWhiteSpace ']' at findCommentsAndEndLine 45 line 178
 
 illegal function DEFINITION END 1 line 368
 'function definition with no param'
+
+illegal R c:9 line:837 startContinuation#765

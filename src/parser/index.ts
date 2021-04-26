@@ -348,8 +348,8 @@ export default (content: string) => {
             everything.push({type: ') function startOfLine', text:')',i1: i, c1:c})
 
             c++
-            everything.push({type: 'newline ) function startOfLine', text:'\n',i1: i, c1:c})
-            i++
+
+            findCommentsAndEndLine()
             continue lineLoop
           }
 
@@ -1602,23 +1602,26 @@ export default (content: string) => {
     let toReturn = true
     dummyLoop:
     while (true) {
+      skipThroughWhiteSpaces()
       if (c === numberOfChars) {
         break dummyLoop
       }
-      if (c < numberOfChars && !whiteSpaceObj[lines[i][c]]) {
+
+      if (lines[i][c] === ';' && whiteSpaceObj[lines[i][c - 1]]) {
+        const commentToEOL = lines[i].slice(c,numberOfChars)
+        // d(commentToEOL,'semiColonComment at findCommentsAndEndLine')
+        everything.push({type: 'semiColonComment at findCommentsAndEndLine', text:commentToEOL,i1: i, c1:c ,c2:numberOfChars})
+        break dummyLoop
+      }
+
+      if (!whiteSpaceObj[lines[i][c]]) {
         d(`ILLEGAL nonWhiteSpace '${lines[i][c]}' at findCommentsAndEndLine ${char()}`)
         // trace()
         // process.exit()
         toReturn = false; break dummyLoop
       }
-      while (c < numberOfChars) {
-        if (lines[i][c] === ';') {
-          d('semiColonComment at findCommentsAndEndLine', char())
-          break dummyLoop
-        }
-        c++
-      }
-      break dummyLoop
+
+      d('this isn\'t supposed to happen #445')
     }
     everything.push({type: 'newLine findCommentsAndEndLine', text:'\n',i1: i, c1:c})
     i++; return toReturn

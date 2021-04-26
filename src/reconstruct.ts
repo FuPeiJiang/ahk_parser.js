@@ -4,13 +4,13 @@ const d = console.debug.bind(console)
 
 
 const content: string =
-fs.readFileSync('tests2/function definition with no param.ahk')
+// fs.readFileSync('tests2/function definition with no param.ahk')
 // fs.readFileSync('tests2/method after assignment.ahk')
 // fs.readFileSync('tests2/ArrAccess startOfLine.ahk')
 // fs.readFileSync('tests2/method call.ahk')
 // fs.readFileSync('tests2/not not.ahk')
 // fs.readFileSync('tests2/v1 assignment.ahk')
-// fs.readFileSync('tests/ahk_explorer.ahk')
+fs.readFileSync('tests/ahk_explorer.ahk')
 // fs.readFileSync('tests/fixes/concat.ahk')
 // fs.readFileSync('tests/fixes/assignment.ahk')
 // fs.readFileSync('tests/fixes/obj in obj.ahk')
