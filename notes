@@ -1436,3 +1436,29 @@ tokens: v1Continuator
 to do:
   not every operator will continuation: ++ will not, well it isn't an operator..
 
+
+          // the whiteSpaces before do count, if there was something before
+a =
+(
+b
+) c
+"b c"
+a =
+(
+) c
+"c"
+
+so, it seems that it's a simple concat
+
+OMG: THIS IS LEGAL: AND TRUE
+var:="c"
+if var between
+(
+bat and k
+)
+p(123)
+
+        // inside continuation, whiteSpaces to the left do count
+
+to do:
+ test between

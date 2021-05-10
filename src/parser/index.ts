@@ -169,10 +169,9 @@ export default (content: string) => {
                   } else {
                     checkThese = true
                   }
-                  if (lines[i].slice(c, c + 3).toLowerCase() === 'between ') {
-                    everything.push({ type: 'legacyIf in{ws}', text: 'between ', i1: i, c1: c, c2: c + 3 })
-                    c += 2
-                    findV1Expression()
+                  if (lines[i].slice(c, c + 3).toLowerCase() === 'in ') {
+                    everything.push({ type: 'legacyIf in{ws}', text: 'in ', i1: i, c1: c, c2: c + 3 })
+                    c += 3
                     doubleComma = true
                   } else if (lines[i].slice(c, c + 8).toLowerCase() === 'between ') {
                     everything.push({ type: 'legacyIf between{ws}', text: 'between ', i1: i, c1: c, c2: c + 8 })
@@ -212,6 +211,7 @@ export default (content: string) => {
 
                 everything.splice(spliceStartIndex, 0, { type: 'legacyIf var', text: lines[validNameLine].slice(validNamestart, validNameEnd), i1: validNameLine, c1: validNamestart, c2: validNameEnd })
                 findV1Expression()
+                doubleComma = false
                 usingStartOfLineLoop = true
                 continue startOfLineLoop
               }
@@ -601,6 +601,51 @@ export default (content: string) => {
 
   return everything
 
+  function lookForAnd(which: string) {
+    let andText
+    if (lookingForAnd && (andText = lines[i].slice(c,c + 4)).toLowerCase() === 'and ') {
+      lookingForAnd = false
+      everything.push({ type: `legacyIf and{ws} ${which}`, text: andText, i1: i, c1: c, c2: c + 4 })
+      c += 4
+      return true
+    }
+  }
+  function doubleCommaV1Str(which: string) {
+    const text = lines[i].slice(v1ExpressionC1, cNotWhiteSpace)
+    everything.push({ type: `v1String ${which}`, text: text, i1: i, c1: v1ExpressionC1, c2: cNotWhiteSpace })
+  }
+  function endV1Str(which: string) {
+    const cEndOfV1Expression = cNotWhiteSpace + 1
+    const text = lines[i].slice(v1ExpressionC1, cEndOfV1Expression)
+    everything.push({ type: `v1String ${which}`, text: text, i1: i, c1: v1ExpressionC1, c2: cEndOfV1Expression })
+
+    const endingWhiteSpaces = lines[i].slice(cEndOfV1Expression, c)
+    // d('endingWhiteSpaces v1Expression', `\`${endingWhiteSpaces}\` ${endingWhiteSpaces.length}LENGTH`)
+    if (endingWhiteSpaces) {
+      everything.push({ type: `endingWhiteSpaces v1Expression ${which}`, text: endingWhiteSpaces, i1: i, c1: cEndOfV1Expression, c2: c })
+    }
+  }
+  function ifDoubleComma() {
+    if (doubleComma) {
+      if (lines[i][c] === ',') {
+        insideDoubleComma()
+        return true
+      }
+    }
+  }
+  function insideDoubleComma() {
+    if (lines[i][c + 1] === ',') {
+      everything.push({ type: ',, legacyIf var in', text: ',,', i1: i, c1: c, c2: c + 2 })
+      c += 2
+      findV1Expression()
+    } else {
+      trace()
+      everything.push({ type: ', legacyIf var in', text: ',', i1: i, c1: c })
+      c++
+      d(i)
+      findV1Expression()
+    }
+  }
   function ws() {
     d(`\`${lines[i].slice(nonWhiteSpaceStart, c)}\``)
   }
@@ -818,6 +863,38 @@ export default (content: string) => {
     //default return false
     return toReturn
   }
+  function findV1StrMid(which: string) {
+    // trace()
+    // process.exit()
+    if (lookForAnd(which)) {return true}
+
+    while (c < numberOfChars && !whiteSpaceObj[lines[i][c]]) {
+      cNotWhiteSpace = c
+
+      if (doubleComma) {
+        if (lines[i][c] === ',') {
+          doubleCommaV1Str(`${which} doubleComma`)
+          if (lines[i][c + 1] === ',') {
+            everything.push({ type: ',, legacyIf var in findV1Expression', text: ',,', i1: i, c1: c, c2: c + 2 })
+            c += 2
+          } else {
+            everything.push({ type: ', legacyIf var in findV1Expression', text: ',', i1: i, c1: c })
+            c++
+          }
+          v1ExpressionC1 = c, cNotWhiteSpace = c - 1
+          continue
+        }
+      }
+
+      if (findPercentVarV1Expression()) {
+        c++; v1ExpressionC1 = c; continue
+      }
+      c++
+    }
+    while (c < numberOfChars && whiteSpaceObj[lines[i][c]]) {
+      c++
+    }
+  }
   function findV1Expression() {
 
     skipThroughWhiteSpaces()
@@ -830,42 +907,28 @@ export default (content: string) => {
     }
 
     v1ExpressionC1 = c, cNotWhiteSpace = c - 1
-    while (c < numberOfChars) {
 
+    foundComment:
+    while (true) {
       if (lines[i][c] === ';') {
         if (whiteSpaceObj[lines[i][c - 1]]) {
+          break foundComment
+        }
+      }
+
+      while (c < numberOfChars) {
+
+        if (lines[i][c] === ';') {
           break
         }
-      }
 
-      let andText
-      if (lookingForAnd && (andText = lines[i].slice(c,c + 4)).toLowerCase() === 'and ') {
-        lookingForAnd = false
-        everything.push({ type: 'legacyIf and{ws} findV1Expression', text: andText, i1: i, c1: c, c2: c + 4 })
-        c += 4
-        return false
+        if (findV1StrMid('findV1Expression')) { return false }
       }
-      while (c < numberOfChars && !whiteSpaceObj[lines[i][c]]) {
-        cNotWhiteSpace = c
-        if (findPercentVarV1Expression()) {
-          c++; v1ExpressionC1 = c; continue
-        }
-        c++
-      }
-      // c++
-      while (c < numberOfChars && whiteSpaceObj[lines[i][c]]) {
-        c++
-      }
+      break
     }
-    const cEndOfV1Expression = cNotWhiteSpace + 1
-    const text = lines[i].slice(v1ExpressionC1, cEndOfV1Expression)
-    everything.push({ type: 'v1String findV1Expression', text: text, i1: i, c1: v1ExpressionC1, c2: cEndOfV1Expression })
 
-    const endingWhiteSpaces = lines[i].slice(cEndOfV1Expression, c)
-    // d('endingWhiteSpaces v1Expression', `\`${endingWhiteSpaces}\` ${endingWhiteSpaces.length}LENGTH`)
-    if (endingWhiteSpaces) {
-      everything.push({ type: 'endingWhiteSpaces v1Expression', text: endingWhiteSpaces, i1: i, c1: cEndOfV1Expression, c2: c })
-    }
+    endV1Str('findV1Expression')
+
 
     //now expect continuation
 
@@ -889,13 +952,14 @@ export default (content: string) => {
       everything.push({ type: '( resolveV1Continuation', text: '(', i1: i, c1: c })
       c++
       const text = lines[i].slice(c, numberOfChars)
-      everything.push({ type: '( resolveV1Continuation', text: text, i1: i, c1: c, c2: numberOfChars })
+      everything.push({ type: 'resolveV1Continuation to EOL', text: text, i1: i, c1: c, c2: numberOfChars })
 
       while (++i < howManyLines) {
         everything.push({ type: 'newline resolveV1Continuation', text: '\n', i1: i, c1: numberOfChars })
         c = 0, numberOfChars = lines[i].length
 
         const c1 = c
+        // inside continuation, whiteSpaces to the left do count
         while (c < numberOfChars && whiteSpaceObj[lines[i][c]]) {
           c++
         }
@@ -905,77 +969,19 @@ export default (content: string) => {
           if (whiteSpacesText) {
             everything.push({ type: 'whiteSpaces before ) resolveV1Continuation', text: whiteSpacesText, i1: i, c1: c1, c2: c })
           }
-
-          d(') resolveV1Continuation')
           everything.push({ type: ') resolveV1Continuation', text: ')', i1: i, c1: c })
-
           c++
 
-          let foundComment = false
-          v1ExpressionC1 = c, cNotWhiteSpace = c - 1
-          while (c < numberOfChars) {
-            if (lines[i][c] === ';') {
-              if (whiteSpaceObj[lines[i][c - 1]]) {
-                foundComment = true
-                break
-              }
-            } else if (findPercentVarV1Expression()) {
-              c++; v1ExpressionC1 = c; continue
-            }
-
-            if (!whiteSpaceObj[lines[i][c]]) {
-              cNotWhiteSpace = c
-            }
-            c++
-          }
-          const cEndOfV1Expression = cNotWhiteSpace + 1
-          const text = lines[i].slice(v1ExpressionC1, cEndOfV1Expression)
-          everything.push({ type: 'v1String resolveV1Continuation 1', text: text, i1: i, c1: v1ExpressionC1, c2: cEndOfV1Expression })
-
-          const endingWhiteSpaces = lines[i].slice(cEndOfV1Expression, c)
-          // d('endingWhiteSpaces v1Expression', `\`${endingWhiteSpaces}\` ${endingWhiteSpaces.length}LENGTH`)
-          if (endingWhiteSpaces) {
-            everything.push({ type: 'endingWhiteSpaces v1Expression', text: endingWhiteSpaces, i1: i, c1: cEndOfV1Expression, c2: c })
-          }
-
-          if (foundComment) {
-            const commentToEOL = lines[i].slice(c, numberOfChars)
-            d(commentToEOL, 'SemiColonComment findV1Expression')
-            everything.push({ type: 'SemiColonComment findV1Expression', text: commentToEOL, i1: i, c1: c, c2: numberOfChars })
-          }
-
-          // expect another one
-          everything.push({ type: 'newline after ) resolveV1Continuation', text: '\n', i1: i, c1: numberOfChars })
-          i++
-          if (i < howManyLines) {
-            c = 0, numberOfChars = lines[i].length
-          }
-          resolveV1Continuation()
+          findV1Expression()
 
           return true
         }
 
-        v1ExpressionC1 = 0, cNotWhiteSpace = -1
+        v1ExpressionC1 = c, cNotWhiteSpace = c - 1
         while (c < numberOfChars) {
-          if (findPercentVarV1Expression()) {
-            c++; v1ExpressionC1 = c; continue
-          }
-
-          if (!whiteSpaceObj[lines[i][c]]) {
-            cNotWhiteSpace = c
-          }
-          c++
+          if (findV1StrMid('resolveV1Continuation')) {return false}
         }
-        const cEndOfV1Expression = cNotWhiteSpace + 1
-        const text = lines[i].slice(v1ExpressionC1, cEndOfV1Expression)
-        everything.push({ type: 'v1String resolveV1Continuation 2', text: text, i1: i, c1: v1ExpressionC1, c2: cEndOfV1Expression })
-
-        const endingWhiteSpaces = lines[i].slice(cEndOfV1Expression, c)
-        // d('endingWhiteSpaces v1Expression', `\`${endingWhiteSpaces}\` ${endingWhiteSpaces.length}LENGTH`)
-        if (endingWhiteSpaces) {
-          everything.push({ type: 'endingWhiteSpaces v1Expression', text: endingWhiteSpaces, i1: i, c1: cEndOfV1Expression, c2: c })
-        }
-
+        endV1Str('resolveV1Continuation')
       }
 
       return true
@@ -986,8 +992,11 @@ export default (content: string) => {
       everything.push({ type: '2 v1Continuator', text: lines[i].slice(c, c + 2), i1: i, c1: c, c2: c + 2 })
       c += 2
     } else if (c < numberOfChars && v1Continuator[lines[i][c]]) {
+      if (ifDoubleComma()) {return false}
+
       everything.push({ type: '1 v1Continuator', text: lines[i][c], i1: i, c1: c })
       c++
+
     } else {
       return false
     }

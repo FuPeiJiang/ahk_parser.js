@@ -1,7 +1,7 @@
-if Var in exe   a
+if Var in exe ,a,,b, c
 ,,
 
 (
 bat,k
-),ok   
+) , ok   
 p(23)
