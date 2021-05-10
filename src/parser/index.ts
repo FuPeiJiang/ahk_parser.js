@@ -903,7 +903,6 @@ export default (content: string) => {
     }
   }
   function findV1Expression() {
-
     skipThroughWhiteSpaces()
 
     if (c < numberOfChars - 1 && lines[i].slice(c, c + 2) === '% ') {
@@ -912,6 +911,11 @@ export default (content: string) => {
       if (!recurseBetweenExpression()) { findExpression() }
       return false
     }
+
+    findV1ExpressionMid()
+    return true
+  }
+  function findV1ExpressionMid() {
 
     v1ExpressionC1 = c, cNotWhiteSpace = c - 1
 
@@ -940,8 +944,6 @@ export default (content: string) => {
     //now expect continuation
 
     resolveV1Continuation()
-
-    return true
   }
   function resolveV1Continuation() {
     if (!skipThroughEmptyLines()) {
@@ -979,7 +981,7 @@ export default (content: string) => {
           everything.push({ type: ') resolveV1Continuation', text: ')', i1: i, c1: c })
           c++
 
-          findV1Expression()
+          findV1ExpressionMid()
 
           return true
         }
