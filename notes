@@ -1371,3 +1371,18 @@ if var = v1Expr
 legacyIfOperators
 =, <>, !=, >, >=, <, <=
 in tokens.ts
+
+THIS IS VALID:
+var:=1
+str:="intege"
+if var is %str%r
+p(345)
+
+THIS TOO
+var:=1
+if var is % "integer"
+p(345)
+
+NO NEWLINE ALLOWED
+if var 
+is integer

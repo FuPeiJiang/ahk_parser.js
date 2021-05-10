@@ -157,9 +157,23 @@ export default (content: string) => {
                 skipValidChar()
 
                 const validNameEnd = c, validNameLine = i
-                skipThroughEmptyLines()
+
+                skipThroughWhiteSpaces()
                 findV1ExpressiondummyLoop:
                 while (true) {
+                  if (lines[i].slice(c, c + 3).toLowerCase() === 'is ') {
+                    everything.push({ type: 'legacyIf is{ws}', text: 'is ', i1: i, c1: c, c2: c + 3 })
+                    c += 3
+                    skipThroughWhiteSpaces()
+                    if (lines[i].slice(c, c + 4).toLowerCase() === 'not ') {
+                      everything.push({ type: 'legacyIf (is) not{ws}', text: 'not ', i1: i, c1: c, c2: c + 4 })
+                      c += 4
+                    }
+                    break findV1ExpressiondummyLoop
+                  }
+
+                  skipThroughEmptyLines()
+
                   if (c < numberOfChars - 1 && legacyIfOperators[lines[i].slice(c, c + 2)]) {
                     everything.push({ type: '2legacyIfOperators', text: lines[i].slice(c, c + 2), i1: i, c1: c, c2: c + 2 })
                     c += 2
@@ -169,6 +183,7 @@ export default (content: string) => {
                     c++
                     break findV1ExpressiondummyLoop
                   }
+                  break findV1ExpressiondummyLoop
                 }
 
                 everything.splice(spliceStartIndex, 0, { type: 'legacyIf var', text: lines[validNameLine].slice(validNamestart, validNameEnd), i1: validNameLine, c1: validNamestart, c2: validNameEnd })
