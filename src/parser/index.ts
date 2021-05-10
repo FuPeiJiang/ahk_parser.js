@@ -1684,9 +1684,6 @@ export default (content: string) => {
         //anything else, return found
         const text = textFromPosToCurrent([c1, i1])
         if (text) {
-          // if (i === 8) {
-          // trace()
-          // }
           everything.push({ type: 'emptyLines', text: text, i1: i1, c1: c1, i2: i, c2: c })
         }
         return true
@@ -1695,6 +1692,13 @@ export default (content: string) => {
       if (i < howManyLines) {
         c = 0, numberOfChars = lines[i].length
       } else {
+        // d(c)
+        i--
+        const text = textFromPosToCurrent([c1, i1])
+        if (text) {
+          everything.push({ type: 'emptyLines EOF', text: text, i1: i1, c1: c1, i2: i, c2: c })
+        }
+        i++
         return false
       }
     }
