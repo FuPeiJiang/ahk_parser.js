@@ -5,8 +5,8 @@ const d = console.debug.bind(console)
 
 const content: string =
 // fs.readFileSync('tests2/operator at v1Expr Newline.ahk')
-fs.readFileSync('tests2/if legacy in.ahk')
-// fs.readFileSync('tests2/if legacy between.ahk')
+// fs.readFileSync('tests2/if legacy in.ahk')
+fs.readFileSync('tests2/if legacy between.ahk')
 // fs.readFileSync('tests2/if nested.ahk')
 // fs.readFileSync('tests2/if.ahk')
 // fs.readFileSync('tests2/percentVar Expr.ahk')

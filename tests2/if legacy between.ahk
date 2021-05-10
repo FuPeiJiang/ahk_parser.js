@@ -5,5 +5,9 @@
 ; a=% "str"
 
 ; if var between % "and" and c
-if var between and and c
-if var not between and and c
+; if var between bbbb and c
+; if var not between aNd and c
+if var bEtween
+(
+bat aNd k
+)

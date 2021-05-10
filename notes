@@ -1462,3 +1462,20 @@ p(123)
 
 to do:
  test between
+
+remove ALL {ws}, instead, use whiteSpaceObj
+
+to do:
+  function CALL are O(slow) O(n^2) ??
+
+ILLEGAL:
+var=a
+(
+  b
+) % "3"
+
+ILLEGAL:
+var=a
+(
+  b
+) % "3"

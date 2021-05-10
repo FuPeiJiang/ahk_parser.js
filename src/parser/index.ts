@@ -169,16 +169,18 @@ export default (content: string) => {
                   } else {
                     checkThese = true
                   }
+
+                  let text, cPlusLen
                   if (lines[i].slice(c, c + 3).toLowerCase() === 'in ') {
                     everything.push({ type: 'legacyIf in{ws}', text: 'in ', i1: i, c1: c, c2: c + 3 })
                     c += 3
                     doubleComma = true
-                  } else if (lines[i].slice(c, c + 8).toLowerCase() === 'between ') {
-                    everything.push({ type: 'legacyIf between{ws}', text: 'between ', i1: i, c1: c, c2: c + 8 })
-                    c += 8
-                    skipThroughWhiteSpaces()
+                  } else if ((text = lines[i].slice(c, cPlusLen = c + 7)).toLowerCase() === 'between' && (cPlusLen === numberOfChars || whiteSpaceObj[lines[i][cPlusLen]])) {
+                    everything.push({ type: 'legacyIf between{ws}', text: text, i1: i, c1: c, c2: cPlusLen })
+                    c += 7
                     lookingForAnd = true
-                    findV1Expression()
+                    // skipThroughWhiteSpaces()
+                    // findV1Expression()
                     break findV1ExpressiondummyLoop
                   }
 
@@ -602,15 +604,19 @@ export default (content: string) => {
   return everything
 
   function lookForAnd(which: string) {
-    let andText
-    if (lookingForAnd && (andText = lines[i].slice(c,c + 4)).toLowerCase() === 'and ') {
-      lookingForAnd = false
-      everything.push({ type: `legacyIf and{ws} ${which}`, text: andText, i1: i, c1: c, c2: c + 4 })
-      c += 4
-      return true
+    if (lookingForAnd) {
+      let text, cPlusLen, wsText
+      if ((text = lines[i].slice(c, cPlusLen = c + 3)).toLowerCase() === 'and' && (cPlusLen === numberOfChars || whiteSpaceObj[wsText = lines[i][cPlusLen]])) {
+        lookingForAnd = false
+        endV1Str(which)
+        everything.push({ type: `legacyIf and{ws} ${which}`, text: `${text}${wsText || ''}`, i1: i, c1: c, c2: cPlusLen })
+        c += 4
+        v1ExpressionC1 = c, cNotWhiteSpace = c - 1
+        return true
+      }
     }
   }
-  function doubleCommaV1Str(which: string) {
+  function beforeCommaV1Str(which: string) {
     const text = lines[i].slice(v1ExpressionC1, cNotWhiteSpace)
     everything.push({ type: `v1String ${which}`, text: text, i1: i, c1: v1ExpressionC1, c2: cNotWhiteSpace })
   }
@@ -864,16 +870,17 @@ export default (content: string) => {
     return toReturn
   }
   function findV1StrMid(which: string) {
-    // trace()
-    // process.exit()
-    if (lookForAnd(which)) {return true}
+    if (lookForAnd(which)) {
+      findV1StrMid(which)
+      return false
+    }
 
     while (c < numberOfChars && !whiteSpaceObj[lines[i][c]]) {
       cNotWhiteSpace = c
 
       if (doubleComma) {
         if (lines[i][c] === ',') {
-          doubleCommaV1Str(`${which} doubleComma`)
+          beforeCommaV1Str(`${which} beforeComma`)
           if (lines[i][c + 1] === ',') {
             everything.push({ type: ',, legacyIf var in findV1Expression', text: ',,', i1: i, c1: c, c2: c + 2 })
             c += 2
@@ -922,7 +929,7 @@ export default (content: string) => {
           break
         }
 
-        if (findV1StrMid('findV1Expression')) { return false }
+        findV1StrMid('findV1Expression')
       }
       break
     }
@@ -979,7 +986,7 @@ export default (content: string) => {
 
         v1ExpressionC1 = c, cNotWhiteSpace = c - 1
         while (c < numberOfChars) {
-          if (findV1StrMid('resolveV1Continuation')) {return false}
+          findV1StrMid('resolveV1Continuation')
         }
         endV1Str('resolveV1Continuation')
       }
@@ -1341,7 +1348,7 @@ export default (content: string) => {
         // d(`${validName} idkVariable ${char()}`)
         if (lookingForAnd && validName.toLowerCase() === 'and') {
           lookingForAnd = false
-          everything.push({ type: 'legacyIf and{ws}', text: `${validName} `, i1: i, c1: nonWhiteSpaceStart, c2: c + 1 })
+          everything.push({ type: 'legacyIf and{ws} findExpression', text: `${validName} `, i1: i, c1: nonWhiteSpaceStart, c2: c + 1 })
           c++
           return false
         } else {
