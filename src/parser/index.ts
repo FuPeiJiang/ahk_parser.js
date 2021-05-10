@@ -162,36 +162,34 @@ export default (content: string) => {
                 findV1ExpressiondummyLoop:
                 while (true) {
                   let checkThese = false
-                  if (lines[i].slice(c, c + 4).toLowerCase() === 'not ') {
-                    everything.push({ type: 'legacyIf not{ws}', text: 'not ', i1: i, c1: c, c2: c + 4 })
-                    c += 4
+                  let text, cPlusLen
+                  if ((text = lines[i].slice(c, cPlusLen = c + 3)).toLowerCase() === 'not' && (cPlusLen === numberOfChars || whiteSpaceObj[lines[i][cPlusLen]])) {
+                    everything.push({ type: 'legacyIf not', text: text, i1: i, c1: c, c2: cPlusLen })
+                    c += 3
                     skipThroughWhiteSpaces()
                   } else {
                     checkThese = true
                   }
 
-                  let text, cPlusLen
-                  if (lines[i].slice(c, c + 3).toLowerCase() === 'in ') {
-                    everything.push({ type: 'legacyIf in{ws}', text: 'in ', i1: i, c1: c, c2: c + 3 })
-                    c += 3
+                  if ((text = lines[i].slice(c, cPlusLen = c + 2)).toLowerCase() === 'in' && (cPlusLen === numberOfChars || whiteSpaceObj[lines[i][cPlusLen]])) {
+                    everything.push({ type: 'legacyIf in', text: text, i1: i, c1: c, c2: cPlusLen })
+                    c += 2
                     doubleComma = true
                   } else if ((text = lines[i].slice(c, cPlusLen = c + 7)).toLowerCase() === 'between' && (cPlusLen === numberOfChars || whiteSpaceObj[lines[i][cPlusLen]])) {
-                    everything.push({ type: 'legacyIf between{ws}', text: text, i1: i, c1: c, c2: cPlusLen })
+                    everything.push({ type: 'legacyIf between', text: text, i1: i, c1: c, c2: cPlusLen })
                     c += 7
                     lookingForAnd = true
-                    // skipThroughWhiteSpaces()
-                    // findV1Expression()
                     break findV1ExpressiondummyLoop
                   }
 
                   if (checkThese) {
-                    if (lines[i].slice(c, c + 3).toLowerCase() === 'is ') {
-                      everything.push({ type: 'legacyIf is{ws}', text: 'is ', i1: i, c1: c, c2: c + 3 })
-                      c += 3
+                    if ((text = lines[i].slice(c, cPlusLen = c + 2)).toLowerCase() === 'is' && (cPlusLen === numberOfChars || whiteSpaceObj[lines[i][cPlusLen]])) {
+                      everything.push({ type: 'legacyIf is', text: text, i1: i, c1: c, c2: cPlusLen })
+                      c += 2
                       skipThroughWhiteSpaces()
-                      if (lines[i].slice(c, c + 4).toLowerCase() === 'not ') {
-                        everything.push({ type: 'legacyIf (is) not{ws}', text: 'not ', i1: i, c1: c, c2: c + 4 })
-                        c += 4
+                      if ((text = lines[i].slice(c, cPlusLen = c + 3)).toLowerCase() === 'not' && (cPlusLen === numberOfChars || whiteSpaceObj[lines[i][cPlusLen]])) {
+                        everything.push({ type: 'legacyIf (is) not', text: text, i1: i, c1: c, c2: cPlusLen })
+                        c += 3
                       }
                       break findV1ExpressiondummyLoop
                     }
