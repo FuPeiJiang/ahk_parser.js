@@ -843,8 +843,7 @@ export default (content: string) => {
     }
     const cEndOfV1Expression = cNotWhiteSpace + 1
     const text = lines[i].slice(v1ExpressionC1, cEndOfV1Expression)
-    // d(text, 'v1String')
-    everything.push({ type: 'v1String', text: text, i1: i, c1: v1ExpressionC1, c2: cEndOfV1Expression })
+    everything.push({ type: 'v1String findV1Expression', text: text, i1: i, c1: v1ExpressionC1, c2: cEndOfV1Expression })
 
     const endingWhiteSpaces = lines[i].slice(cEndOfV1Expression, c)
     // d('endingWhiteSpaces v1Expression', `\`${endingWhiteSpaces}\` ${endingWhiteSpaces.length}LENGTH`)
@@ -921,8 +920,7 @@ export default (content: string) => {
           }
           const cEndOfV1Expression = cNotWhiteSpace + 1
           const text = lines[i].slice(v1ExpressionC1, cEndOfV1Expression)
-          // d(text, 'v1String')
-          everything.push({ type: 'v1String', text: text, i1: i, c1: v1ExpressionC1, c2: cEndOfV1Expression })
+          everything.push({ type: 'v1String resolveV1Continuation 1', text: text, i1: i, c1: v1ExpressionC1, c2: cEndOfV1Expression })
 
           const endingWhiteSpaces = lines[i].slice(cEndOfV1Expression, c)
           // d('endingWhiteSpaces v1Expression', `\`${endingWhiteSpaces}\` ${endingWhiteSpaces.length}LENGTH`)
@@ -960,8 +958,7 @@ export default (content: string) => {
         }
         const cEndOfV1Expression = cNotWhiteSpace + 1
         const text = lines[i].slice(v1ExpressionC1, cEndOfV1Expression)
-        // d(text, 'v1String')
-        everything.push({ type: 'v1String', text: text, i1: i, c1: v1ExpressionC1, c2: cEndOfV1Expression })
+        everything.push({ type: 'v1String resolveV1Continuation 2', text: text, i1: i, c1: v1ExpressionC1, c2: cEndOfV1Expression })
 
         const endingWhiteSpaces = lines[i].slice(cEndOfV1Expression, c)
         // d('endingWhiteSpaces v1Expression', `\`${endingWhiteSpaces}\` ${endingWhiteSpaces.length}LENGTH`)
@@ -1749,8 +1746,7 @@ export default (content: string) => {
       } else {
         const cEndOfV1Expression = cNotWhiteSpace + 1
         const text = lines[i].slice(v1ExpressionC1, cEndOfV1Expression)
-        // d(text, 'v1String')
-        everything.push({ type: 'v1String', text: text, i1: i, c1: v1ExpressionC1, c2: cEndOfV1Expression })
+        everything.push({ type: 'v1String findPercentVarV1Expression', text: text, i1: i, c1: v1ExpressionC1, c2: cEndOfV1Expression })
 
 
         everything.push({ type: '%START %Var%', text: '%', i1: i, c1: c })
