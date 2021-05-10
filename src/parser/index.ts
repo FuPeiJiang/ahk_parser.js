@@ -824,22 +824,33 @@ export default (content: string) => {
       return false
     }
 
-    let foundComment = false
     v1ExpressionC1 = c, cNotWhiteSpace = c - 1
     while (c < numberOfChars) {
+
       if (lines[i][c] === ';') {
         if (whiteSpaceObj[lines[i][c - 1]]) {
-          foundComment = true
           break
         }
-      } else if (findPercentVarV1Expression()) {
-        c++; v1ExpressionC1 = c; continue
       }
 
-      if (!whiteSpaceObj[lines[i][c]]) {
-        cNotWhiteSpace = c
+      let andText
+      if (lookingForAnd && (andText = lines[i].slice(c,c + 4)).toLowerCase() === 'and ') {
+        lookingForAnd = false
+        everything.push({ type: 'legacyIf and{ws} findV1Expression', text: andText, i1: i, c1: c, c2: c + 4 })
+        c += 4
+        return false
       }
-      c++
+      while (c < numberOfChars && !whiteSpaceObj[lines[i][c]]) {
+        cNotWhiteSpace = c
+        if (findPercentVarV1Expression()) {
+          c++; v1ExpressionC1 = c; continue
+        }
+        c++
+      }
+      // c++
+      while (c < numberOfChars && whiteSpaceObj[lines[i][c]]) {
+        c++
+      }
     }
     const cEndOfV1Expression = cNotWhiteSpace + 1
     const text = lines[i].slice(v1ExpressionC1, cEndOfV1Expression)
@@ -849,12 +860,6 @@ export default (content: string) => {
     // d('endingWhiteSpaces v1Expression', `\`${endingWhiteSpaces}\` ${endingWhiteSpaces.length}LENGTH`)
     if (endingWhiteSpaces) {
       everything.push({ type: 'endingWhiteSpaces v1Expression', text: endingWhiteSpaces, i1: i, c1: cEndOfV1Expression, c2: c })
-    }
-
-    if (foundComment) {
-      const commentToEOL = lines[i].slice(c, numberOfChars)
-      d(commentToEOL, 'SemiColonComment findV1Expression')
-      everything.push({ type: 'SemiColonComment findV1Expression', text: commentToEOL, i1: i, c1: c, c2: numberOfChars })
     }
 
     //now expect continuation
@@ -1313,6 +1318,7 @@ export default (content: string) => {
       if (isNaN(Number(validName))) {
         // d(`${validName} idkVariable ${char()}`)
         if (lookingForAnd && validName.toLowerCase() === 'and') {
+          lookingForAnd = false
           everything.push({ type: 'legacyIf and{ws}', text: `${validName} `, i1: i, c1: nonWhiteSpaceStart, c2: c + 1 })
           c++
           return false
@@ -1733,8 +1739,6 @@ export default (content: string) => {
 
       if (!whiteSpaceObj[lines[i][c]]) {
         d(`ILLEGAL nonWhiteSpace '${lines[i][c]}' at findCommentsAndEndLine ${char()}`)
-        // trace()
-        // process.exit()
         toReturn = false; break dummyLoop
       }
 
@@ -1748,7 +1752,7 @@ export default (content: string) => {
       if (lines[i][c - 1] === '`') {
         d('literal % in findV1Expression')
       } else {
-        const cEndOfV1Expression = cNotWhiteSpace + 1
+        const cEndOfV1Expression = cNotWhiteSpace
         const text = lines[i].slice(v1ExpressionC1, cEndOfV1Expression)
         everything.push({ type: 'v1String findPercentVarV1Expression', text: text, i1: i, c1: v1ExpressionC1, c2: cEndOfV1Expression })
 
