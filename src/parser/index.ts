@@ -129,6 +129,27 @@ export default (content: string) => {
               // d(validName, 'whiteSpace DIRECTIVE', char())
             } else if (idkType === 2) {
               // d(validName, 'if statement', char())
+              c++
+              everything.push({ type: 'if ', text: 'if ', i1: i, c1: nonWhiteSpaceStart, c2: c })
+              skipThroughWhiteSpaces()
+              if (lines[i][c] === '(') {
+                everything.push({ type: '( if', text: '(', i1: i, c1: c })
+                c++
+                if (!recurseBetweenExpression()) { findExpression() }
+                // d(') group', char())
+                everything.push({ type: ') if', text: ')', i1: i, c1: c })
+                c++
+                skipThroughEmptyLines()
+                if (lines[i][c] === '{') {
+                  everything.push({ type: '} if', text: '{', i1: i, c1: c })
+                  c++
+                }
+                usingStartOfLineLoop = true
+                continue startOfLineLoop
+              }
+
+              i++
+              continue lineLoop
             } else if (idkType === 3) {
               d(validName, 'global local or static', char())
             }

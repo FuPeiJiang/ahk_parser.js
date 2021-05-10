@@ -1312,3 +1312,56 @@ a:=(b=1) ? 2 :  1
 ternary colon:
 recurseBetweenExpression()
 if (i === howManyLines) {return false}
+
+if statement:
+
+"if "
+can only be followed by space, no comma.
+
+if, (true) {
+  p(234)
+}
+this would be a command, but one that doesn't exist.
+
+https://www.autohotkey.com/docs/commands/IfExpression.htm
+
+An If statement that contains an expression is usually differentiated from a traditional If statement such as 
+if FoundColor != Blue by enclosing the expression in parentheses, as in if (FoundColor != "Blue"). However, this is not strictly required
+
+In particular, the following are also common ways of writing an If (expression):
+
+Starting with an open parenthesis but not fully enclosing the expression: if (x > 0) and (y > 0)
+Starting with a function call: if InStr(a, b)
+Starting with an operator such as not or !: if !MyVar
+
+https://www.autohotkey.com/docs/Language.htm#if-statement
+If Var op Value, where op is one of the following operators: =, <>, !=, >, >=, <, <=.
+If Var [not] between Lower and Upper
+If Var [not] in/contains MatchList
+If Var is [not] Type
+Any If statement which does not match one of the usages shown above is interpreted as If (expression).
+
+These are some common points of confusion related to legacy If statements:
+
+Variable names must be enclosed in percent signs only on the right-hand side of the operator.
+between, in, contains and is are only valid in this context; they cannot be used in expressions.
+Multiple conditions cannot be written on the same line (such as with the and operator).
+None of the parameters are expressions.
+
+
+if
+skipThroughWhiteSpaces
+  (
+  var?
+    op ?
+    not ?
+    value (v1 expr)
+
+if () skipThroughEmptyLines
+if { , else normal command (startOfLineLoop)
+
+if (true) 
+{p(345345)
+}
+
+but also startOfLineLoop EVEN IF found {
