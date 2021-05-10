@@ -1479,3 +1479,7 @@ var=a
 (
   b
 ) % "3"
+
+THIS IS LEGAL:
+if Var in % "a,b"
+
