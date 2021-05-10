@@ -1394,3 +1394,45 @@ this too...
 a=% +="ok"
 
 global lookingForAnd = false
+
+illegal:
+if Var in exe   ,% popo,ok   
+
+LEGAL:
+oof:="ba"
+var:="bat"
+if Var in exe   ,%oof%t,ok   
+p(23)
+
+LEGAL & both true:
+; var:="exe   a,bat"
+var:="k"
+if Var in exe   a
+,,
+
+(
+bat,k
+),ok   
+
+this is legal
+a=b
+;fwefe
+
+,
+!
+/
+
+?
+? :  a
+<<=
+d(a)
+; these will not: and, not, :
+; ? : is illegal
+; ? : a LEGAL
+; produces "b, ! / ? ? :  a <<=" somehow whiteSpaces were added, but not before comma(,)
+
+tokens: v1Continuator
+
+to do:
+  not every operator will continuation: ++ will not, well it isn't an operator..
+

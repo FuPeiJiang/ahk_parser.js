@@ -1,5 +1,5 @@
 import { trace } from 'console'
-import { whiteSpaceObj, variableCharsObj, operatorsObj, legacyIfOperators, typeOfValidVarName, whiteSpaceOverrideAssign, propCharsObj } from './tokens'
+import { whiteSpaceObj, variableCharsObj, operatorsObj, legacyIfOperators, v1Continuator, typeOfValidVarName, whiteSpaceOverrideAssign, propCharsObj } from './tokens'
 const d = console.debug.bind(console)
 
 export default (content: string) => {
@@ -14,7 +14,7 @@ export default (content: string) => {
   const toFile = ''
   const rangeAndReplaceTextArr: [[[number, number], [number, number]], string][] = []
 
-  let i = 0, c = 0, numberOfChars = 0, validName = '', strStartLine: number, strStartPos: number, insideContinuation = false, beforeConcat: number, nonWhiteSpaceStart: number, exprFoundLine = -1, colonDeep = 0, usingStartOfLineLoop = false, variadicAsterisk = false, lineWhereCanConcat = -1, v1ExpressionC1: number, cNotWhiteSpace: number, percentVarStart: number, propertyC1: number, lookingForAnd = false
+  let i = 0, c = 0, numberOfChars = 0, validName = '', strStartLine: number, strStartPos: number, insideContinuation = false, beforeConcat: number, nonWhiteSpaceStart: number, exprFoundLine = -1, colonDeep = 0, usingStartOfLineLoop = false, variadicAsterisk = false, lineWhereCanConcat = -1, v1ExpressionC1: number, cNotWhiteSpace: number, percentVarStart: number, propertyC1: number, lookingForAnd = false, doubleComma = false
   let everythingPushCounter: number; everythingPushCounter = 0
   lineLoop:
   while (i < howManyLines) {
@@ -169,7 +169,12 @@ export default (content: string) => {
                   } else {
                     checkThese = true
                   }
-                  if (lines[i].slice(c, c + 8).toLowerCase() === 'between ') {
+                  if (lines[i].slice(c, c + 3).toLowerCase() === 'between ') {
+                    everything.push({ type: 'legacyIf in{ws}', text: 'between ', i1: i, c1: c, c2: c + 3 })
+                    c += 2
+                    findV1Expression()
+                    doubleComma = true
+                  } else if (lines[i].slice(c, c + 8).toLowerCase() === 'between ') {
                     everything.push({ type: 'legacyIf between{ws}', text: 'between ', i1: i, c1: c, c2: c + 8 })
                     c += 8
                     skipThroughWhiteSpaces()
@@ -973,13 +978,21 @@ export default (content: string) => {
 
       }
 
-
       return true
+    } else if (c < numberOfChars - 2 && v1Continuator[lines[i].slice(c, c + 3)]) {
+      everything.push({ type: '3 v1Continuator', text: lines[i].slice(c, c + 3), i1: i, c1: c, c2: c + 3 })
+      c += 3
+    } else if (c < numberOfChars - 1 && v1Continuator[lines[i].slice(c, c + 2)]) {
+      everything.push({ type: '2 v1Continuator', text: lines[i].slice(c, c + 2), i1: i, c1: c, c2: c + 2 })
+      c += 2
+    } else if (c < numberOfChars && v1Continuator[lines[i][c]]) {
+      everything.push({ type: '1 v1Continuator', text: lines[i][c], i1: i, c1: c })
+      c++
     } else {
-
-
       return false
     }
+    findV1Expression()
+    return false
 
 
   }
