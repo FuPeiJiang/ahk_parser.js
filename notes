@@ -1386,3 +1386,11 @@ p(345)
 NO NEWLINE ALLOWED
 if var 
 is integer
+
+omg this is legal, I'm saved
+a=% "ok"
+p(a)
+this too...
+a=% +="ok"
+
+global lookingForAnd = false

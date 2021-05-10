@@ -14,7 +14,7 @@ export default (content: string) => {
   const toFile = ''
   const rangeAndReplaceTextArr: [[[number, number], [number, number]], string][] = []
 
-  let i = 0, c = 0, numberOfChars = 0, validName = '', strStartLine: number, strStartPos: number, insideContinuation = false, beforeConcat: number, nonWhiteSpaceStart: number, exprFoundLine = -1, colonDeep = 0, usingStartOfLineLoop = false, variadicAsterisk = false, lineWhereCanConcat = -1, v1ExpressionC1: number, cNotWhiteSpace: number, percentVarStart: number, propertyC1: number
+  let i = 0, c = 0, numberOfChars = 0, validName = '', strStartLine: number, strStartPos: number, insideContinuation = false, beforeConcat: number, nonWhiteSpaceStart: number, exprFoundLine = -1, colonDeep = 0, usingStartOfLineLoop = false, variadicAsterisk = false, lineWhereCanConcat = -1, v1ExpressionC1: number, cNotWhiteSpace: number, percentVarStart: number, propertyC1: number, lookingForAnd = false
   let everythingPushCounter: number; everythingPushCounter = 0
   lineLoop:
   while (i < howManyLines) {
@@ -161,15 +161,34 @@ export default (content: string) => {
                 skipThroughWhiteSpaces()
                 findV1ExpressiondummyLoop:
                 while (true) {
-                  if (lines[i].slice(c, c + 3).toLowerCase() === 'is ') {
-                    everything.push({ type: 'legacyIf is{ws}', text: 'is ', i1: i, c1: c, c2: c + 3 })
-                    c += 3
+                  let checkThese = false
+                  if (lines[i].slice(c, c + 4).toLowerCase() === 'not ') {
+                    everything.push({ type: 'legacyIf not{ws}', text: 'not ', i1: i, c1: c, c2: c + 4 })
+                    c += 4
                     skipThroughWhiteSpaces()
-                    if (lines[i].slice(c, c + 4).toLowerCase() === 'not ') {
-                      everything.push({ type: 'legacyIf (is) not{ws}', text: 'not ', i1: i, c1: c, c2: c + 4 })
-                      c += 4
-                    }
+                  } else {
+                    checkThese = true
+                  }
+                  if (lines[i].slice(c, c + 8).toLowerCase() === 'between ') {
+                    everything.push({ type: 'legacyIf between{ws}', text: 'between ', i1: i, c1: c, c2: c + 8 })
+                    c += 8
+                    skipThroughWhiteSpaces()
+                    lookingForAnd = true
+                    findV1Expression()
                     break findV1ExpressiondummyLoop
+                  }
+
+                  if (checkThese) {
+                    if (lines[i].slice(c, c + 3).toLowerCase() === 'is ') {
+                      everything.push({ type: 'legacyIf is{ws}', text: 'is ', i1: i, c1: c, c2: c + 3 })
+                      c += 3
+                      skipThroughWhiteSpaces()
+                      if (lines[i].slice(c, c + 4).toLowerCase() === 'not ') {
+                        everything.push({ type: 'legacyIf (is) not{ws}', text: 'not ', i1: i, c1: c, c2: c + 4 })
+                        c += 4
+                      }
+                      break findV1ExpressiondummyLoop
+                    }
                   }
 
                   skipThroughEmptyLines()
@@ -797,6 +816,14 @@ export default (content: string) => {
   function findV1Expression() {
 
     skipThroughWhiteSpaces()
+
+    if (c < numberOfChars - 1 && lines[i].slice(c, c + 2) === '% ') {
+      everything.push({ type: '% v1->v2 expr', text: '% ', i1: i, c1: c, c2: c + 2 })
+      c += 2
+      if (!recurseBetweenExpression()) { findExpression() }
+      return false
+    }
+
     let foundComment = false
     v1ExpressionC1 = c, cNotWhiteSpace = c - 1
     while (c < numberOfChars) {
@@ -958,9 +985,14 @@ export default (content: string) => {
   function findOperators() {
     //#VARIABLE ASSIGNMENT
     let toReturn = true
-    if (c < numberOfChars - 2 && operatorsObj[lines[i].slice(c, c + 3).toLowerCase()]) {
+    let text, lowerText
+    if (c < numberOfChars - 2 && operatorsObj[lowerText = (text = lines[i].slice(c, c + 3)).toLowerCase()]) {
       // d(lines[i].slice(c, c + 3), '3operator', char())
-      everything.push({ type: '3operator', text: lines[i].slice(c, c + 3), i1: i, c1: c, c2: c + 3 })
+      if (lookingForAnd && lowerText === 'and') {
+        return false
+      } else {
+        everything.push({ type: '3operator', text: text, i1: i, c1: c, c2: c + 3 })
+      }
       c += 3
     } else if (c < numberOfChars - 1 && operatorsObj[lines[i].slice(c, c + 2).toLowerCase()]) {
       // d(lines[i].slice(c, c + 2), '2operator', char())
@@ -1283,7 +1315,13 @@ export default (content: string) => {
 
       if (isNaN(Number(validName))) {
         // d(`${validName} idkVariable ${char()}`)
-        everything.push({ type: 'idkVariable', text: validName, i1: i, c1: nonWhiteSpaceStart, c2: c })
+        if (lookingForAnd && validName.toLowerCase() === 'and') {
+          everything.push({ type: 'legacyIf and{ws}', text: `${validName} `, i1: i, c1: nonWhiteSpaceStart, c2: c + 1 })
+          c++
+          return false
+        } else {
+          everything.push({ type: 'idkVariable', text: validName, i1: i, c1: nonWhiteSpaceStart, c2: c })
+        }
       } else {
         // d(`${validName} Integer ${char()}`)
         everything.push({ type: 'Integer', text: validName, i1: i, c1: nonWhiteSpaceStart, c2: c })
