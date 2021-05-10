@@ -4,7 +4,8 @@ const d = console.debug.bind(console)
 
 
 const content: string =
-fs.readFileSync('tests2/if.ahk')
+fs.readFileSync('tests2/if nested.ahk')
+// fs.readFileSync('tests2/if.ahk')
 // fs.readFileSync('tests2/percentVar Expr.ahk')
 // fs.readFileSync('tests2/ternary colon.ahk')
 // fs.readFileSync('tests2/labels.ahk')

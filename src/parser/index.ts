@@ -141,8 +141,12 @@ export default (content: string) => {
                 c++
                 skipThroughEmptyLines()
                 if (lines[i][c] === '{') {
-                  everything.push({ type: '} if', text: '{', i1: i, c1: c })
+                  everything.push({ type: '{ if', text: '{', i1: i, c1: c })
+                  // d(lines[i][c])
+
                   c++
+                  skipThroughWhiteSpaces()
+                  // d(numberOfChars, lines[i].length)
                 }
                 usingStartOfLineLoop = true
                 continue startOfLineLoop
