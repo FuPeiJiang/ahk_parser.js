@@ -1,5 +1,5 @@
 import { trace } from 'console'
-import { whiteSpaceObj, variableCharsObj, operatorsObj, typeOfValidVarName, whiteSpaceOverrideAssign, propCharsObj } from './tokens'
+import { whiteSpaceObj, variableCharsObj, operatorsObj, legacyIfOperators, typeOfValidVarName, whiteSpaceOverrideAssign, propCharsObj } from './tokens'
 const d = console.debug.bind(console)
 
 export default (content: string) => {
@@ -148,6 +148,31 @@ export default (content: string) => {
                   skipThroughWhiteSpaces()
                   // d(numberOfChars, lines[i].length)
                 }
+                usingStartOfLineLoop = true
+                continue startOfLineLoop
+              } else if (variableCharsObj[lines[i][c]]) {
+                const validNamestart = c, spliceStartIndex = everything.length
+
+                c++
+                skipValidChar()
+
+                const validNameEnd = c, validNameLine = i
+                skipThroughEmptyLines()
+                findV1ExpressiondummyLoop:
+                while (true) {
+                  if (c < numberOfChars - 1 && legacyIfOperators[lines[i].slice(c, c + 2)]) {
+                    everything.push({ type: '2legacyIfOperators', text: lines[i].slice(c, c + 2), i1: i, c1: c, c2: c + 2 })
+                    c += 2
+                    break findV1ExpressiondummyLoop
+                  } else if (c < numberOfChars && legacyIfOperators[lines[i][c]]) {
+                    everything.push({ type: '1legacyIfOperators', text: lines[i][c], i1: i, c1: c })
+                    c++
+                    break findV1ExpressiondummyLoop
+                  }
+                }
+
+                everything.splice(spliceStartIndex, 0, { type: 'legacyIf var', text: lines[validNameLine].slice(validNamestart, validNameEnd), i1: validNameLine, c1: validNamestart, c2: validNameEnd })
+                findV1Expression()
                 usingStartOfLineLoop = true
                 continue startOfLineLoop
               }

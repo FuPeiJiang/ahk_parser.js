@@ -1365,3 +1365,9 @@ if (true)
 }
 
 but also startOfLineLoop EVEN IF found {
+
+if var = v1Expr
+
+legacyIfOperators
+=, <>, !=, >, >=, <, <=
+in tokens.ts
