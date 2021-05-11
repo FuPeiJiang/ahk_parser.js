@@ -1640,3 +1640,82 @@ I need to note down
 skipCommaAssignment(), LOL, just write functions
 
 infinite for
+
+return Expr
+return, Expr
+return
+, Expr
+, ok()
+all work
+
+skip, if comma.
+if same line: find
+else: staroflineLoop
+
+if statement:
+  skipThroughEmptyLines
+  if whiteSpace + SameLine:
+    if comma:
+      c++
+    find V1 OR find V2
+  else:
+    if comma:
+      c++
+      //ONLY if comma
+      find V1 OR find V2
+    
+
+if statement:
+  skipThroughEmptyLines
+  if comma:
+    commaFound
+    c++
+  if whiteSpace + SameLine:
+    if !commaFound:
+      look assignmentOperators
+    find V1 OR find V2
+  else if (commaFound)
+    find V1 OR find V2
+
+if statement:
+
+  saveLine
+
+  skipThroughEmptyLines
+  if comma:
+    c++
+    find V1 OR find V2
+    startOfLineLoop
+  else if sameLine && whiteSpace :
+
+    BUT `msgbox ;` isn't a command. well, it IS. It's v1Str's job to see that it's a comment
+      a= b ; comment
+
+    look assignmentOperators
+    find V1 OR find V2
+
+
+
+skipThroughEmptyLines
+if statement:
+  if comma:
+    c++
+    find V1 OR find V2
+    startOfLineLoop
+  else if sameLine && whiteSpace :
+
+    //if #directive
+    if (idkType===1)
+    else ('if')
+    else if recurseBetweenExpression()
+    //if global local or static{ws}
+    else if (idkType === 3)
+      global
+    else ('return')
+    else
+      find V1 OR find V2
+if sameLine && ':'
+  label
+
+how do I ?
+find V1 OR find V2
