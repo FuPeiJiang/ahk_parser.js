@@ -19,7 +19,7 @@ export default (content: string) => {
 
   let i = 0, c = 0, numberOfChars = 0, validName = '', strStartLine: number, strStartPos: number, insideContinuation = false, beforeConcat: number, nonWhiteSpaceStart: number, exprFoundLine = -1, colonDeep = 0, usingStartOfLineLoop = false, variadicAsterisk = false, lineWhereCanConcat = -1, v1ExpressionC1: number, cNotWhiteSpace: number, percentVarStart: number, propertyC1 = -1, lookingForAnd = false, lookingForIn = false, doubleComma = false, singleComma = false, insideV1Continuation = false
   let everythingPushCounter: number; everythingPushCounter = 0
-  let spliceStartIndex: number, validNameLine: number, validNameEnd: number
+  let spliceStartIndex: number, validNameLine: number, validNameEnd: number, findingVarName = false, varNameCanLtrimSpaces: false, idkVarC1 = 0
   lineLoop:
   while (i < howManyLines) {
     c = 0
@@ -199,8 +199,14 @@ export default (content: string) => {
                 usingStartOfLineLoop = true
                 continue startOfLineLoop
               } else if (idkType === 3) {
-                d(validName, 'global local or static', char())
-                return everything
+                // d(validName, 'global local or static', char())
+                everything.push({ type: 'global local or static{ws}', text: `${validName}${lines[i][c]}`, i1: i, c1: nonWhiteSpaceStart, c2: c })
+                c++
+                findVariableName()
+                recurseBetweenExpression()
+                usingStartOfLineLoop = true
+                continue startOfLineLoop
+              // return everything
               }
               const text = lines[i].slice(nonWhiteSpaceStart, numberOfChars)
               everything.push({ type: 'directive', text: text, i1: i, c1: nonWhiteSpaceStart, c2: numberOfChars })
@@ -646,7 +652,9 @@ export default (content: string) => {
 
   function findVariableName() {
     //if whiteSpace in v1String, then illegal variable Name
+    findingVarName = true
     skipThroughWhiteSpaces()
+    nonWhiteSpaceStart = c
     findV1ExpressionMid()
   }
   function findNamedIf() {
@@ -1027,28 +1035,35 @@ export default (content: string) => {
     return true
   }
   function findV1ExpressionMid() {
-    v1ExpressionC1 = c, cNotWhiteSpace = c - 1
+    if (findingVarName) {
+      findIdkVar()
+      resolveV1Continuation()
+      findingVarName = false
+      return
+    } else {
+      v1ExpressionC1 = c, cNotWhiteSpace = c - 1
 
-    foundComment:
-    while (true) {
-      if (lines[i][c] === ';') {
-        if (whiteSpaceObj[lines[i][c - 1]]) {
-          break foundComment
-        }
-      }
-      while (c < numberOfChars) {
+      foundComment:
+      while (true) {
         if (lines[i][c] === ';') {
-          break foundComment
+          if (whiteSpaceObj[lines[i][c - 1]]) {
+            break foundComment
+          }
         }
-        if (findV1StrMid('findV1Expression')) {
-          return
+        while (c < numberOfChars) {
+          if (lines[i][c] === ';') {
+            break foundComment
+          }
+          if (findV1StrMid('findV1Expression')) {
+            return
+          }
         }
+        break
       }
-      break
+      endV1Str('findV1Expression')
+      //now expect continuation
+      resolveV1Continuation()
     }
-    endV1Str('findV1Expression')
-    //now expect continuation
-    resolveV1Continuation()
   }
   function resolveV1Continuation() {
     if (!skipThroughEmptyLines()) {
@@ -1096,25 +1111,27 @@ export default (content: string) => {
       }
 
       return true
-    } else if (c < numberOfChars - 2 && v1Continuator[lines[i].slice(c, c + 3)]) {
-      everything.push({ type: '3 v1Continuator', text: lines[i].slice(c, c + 3), i1: i, c1: c, c2: c + 3 })
-      c += 3
-    } else if (c < numberOfChars - 1 && v1Continuator[lines[i].slice(c, c + 2)]) {
-      everything.push({ type: '2 v1Continuator', text: lines[i].slice(c, c + 2), i1: i, c1: c, c2: c + 2 })
-      c += 2
-    } else if (c < numberOfChars && v1Continuator[lines[i][c]]) {
-      if (ifDoubleComma()) {return false}
-      if (singleComma) {return false}
+    } else if (!findingVarName) {
+      if (c < numberOfChars - 2 && v1Continuator[lines[i].slice(c, c + 3)]) {
+        everything.push({ type: '3 v1Continuator', text: lines[i].slice(c, c + 3), i1: i, c1: c, c2: c + 3 })
+        c += 3
+      } else if (c < numberOfChars - 1 && v1Continuator[lines[i].slice(c, c + 2)]) {
+        everything.push({ type: '2 v1Continuator', text: lines[i].slice(c, c + 2), i1: i, c1: c, c2: c + 2 })
+        c += 2
+      } else if (c < numberOfChars && v1Continuator[lines[i][c]]) {
+        if (ifDoubleComma()) {return false}
+        if (singleComma) {return false}
 
-      everything.push({ type: '1 v1Continuator', text: lines[i][c], i1: i, c1: c })
+        everything.push({ type: '1 v1Continuator', text: lines[i][c], i1: i, c1: c })
 
-      c++
-
-    } else {
+        c++
+      } else {
+        return false
+      }
+      //if found v1Continuator, continue looking
+      findV1Expression()
       return false
     }
-    findV1Expression()
-    return false
 
 
   }
@@ -1930,6 +1947,7 @@ export default (content: string) => {
     }
     return false
   }
+
   function findPercentVar() {
     const percentVarStart = c
     if (c < numberOfChars && lines[i][c] === '%') {
@@ -1943,6 +1961,55 @@ export default (content: string) => {
         return false
       }
     } else {
+      return false
+    }
+  }
+  function findIdkVar() {
+    if (variableCharsObj[lines[i][c]]) {
+      idkVarC1 = c
+      c++
+    } else if (c < numberOfChars && lines[i][c] === '%') {
+      everything.push({ type: '% checkPercent', text: '%', i1: i, c1: c })
+      percentVarMid()
+      c++
+      idkVarC1 = c
+    } else {
+      return false
+    }
+    while (c < numberOfChars) {
+      if (c < numberOfChars && lines[i][c] === '%') {
+        everything.push({ type: 'v1String findIdkVar', text: lines[i].slice(idkVarC1,c), i1: i, c1: idkVarC1, c2: c })
+        everything.push({ type: '% checkPercent', text: '%', i1: i, c1: c })
+        percentVarMid()
+        c++
+        if (c === numberOfChars) {
+          return true
+        } else {
+          idkVarC1 = c
+        }
+      }
+      if (variableCharsObj[lines[i][c]]) {
+        c++
+      } else {
+        break
+      }
+    }
+    const text = lines[i].slice(idkVarC1,c)
+    if (text) {
+      everything.push({ type: 'v1String findIdkVar', text: text, i1: i, c1: idkVarC1, c2: c })
+    }
+    return true
+  }
+  function percentVarMid() {
+    c++
+    idkVarC1 = c
+    skipValidChar()
+    if (c < numberOfChars && lines[i][c] === '%') {
+      everything.push({ type: 'v1String percentVarMid', text: lines[i].slice(idkVarC1,c), i1: i, c1: idkVarC1, c2: c })
+      everything.push({ type: '% percentVarMid', text: '%', i1: i, c1: c })
+      return true
+    } else {
+      d(lines[i].slice(nonWhiteSpaceStart, c), 'ILLEGAL %VAR%', char())
       return false
     }
   }

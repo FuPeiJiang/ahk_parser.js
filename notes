@@ -1629,3 +1629,10 @@ for
 ) in [1,2,3] {
 }
 
+findingVarName = true
+varNameCanLtrimSpaces when findVariableName
+
+only 1 line of continuation section is allowed for var name, because no newline in varName.
+when found AnyVarName, varNameCanLtrimSpaces=false
+
+I need to note down
