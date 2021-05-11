@@ -340,7 +340,7 @@ Ralt & m::
 fiouf label can't have spaces
 label :
 
-so I am both here and here:
+so I am both here and here
  .=
  & RCtrl::
 
@@ -1534,3 +1534,42 @@ omg, it really does A LOT of preprocessing
 
 line 278 // oof, command here
 I'm just going
+
+current command ORDER:
+
+'command EOL'
+'comma DIRECTIVE OR COMMAND'
+'directive'
+'= whiteSpace v1Assignment'
+'assignment whiteSpace'
+'command'
+
+comma DIRECTIVE CAN take precedence, but it won't
+
+comma DIRECTIVE can have spaces or lines in between, so it should be after.
+same as comma EOL, which shouldn't even exist. because you can comma continue. so expect a comma, or continue.
+
+if (c === numberOfChars) {
+  just skip..
+  anything that checks the LINE only
+
+
+IfEqual
+,
+
+IMPORTANT:
+'directive'
+'assignment'
+'command'
+
+'assignment'
+
+omg, the comma is optional, this is the worst...
+comma is only useful for multiline
+
+after whitespace command or eol command
+check for comma: good idea
+
+first, do EOL
+
+nested namedIf kinda works..
