@@ -175,6 +175,10 @@ export default (content: string) => {
                     everything.push({ type: 'legacyIf in', text: text, i1: i, c1: c, c2: cPlusLen })
                     c += 2
                     doubleComma = true
+                  } else if ((text = lines[i].slice(c, cPlusLen = c + 8)).toLowerCase() === 'contains' && (cPlusLen === numberOfChars || whiteSpaceObj[lines[i][cPlusLen]])) {
+                    everything.push({ type: 'legacyIf contains', text: text, i1: i, c1: c, c2: cPlusLen })
+                    c += 8
+                    doubleComma = true
                   } else if ((text = lines[i].slice(c, cPlusLen = c + 7)).toLowerCase() === 'between' && (cPlusLen === numberOfChars || whiteSpaceObj[lines[i][cPlusLen]])) {
                     everything.push({ type: 'legacyIf between', text: text, i1: i, c1: c, c2: cPlusLen })
                     c += 7
@@ -926,9 +930,8 @@ export default (content: string) => {
       }
 
       while (c < numberOfChars) {
-
         if (lines[i][c] === ';') {
-          break
+          break foundComment
         }
 
         findV1StrMid('findV1Expression')
@@ -937,7 +940,6 @@ export default (content: string) => {
     }
 
     endV1Str('findV1Expression')
-
 
     //now expect continuation
 
@@ -1706,6 +1708,7 @@ export default (content: string) => {
   function skipThroughEmptyLines() {
     const c1 = c, i1 = i
     //also skip through whiteSpaces, comments
+    outOfLines:
     while (i < howManyLines) {
       while (c < numberOfChars && whiteSpaceObj[lines[i][c]]) {
         c++
@@ -1727,16 +1730,16 @@ export default (content: string) => {
       if (i < howManyLines) {
         c = 0, numberOfChars = lines[i].length
       } else {
-        // d(c)
-        i--
-        const text = textFromPosToCurrent([c1, i1])
-        if (text) {
-          everything.push({ type: 'emptyLines EOF', text: text, i1: i1, c1: c1, i2: i, c2: c })
-        }
-        i++
-        return false
+        break outOfLines
       }
     }
+    i--
+    c = numberOfChars
+    const text = textFromPosToCurrent([c1, i1])
+    if (text) {
+      everything.push({ type: 'emptyLines EOF', text: text, i1: i1, c1: c1, i2: i, c2: c })
+    }
+    i++
     return false
   }
   function skipThroughWhiteSpaces() {

@@ -1484,3 +1484,9 @@ var=a
 THIS IS LEGAL:
 if Var in % "a,b"
 
+
+skipThroughEmptyLines() fixed:
+  c = numberOfChars
+  const text = textFromPosToCurrent([c1, i1])
+
+if var contains ,,,
