@@ -272,10 +272,12 @@ export default (content: string) => {
                 skipThroughWhiteSpaces()
                 singleComma = true
                 findV1ExpressionMid()
+                everything.push({ type: ', 1 namedIf', text: ',', i1: i, c1: c })
+                c++
                 singleComma = false
                 if (!recurseBetweenExpression()) { findExpression() }
                 if (lines[i][c] === ',') {
-                  everything.push({ type: ', namedIf', text: ',', i1: i, c1: c })
+                  everything.push({ type: ', 2 namedIf', text: ',', i1: i, c1: c })
                   c++
                   // oof, command here
                   const saveC = c
@@ -682,7 +684,6 @@ export default (content: string) => {
       trace()
       everything.push({ type: ', legacyIf var in', text: ',', i1: i, c1: c })
       c++
-      d(i)
       findV1Expression()
     }
   }
@@ -1033,8 +1034,10 @@ export default (content: string) => {
       c += 2
     } else if (c < numberOfChars && v1Continuator[lines[i][c]]) {
       if (ifDoubleComma()) {return false}
+      if (singleComma) {return false}
 
       everything.push({ type: '1 v1Continuator', text: lines[i][c], i1: i, c1: c })
+
       c++
 
     } else {
