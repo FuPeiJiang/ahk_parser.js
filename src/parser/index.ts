@@ -272,6 +272,7 @@ export default (content: string) => {
                 skipThroughWhiteSpaces()
                 singleComma = true
                 findV1ExpressionMid()
+                singleComma = false
                 if (!recurseBetweenExpression()) { findExpression() }
                 if (lines[i][c] === ',') {
                   everything.push({ type: ', namedIf', text: ',', i1: i, c1: c })
