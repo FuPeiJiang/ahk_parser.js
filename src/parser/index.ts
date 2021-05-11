@@ -204,6 +204,7 @@ export default (content: string) => {
                 c++
                 findVariableName()
                 recurseBetweenExpression()
+                if (skipCommaAssignment()) {break lineLoop}
                 usingStartOfLineLoop = true
                 continue startOfLineLoop
               // return everything
@@ -238,6 +239,8 @@ export default (content: string) => {
               const assignedTo = lines[validNameLine].slice(validNameStart, validNameEnd)
               // d(`${assignedTo} assignment whiteSpace`)
               everything.splice(spliceStartIndex, 0, { type: 'assignment whiteSpace', text: assignedTo, i1: validNameLine, c1: validNameStart, c2: validNameEnd })
+
+              if (skipCommaAssignment()) {break lineLoop}
 
               if (i === lineWhereCanConcat) {
                 findCommentsAndEndLine()
@@ -596,6 +599,8 @@ export default (content: string) => {
           // d(`${assignedTo} assignment`)
           everything.splice(spliceStartIndex, 0, { type: 'assignment', text: assignedTo, i1: validNameLine, c1: validNameStart, c2: validNameEnd })
 
+          if (skipCommaAssignment()) {break lineLoop}
+
           if (i === lineWhereCanConcat) {
             findCommentsAndEndLine()
           } else {
@@ -650,6 +655,19 @@ export default (content: string) => {
 
   return everything
 
+  // start of functions
+  function skipCommaAssignment() {
+    while (i < howManyLines) {
+      if (lines[i][c] !== ',') {
+        return false
+      }
+      everything.push({ type: ', assignment', text: ',', i1: i, c1: c })
+      c++
+      findVariableName()
+      recurseBetweenExpression()
+    }
+    return true
+  }
   function findVariableName() {
     //if whiteSpace in v1String, then illegal variable Name
     findingVarName = true
