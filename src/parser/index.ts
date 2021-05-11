@@ -17,7 +17,7 @@ export default (content: string) => {
   let okk: number
   okk = 0
 
-  let i = 0, c = 0, numberOfChars = 0, validName = '', strStartLine: number, strStartPos: number, insideContinuation = false, beforeConcat: number, nonWhiteSpaceStart: number, exprFoundLine = -1, colonDeep = 0, usingStartOfLineLoop = false, variadicAsterisk = false, lineWhereCanConcat = -1, v1ExpressionC1: number, cNotWhiteSpace: number, percentVarStart: number, propertyC1 = -1, lookingForAnd = false, doubleComma = false, singleComma = false, insideV1Continuation = false
+  let i = 0, c = 0, numberOfChars = 0, validName = '', strStartLine: number, strStartPos: number, insideContinuation = false, beforeConcat: number, nonWhiteSpaceStart: number, exprFoundLine = -1, colonDeep = 0, usingStartOfLineLoop = false, variadicAsterisk = false, lineWhereCanConcat = -1, v1ExpressionC1: number, cNotWhiteSpace: number, percentVarStart: number, propertyC1 = -1, lookingForAnd = false, lookingForIn = false, doubleComma = false, singleComma = false, insideV1Continuation = false
   let everythingPushCounter: number; everythingPushCounter = 0
   let spliceStartIndex: number, validNameLine: number, validNameEnd: number
   lineLoop:
@@ -200,6 +200,7 @@ export default (content: string) => {
                 continue startOfLineLoop
               } else if (idkType === 3) {
                 d(validName, 'global local or static', char())
+                return everything
               }
               const text = lines[i].slice(nonWhiteSpaceStart, numberOfChars)
               everything.push({ type: 'directive', text: text, i1: i, c1: nonWhiteSpaceStart, c2: numberOfChars })
@@ -251,6 +252,29 @@ export default (content: string) => {
                   continue startOfLineLoop
                 } else if (foundNamedIf === 2) {
                   continue lineLoop
+                }
+
+                if (validName.toLowerCase() === 'for') {
+                  everything.splice(spliceStartIndex, 0, { type: 'for', text: validName, i1: validNameLine, c1: nonWhiteSpaceStart, c2: validNameEnd })
+                  skipThroughWhiteSpaces()
+                  singleComma = true
+                  lookingForIn = true
+                  findV1ExpressionMid()
+                  singleComma = false
+                  if (lines[i][c] === ',') {
+                    everything.push({ type: ', for', text: ',', i1: i, c1: c })
+                    c++
+                    skipThroughWhiteSpaces()
+                    findV1ExpressionMid()
+                  }
+                  if (!recurseBetweenExpression()) { findExpression() }
+                  skipThroughEmptyLines()
+                  if (lines[i][c] === '{') {
+                    everything.push({ type: '{ for', text: '{', i1: i, c1: c })
+                    c++
+                  }
+                  usingStartOfLineLoop = true
+                  continue startOfLineLoop
                 }
 
                 if (validName.toLowerCase() === 'return') {
@@ -605,7 +629,6 @@ export default (content: string) => {
 
     //end of lineLoop
     d('end of lineLoop')
-    // ch()
     // everything.push({type: 'end of lineLoop', text:'\n',i1: i, c1:c})
     i++
     continue lineLoop
@@ -663,6 +686,19 @@ export default (content: string) => {
         }
         findV1Expression()
         return 2
+      }
+    }
+  }
+  function lookForIn(which: string) {
+    if (lookingForIn) {
+      let text, cPlusLen, wsText
+      if ((text = lines[i].slice(c, cPlusLen = c + 2)).toLowerCase() === 'in' && (cPlusLen === numberOfChars || whiteSpaceObj[wsText = lines[i][cPlusLen]])) {
+        lookingForIn = false
+        endV1Str(which)
+        everything.push({ type: `in{ws} lookForIn ${which}`, text: `${text}${wsText || ''}`, i1: i, c1: c, c2: cPlusLen })
+        c += 3
+        v1ExpressionC1 = c, cNotWhiteSpace = c - 1
+        return true
       }
     }
   }
@@ -936,6 +972,10 @@ export default (content: string) => {
       return false
     }
 
+    if (lookForIn(which)) {
+      return true
+    }
+
     while (c < numberOfChars && !whiteSpaceObj[lines[i][c]]) {
       cNotWhiteSpace = c
 
@@ -996,7 +1036,9 @@ export default (content: string) => {
         if (lines[i][c] === ';') {
           break foundComment
         }
-        if (findV1StrMid('findV1Expression')) {return}
+        if (findV1StrMid('findV1Expression')) {
+          return
+        }
       }
       break
     }
@@ -1454,7 +1496,8 @@ export default (content: string) => {
     }
 
     if (lines[i][c] === '[') {
-      // d('[ Array', char())
+      //quick patch
+      lineWhereCanConcat = i //THIS IS UNTESTED
       everything.push({ type: '[ Array', text: '[', i1: i, c1: c })
 
       c++

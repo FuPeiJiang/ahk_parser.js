@@ -1615,3 +1615,8 @@ so if concat = true, do not obj
     }
           d(c)
       okk = 1
+
+v:="t"
+for a, %v% in [1,2,3] {
+  p(t)
+}
