@@ -277,10 +277,29 @@ export default (content: string) => {
                   everything.push({ type: ', namedIf', text: ',', i1: i, c1: c })
                   c++
                   // oof, command here
-                  usingStartOfLineLoop = true
-                  continue startOfLineLoop
+                  const saveC = c
+                  skipThroughWhiteSpaces()
+                  nonWhiteSpaceStart = c
+                  skipValidChar()
+                  validName = lines[i].slice(nonWhiteSpaceStart, c)
+                  const idkType = typeOfValidVarName[validName.toLowerCase()]
+                  if (idkType) {
+                    c = saveC
+                    usingStartOfLineLoop = true
+                    continue startOfLineLoop
+                  } else {
+                    c = saveC
+                    findV1Expression()
+                    continue lineLoop
+                  }
+
                 } else {
-                  findCommentsAndEndLine()
+                  skipThroughEmptyLines()
+                  if (lines[i][c] === '{') {
+                    everything.push({ type: '{ namedIf', text: '{', i1: i, c1: c })
+                    c++
+                  }
+                  findV1Expression()
                   continue lineLoop
                 }
               } else if (validName.toLowerCase() === 'return') {
