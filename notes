@@ -1573,3 +1573,45 @@ check for comma: good idea
 first, do EOL
 
 nested namedIf kinda works..
+
+EOL, whitespace, or comment
+
+"if "
+bad,
+it could be tab
+
+uh oh..
+this is legal
+if {1:2,4:56,6:3}.count() == 3 {
+  p(345)
+}
+
+{1:2}.count() is legal
+it's not validvar.count()
+
+
+if "fwef" . "564g" {
+
+}
+
+there shouldn't be object after string.
+well, no obj when concat
+
+ok, this is legal and true
+if {1:2,4:56,6:3}.count() == 3 . [  456 ] {
+  p(78)
+}
+this too
+if {1:2,4:56,6:3}.count() == 3 . {} {
+  p(78)
+}
+so if concat = true, do not obj
+
+
+    if (okk && i === 3) {
+      d(c, numberOfChars)
+      trace()
+      // process.exit()
+    }
+          d(c)
+      okk = 1

@@ -10,11 +10,14 @@ export default (content: string) => {
   }
   const lines = content.split('\n')
   const howManyLines = lines.length
-  const everything = []
+  const everything: any[] = []
   const toFile = ''
   const rangeAndReplaceTextArr: [[[number, number], [number, number]], string][] = []
 
-  let i = 0, c = 0, numberOfChars = 0, validName = '', strStartLine: number, strStartPos: number, insideContinuation = false, beforeConcat: number, nonWhiteSpaceStart: number, exprFoundLine = -1, colonDeep = 0, usingStartOfLineLoop = false, variadicAsterisk = false, lineWhereCanConcat = -1, v1ExpressionC1: number, cNotWhiteSpace: number, percentVarStart: number, propertyC1: number, lookingForAnd = false, doubleComma = false, singleComma = false, insideV1Continuation = false
+  let okk: number
+  okk = 0
+
+  let i = 0, c = 0, numberOfChars = 0, validName = '', strStartLine: number, strStartPos: number, insideContinuation = false, beforeConcat: number, nonWhiteSpaceStart: number, exprFoundLine = -1, colonDeep = 0, usingStartOfLineLoop = false, variadicAsterisk = false, lineWhereCanConcat = -1, v1ExpressionC1: number, cNotWhiteSpace: number, percentVarStart: number, propertyC1 = -1, lookingForAnd = false, doubleComma = false, singleComma = false, insideV1Continuation = false
   let everythingPushCounter: number; everythingPushCounter = 0
   let spliceStartIndex: number, validNameLine: number, validNameEnd: number
   lineLoop:
@@ -110,25 +113,7 @@ export default (content: string) => {
                 c++
                 everything.push({ type: 'if ', text: 'if ', i1: i, c1: nonWhiteSpaceStart, c2: c })
                 skipThroughWhiteSpaces()
-                if (lines[i][c] === '(') {
-                  everything.push({ type: '( if', text: '(', i1: i, c1: c })
-                  c++
-                  if (!recurseBetweenExpression()) { findExpression() }
-                  // d(') group', char())
-                  everything.push({ type: ') if', text: ')', i1: i, c1: c })
-                  c++
-                  skipThroughEmptyLines()
-                  if (lines[i][c] === '{') {
-                    everything.push({ type: '{ if', text: '{', i1: i, c1: c })
-                    // d(lines[i][c])
-
-                    c++
-                    skipThroughWhiteSpaces()
-                  // d(numberOfChars, lines[i].length)
-                  }
-                  usingStartOfLineLoop = true
-                  continue startOfLineLoop
-                } else if (variableCharsObj[lines[i][c]]) {
+                if (variableCharsObj[lines[i][c]]) {
                   const validNamestart = c, spliceStartIndex = everything.length
                   c++
                   skipValidChar()
@@ -196,8 +181,23 @@ export default (content: string) => {
                   continue startOfLineLoop
                 }
 
-                i++
-                continue lineLoop
+                // if (lines[i][c] === '(') {
+                // everything.push({ type: '( if', text: '(', i1: i, c1: c })
+                // c++
+                if (!recurseBetweenExpression()) { findExpression() }
+                // d(') group', char())
+                // everything.push({ type: ') if', text: ')', i1: i, c1: c })
+                // c++
+                skipThroughEmptyLines()
+                if (lines[i][c] === '{') {
+                  everything.push({ type: '{ if', text: '{', i1: i, c1: c })
+                  // d(lines[i][c])
+
+                  c++
+                  // d(numberOfChars, lines[i].length)
+                }
+                usingStartOfLineLoop = true
+                continue startOfLineLoop
               } else if (idkType === 3) {
                 d(validName, 'global local or static', char())
               }
@@ -245,7 +245,6 @@ export default (content: string) => {
             // statement can't have Expr if line changed...
 
               if (i === lineBeforeSkip) {
-
 
                 const foundNamedIf = findNamedIf()
                 if (foundNamedIf === 1) {
@@ -338,6 +337,7 @@ export default (content: string) => {
               everything.splice(spliceStartIndex, 0, { type: 'comma DIRECTIVE OR COMMAND', text: validName, i1: validNameLine, c1: validNameStart, c2: validNameEnd })
               const text = lines[validNameLine].slice(c, numberOfChars)
               everything.push({ type: 'comma DIRECTIVE OR COMMAND to EOL', text: text, i1: validNameLine, c1: c, c2: numberOfChars })
+              everything.push({ type: 'newline DIRECTIVE OR COMMAND', text: '\n', i1: validNameLine, c1: numberOfChars })
               i++
               continue lineLoop
             }
@@ -708,7 +708,6 @@ export default (content: string) => {
       c += 2
       findV1Expression()
     } else {
-      trace()
       everything.push({ type: ', legacyIf var in', text: ',', i1: i, c1: c })
       c++
       findV1Expression()
@@ -1123,6 +1122,8 @@ export default (content: string) => {
         c++
       } else {
         // d(lines[i][c], '1operator', char())
+
+
         everything.push({ type: '1operator', text: lines[i][c], i1: i, c1: c })
         c++
       }
@@ -1147,6 +1148,9 @@ export default (content: string) => {
   //really hard to understand
   function betweenExpression() {
     // exprFoundLine = i
+
+    if (i === howManyLines) {return false}
+
     beforeConcat = c
     if (insideContinuation) {
       skipThroughWhiteSpaces()
@@ -1206,7 +1210,7 @@ export default (content: string) => {
   }
 
   //true if not number and not property EOL
-  function skipProperties() {
+  function skipProperties(): boolean {
     propertyC1 = c
 
     while (c < numberOfChars && propCharsObj[lines[i][c]]) {
@@ -1298,15 +1302,17 @@ export default (content: string) => {
     c++
   }
   function findExpression() {
-
     if (i === howManyLines) {
       d('illegal empty assignment', char())
       return false
     }
 
     skipThroughWhiteSpaces()
+
     //nothing left, continue
     if (c === numberOfChars || lines[i][c] === ';') {
+      d(c, numberOfChars, lines[i])
+
       if (insideContinuation) {
         if (endExprContinuation()) {
           findExpression()
@@ -1319,6 +1325,7 @@ export default (content: string) => {
       }
       return false
     }
+
     nonWhiteSpaceStart = c
     //stumble upon a valid variable Char
     if (lines[i][c] === '%' || variableCharsObj[lines[i][c]]) {
@@ -1476,13 +1483,15 @@ export default (content: string) => {
       }
       // d('] Array', char())
 
+      if (lines[i][c] !== ']') {
+        d(`\`${lines[i][c]}\` illegal NOT ] Array ${linesPlusChar()}`)
+      }
       everything.push({ type: '] Array', text: ']', i1: i, c1: c })
       c++
       recurseBetweenExpression()
       return true
     }
-
-    if (lines[i][c] === '{') {
+    if (i !== lineWhereCanConcat && lines[i][c] === '{') {
       // d('{ object', char())
       everything.push({ type: '{ object', text: '{', i1: i, c1: c })
       const objStart: [number, number] = [c, i]
@@ -1490,7 +1499,7 @@ export default (content: string) => {
       //exprFoundLine = i
       let kStart: [number, number], vStart: [number, number], k: string, v: string
       const mapKeysAndValuesArr = []
-      let singleVar: boolean, afterSingleVar: number, beforeSkipSpaces: number, afterSkipSpaces: number, afterFindExpression: number, haventFoundSingleVar: boolean
+      let singleVar: boolean, afterSingleVar: number, beforeSkipSpaces: number, afterSkipSpaces: number, afterFindExpression = -1, haventFoundSingleVar: boolean
       while (true) {
         kStart = [c, i]
         singleVar = true
@@ -1674,6 +1683,8 @@ export default (content: string) => {
       numberOfChars = lines[i].length
       skipThroughWhiteSpaces()
       if (c === numberOfChars) {
+        trace()
+        process.exit()
         d('Continuation skip empty line')
         i++
         continue
@@ -1936,6 +1947,9 @@ export default (content: string) => {
   }
   function l() {
     return `line ${i + 1}`
+  }
+  function linesPlusChar() {
+    return `line:${i + 1}, char:${c + 1}`
   }
 }
 

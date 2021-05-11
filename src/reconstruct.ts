@@ -4,7 +4,8 @@ const d = console.debug.bind(console)
 
 
 const content: string =
-fs.readFileSync('tests2/named if nested.ahk')
+fs.readFileSync('tests2/obj arr concat.ahk')
+// fs.readFileSync('tests2/named if nested.ahk')
 // fs.readFileSync('tests2/named if.ahk')
 // fs.readFileSync('tests2/if var op value.ahk')
 // fs.readFileSync('tests2/percent after continuation ).ahk')
