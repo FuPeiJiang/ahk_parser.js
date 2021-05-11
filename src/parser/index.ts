@@ -17,7 +17,7 @@ export default (content: string) => {
   let okk: number
   okk = 0
 
-  let i = 0, c = 0, numberOfChars = 0, validName = '', strStartLine: number, strStartPos: number, insideContinuation = false, beforeConcat: number, nonWhiteSpaceStart: number, exprFoundLine = -1, colonDeep = 0, usingStartOfLineLoop = false, variadicAsterisk = false, lineWhereCanConcat = -1, v1ExpressionC1: number, cNotWhiteSpace: number, percentVarStart: number, propertyC1 = -1, lookingForAnd = false, lookingForIn = false, doubleComma = false, singleComma = false, insideV1Continuation = false
+  let i = 0, c = 0, numberOfChars = 0, validName = '', strStartLine: number, strStartPos: number, insideContinuation = false, beforeConcat: number, nonWhiteSpaceStart: number, exprFoundLine = -1, colonDeep = 0, usingStartOfLineLoop = false, variadicAsterisk = false, lineWhereCanConcat = -1, v1ExpressionC1: number, cNotWhiteSpace: number, percentVarStart: number, propertyC1 = -1, lookingForAnd = false, doubleComma = false, singleComma = false, insideV1Continuation = false
   let everythingPushCounter: number; everythingPushCounter = 0
   let spliceStartIndex: number, validNameLine: number, validNameEnd: number, findingVarName = false, varNameCanLtrimSpaces: false, idkVarC1 = 0
   lineLoop:
@@ -51,6 +51,10 @@ export default (content: string) => {
 
     startOfLineLoop:
     while (true) {
+
+      if (i > 200) {
+        return everything
+      }
 
       //out of lines
       if (i === howManyLines) {
@@ -265,15 +269,22 @@ export default (content: string) => {
 
                 if (validName.toLowerCase() === 'for') {
                   everything.splice(spliceStartIndex, 0, { type: 'for', text: validName, i1: validNameLine, c1: nonWhiteSpaceStart, c2: validNameEnd })
-                  singleComma = true
-                  lookingForIn = true
                   findVariableName()
-                  singleComma = false
+                  ch()
                   if (lines[i][c] === ',') {
                     everything.push({ type: ', for', text: ',', i1: i, c1: c })
                     c++
                     findVariableName()
                   }
+                  // lookForIn
+                  let text, cPlusLen, wsText
+                  if ((text = lines[i].slice(c, cPlusLen = c + 2)).toLowerCase() === 'in' && (cPlusLen === numberOfChars || whiteSpaceObj[wsText = lines[i][cPlusLen]])) {
+                    everything.push({ type: 'in{ws} lookForIn', text: `${text}${wsText || ''}`, i1: i, c1: c, c2: cPlusLen })
+                  } else {
+                    d('ILLEGAL, (for) is missing `in`')
+                  }
+                  c += 3
+
                   if (!recurseBetweenExpression()) { findExpression() }
                   skipThroughEmptyLines()
                   if (lines[i][c] === '{') {
@@ -669,7 +680,7 @@ export default (content: string) => {
     return true
   }
   function findVariableName() {
-    //if whiteSpace in v1String, then illegal variable Name
+    //if whiteSpace in v1String, then illegal var Name
     findingVarName = true
     skipThroughWhiteSpaces()
     nonWhiteSpaceStart = c
@@ -718,7 +729,7 @@ export default (content: string) => {
       }
     }
   }
-  function lookForIn(which: string) {
+  /* function lookForIn(which: string) {
     if (lookingForIn) {
       let text, cPlusLen, wsText
       if ((text = lines[i].slice(c, cPlusLen = c + 2)).toLowerCase() === 'in' && (cPlusLen === numberOfChars || whiteSpaceObj[wsText = lines[i][cPlusLen]])) {
@@ -730,7 +741,7 @@ export default (content: string) => {
         return true
       }
     }
-  }
+  } */
   function lookForAnd(which: string) {
     if (lookingForAnd) {
       let text, cPlusLen, wsText
@@ -1001,10 +1012,6 @@ export default (content: string) => {
       return false
     }
 
-    if (lookForIn(which)) {
-      return true
-    }
-
     while (c < numberOfChars && !whiteSpaceObj[lines[i][c]]) {
       cNotWhiteSpace = c
 
@@ -1035,7 +1042,6 @@ export default (content: string) => {
       c++
     }
     while (c < numberOfChars && whiteSpaceObj[lines[i][c]]) {
-      d('illegal variable Name',linesPlusChar())
       c++
     }
   }
