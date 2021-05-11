@@ -256,16 +256,14 @@ export default (content: string) => {
 
                 if (validName.toLowerCase() === 'for') {
                   everything.splice(spliceStartIndex, 0, { type: 'for', text: validName, i1: validNameLine, c1: nonWhiteSpaceStart, c2: validNameEnd })
-                  skipThroughWhiteSpaces()
                   singleComma = true
                   lookingForIn = true
-                  findV1ExpressionMid()
+                  findVariableName()
                   singleComma = false
                   if (lines[i][c] === ',') {
                     everything.push({ type: ', for', text: ',', i1: i, c1: c })
                     c++
-                    skipThroughWhiteSpaces()
-                    findV1ExpressionMid()
+                    findVariableName()
                   }
                   if (!recurseBetweenExpression()) { findExpression() }
                   skipThroughEmptyLines()
@@ -646,6 +644,11 @@ export default (content: string) => {
 
   return everything
 
+  function findVariableName() {
+    //if whiteSpace in v1String, then illegal variable Name
+    skipThroughWhiteSpaces()
+    findV1ExpressionMid()
+  }
   function findNamedIf() {
     if (namedIf[validName.toLowerCase()]) {
       everything.splice(spliceStartIndex, 0, { type: 'named if', text: validName, i1: validNameLine, c1: nonWhiteSpaceStart, c2: validNameEnd })
@@ -1006,6 +1009,7 @@ export default (content: string) => {
       c++
     }
     while (c < numberOfChars && whiteSpaceObj[lines[i][c]]) {
+      d('illegal variable Name',linesPlusChar())
       c++
     }
   }
@@ -1084,7 +1088,7 @@ export default (content: string) => {
           return true
         }
 
-        v1ExpressionC1 = c, cNotWhiteSpace = c - 1
+        v1ExpressionC1 = 0, cNotWhiteSpace = -1
         while (c < numberOfChars) {
           findV1StrMid('resolveV1Continuation')
         }

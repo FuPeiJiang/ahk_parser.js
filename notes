@@ -1620,3 +1620,12 @@ v:="t"
 for a, %v% in [1,2,3] {
   p(t)
 }
+
+//if whiteSpace in v1String, then illegal variable Name
+but this is legal and NOT skipped by skipWhiteSpaces()
+for
+(
+  ue
+) in [1,2,3] {
+}
+
