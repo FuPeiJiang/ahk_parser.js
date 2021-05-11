@@ -1,5 +1,5 @@
 import { trace } from 'console'
-import { whiteSpaceObj, variableCharsObj, operatorsObj, legacyIfOperators, v1Continuator, typeOfValidVarName, whiteSpaceOverrideAssign, propCharsObj } from './tokens'
+import { whiteSpaceObj, variableCharsObj, operatorsObj, legacyIfOperators, v1Continuator, typeOfValidVarName, whiteSpaceOverrideAssign, propCharsObj, namedIf } from './tokens'
 const d = console.debug.bind(console)
 
 export default (content: string) => {
@@ -14,7 +14,7 @@ export default (content: string) => {
   const toFile = ''
   const rangeAndReplaceTextArr: [[[number, number], [number, number]], string][] = []
 
-  let i = 0, c = 0, numberOfChars = 0, validName = '', strStartLine: number, strStartPos: number, insideContinuation = false, beforeConcat: number, nonWhiteSpaceStart: number, exprFoundLine = -1, colonDeep = 0, usingStartOfLineLoop = false, variadicAsterisk = false, lineWhereCanConcat = -1, v1ExpressionC1: number, cNotWhiteSpace: number, percentVarStart: number, propertyC1: number, lookingForAnd = false, doubleComma = false
+  let i = 0, c = 0, numberOfChars = 0, validName = '', strStartLine: number, strStartPos: number, insideContinuation = false, beforeConcat: number, nonWhiteSpaceStart: number, exprFoundLine = -1, colonDeep = 0, usingStartOfLineLoop = false, variadicAsterisk = false, lineWhereCanConcat = -1, v1ExpressionC1: number, cNotWhiteSpace: number, percentVarStart: number, propertyC1: number, lookingForAnd = false, doubleComma = false, singleComma = false, insideV1Continuation = false
   let everythingPushCounter: number; everythingPushCounter = 0
   lineLoop:
   while (i < howManyLines) {
@@ -152,10 +152,8 @@ export default (content: string) => {
                 continue startOfLineLoop
               } else if (variableCharsObj[lines[i][c]]) {
                 const validNamestart = c, spliceStartIndex = everything.length
-
                 c++
                 skipValidChar()
-
                 const validNameEnd = c, validNameLine = i
 
                 skipThroughWhiteSpaces()
@@ -264,19 +262,33 @@ export default (content: string) => {
             }
             continue lineLoop
           }
-
           if (idkType === 4) {
             // d(validName, 'whiteSpace COMMAND', nonWhiteSpaceStart + 1, lineBeforeSkip + 1, 'line')
             // statement can't have Expr if line changed...
-            if (i === lineBeforeSkip) {
 
-              if (validName.toLowerCase() === 'return') {
-                // can't be betweenExpression() because whiteSpace := takes priority
-                // everything.push({type: 'return', text:validName,i1: validNameLine, c1:nonWhiteSpaceStart ,c2:validNameEnd})
+            if (i === lineBeforeSkip) {
+              if (namedIf[validName.toLowerCase()]) {
+                everything.splice(spliceStartIndex, 0, { type: 'named if', text: validName, i1: validNameLine, c1: nonWhiteSpaceStart, c2: validNameEnd })
+                skipThroughWhiteSpaces()
+                singleComma = true
+                findV1ExpressionMid()
+                if (!recurseBetweenExpression()) { findExpression() }
+                if (lines[i][c] === ',') {
+                  everything.push({ type: ', namedIf', text: ',', i1: i, c1: c })
+                  c++
+                  // oof, command here
+                  usingStartOfLineLoop = true
+                  continue startOfLineLoop
+                } else {
+                  findCommentsAndEndLine()
+                  continue lineLoop
+                }
+              } else if (validName.toLowerCase() === 'return') {
+              // can't be betweenExpression() because whiteSpace := takes priority
+              // everything.push({type: 'return', text:validName,i1: validNameLine, c1:nonWhiteSpaceStart ,c2:validNameEnd})
                 everything.splice(spliceStartIndex, 0, { type: 'return', text: validName, i1: validNameLine, c1: nonWhiteSpaceStart, c2: validNameEnd })
                 findExpression()
               } else {
-
                 everything.splice(spliceStartIndex, 0, { type: 'command', text: validName, i1: validNameLine, c1: nonWhiteSpaceStart, c2: validNameEnd })
                 const text = lines[validNameLine].slice(c, numberOfChars)
                 everything.push({ type: 'command to EOL', text: text, i1: validNameLine, c1: c, c2: numberOfChars })
@@ -882,7 +894,7 @@ export default (content: string) => {
 
       if (doubleComma) {
         if (lines[i][c] === ',') {
-          beforeCommaV1Str(`${which} beforeComma`)
+          beforeCommaV1Str(`${which} beforeDoubleComma`)
           if (lines[i][c + 1] === ',') {
             everything.push({ type: ',, legacyIf var in findV1Expression', text: ',,', i1: i, c1: c, c2: c + 2 })
             c += 2
@@ -892,6 +904,14 @@ export default (content: string) => {
           }
           v1ExpressionC1 = c, cNotWhiteSpace = c - 1
           continue
+        }
+      } else if (singleComma && !insideV1Continuation) {
+        if (lines[i][c] === ',') {
+          beforeCommaV1Str(`${which} beforeSingleComma`)
+          everything.push({ type: ', singleComma', text: ',', i1: i, c1: c })
+          c++
+          v1ExpressionC1 = c, cNotWhiteSpace = c - 1
+          return true
         }
       }
 
@@ -918,7 +938,6 @@ export default (content: string) => {
     return true
   }
   function findV1ExpressionMid() {
-
     v1ExpressionC1 = c, cNotWhiteSpace = c - 1
 
     foundComment:
@@ -928,36 +947,27 @@ export default (content: string) => {
           break foundComment
         }
       }
-
       while (c < numberOfChars) {
         if (lines[i][c] === ';') {
           break foundComment
         }
-
-        findV1StrMid('findV1Expression')
+        if (findV1StrMid('findV1Expression')) {return}
       }
       break
     }
-
     endV1Str('findV1Expression')
-
     //now expect continuation
-
     resolveV1Continuation()
   }
   function resolveV1Continuation() {
     if (!skipThroughEmptyLines()) {
-      // d('v1Continuation OutOfLines')
-      // trace()
       return false
     }
-
     if (lines[i][c] === undefined) {
       d('this shouldn\'t happen resolveV1Continuation lines[i][c] === undefined')
     }
-
     if (lines[i][c] === '(') {
-      // d('( resolveV1Continuation')
+      insideV1Continuation = true
       everything.push({ type: '( resolveV1Continuation', text: '(', i1: i, c1: c })
       c++
       const text = lines[i].slice(c, numberOfChars)
@@ -974,6 +984,7 @@ export default (content: string) => {
         }
 
         if (lines[i][c] === ')') {
+          insideV1Continuation = false
           const whiteSpacesText = lines[i].slice(c1, c)
           if (whiteSpacesText) {
             everything.push({ type: 'whiteSpaces before ) resolveV1Continuation', text: whiteSpacesText, i1: i, c1: c1, c2: c })

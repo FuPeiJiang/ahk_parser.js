@@ -1490,3 +1490,47 @@ skipThroughEmptyLines() fixed:
   const text = textFromPosToCurrent([c1, i1])
 
 if var contains ,,,
+
+
+IfEqual, Var , Value          ; if Var = Value
+IfEqual Var , Value          ; if Var = Value
+IfEqual
+, Var , Value          ; if Var = Value
+OR
+
+Note that command-like If statements allow a command or command-like control flow statement to be written on the same line
+LEGAL
+IfEqual, Var , Value, COMMAND LIKE          ; if Var = Value
+IfEqual, Var , Value, sleep, 2          ; if Var = Value
+IfEqual, Var , Value, return          ; if Var = Value
+legal, but does nothing... , it also voids what comes below.
+IfEqual, Var , Value, Expr          ; if Var = Value
+IfEqual, Var , 4, x+=2          ; if Var = Value
+IfEqual, Var , 4, f[;]5[]          ; if Var = Value
+
+IfWinActive , ahk_exe code.exe,,,, msgbox, hello
+crazy huh ?
+
+idkType === 4
+
+msgbox 
+(
+j
+)
+
+---------------------------
+ahk_parser.js test36.ahk
+---------------------------
+Error at line 459.
+
+Line Text: msgboxj
+Error: This line does not contain a recognized action.
+
+The program will exit.
+---------------------------
+OK   
+---------------------------
+omg, it really does A LOT of preprocessing
+
+line 278 // oof, command here
+I'm just going
