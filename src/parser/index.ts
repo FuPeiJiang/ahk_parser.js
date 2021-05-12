@@ -261,8 +261,8 @@ export default (content: string) => {
                 continue lineLoop
               } else if (idkType === 3) {
                 // d(validName, 'global local or static', char())
-                everything.push({ type: 'global local or static{ws}', text: `${validName}${lines[i][c]}`, i1: i, c1: nonWhiteSpaceStart, c2: c })
-                c++
+                everything.splice(spliceStartIndex, 0, { type: 'global local or static{ws}', text: validName, i1: validNameLine, c1: validNameStart, c2: validNameEnd })
+
                 findVariableName()
                 recurseBetweenExpression()
                 if (skipCommaAssignment()) {break lineLoop}

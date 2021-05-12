@@ -4,7 +4,7 @@ const d = console.debug.bind(console)
 
 
 const content: string =
-fs.readFileSync('tests2/idkAnymore3.ahk')
+// fs.readFileSync('tests2/idkAnymore3.ahk')
 // fs.readFileSync('tests2/idkAnymore2.ahk')
 // fs.readFileSync('tests2/idkAnymore1.ahk')
 // fs.readFileSync('tests2/unexpected EOL after var parsing.ahk')
@@ -33,7 +33,7 @@ fs.readFileSync('tests2/idkAnymore3.ahk')
 // fs.readFileSync('tests2/method call.ahk')
 // fs.readFileSync('tests2/not not.ahk')
 // fs.readFileSync('tests2/v1 assignment.ahk')
-// fs.readFileSync('tests/ahk_explorer.ahk')
+fs.readFileSync('tests/ahk_explorer.ahk')
 // fs.readFileSync('tests/fixes/concat.ahk')
 // fs.readFileSync('tests/fixes/assignment.ahk')
 // fs.readFileSync('tests/fixes/obj in obj.ahk')
