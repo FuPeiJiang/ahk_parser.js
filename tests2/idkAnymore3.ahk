@@ -1,0 +1,1 @@
+if (TextBeingRenamed=RenamingSimple) { ;only different capitalization

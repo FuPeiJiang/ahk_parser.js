@@ -102,8 +102,6 @@ export default (content: string) => {
 
         const idkType = typeOfValidVarName[validName.toLowerCase()]
 
-
-
         if (idkType) {
 
           if (skipThroughEmptyLines()) {
@@ -234,6 +232,7 @@ export default (content: string) => {
                   // d(lines[i][c])
 
                   c++
+                  if (!skipThroughEmptyLines()) { break lineLoop }
                   // d(numberOfChars, lines[i].length)
                 }
                 usingStartOfLineLoop = true
@@ -298,10 +297,11 @@ export default (content: string) => {
                   c += 3
 
                   if (!recurseBetweenExpression()) { findExpression() }
-                  skipThroughEmptyLines()
+                  if (i === howManyLines) { break lineLoop }
                   if (lines[i][c] === '{') {
                     everything.push({ type: '{ for', text: '{', i1: i, c1: c })
                     c++
+                    if (!skipThroughEmptyLines()) { break lineLoop }
                   }
                   usingStartOfLineLoop = true
                   continue startOfLineLoop

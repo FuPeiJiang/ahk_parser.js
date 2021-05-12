@@ -1765,3 +1765,17 @@ AFTER:
 if (!recurseBetweenExpression()) { findExpression() }
 CHECK:
 if (i === howManyLines) { break lineLoop }
+
+loop forever at i===300
+
+c === 35, line 1438
+36 finished ) group
+c===39 line 233
+
+AFTER:
+'{'
+c++
+DO:
+if (!skipThroughEmptyLines()) { break lineLoop }
+
+
