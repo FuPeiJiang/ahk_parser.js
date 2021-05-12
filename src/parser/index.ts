@@ -149,9 +149,8 @@ export default (content: string) => {
                 continue lineLoop
               } else if (idkType === 2) {
                 // d(validName, 'if statement', char())
-                c++
-                everything.push({ type: 'if ', text: 'if ', i1: i, c1: nonWhiteSpaceStart, c2: c })
-                skipThroughWhiteSpaces()
+                everything.splice(spliceStartIndex, 0, { type: 'if', text: validName, i1: validNameLine, c1: validNameStart, c2: validNameEnd })
+
                 if (variableCharsObj[lines[i][c]]) {
                   const validNamestart = c, spliceStartIndex = everything.length
                   c++
@@ -227,7 +226,9 @@ export default (content: string) => {
                 // d(') group', char())
                 // everything.push({ type: ') if', text: ')', i1: i, c1: c })
                 // c++
-                skipThroughEmptyLines()
+                if (i === howManyLines) { break lineLoop }
+                // I don't need to skip empty lines because the above does it for me
+
                 if (lines[i][c] === '{') {
                   everything.push({ type: '{ if', text: '{', i1: i, c1: c })
                   // d(lines[i][c])

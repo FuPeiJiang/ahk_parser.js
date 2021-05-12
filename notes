@@ -1757,4 +1757,11 @@ if statement:
 if sameLine && ':'
   label
 
+loop forever at i===171
 
+// I don't need to skip empty lines because the above does it for me
+
+AFTER:
+if (!recurseBetweenExpression()) { findExpression() }
+CHECK:
+if (i === howManyLines) { break lineLoop }
