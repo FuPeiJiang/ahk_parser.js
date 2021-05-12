@@ -1,2 +1,4 @@
 to find a message
 search `concat or 'concat and you'll find it
+
+when debugging, if there's an infinite loop, note down the line number (i)

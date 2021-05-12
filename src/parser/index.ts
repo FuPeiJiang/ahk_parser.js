@@ -332,7 +332,7 @@ export default (content: string) => {
           continue startOfLineLoop
           //end of is statement
         }
-        if (i === validNameLine && lines[i][c] === ':' && c + 1 === numberOfChars || whiteSpaceObj[lines[i][c + 1]]) {
+        if (i === validNameLine && lines[i][c] === ':' && (c + 1 === numberOfChars || whiteSpaceObj[lines[i][c + 1]])) {
           c++
           const text = lines[i].slice(nonWhiteSpaceStart, c)
           everything.push({ type: 'label:', text: text, i1: i, c1: nonWhiteSpaceStart, c2: c })
@@ -582,7 +582,7 @@ export default (content: string) => {
 
         //#v1 expression
         if (c < numberOfChars && lines[i][c] === '=') {
-          everything.push({ type: 'var at v1Assignment', text: validName, i1: i, c1: nonWhiteSpaceStart, c2: c })
+          everything.splice(spliceStartIndex, 0, { type: 'var at v1Assignment', text: validName, i1: i, c1: nonWhiteSpaceStart, c2: c })
           everything.push({ type: '= v1Assignment', text: '=', i1: i, c1: c })
           c++
           findV1Expression()
