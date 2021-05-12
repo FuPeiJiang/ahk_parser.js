@@ -77,14 +77,19 @@ export default (content: string) => {
       //#function DEFINITION END
       if (lines[i][c] === '}') {
         // d(`} Function DEFINITION ${char()}`)
-        everything.push({ type: '} function definition', text: '}', i1: i, c1: c })
+        everything.push({ type: '} unknown', text: '}', i1: i, c1: c })
+        c++
+        if (!skipThroughEmptyLines()) { break lineLoop }
+        usingStartOfLineLoop = true
+        continue startOfLineLoop
+        /* everything.push({ type: '} function definition', text: '}', i1: i, c1: c })
         c++
         const text = lines[i].slice(c, numberOfChars)
         everything.push({ type: '} function definition to EOL', text: text, i1: i, c1: c, c2: numberOfChars })
         everything.push({ type: 'newLine } function definition', text: '\n', i1: i, c1: c })
         i++
         // findCommentsAndEndLine()
-        continue lineLoop
+        continue lineLoop */
       }
 
       nonWhiteSpaceStart = c
@@ -196,7 +201,7 @@ export default (content: string) => {
                       }
                     }
 
-                    skipThroughEmptyLines()
+                    if (!skipThroughEmptyLines()) { break lineLoop }
 
                     if (c < numberOfChars - 1 && legacyIfOperators[lines[i].slice(c, c + 2)]) {
                       everything.push({ type: '2legacyIfOperators', text: lines[i].slice(c, c + 2), i1: i, c1: c, c2: c + 2 })
@@ -308,8 +313,17 @@ export default (content: string) => {
                 }
 
                 if (validName.toLowerCase() === 'return') {
-                  everything.splice(spliceStartIndex, 0, { type: 'return comma', text: validName, i1: validNameLine, c1: nonWhiteSpaceStart, c2: validNameEnd })
+                  everything.splice(spliceStartIndex, 0, { type: 'return whiteSpace', text: validName, i1: validNameLine, c1: nonWhiteSpaceStart, c2: validNameEnd })
                   doReturn()
+                  usingStartOfLineLoop = true
+                  continue startOfLineLoop
+                } else if (validName.toLowerCase() === 'else') {
+                  everything.splice(spliceStartIndex, 0, { type: 'else whiteSpace', text: validName, i1: validNameLine, c1: nonWhiteSpaceStart, c2: validNameEnd })
+                  if (lines[i][c] === '{') {
+                    everything.push({ type: '{ else', text: '{', i1: i, c1: c })
+                    c++
+                    if (!skipThroughEmptyLines()) { break lineLoop }
+                  }
                   usingStartOfLineLoop = true
                   continue startOfLineLoop
                 } else {
@@ -327,8 +341,16 @@ export default (content: string) => {
             }
           }
           //EOL: ???    OR COMMENT ?????
-          everything.splice(spliceStartIndex, 0, { type: 'command ELSE', text: validName, i1: validNameLine, c1: nonWhiteSpaceStart, c2: validNameEnd })
-          recurseBetweenExpression()
+          everything.splice(spliceStartIndex, 0, { type: 'command EOL or comment', text: validName, i1: validNameLine, c1: nonWhiteSpaceStart, c2: validNameEnd })
+          if (recurseBetweenExpression()) {
+            //ok..
+          } else if (validName.toLowerCase() === 'else') {
+            if (lines[i][c] === '{') {
+              everything.push({ type: '{ else', text: '{', i1: i, c1: c })
+              c++
+              if (!skipThroughEmptyLines()) { break lineLoop }
+            }
+          }
           usingStartOfLineLoop = true
           continue startOfLineLoop
           //end of is statement
@@ -337,7 +359,7 @@ export default (content: string) => {
           c++
           const text = lines[i].slice(nonWhiteSpaceStart, c)
           everything.push({ type: 'label:', text: text, i1: i, c1: nonWhiteSpaceStart, c2: c })
-          skipThroughEmptyLines()
+          if (!skipThroughEmptyLines()) { break lineLoop }
           usingStartOfLineLoop = true
           continue startOfLineLoop
         }
@@ -438,7 +460,7 @@ export default (content: string) => {
                   // d(validName, 'Param', char())
                   everything.push({ type: 'Param', text: validName, i1: i, c1: nonWhiteSpaceStart, c2: c })
                 }
-                skipThroughEmptyLines()
+                if (!skipThroughEmptyLines()) { break lineLoop }
                 findBetween()
 
               }
@@ -460,7 +482,7 @@ export default (content: string) => {
             //after break breakThisWhenParenEnd
             everything.push({ type: ') function DEFINITION', text: ')', i1: i, c1: c })
             c++
-            skipThroughEmptyLines()
+            if (!skipThroughEmptyLines()) { break lineLoop }
             // d(`{ Function DEFINITION ${char()}`)
             everything.push({ type: '{ function DEFINITION', text: '{', i1: i, c1: c })
             c++

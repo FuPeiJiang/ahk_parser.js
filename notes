@@ -1778,4 +1778,46 @@ c++
 DO:
 if (!skipThroughEmptyLines()) { break lineLoop }
 
+do
+else if
+else
 
+after }, don't return
+'continue'
+instead of only checking for if..
+also check for else
+if there's else, the if MUST have braces, right, right ?
+
+NOPE
+a:=",,"
+if a = ,
+p(345)
+else if a = ,,
+p(876)
+
+ayt
+a:="b"
+if a = ,
+p(345)
+else if a = ,,
+p(876)
+else if a between b and c
+p(666666)
+else msgbox, hello
+//is equivalent to
+else
+
+msgbox, hello
+
+OMG, I'm done...
+a:="2"
+if a = ,
+p(345)
+else ifequal a, 2
+p(876)
+
+just startOfLineLoop
+
+what about else { ? idk, block ?
+
+you cannot have a comma after else
