@@ -702,6 +702,16 @@ export default (content: string) => {
   return everything
 
   // start of functions
+  function findCommaV1Expression(which) {
+    if (lines[i][c] === ',') {
+      everything.push({ type: `, ${which}`, text: ',', i1: i, c1: c })
+      c++
+      singleComma = true
+      findV1Expression()
+      singleComma = false
+      return true
+    }
+  }
   function doReturn() {
     if (!recurseBetweenExpression()) { findExpression() }
     if (i < howManyLines) {
@@ -734,42 +744,31 @@ export default (content: string) => {
   function findLoop() {
     if (validName.toLowerCase() === 'loop') {
       everything.splice(spliceStartIndex, 0, { type: 'loop whiteSpace', text: validName, i1: validNameLine, c1: nonWhiteSpaceStart, c2: validNameEnd })
-
+      if (!skipThroughEmptyLines()) { return 2 }
       if (variableCharsObj[lines[i][c]]) {
 
         let text, cPlusLen
-        if ((text = lines[i].slice(c, cPlusLen = c + 5)).toLowerCase() === 'files' && !variableCharsObj[lines[c][5]]) {
+        if ((text = lines[i].slice(c, cPlusLen = c + 5)).toLowerCase() === 'files' && !variableCharsObj[lines[i][cPlusLen]]) {
           everything.push({ type: '(loop) files', text: text, i1: i, c1: c, c2: cPlusLen })
           c += 5
           if (!skipThroughEmptyLines()) { return 2 }
-          if (lines[i][c] === ',') {
-            everything.push({ type: ', 1 (loop) files', text: ',', i1: i, c1: c })
-            c++
-            singleComma = true
-            findV1Expression()
-            singleComma = false
-            if (lines[i][c] === ',') {
-              everything.push({ type: ', 2 (loop) files', text: ',', i1: i, c1: c })
-              c++
-              singleComma = true
-              findV1Expression()
-              singleComma = false
-              usingStartOfLineLoop = true
-              return 1
+          if (findCommaV1Expression(', 1 (loop) files')) {
+            findCommaV1Expression(', 2 (loop) files')
+          }
+          usingStartOfLineLoop = true
+          return 1
+        } else if ((text = lines[i].slice(c, cPlusLen = c + 5)).toLowerCase() === 'parse' && !variableCharsObj[lines[i][cPlusLen]]) {
+          everything.push({ type: '(loop) parse', text: text, i1: i, c1: c, c2: cPlusLen })
+          c += 5
+          if (!skipThroughEmptyLines()) { return 2 }
+          if (findCommaV1Expression('1 (loop) parse')) {
+            if (findCommaV1Expression('2 (loop) parse')) {
+              findCommaV1Expression('3 (loop) parse')
             }
           }
+          usingStartOfLineLoop = true
+          return 1
         }
-        /* else if ((text = lines[i].slice(c, cPlusLen = c + 8)).toLowerCase() === 'contains' && (cPlusLen === numberOfChars || whiteSpaceObj[lines[i][cPlusLen]])) {
-            everything.push({ type: 'legacyIf contains', text: text, i1: i, c1: c, c2: cPlusLen })
-            c += 8
-            doubleComma = true
-          } else if ((text = lines[i].slice(c, cPlusLen = c + 7)).toLowerCase() === 'between' && (cPlusLen === numberOfChars || whiteSpaceObj[lines[i][cPlusLen]])) {
-            everything.push({ type: 'legacyIf between', text: text, i1: i, c1: c, c2: cPlusLen })
-            c += 7
-            lookingForAnd = true
-            break findV1ExpressiondummyLoop
-          } */
-
 
       }
       findV1Expression()
