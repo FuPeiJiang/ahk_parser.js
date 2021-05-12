@@ -129,6 +129,16 @@ export default (content: string) => {
                   doReturn()
                   usingStartOfLineLoop = true
                   continue startOfLineLoop
+                } else if (validName.toLowerCase() === 'loop') {
+                  everything.splice(spliceStartIndex, 0, { type: 'loop whiteSpace', text: validName, i1: validNameLine, c1: nonWhiteSpaceStart, c2: validNameEnd })
+                  findV1Expression()
+                  if (lines[i][c] === '{') {
+                    everything.push({ type: '{ loop', text: '{', i1: i, c1: c })
+                    c++
+                    if (!skipThroughEmptyLines()) { break lineLoop }
+                  }
+                  usingStartOfLineLoop = true
+                  continue startOfLineLoop
                 }
 
                 everything.splice(spliceStartIndex, 0, { type: 'comma DIRECTIVE OR COMMAND', text: validName, i1: validNameLine, c1: validNameStart, c2: validNameEnd })
@@ -326,6 +336,16 @@ export default (content: string) => {
                   }
                   usingStartOfLineLoop = true
                   continue startOfLineLoop
+                } else if (validName.toLowerCase() === 'loop') {
+                  everything.splice(spliceStartIndex, 0, { type: 'loop whiteSpace', text: validName, i1: validNameLine, c1: nonWhiteSpaceStart, c2: validNameEnd })
+                  findV1Expression()
+                  if (lines[i][c] === '{') {
+                    everything.push({ type: '{ loop', text: '{', i1: i, c1: c })
+                    c++
+                    if (!skipThroughEmptyLines()) { break lineLoop }
+                  }
+                  usingStartOfLineLoop = true
+                  continue startOfLineLoop
                 } else {
                   everything.splice(spliceStartIndex, 0, { type: 'command', text: validName, i1: validNameLine, c1: nonWhiteSpaceStart, c2: validNameEnd })
                   const text = lines[validNameLine].slice(c, numberOfChars)
@@ -347,6 +367,12 @@ export default (content: string) => {
           } else if (validName.toLowerCase() === 'else') {
             if (lines[i][c] === '{') {
               everything.push({ type: '{ else', text: '{', i1: i, c1: c })
+              c++
+              if (!skipThroughEmptyLines()) { break lineLoop }
+            }
+          } else if (validName.toLowerCase() === 'loop') {
+            if (lines[i][c] === '{') {
+              everything.push({ type: '{ loop', text: '{', i1: i, c1: c })
               c++
               if (!skipThroughEmptyLines()) { break lineLoop }
             }

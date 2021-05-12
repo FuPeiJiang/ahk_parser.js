@@ -1821,3 +1821,21 @@ just startOfLineLoop
 what about else { ? idk, block ?
 
 you cannot have a comma after else
+
+to do:
+loop % LV_GetCount()
+so
+Loop [, Count]
+Loop [, v1Expression]
+
+to do:
+comma assignment should work for arrayIndex assignment
+
+to do:
+canConcat shouldn't be true
+This[HWND].Rows := {}
+
+to do:
+MapIndexToID(HWND, Row) { shouldn't be MapIndexToID(HWND, ) {
+AND
+Detach(HWND) { shouldn't be Detach() {
