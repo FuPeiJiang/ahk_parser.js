@@ -4,7 +4,8 @@ const d = console.debug.bind(console)
 
 
 const content: string =
-fs.readFileSync('tests2/return.ahk')
+fs.readFileSync('tests2/unexpected EOL after var parsing.ahk')
+// fs.readFileSync('tests2/return.ahk')
 // fs.readFileSync('tests2/infinite for.ahk')
 // fs.readFileSync('tests2/global var comma.ahk')
 // fs.readFileSync('tests2/global.ahk')

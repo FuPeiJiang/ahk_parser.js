@@ -1719,3 +1719,40 @@ if sameLine && ':'
 
 how do I ?
 find V1 OR find V2
+
+SUMMIT OF PREPROCESSING: LEGAL AND does MSGBOX
+msg
+(
+box
+),hello
+
+
+  else if sameLine && (whiteSpace || EOL) :
+
+if statement:
+  if skipThroughEmptyLines:
+    if comma:
+      c++
+      find V1 OR find V2
+      startOfLineLoop
+
+      if recurseBetweenExpression()
+    else if sameLine && whiteSpace :
+
+      //if #directive
+      if (idkType===1) (EOL)
+      else ('if')
+      else if recurseBetweenExpression() (EOL)
+      //if global local or static{ws}
+      else if (idkType === 3)
+        global
+      else ('return') (EOL)
+      else
+        find V1 OR find V2
+  //EOL: ???    OR COMMENT ?????
+  recurseBetweenExpression()
+  startOfLineLoop
+
+     
+if sameLine && ':'
+  label
