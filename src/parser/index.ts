@@ -124,22 +124,22 @@ export default (content: string) => {
                   continue startOfLineLoop
                 } else if (foundNamedIf === 2) {
                   continue lineLoop
-                } else if (validName.toLowerCase() === 'return') {
+                }
+
+                const foundLoop = findLoop()
+                if (foundLoop === 1) {
+                  continue startOfLineLoop
+                } else if (foundLoop === 2) {
+                  continue lineLoop
+                }
+
+                if (validName.toLowerCase() === 'return') {
                   everything.splice(spliceStartIndex, 0, { type: 'return comma', text: validName, i1: validNameLine, c1: nonWhiteSpaceStart, c2: validNameEnd })
                   doReturn()
                   usingStartOfLineLoop = true
                   continue startOfLineLoop
-                } else if (validName.toLowerCase() === 'loop') {
-                  everything.splice(spliceStartIndex, 0, { type: 'loop whiteSpace', text: validName, i1: validNameLine, c1: nonWhiteSpaceStart, c2: validNameEnd })
-                  findV1Expression()
-                  if (lines[i][c] === '{') {
-                    everything.push({ type: '{ loop', text: '{', i1: i, c1: c })
-                    c++
-                    if (!skipThroughEmptyLines()) { break lineLoop }
-                  }
-                  usingStartOfLineLoop = true
-                  continue startOfLineLoop
                 }
+
 
                 everything.splice(spliceStartIndex, 0, { type: 'comma DIRECTIVE OR COMMAND', text: validName, i1: validNameLine, c1: validNameStart, c2: validNameEnd })
                 const text = lines[validNameLine].slice(c, numberOfChars)
@@ -294,6 +294,13 @@ export default (content: string) => {
                   continue lineLoop
                 }
 
+                const foundLoop = findLoop()
+                if (foundLoop === 1) {
+                  continue startOfLineLoop
+                } else if (foundLoop === 2) {
+                  continue lineLoop
+                }
+
                 if (validName.toLowerCase() === 'for') {
                   everything.splice(spliceStartIndex, 0, { type: 'for', text: validName, i1: validNameLine, c1: nonWhiteSpaceStart, c2: validNameEnd })
                   findVariableName()
@@ -331,16 +338,6 @@ export default (content: string) => {
                   everything.splice(spliceStartIndex, 0, { type: 'else whiteSpace', text: validName, i1: validNameLine, c1: nonWhiteSpaceStart, c2: validNameEnd })
                   if (lines[i][c] === '{') {
                     everything.push({ type: '{ else', text: '{', i1: i, c1: c })
-                    c++
-                    if (!skipThroughEmptyLines()) { break lineLoop }
-                  }
-                  usingStartOfLineLoop = true
-                  continue startOfLineLoop
-                } else if (validName.toLowerCase() === 'loop') {
-                  everything.splice(spliceStartIndex, 0, { type: 'loop whiteSpace', text: validName, i1: validNameLine, c1: nonWhiteSpaceStart, c2: validNameEnd })
-                  findV1Expression()
-                  if (lines[i][c] === '{') {
-                    everything.push({ type: '{ loop', text: '{', i1: i, c1: c })
                     c++
                     if (!skipThroughEmptyLines()) { break lineLoop }
                   }
@@ -733,6 +730,59 @@ export default (content: string) => {
     skipThroughWhiteSpaces()
     nonWhiteSpaceStart = c
     findV1ExpressionMid()
+  }
+  function findLoop() {
+    if (validName.toLowerCase() === 'loop') {
+      everything.splice(spliceStartIndex, 0, { type: 'loop whiteSpace', text: validName, i1: validNameLine, c1: nonWhiteSpaceStart, c2: validNameEnd })
+
+      if (variableCharsObj[lines[i][c]]) {
+
+        let text, cPlusLen
+        if ((text = lines[i].slice(c, cPlusLen = c + 5)).toLowerCase() === 'files' && !variableCharsObj[lines[c][5]]) {
+          everything.push({ type: '(loop) files', text: text, i1: i, c1: c, c2: cPlusLen })
+          c += 5
+          if (!skipThroughEmptyLines()) { return 2 }
+          if (lines[i][c] === ',') {
+            everything.push({ type: ', 1 (loop) files', text: ',', i1: i, c1: c })
+            c++
+            singleComma = true
+            findV1Expression()
+            singleComma = false
+            if (lines[i][c] === ',') {
+              everything.push({ type: ', 2 (loop) files', text: ',', i1: i, c1: c })
+              c++
+              singleComma = true
+              findV1Expression()
+              singleComma = false
+              usingStartOfLineLoop = true
+              return 1
+            }
+          }
+        }
+        /* else if ((text = lines[i].slice(c, cPlusLen = c + 8)).toLowerCase() === 'contains' && (cPlusLen === numberOfChars || whiteSpaceObj[lines[i][cPlusLen]])) {
+            everything.push({ type: 'legacyIf contains', text: text, i1: i, c1: c, c2: cPlusLen })
+            c += 8
+            doubleComma = true
+          } else if ((text = lines[i].slice(c, cPlusLen = c + 7)).toLowerCase() === 'between' && (cPlusLen === numberOfChars || whiteSpaceObj[lines[i][cPlusLen]])) {
+            everything.push({ type: 'legacyIf between', text: text, i1: i, c1: c, c2: cPlusLen })
+            c += 7
+            lookingForAnd = true
+            break findV1ExpressiondummyLoop
+          } */
+
+
+      }
+      findV1Expression()
+
+      findV1Expression()
+      if (lines[i][c] === '{') {
+        everything.push({ type: '{ loop', text: '{', i1: i, c1: c })
+        c++
+        if (!skipThroughEmptyLines()) { return 2 }
+      }
+      usingStartOfLineLoop = true
+      return 1
+    }
   }
   function findNamedIf() {
     if (namedIf[validName.toLowerCase()]) {
