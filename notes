@@ -1829,7 +1829,12 @@ Loop [, Count]
 Loop [, v1Expression]
 
 to do:
-comma assignment should work for arrayIndex assignment
+fix arrIndex assignment
+ClrTx := This[H].Cells[Row][Col].T
+
+to do:
+skipCommaV2Expr should work for arrayIndex assignment
+This[H].CurTX := This[H].TX, This[H].CurTB := 
 
 DONE:
 canConcat shouldn't be true
@@ -1848,3 +1853,6 @@ to do:
   must be space, cannot EOL, cannot comma
   validName
   not optional {
+
+
+

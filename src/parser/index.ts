@@ -609,12 +609,16 @@ export default (content: string) => {
                 continue lineLoop
               }
             } else if (lines[i][c] === '[') {
-              everything.push({ type: 'ArrAccess', text: validName, i1: i, c1: propertyC1, c2: c })
+              everything.push({ type: 'ArrAccess startOfLine WHAT', text: validName, i1: i, c1: propertyC1, c2: c })
               everything.push({ type: '[ Array startOfLine', text: '[', i1: i, c1: c })
               endArrAccess()
             } else {
               everything.push({ type: 'property ending at startOfLine', text: validName, i1: i, c1: propertyC1, c2: c })
               isProp = true
+              recurseBetweenExpression()
+              if (skipCommaV2Expr()) {break lineLoop}
+              usingStartOfLineLoop = true
+              continue startOfLineLoop
             }
           } else {
             isProp = true
@@ -632,19 +636,18 @@ export default (content: string) => {
             continue startOfLineLoop
           }
           continue lineLoop
+          //#ARR ACCESS startofline
+          //#ARRAY ACCESS startofline
         } else if (lines[i][c] === '[') {
           if (!isNaN(Number(validName))) {
             d('illegal ArrAccess on startOfLine: can\'t ArrAcess on Integer', validName)
           }
+          everything.push({ type: 'ArrAccess startOfLine', text: validName, i1: i, c1: propertyC1, c2: c })
           endArrAccess()
           recurseBetweenExpression()
-          if (i === lineWhereCanConcat) {
-            findCommentsAndEndLine()
-          } else {
-            usingStartOfLineLoop = true
-            continue startOfLineLoop
-          }
-          continue lineLoop
+          if (skipCommaV2Expr()) {break lineLoop}
+          usingStartOfLineLoop = true
+          continue startOfLineLoop
         }
 
         //out of lines
@@ -1589,7 +1592,7 @@ export default (content: string) => {
   }
   function endArrAccess() {
     // d(`${validName} ArrAccess ${char()}`)
-    everything.push({ type: 'ArrAccess', text: validName, i1: i, c1: nonWhiteSpaceStart, c2: c })
+    // everything.push({ type: 'ArrAccess', text: validName, i1: i, c1: nonWhiteSpaceStart, c2: c })
 
     // d('[ ArrAccess', char())
     everything.push({ type: '[ ArrAccess', text: '[', i1: i, c1: c })
@@ -1598,6 +1601,46 @@ export default (content: string) => {
     // d('] ArrAccess', char())
     everything.push({ type: '] ArrAccess', text: ']', i1: i, c1: c })
     c++
+    recurseFindTrailingExpr()
+  }
+  function trailingAndRecurse() {
+    recurseFindTrailingExpr()
+    recurseBetweenExpression()
+  }
+  function recurseFindTrailingExpr() {
+    if (findTrailingExpr()) {
+      while (findTrailingExpr()) {
+        //
+      }
+      return true
+    }
+  }
+  function findTrailingExpr() {
+    if (lines[i][c] === '.') {
+
+      if (isNaN(Number(validName))) {
+        // everything.push({ type: 'obj with property', text: validName, i1: i, c1: nonWhiteSpaceStart, c2: c })
+      } else {
+        everything.push({ type: 'Integer part of Decimal', text: validName, i1: i, c1: nonWhiteSpaceStart, c2: c })
+      }
+      c++
+      everything.push({ type: '. property', text: '.', i1: i, c1: c })
+      findMethodOrProperty()
+      return true
+    }
+
+    //#FUNCTION CALL
+    if (lines[i][c] === '(') {
+      const functionMidReturn = functionMid('function')
+      if (functionMidReturn === 1) {
+        return true
+      } else if (functionMidReturn === 2) {
+        return false
+      }
+    }
+    if (findArrayAccess()) {
+      return true
+    }
   }
   function findExpression() {
     if (i === howManyLines) {
@@ -1657,35 +1700,6 @@ export default (content: string) => {
         return true
       }
 
-      if (lines[i][c] === '.') {
-
-        if (isNaN(Number(validName))) {
-          everything.push({ type: 'obj with property', text: validName, i1: i, c1: nonWhiteSpaceStart, c2: c })
-        } else {
-          everything.push({ type: 'Integer part of Decimal', text: validName, i1: i, c1: nonWhiteSpaceStart, c2: c })
-        }
-        c++
-        everything.push({ type: '. property', text: '.', i1: i, c1: c })
-        findMethodOrProperty()
-        recurseBetweenExpression()
-        return true
-      }
-
-      //#FUNCTION CALL
-      if (lines[i][c] === '(') {
-        const functionMidReturn = functionMid('function')
-        if (functionMidReturn === 1) {
-          recurseBetweenExpression()
-          return true
-        } else if (functionMidReturn === 2) {
-          return false
-        }
-      }
-      if (findArrayAccess()) {
-        recurseBetweenExpression()
-        return true
-      }
-
       if (isNaN(Number(validName))) {
         // d(`${validName} idkVariable ${char()}`)
         if (lookingForAnd && validName.toLowerCase() === 'and') {
@@ -1701,6 +1715,12 @@ export default (content: string) => {
         // d(`${validName} Integer ${char()}`)
         everything.push({ type: 'Integer', text: validName, i1: i, c1: nonWhiteSpaceStart, c2: c })
       }
+
+      if (recurseFindTrailingExpr()) {
+        recurseBetweenExpression()
+        return true
+      }
+
       recurseBetweenExpression()
       return true
 
@@ -1766,7 +1786,7 @@ export default (content: string) => {
           }
           everything.push({ type: '] Array', text: ']', i1: i, c1: c })
           c++
-          recurseBetweenExpression()
+          trailingAndRecurse()
           return true
         }
 
@@ -1836,7 +1856,7 @@ export default (content: string) => {
             }
             everything.push({ type: '} object', text: '}', i1: i, c1: c })
             colonDeep--, c++
-            recurseBetweenExpression()
+            trailingAndRecurse()
             return true
 
             /* if (lines[i][c] === ',') {
