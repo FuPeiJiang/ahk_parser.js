@@ -644,10 +644,7 @@ export default (content: string) => {
           }
           everything.push({ type: 'ArrAccess startOfLine', text: validName, i1: i, c1: propertyC1, c2: c })
           endArrAccess()
-          recurseBetweenExpression()
-          if (skipCommaV2Expr()) {break lineLoop}
-          usingStartOfLineLoop = true
-          continue startOfLineLoop
+          recurseFindTrailingExpr()
         }
 
         //out of lines
@@ -1430,6 +1427,7 @@ export default (content: string) => {
     } else {
       return false
     }
+    lineWhereCanConcat = -1
     legalObjLine = i
     return toReturn
 
