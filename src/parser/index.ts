@@ -32,7 +32,6 @@ export default (content: string) => {
     // leave 2 chars at end
     if (c < numberOfChars - 1 && lines[i].slice(c, c + 2) === '/*') {
       const multiLineCommentLineStart = i, multiLineCommentColStart = c
-      // d('MultilineComment START', l())
       while (++i < howManyLines) {
         c = 0
         numberOfChars = lines[i].length
@@ -41,9 +40,17 @@ export default (content: string) => {
 
         //if line starts with */
         if (c < numberOfChars - 1 && lines[i].slice(c, c + 2) === '*/') {
-          // d('MultilineComment END', l())
-          // everything.push({ type: 'MultilineComment', lineStart: multiLineCommentLineStart, colStart: multiLineCommentColStart, lineEnd: i, colEnd: c + 2 })
           i++
+
+          if (i === howManyLines) {
+            break lineLoop
+          }
+          c = 0, numberOfChars = 0
+
+          const text = textFromPosToCurrent([multiLineCommentColStart, multiLineCommentLineStart])
+          if (text) {
+            everything.push({ type: 'emptyLines', text: text, i1: multiLineCommentLineStart, c1: multiLineCommentColStart, i2: i, c2: c })
+          }
           continue lineLoop
         }
       }
@@ -551,8 +558,6 @@ export default (content: string) => {
             usingStartOfLineLoop = true
             continue startOfLineLoop
           } else {
-
-            everything.push({ type: 'function startOfLine', text: validName, i1: i, c1: nonWhiteSpaceStart, c2: c })
             const functionMidReturn = functionMid('function startOfLine')
             if (functionMidReturn === 1) {
               lastTrailingWasFunc = true
@@ -567,7 +572,7 @@ export default (content: string) => {
         //out of lines
         if (!skipThroughEmptyLines()) {
           if (lastTrailingWasFunc) {
-            everything.splice(spliceStartIndex, 0, { type: 'assignment', text: validName, i1: validNameLine, c1: validNameStart, c2: validNameEnd })
+            everything.splice(spliceStartIndex, 0, { type: 'function CALL', text: validName, i1: validNameLine, c1: validNameStart, c2: validNameEnd })
           }
           break lineLoop
         }
@@ -591,7 +596,7 @@ export default (content: string) => {
           continue startOfLineLoop
         } else {
           if (lastTrailingWasFunc) {
-            everything.splice(spliceStartIndex, 0, { type: 'assignment', text: validName, i1: validNameLine, c1: validNameStart, c2: validNameEnd })
+            everything.splice(spliceStartIndex, 0, { type: 'function CALL', text: validName, i1: validNameLine, c1: validNameStart, c2: validNameEnd })
             if (skipCommaV2Expr()) {break lineLoop}
             usingStartOfLineLoop = true
             continue startOfLineLoop
@@ -1588,7 +1593,6 @@ export default (content: string) => {
         }
         everything.push({ type: `] ${which}`, text: ']', i1: i, c1: c })
         c++
-        recurseFindTrailingExpr()
         return true
       }
     }
