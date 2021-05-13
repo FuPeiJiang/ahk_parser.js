@@ -567,11 +567,51 @@ export default (content: string) => {
             // d(`${validName}( function( startOfLine ${char()}`)
 
             everything.push({ type: 'function( startOfLine', text: `${validName}(`, i1: i, c1: nonWhiteSpaceStart, c2: c + 1 })
+            legalObjLine = i
             c++
             // exprFoundLine = i
-            let endsWithComma = false
+            const endsWithComma = false
+            let isComma
             while (true) {
-              if (!skipThroughEmptyLines()) { d('EOF Function startOfLine'); break lineLoop }
+
+              if (!skipThroughEmptyLines()) {
+                d('ILLEGAL ) function CALL OUT OF LINES', char())
+                break lineLoop }
+              if (lines[i][c] === ',') {
+                c++
+                isComma = true
+                legalObjLine = i
+              } else {
+                if (i !== legalObjLine ) {
+                  d('ILLEGAL ) function CALL startOfLine i !== legalObjLine', char())
+                }
+              }
+
+              const arrSpliceStartIndex = everything.length
+              if (recurseBetweenExpression() || findExpression()) {
+                if (isComma) {
+                  isComma = false
+                  everything.splice(arrSpliceStartIndex, 0, { type: ', function CALL startOfLine', text: ',', i1: i, c1: c })
+                }
+              } else {
+                if (isComma) {
+                  isComma = false
+                  d('ILLEGAL trailling , function CALL startOfLine', char())
+                  everything.splice(arrSpliceStartIndex, 0, { type: 'ILLEGAL trailling , function CALL startOfLine', text: ',', i1: i, c1: c })
+                }
+
+                if (lines[i][c] !== ')') {
+                  d(`\`${lines[i][c]}\` illegal NOT ) function CALL startOfLine ${linesPlusChar()}`)
+                }
+                everything.push({ type: ') function CALL startOfLine', text: ')', i1: i, c1: c })
+                c++
+                if (!skipThroughEmptyLines()) { break lineLoop }
+                usingStartOfLineLoop = true
+                continue startOfLineLoop
+              }
+
+
+              /* if (!skipThroughEmptyLines()) { d('EOF Function startOfLine'); break lineLoop }
               if (lines[i][c] === ',') {
                 endsWithComma = true
                 // d(', function CALL startOfLine', char())
@@ -586,10 +626,10 @@ export default (content: string) => {
                   d('ILLEGAL trailling , FUNCTION startOfLine', char())
                 }
                 break
-              }
+              } */
             }
 
-            if (i !== lineWhereCanConcat) {
+            /* if (i !== lineWhereCanConcat) {
               d('ILLEGAL ) function startOfLine', char())
             }
             // d(') function startOfLine', char())
@@ -598,7 +638,7 @@ export default (content: string) => {
             c++
 
             findCommentsAndEndLine()
-            continue lineLoop
+            continue lineLoop */
           }
 
           //#METHOD OR PROPERTY
@@ -892,7 +932,7 @@ export default (content: string) => {
         }
 
       } else {
-        skipThroughEmptyLines()
+        if (!skipThroughEmptyLines()) { return 2 }
         if (lines[i][c] === '{') {
           everything.push({ type: '{ namedIf', text: '{', i1: i, c1: c })
           c++
@@ -1519,7 +1559,7 @@ export default (content: string) => {
   function endMethodCall() {
     let endsWithComma = false
     while (true) {
-      skipThroughEmptyLines()
+      if (!skipThroughEmptyLines()) { return false }
       if (lines[i][c] === ',') {
         endsWithComma = true
         // d(', method CALL', char())
@@ -1642,7 +1682,7 @@ export default (content: string) => {
         //exprFoundLine = i
         let endsWithComma = false
         while (true) {
-          skipThroughEmptyLines()
+          if (!skipThroughEmptyLines()) { return false }
           if (lines[i][c] === ',') {
             endsWithComma = true
             // d(', function CALL', char())
@@ -1724,7 +1764,7 @@ export default (content: string) => {
       let isComma = false
       while (true) {
 
-        skipThroughEmptyLines()
+        if (!skipThroughEmptyLines()) { return false }
         if (lines[i][c] === ',') {
           c++
           isComma = true
@@ -1777,7 +1817,7 @@ export default (content: string) => {
         // kStart = [c, i]
 
         // beforeSkipSpaces = c
-        skipThroughEmptyLines()
+        if (!skipThroughEmptyLines()) { return false }
         // afterSkipSpaces = c
 
         const objSpliceStartIndex = everything.length
