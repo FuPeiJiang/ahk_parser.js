@@ -468,27 +468,35 @@ export default (content: string) => {
           if (isFunctionDefinition()) {
             // d(`${validName}( function( DEFINITION ${char()}`)
             everything.push({ type: 'function( definition', text: `${validName}(`, i1: i, c1: nonWhiteSpaceStart, c2: c + 1 })
+            legalObjLine = i
             c++
             variadicAsterisk = true
-            breakThisWhenParenEnd:
+            let isComma = false
             while (true) {
-              skipThroughWhiteSpaces()
-              nonWhiteSpaceStart = c
 
-              if (c === numberOfChars) {
-                d('illegal function DEFINITION: need something after (', char())
-                i++
-                variadicAsterisk = false
-                continue lineLoop
+              skipThroughEmptyLines()
+              const funcDefSpliceStartIndex = everything.length
+              if (lines[i][c] === ',') {
+                c++
+                isComma = true
+                legalObjLine = i
+                skipThroughWhiteSpaces()
+              } else {
+                if (i !== legalObjLine ) {
+                  d('ILLEGAL ) function DEFINITION i !== legalObjLine', char())
+                }
               }
 
-              skipValidChar()
-              validName = lines[i].slice(nonWhiteSpaceStart, c)
+              if (c < numberOfChars && variableCharsObj[lines[i][c]]) {
+                nonWhiteSpaceStart = c
+                c++
+                skipValidChar()
+                validName = lines[i].slice(nonWhiteSpaceStart, c)
 
-              if (lines[i][c] === ')') {
+                /* if (lines[i][c] === ')') {
                 // d('function definition with no param')
-                break breakThisWhenParenEnd
-              } else {
+                  break breakThisWhenParenEnd
+                } else { */
                 if (validName.toLowerCase() === 'byref') {
                   everything.push({ type: 'byref', text: `${validName}`, i1: i, c1: nonWhiteSpaceStart, c2: c })
                   skipThroughWhiteSpaces(), nonWhiteSpaceStart = c
@@ -503,9 +511,33 @@ export default (content: string) => {
                 if (!skipThroughEmptyLines()) { break lineLoop }
                 findBetween()
 
+                // }
+                if (isComma) {
+                  isComma = false
+                  everything.splice(funcDefSpliceStartIndex, 0, { type: ', function DEFINITION', text: ',', i1: i, c1: c })
+                }
+              } else {
+                if (isComma) {
+                  isComma = false
+                  d('ILLEGAL trailling , function DEFINITION', char())
+                  everything.splice(funcDefSpliceStartIndex, 0, { type: 'ILLEGAL trailling , function DEFINITION', text: ',', i1: i, c1: c })
+                }
+
+                if (lines[i][c] !== ')') {
+                  d(`\`${lines[i][c]}\` illegal NOT ) function DEFINITION ${linesPlusChar()}`)
+                }
+                everything.push({ type: ') function DEFINITION', text: ')', i1: i, c1: c })
+                c++
+                if (!skipThroughEmptyLines()) { break lineLoop }
+                everything.push({ type: '{ function DEFINITION', text: '{', i1: i, c1: c })
+                c++
+                if (!skipThroughEmptyLines()) { break lineLoop }
+                usingStartOfLineLoop = true
+                variadicAsterisk = false
+                continue startOfLineLoop
               }
 
-              if (lines[i][c] !== ',') {
+              /* if (lines[i][c] !== ',') {
                 if (lines[i][c] === ')') {
                   // d(') function DEFINITION', char())
                   break breakThisWhenParenEnd
@@ -517,7 +549,7 @@ export default (content: string) => {
               // d(', Function DEFINITION', char())
               everything.push({ type: ', function definition', text: ',', i1: i, c1: c })
 
-              c++
+              c++ */
             }
             //after break breakThisWhenParenEnd
             everything.push({ type: ') function DEFINITION', text: ')', i1: i, c1: c })
@@ -526,9 +558,9 @@ export default (content: string) => {
             // d(`{ Function DEFINITION ${char()}`)
             everything.push({ type: '{ function DEFINITION', text: '{', i1: i, c1: c })
             c++
-            usingStartOfLineLoop = true
             skipThroughWhiteSpaces()
             variadicAsterisk = false
+            usingStartOfLineLoop = true
             continue startOfLineLoop
           } else {
             //#FUNCTION CALL startOfLine
@@ -1684,14 +1716,11 @@ export default (content: string) => {
     }
 
     if (lines[i][c] === '[') {
-      //quick patch
       everything.push({ type: '[ Array', text: '[', i1: i, c1: c })
       legalObjLine = i
 
       c++
 
-      // exprFoundLine = i
-      const notFoundExpression = false
       let isComma = false
       while (true) {
 
