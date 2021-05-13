@@ -564,7 +564,7 @@ export default (content: string) => {
             continue startOfLineLoop
           } else {
 
-            const functionMidReturn = functionMid()
+            const functionMidReturn = functionMid('function startOfLine')
             if (functionMidReturn === 1) {
               usingStartOfLineLoop = true
               continue startOfLineLoop
@@ -599,9 +599,13 @@ export default (content: string) => {
           if (skipProperties()) {
             //#METHOD CALL
             if (lines[i][c] === '(') {
-              everything.push({ type: 'method( startOfLine', text: `${validName}(`, i1: i, c1: propertyC1, c2: c + 1 })
-              c++
-              endMethodCall()
+              const functionMidReturn = functionMid('method startOfLine')
+              if (functionMidReturn === 1) {
+                usingStartOfLineLoop = true
+                continue startOfLineLoop
+              } else if (functionMidReturn === 2) {
+                continue lineLoop
+              }
             } else if (lines[i][c] === '[') {
               everything.push({ type: 'ArrAccess', text: validName, i1: i, c1: propertyC1, c2: c })
               everything.push({ type: '[ Array startOfLine', text: '[', i1: i, c1: c })
@@ -720,8 +724,8 @@ export default (content: string) => {
   return everything
 
   // start of functions
-  function functionMid() {
-    everything.push({ type: 'function(', text: `${validName}(`, i1: i, c1: nonWhiteSpaceStart, c2: c + 1 })
+  function functionMid(which: string) {
+    everything.push({ type: `${which}(`, text: `${validName}(`, i1: i, c1: nonWhiteSpaceStart, c2: c + 1 })
     legalObjLine = i
     c++
     // exprFoundLine = i
@@ -730,7 +734,7 @@ export default (content: string) => {
     while (true) {
 
       if (!skipThroughEmptyLines()) {
-        d('ILLEGAL ) function CALL OUT OF LINES', char())
+        d(`ILLEGAL ) ${which} CALL OUT OF LINES`, char())
         return 2
       } if (lines[i][c] === ',') {
         c++
@@ -738,7 +742,7 @@ export default (content: string) => {
         legalObjLine = i
       } else {
         if (i !== legalObjLine ) {
-          d('ILLEGAL ) function CALL startOfLine i !== legalObjLine', char())
+          d(`ILLEGAL ) ${which} CALL startOfLine i !== legalObjLine`, char())
         }
       }
 
@@ -746,19 +750,19 @@ export default (content: string) => {
       if (recurseBetweenExpression() || findExpression()) {
         if (isComma) {
           isComma = false
-          everything.splice(arrSpliceStartIndex, 0, { type: ', function CALL startOfLine', text: ',', i1: i, c1: c })
+          everything.splice(arrSpliceStartIndex, 0, { type: `, ${which} CALL startOfLine`, text: ',', i1: i, c1: c })
         }
       } else {
         if (isComma) {
           isComma = false
-          d('ILLEGAL trailling , function CALL startOfLine', char())
-          everything.splice(arrSpliceStartIndex, 0, { type: 'ILLEGAL trailling , function CALL startOfLine', text: ',', i1: i, c1: c })
+          d(`ILLEGAL trailling , ${which} CALL startOfLine`, char())
+          everything.splice(arrSpliceStartIndex, 0, { type: `ILLEGAL trailling , ${which} CALL startOfLine`, text: ',', i1: i, c1: c })
         }
 
         if (lines[i][c] !== ')') {
-          d(`\`${lines[i][c]}\` illegal NOT ) function CALL startOfLine ${linesPlusChar()}`)
+          d(`\`${lines[i][c]}\` illegal NOT ) ${which} CALL startOfLine ${linesPlusChar()}`)
         }
-        everything.push({ type: ') function CALL startOfLine', text: ')', i1: i, c1: c })
+        everything.push({ type: `) ${which} CALL startOfLine`, text: ')', i1: i, c1: c })
         c++
         if (!skipThroughEmptyLines()) { return 2 }
         return 1
@@ -1518,12 +1522,13 @@ export default (content: string) => {
     if (skipProperties()) {
       //#METHOD CALL
       if (lines[i][c] === '(') {
-        // d(`${validName}( METHOD( ${char()}`)
-        everything.push({ type: 'method(', text: `${validName}(`, i1: i, c1: nonWhiteSpaceStart, c2: c + 1 })
-        c++
-        // exprFoundLine = i
-        endMethodCall()
-        return true
+        const functionMidReturn = functionMid('method')
+        if (functionMidReturn === 1) {
+          recurseBetweenExpression()
+          return true
+        } else if (functionMidReturn === 2) {
+          return false
+        }
       }
 
       if (findArrayAccess()) { return true }
@@ -1653,7 +1658,8 @@ export default (content: string) => {
       }
 
       //#FUNCTION CALL
-      if (lines[i][c] === '(') {const functionMidReturn = functionMid()
+      if (lines[i][c] === '(') {
+        const functionMidReturn = functionMid('function')
         if (functionMidReturn === 1) {
           recurseBetweenExpression()
           return true
