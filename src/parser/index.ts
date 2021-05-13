@@ -19,7 +19,7 @@ export default (content: string) => {
 
   let i = 0, c = 0, numberOfChars = 0, validName = '', strStartLine: number, strStartPos: number, insideContinuation = false, beforeConcat: number, nonWhiteSpaceStart: number, exprFoundLine = -1, colonDeep = 0, usingStartOfLineLoop = false, variadicAsterisk = false, lineWhereCanConcat = -1, v1ExpressionC1: number, cNotWhiteSpace: number, percentVarStart: number, propertyC1 = -1, lookingForAnd = false, doubleComma = false, singleComma = false, insideV1Continuation = false
   let everythingPushCounter: number; everythingPushCounter = 0
-  let spliceStartIndex: number, validNameLine: number, validNameEnd: number, findingVarName = false, varNameCanLtrimSpaces: false, idkVarC1 = 0, legalObjLine = -1
+  let spliceStartIndex: number, validNameLine: number, validNameEnd: number, findingVarName = false, varNameCanLtrimSpaces: false, idkVarC1 = 0, legalObjLine = -1, lastTrailingWasFunc = false
   lineLoop:
   while (i < howManyLines) {
     c = 0
@@ -168,10 +168,10 @@ export default (content: string) => {
                 breakToGoFindV2:
                 while (variableCharsObj[lines[i][c]]) {
                   const saveC = c, saveI = i, saveNumChars = numberOfChars
-                  // c++
                   while (findPercentVar() || variableCharsObj[lines[i][c]]) {
                     c++
                   }
+                  const cendOfLegacyIfVar = c
                   while (c < numberOfChars && whiteSpaceObj[lines[i][c]]) {
                     c++
                   }
@@ -233,7 +233,7 @@ export default (content: string) => {
                     c = saveC, i = saveI , numberOfChars = saveNumChars
                     break breakToGoFindV2
                   }
-                  everything.splice(spliceStartIndex, 0, { type: 'legacyIf var', text: lines[validNameLine].slice(validNamestart, validNameEnd), i1: validNameLine, c1: validNamestart, c2: validNameEnd })
+                  everything.splice(spliceStartIndex, 0, { type: 'legacyIf var', text: lines[saveI].slice(saveC, cendOfLegacyIfVar), i1: saveI, c1: saveC, c2: cendOfLegacyIfVar })
                   findV1Expression()
                   doubleComma = false
                   usingStartOfLineLoop = true
@@ -456,6 +456,7 @@ export default (content: string) => {
       validName = lines[i].slice(nonWhiteSpaceStart, c)
       validNameEnd = c, validNameLine = i
 
+      lastTrailingWasFunc = false
       if (validName) {
         //#FUNCTION
         if (lines[i][c] === '(') {
@@ -537,19 +538,6 @@ export default (content: string) => {
                 continue startOfLineLoop
               }
 
-              /* if (lines[i][c] !== ',') {
-                if (lines[i][c] === ')') {
-                  // d(') function DEFINITION', char())
-                  break breakThisWhenParenEnd
-                } else {
-                  d('illegal function DEFINITION END', char())
-                  return everything
-                }
-              }
-              // d(', Function DEFINITION', char())
-              everything.push({ type: ', function definition', text: ',', i1: i, c1: c })
-
-              c++ */
             }
             //after break breakThisWhenParenEnd
             everything.push({ type: ') function DEFINITION', text: ')', i1: i, c1: c })
@@ -564,118 +552,50 @@ export default (content: string) => {
             continue startOfLineLoop
           } else {
 
+            everything.push({ type: 'function startOfLine', text: validName, i1: i, c1: nonWhiteSpaceStart, c2: c })
             const functionMidReturn = functionMid('function startOfLine')
             if (functionMidReturn === 1) {
-              if (skipCommaV2Expr()) {break lineLoop}
-              usingStartOfLineLoop = true
-              continue startOfLineLoop
+              lastTrailingWasFunc = true
             } else if (functionMidReturn === 2) {
               continue lineLoop
             }
-
           }
 
-          //#METHOD OR PROPERTY
-          // this is NOT a METHOD call:
-          // str.=v[key] "+" k "|"
-          // so check if the next character is a valid Var
-        } else if (lines[i][c] === '.' && variableCharsObj[lines[i][c + 1]]) {
-          //can't have number on startOfLine
-          if (isNaN(Number(validName))) {
-            // everything.push({ type: 'obj with property startOfLine', text: validName, i1: i, c1: nonWhiteSpaceStart, c2: c })
-          } else {
-            // everything.push({ type: 'Integer part of Decimal startOfLine', text: validName, i1: i, c1: nonWhiteSpaceStart, c2: c })
-            d('illegal: can\'t have number on startOfLine')
-          }
-
-          everything.push({ type: '. property startOfLine', text: '.', i1: i, c1: c })
-          c++
-
-          const validNameStart = c
-          skipValidChar()
-          validName = lines[i].slice(validNameStart, c)
-          everything.push({ type: 'property startOfLine', text: validName, i1: i, c1: validNameStart, c2: c })
-          recurseFindTrailingExpr()
-
-          // let isProp = false
-          //
-          // if (!findMethodOrProperty()) {
-          // }
-
-          //if not number and not property EOL
-          /* if (skipProperties()) {
-            //#METHOD CALL
-            if (lines[i][c] === '(') {
-              const functionMidReturn = functionMid('method startOfLine')
-              if (functionMidReturn === 1) {
-                usingStartOfLineLoop = true
-                continue startOfLineLoop
-              } else if (functionMidReturn === 2) {
-                continue lineLoop
-              }
-            } else if (lines[i][c] === '[') {
-              everything.push({ type: 'ArrAccess startOfLine WHAT', text: validName, i1: i, c1: propertyC1, c2: c })
-              everything.push({ type: '[ Array startOfLine', text: '[', i1: i, c1: c })
-              endArrAccess()
-            } else {
-              everything.push({ type: 'property ending at startOfLine', text: validName, i1: i, c1: propertyC1, c2: c })
-              isProp = true
-              recurseBetweenExpression()
-              if (skipCommaV2Expr()) {break lineLoop}
-              usingStartOfLineLoop = true
-              continue startOfLineLoop
-            }
-          } else {
-            isProp = true
-          } */
-
-          //a method can actually be assigned... property too
-          //if prop and no assignment
-          /* if (!recurseBetweenExpression() && isProp) {
-            d('illegal property on startOfLine', char())
-          }
-          if (i === lineWhereCanConcat) {
-            findCommentsAndEndLine()
-          } else {
-            usingStartOfLineLoop = true
-            continue startOfLineLoop
-          }
-          continue lineLoop */
-          //#ARR ACCESS startofline
-          //#ARRAY ACCESS startofline
-        } else if (lines[i][c] === '[') {
-          if (!isNaN(Number(validName))) {
-            d('illegal ArrAccess on startOfLine: can\'t ArrAcess on Integer', validName)
-          }
-          // everything.push({ type: 'ArrAccess startOfLine', text: validName, i1: i, c1: propertyC1, c2: c })
-          arrayMid('ArrAccess startOfLine')
         }
+        recurseFindTrailingExpr()
 
         //out of lines
-        if (!skipThroughEmptyLines()) { break lineLoop }
+        if (!skipThroughEmptyLines()) {
+          if (lastTrailingWasFunc) {
+            everything.splice(spliceStartIndex, 0, { type: 'assignment', text: validName, i1: validNameLine, c1: validNameStart, c2: validNameEnd })
+          }
+          break lineLoop
+        }
 
         //#v1 expression
         if (c < numberOfChars && lines[i][c] === '=') {
-          everything.splice(spliceStartIndex, 0, { type: 'var at v1Assignment', text: validName, i1: i, c1: nonWhiteSpaceStart, c2: c })
+          everything.splice(spliceStartIndex, 0, { type: 'var at v1Assignment', text: validName, i1: validNameLine, c1: validNameStart, c2: validNameEnd })
           everything.push({ type: '= v1Assignment', text: '=', i1: i, c1: c })
           c++
           findV1Expression()
-          // everything.push({type: 'newLine v1Assignment', text:'\n',i1: i, c1:c})
-          // i++
-          // continue lineLoop
           usingStartOfLineLoop = true
           continue startOfLineLoop
         }
 
         //#ASSIGNMENT
         if (recurseBetweenExpression()) {
-          const assignedTo = lines[validNameLine].slice(validNameStart, validNameEnd)
-          // d(`${assignedTo} assignment`)
-          everything.splice(spliceStartIndex, 0, { type: 'assignment', text: assignedTo, i1: validNameLine, c1: validNameStart, c2: validNameEnd })
+          everything.splice(spliceStartIndex, 0, { type: 'assignment', text: validName, i1: validNameLine, c1: validNameStart, c2: validNameEnd })
 
           if (skipCommaV2Expr()) {break lineLoop}
           usingStartOfLineLoop = true
           continue startOfLineLoop
+        } else {
+          if (lastTrailingWasFunc) {
+            everything.splice(spliceStartIndex, 0, { type: 'assignment', text: validName, i1: validNameLine, c1: validNameStart, c2: validNameEnd })
+            if (skipCommaV2Expr()) {break lineLoop}
+            usingStartOfLineLoop = true
+            continue startOfLineLoop
+          }
         }
       }
 
@@ -706,6 +626,7 @@ export default (content: string) => {
 
     //end of lineLoop
     d('end of lineLoop')
+    return everything
     // everything.push({type: 'end of lineLoop', text:'\n',i1: i, c1:c})
     i++
     continue lineLoop
@@ -770,7 +691,6 @@ export default (content: string) => {
         }
         everything.push({ type: `) ${which} CALL startOfLine`, text: ')', i1: i, c1: c })
         c++
-        if (!skipThroughEmptyLines()) { return 2 }
         return 1
       }
 
@@ -1701,15 +1621,20 @@ export default (content: string) => {
   }
   function findTrailingExpr() {
     if (lines[i][c] === '.') {
-
-      if (isNaN(Number(validName))) {
+      lastTrailingWasFunc = false
+      c++
+      everything.push({ type: '. property', text: '.', i1: i, c1: c })
+      const c1 = c
+      skipValidChar()
+      everything.push({ type: '(.) property findTrailingExpr', text: lines[i].slice(c1,c), i1: i, c1: c1, c2: c })
+      /* if (isNaN(Number(validName))) {
         // everything.push({ type: 'obj with property', text: validName, i1: i, c1: nonWhiteSpaceStart, c2: c })
       } else {
         // everything.push({ type: 'Integer part of Decimal', text: validName, i1: i, c1: nonWhiteSpaceStart, c2: c })
       }
       c++
       everything.push({ type: '. property', text: '.', i1: i, c1: c })
-      findMethodOrProperty()
+      findMethodOrProperty() */
       return true
     }
 
@@ -1717,12 +1642,14 @@ export default (content: string) => {
     if (lines[i][c] === '(') {
       const functionMidReturn = functionMid('function')
       if (functionMidReturn === 1) {
+        lastTrailingWasFunc = true
         return true
       } else if (functionMidReturn === 2) {
         return false
       }
     }
     if (findArrayAccess()) {
+      lastTrailingWasFunc = false
       return true
     }
   }
@@ -1759,14 +1686,14 @@ export default (content: string) => {
 
       skipValidChar()
 
-      validName = lines[i].slice(nonWhiteSpaceStart, c)
+      let fEvalidName = lines[i].slice(nonWhiteSpaceStart, c)
       if (c === numberOfChars) {
-        if (isNaN(Number(validName))) {
+        if (isNaN(Number(fEvalidName))) {
           // d(`${validName} validName VARIABLE EOL ${char()}`)
-          everything.push({ type: 'validName VARIABLE EOL', text: validName, i1: i, c1: nonWhiteSpaceStart, c2: c })
+          everything.push({ type: 'validName VARIABLE EOL', text: fEvalidName, i1: i, c1: nonWhiteSpaceStart, c2: c })
         } else {
           // d(`${validName} Integer EOL ${char()}`)
-          everything.push({ type: 'Integer', text: validName, i1: i, c1: nonWhiteSpaceStart, c2: c })
+          everything.push({ type: 'Integer', text: fEvalidName, i1: i, c1: nonWhiteSpaceStart, c2: c })
         }
         recurseBetweenExpression()
         return true
@@ -1776,28 +1703,28 @@ export default (content: string) => {
       while (c < numberOfChars && (findPercentVar() || variableCharsObj[lines[i][c]])) {
         c++
       }
-      validName = lines[i].slice(nonWhiteSpaceStart, c)
+      fEvalidName = lines[i].slice(nonWhiteSpaceStart, c)
       if (c === numberOfChars) {
-        d(`${validName} %VARIABLE% EOL ${char()}`)
-        everything.push({ type: '%VARIABLE% EOL', text: validName, i1: i, c1: nonWhiteSpaceStart, c2: c })
+        d(`${fEvalidName} %VARIABLE% EOL ${char()}`)
+        everything.push({ type: '%VARIABLE% EOL', text: fEvalidName, i1: i, c1: nonWhiteSpaceStart, c2: c })
         recurseBetweenExpression()
         return true
       }
 
-      if (isNaN(Number(validName))) {
+      if (isNaN(Number(fEvalidName))) {
         // d(`${validName} idkVariable ${char()}`)
-        if (lookingForAnd && validName.toLowerCase() === 'and') {
+        if (lookingForAnd && fEvalidName.toLowerCase() === 'and') {
           lookingForAnd = false
-          everything.push({ type: 'legacyIf and{ws} findExpression', text: `${validName} `, i1: i, c1: nonWhiteSpaceStart, c2: c + 1 })
+          everything.push({ type: 'legacyIf and{ws} findExpression', text: `${fEvalidName} `, i1: i, c1: nonWhiteSpaceStart, c2: c + 1 })
           c++
           return false
         } else {
-          everything.push({ type: 'idkVariable', text: validName, i1: i, c1: nonWhiteSpaceStart, c2: c })
+          everything.push({ type: 'idkVariable', text: fEvalidName, i1: i, c1: nonWhiteSpaceStart, c2: c })
           lineWhereCanConcat = i
         }
       } else {
         // d(`${validName} Integer ${char()}`)
-        everything.push({ type: 'Integer', text: validName, i1: i, c1: nonWhiteSpaceStart, c2: c })
+        everything.push({ type: 'Integer', text: fEvalidName, i1: i, c1: nonWhiteSpaceStart, c2: c })
       }
 
       if (recurseFindTrailingExpr()) {
