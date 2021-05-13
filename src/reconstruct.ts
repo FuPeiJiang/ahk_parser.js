@@ -4,11 +4,11 @@ const d = console.debug.bind(console)
 
 
 const content: string =
-// fs.readFileSync('tests2/function definition fix.ahk')
+fs.readFileSync('tests2/function definition fix.ahk')
 // fs.readFileSync('tests2/class.ahk')
 // fs.readFileSync('tests/arrays.ahk')
 // fs.readFileSync('tests2/idkAnymore5.ahk')
-fs.readFileSync('tests/literal objects.ahk')
+// fs.readFileSync('tests/literal objects.ahk')
 // fs.readFileSync('tests2/loop idk.ahk')
 // fs.readFileSync('tests2/idkAnymore4.ahk')
 // fs.readFileSync('tests2/loop Reg.ahk')

@@ -1,7 +1,7 @@
 MapIndexToID(  HWND  
 , Row) {
 }
-; Detach(  HWND  ) {
-; }
-; foo() {
-; }
+Detach(  HWND  ) {
+}
+foo() {
+}
