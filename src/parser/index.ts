@@ -747,27 +747,44 @@ export default (content: string) => {
       if (!skipThroughEmptyLines()) { return 2 }
       if (variableCharsObj[lines[i][c]]) {
 
-        let text, cPlusLen
-        if ((text = lines[i].slice(c, cPlusLen = c + 5)).toLowerCase() === 'files' && !variableCharsObj[lines[i][cPlusLen]]) {
-          everything.push({ type: '(loop) files', text: text, i1: i, c1: c, c2: cPlusLen })
-          c += 5
-          if (!skipThroughEmptyLines()) { return 2 }
-          if (findCommaV1Expression(', 1 (loop) files')) {
-            findCommaV1Expression(', 2 (loop) files')
-          }
-          usingStartOfLineLoop = true
-          return 1
-        } else if ((text = lines[i].slice(c, cPlusLen = c + 5)).toLowerCase() === 'parse' && !variableCharsObj[lines[i][cPlusLen]]) {
-          everything.push({ type: '(loop) parse', text: text, i1: i, c1: c, c2: cPlusLen })
-          c += 5
-          if (!skipThroughEmptyLines()) { return 2 }
-          if (findCommaV1Expression('1 (loop) parse')) {
-            if (findCommaV1Expression('2 (loop) parse')) {
-              findCommaV1Expression('3 (loop) parse')
+        breakToGoFindV1Expression:
+        while (true) {
+          let text, cPlusLen
+          if ((text = lines[i].slice(c, cPlusLen = c + 4)).toLowerCase() === 'files' && !variableCharsObj[lines[i][cPlusLen]]) {
+            everything.push({ type: '(loop) read', text: text, i1: i, c1: c, c2: cPlusLen })
+            c += 4
+            if (!skipThroughEmptyLines()) { return 2 }
+            if (findCommaV1Expression(', 1 (loop) read')) {
+              findCommaV1Expression(', 2 (loop) read')
             }
+          } else if ((text = lines[i].slice(c, cPlusLen = c + 5)).toLowerCase() === 'files' && !variableCharsObj[lines[i][cPlusLen]]) {
+            everything.push({ type: '(loop) files', text: text, i1: i, c1: c, c2: cPlusLen })
+            c += 5
+            if (!skipThroughEmptyLines()) { return 2 }
+            if (findCommaV1Expression(', 1 (loop) files')) {
+              findCommaV1Expression(', 2 (loop) files')
+            }
+          } else if ((text = lines[i].slice(c, cPlusLen = c + 5)).toLowerCase() === 'parse' && !variableCharsObj[lines[i][cPlusLen]]) {
+            everything.push({ type: '(loop) parse', text: text, i1: i, c1: c, c2: cPlusLen })
+            c += 5
+            if (!skipThroughEmptyLines()) { return 2 }
+            if (findCommaV1Expression('1 (loop) parse')) {
+              if (findCommaV1Expression('2 (loop) parse')) {
+                findCommaV1Expression('3 (loop) parse')
+              }
+            }
+          } else {
+            break breakToGoFindV1Expression
+          }
+
+          if (lines[i][c] === '{') {
+            everything.push({ type: '{ loop', text: '{', i1: i, c1: c })
+            c++
+            if (!skipThroughEmptyLines()) { return 2 }
           }
           usingStartOfLineLoop = true
           return 1
+
         }
 
       }
@@ -2062,6 +2079,7 @@ export default (content: string) => {
         if (lines[i][c] !== '%') {
           d('illegal %VAR% in v1Expression', char())
         }
+        cNotWhiteSpace = c
         everything.push({ type: 'END% %Var%', text: lines[i][c], i1: i, c1: c })
         return true
       }
