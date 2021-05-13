@@ -1675,37 +1675,44 @@ export default (content: string) => {
       c++
 
       // exprFoundLine = i
+      const notFoundExpression = false
+      let isComma = false
       while (true) {
-        if (!findExpression()) {
-          if (lines[i][c] === ',') {
-            d('ILLEGAL trailling , ARRAY', char())
-          } else if (lines[i][c] === ']') {
-            // d('valid empty arr', char())
-          } else {
-            d('illegal arr1', char())
-          }
-          break
-        }
-        if (lines[i][c] === ',') {
-          everything.push({ type: ', ARRAY', text: ',', i1: i, c1: c })
-          legalObjLine = i
-        } else {
-          break
-        }
-        c++
-      }
-      if (i !== legalObjLine ) {
-        d('ILLEGAL ] Array', char())
-      }
-      // d('] Array', char())
 
-      if (lines[i][c] !== ']') {
-        d(`\`${lines[i][c]}\` illegal NOT ] Array ${linesPlusChar()}`)
+        if (lines[i][c] === ',') {
+          c++
+          isComma = true
+          legalObjLine = i
+        }
+
+        const arrSpliceStartIndex = everything.length
+        if (findExpression()) {
+          if (isComma) {
+            isComma = false
+            everything.splice(arrSpliceStartIndex, 0, { type: ', ARRAY', text: ',', i1: i, c1: c })
+          }
+        } else {
+          if (isComma) {
+            isComma = false
+            d('ILLEGAL trailling , ARRAY', char())
+            everything.splice(arrSpliceStartIndex, 0, { type: 'ILLEGAL trailling , ARRAY', text: ',', i1: i, c1: c })
+          }
+          if (i !== legalObjLine ) {
+            d('ILLEGAL ] Array', char())
+          }
+          // d('] Array', char())
+
+          if (lines[i][c] !== ']') {
+            d(`\`${lines[i][c]}\` illegal NOT ] Array ${linesPlusChar()}`)
+          }
+          everything.push({ type: '] Array', text: ']', i1: i, c1: c })
+          c++
+          recurseBetweenExpression()
+          return true
+        }
+
       }
-      everything.push({ type: '] Array', text: ']', i1: i, c1: c })
-      c++
-      recurseBetweenExpression()
-      return true
+
     }
     if (i !== lineWhereCanConcat && lines[i][c] === '{') {
       // d('{ object', char())
