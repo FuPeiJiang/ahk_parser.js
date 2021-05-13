@@ -1839,3 +1839,6 @@ to do:
 MapIndexToID(HWND, Row) { shouldn't be MapIndexToID(HWND, ) {
 AND
 Detach(HWND) { shouldn't be Detach() {
+
+to do:
+  startContinuation() was rewritten, retest it.

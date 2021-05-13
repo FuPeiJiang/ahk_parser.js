@@ -19,7 +19,7 @@ export default (content: string) => {
 
   let i = 0, c = 0, numberOfChars = 0, validName = '', strStartLine: number, strStartPos: number, insideContinuation = false, beforeConcat: number, nonWhiteSpaceStart: number, exprFoundLine = -1, colonDeep = 0, usingStartOfLineLoop = false, variadicAsterisk = false, lineWhereCanConcat = -1, v1ExpressionC1: number, cNotWhiteSpace: number, percentVarStart: number, propertyC1 = -1, lookingForAnd = false, doubleComma = false, singleComma = false, insideV1Continuation = false
   let everythingPushCounter: number; everythingPushCounter = 0
-  let spliceStartIndex: number, validNameLine: number, validNameEnd: number, findingVarName = false, varNameCanLtrimSpaces: false, idkVarC1 = 0
+  let spliceStartIndex: number, validNameLine: number, validNameEnd: number, findingVarName = false, varNameCanLtrimSpaces: false, idkVarC1 = 0, legalObjLine = -1
   lineLoop:
   while (i < howManyLines) {
     c = 0
@@ -170,7 +170,6 @@ export default (content: string) => {
                   c++
                   skipValidChar()
                   validNameEnd = c, validNameLine = i
-
                   skipThroughWhiteSpaces()
                   findV1ExpressiondummyLoop:
                   while (true) {
@@ -223,6 +222,8 @@ export default (content: string) => {
                       c++
                       break findV1ExpressiondummyLoop
                     }
+                    everything.splice(spliceStartIndex, 0, { type: 'legacyIf var', text: lines[validNameLine].slice(validNamestart, validNameEnd), i1: validNameLine, c1: validNamestart, c2: validNameEnd })
+                    lineWhereCanConcat = i
                     break breakToGoFindV2
                   }
                   everything.splice(spliceStartIndex, 0, { type: 'legacyIf var', text: lines[validNameLine].slice(validNamestart, validNameEnd), i1: validNameLine, c1: validNamestart, c2: validNameEnd })
@@ -516,7 +517,6 @@ export default (content: string) => {
           } else {
             //#FUNCTION CALL startOfLine
             // d(`${validName}( function( startOfLine ${char()}`)
-            lineWhereCanConcat = i
 
             everything.push({ type: 'function( startOfLine', text: `${validName}(`, i1: i, c1: nonWhiteSpaceStart, c2: c + 1 })
             c++
@@ -578,12 +578,10 @@ export default (content: string) => {
           if (skipProperties()) {
             //#METHOD CALL
             if (lines[i][c] === '(') {
-              lineWhereCanConcat = i
               everything.push({ type: 'method( startOfLine', text: `${validName}(`, i1: i, c1: propertyC1, c2: c + 1 })
               c++
               endMethodCall()
             } else if (lines[i][c] === '[') {
-              lineWhereCanConcat = i
               everything.push({ type: 'ArrAccess', text: validName, i1: i, c1: propertyC1, c2: c })
               everything.push({ type: '[ Array startOfLine', text: '[', i1: i, c1: c })
               endArrAccess()
@@ -611,7 +609,6 @@ export default (content: string) => {
           if (!isNaN(Number(validName))) {
             d('illegal ArrAccess on startOfLine: can\'t ArrAcess on Integer', validName)
           }
-          lineWhereCanConcat = i
           endArrAccess()
           recurseBetweenExpression()
           if (i === lineWhereCanConcat) {
@@ -1345,7 +1342,6 @@ export default (content: string) => {
     } else {
       return false
     }
-    lineWhereCanConcat = i
     return toReturn
 
   }
@@ -1526,7 +1522,8 @@ export default (content: string) => {
 
     //nothing left, continue
     if (c === numberOfChars || lines[i][c] === ';') {
-      d(c, numberOfChars, lines[i])
+
+      // d('findExpression nothing left, continue',c, numberOfChars, lines[i])
 
       if (insideContinuation) {
         if (endExprContinuation()) {
@@ -1670,7 +1667,6 @@ export default (content: string) => {
 
     if (lines[i][c] === '[') {
       //quick patch
-      lineWhereCanConcat = i //THIS IS UNTESTED
       everything.push({ type: '[ Array', text: '[', i1: i, c1: c })
 
       c++
@@ -1710,7 +1706,8 @@ export default (content: string) => {
     if (i !== lineWhereCanConcat && lines[i][c] === '{') {
       // d('{ object', char())
       everything.push({ type: '{ object', text: '{', i1: i, c1: c })
-      const objStart: [number, number] = [c, i]
+      legalObjLine = i
+      // const objStart: [number, number] = [c, i]
       colonDeep++, c++
       //exprFoundLine = i
       let kStart: [number, number], vStart: [number, number], k: string, v: string
@@ -1745,6 +1742,8 @@ export default (content: string) => {
           if (haventFoundSingleVar) {
             if (lines[i][c] === ',') {
               d('ILLEGAL trailling , OBJECT', char())
+              everything.push({ type: 'ILLEGAL trailling , OBJECT', text: ',', i1: i, c1: c })
+              c++
             } else if (lines[i][c] === '}') {
               // d('valid empty obj', char())
             } else {
@@ -1757,6 +1756,7 @@ export default (content: string) => {
         if (lines[i][c] === ':') {
           // d(': object', char())
           everything.push({ type: ': object', text: ':', i1: i, c1: c })
+          legalObjLine = i
         } else {
           d('illegal obj2', char())
         }
@@ -1785,12 +1785,13 @@ export default (content: string) => {
         if (lines[i][c] === ',') {
           // d(', object', char())
           everything.push({ type: ', object', text: ',', i1: i, c1: c })
+          legalObjLine = i
         } else {
           break
         }
         c++
       }
-      if (i !== lineWhereCanConcat) {
+      if (i !== legalObjLine) {
         d('ILLEGAL }', char())
       }
       // d('} object', char())
@@ -1893,8 +1894,17 @@ export default (content: string) => {
     }
   }
   function startContinuation() {
-    i++
-    while (i < howManyLines) {
+    if (!skipThroughEmptyLines()) {
+      d('illegal: startContinuation OutOfLines')
+      trace()
+      return false
+    }
+    if (lines[i][c] === '(') {
+      insideContinuation = true
+      return true
+    }
+    return false
+    /* while (i < howManyLines) {
       c = 0
       numberOfChars = lines[i].length
       skipThroughWhiteSpaces()
@@ -1918,9 +1928,7 @@ export default (content: string) => {
         return false
       }
     }
-    d('illegal: startContinuation OutOfLines')
-    trace()
-    return false
+ */
   }
   function endExprContinuation() {
     i++, c = 0, numberOfChars = lines[i].length
@@ -2176,6 +2184,7 @@ export default (content: string) => {
       }
       const text = lines[i].slice(c1, c)
       everything.push({ type: 'singleVar', text: text, i1: i, c1: c1, c2: c })
+      lineWhereCanConcat = i
       return true
     }
     return false
