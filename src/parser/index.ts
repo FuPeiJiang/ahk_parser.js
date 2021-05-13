@@ -155,8 +155,9 @@ export default (content: string) => {
             // only directives and "if" override assignment and ONLY when there's a whiteSpace
               if (idkType === 1) {
                 // d(validName, 'whiteSpace DIRECTIVE', char())
-                const text = lines[i].slice(nonWhiteSpaceStart, numberOfChars)
-                everything.push({ type: 'directive', text: text, i1: i, c1: nonWhiteSpaceStart, c2: numberOfChars })
+                everything.splice(spliceStartIndex, 0, { type: 'directive', text: validName, i1: validNameLine, c1: validNameStart, c2: validNameEnd })
+                const text = lines[i].slice(c, numberOfChars)
+                everything.push({ type: 'directive to EOL', text: text, i1: i, c1: nonWhiteSpaceStart, c2: numberOfChars })
                 everything.push({ type: 'newLine directive', text: '\n', i1: i, c1: c })
                 i++
                 continue lineLoop
