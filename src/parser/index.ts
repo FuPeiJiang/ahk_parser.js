@@ -795,9 +795,16 @@ export default (content: string) => {
         }
 
       }
-      findV1Expression()
 
+      singleComma = true
       findV1Expression()
+      singleComma = false
+      if (findCommaV1Expression(', 1 (loop) idk')) {
+        if (findCommaV1Expression(', 2 (loop) idk')) {
+          findCommaV1Expression(', 3 (loop) idk')
+        }
+      }
+
       if (lines[i][c] === '{') {
         everything.push({ type: '{ loop', text: '{', i1: i, c1: c })
         c++
