@@ -1729,18 +1729,22 @@ export default (content: string) => {
       while (true) {
 
 
-        kStart = [c, i]
+        // kStart = [c, i]
         singleVar = true
 
         const objSpliceStartIndex = everything.length
-        beforeSkipSpaces = c
+        // beforeSkipSpaces = c
         skipThroughEmptyLines()
-        afterSkipSpaces = c
+        // afterSkipSpaces = c
 
         if (lines[i][c] === ',') {
           c++
           isComma = true
           legalObjLine = i
+        } else {
+          if (i !== legalObjLine ) {
+            d('ILLEGAL ] Array i !== legalObjLine', char())
+          }
         }
         //skipSpaces
         // skip though propCharsObj
@@ -1765,9 +1769,6 @@ export default (content: string) => {
               isComma = false
               d('ILLEGAL trailling , object', char())
               everything.splice(objSpliceStartIndex, 0, { type: 'ILLEGAL trailling , object', text: ',', i1: i, c1: c })
-            }
-            if (i !== legalObjLine) {
-              d('ILLEGAL } object i !== legalObjLine', char())
             }
             if (lines[i][c] !== '}') {
               d(`\`${lines[i][c]}\` illegal NOT } object ${linesPlusChar()}`)
@@ -1795,7 +1796,8 @@ export default (content: string) => {
           everything.push({ type: ': object', text: ':', i1: i, c1: c })
           legalObjLine = i
         } else {
-          d('illegal obj2', char())
+          d('illegal obj2, key without : ', char())
+          return false
         }
 
         /* if (singleVar) {
