@@ -164,7 +164,8 @@ export default (content: string) => {
                 // d(validName, 'if statement', char())
                 everything.splice(spliceStartIndex, 0, { type: 'if', text: validName, i1: validNameLine, c1: validNameStart, c2: validNameEnd })
 
-                if (variableCharsObj[lines[i][c]]) {
+                breakToGoFindV2:
+                while (variableCharsObj[lines[i][c]]) {
                   const validNamestart = c, spliceStartIndex = everything.length
                   c++
                   skipValidChar()
@@ -222,9 +223,8 @@ export default (content: string) => {
                       c++
                       break findV1ExpressiondummyLoop
                     }
-                    break findV1ExpressiondummyLoop
+                    break breakToGoFindV2
                   }
-
                   everything.splice(spliceStartIndex, 0, { type: 'legacyIf var', text: lines[validNameLine].slice(validNamestart, validNameEnd), i1: validNameLine, c1: validNamestart, c2: validNameEnd })
                   findV1Expression()
                   doubleComma = false
