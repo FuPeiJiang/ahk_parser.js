@@ -266,7 +266,7 @@ export default (content: string) => {
                 // d(`${assignedTo} assignment`)
                 everything.splice(spliceStartIndex, 0, { type: 'assignment', text: assignedTo, i1: validNameLine, c1: validNameStart, c2: validNameEnd })
 
-                if (skipCommaAssignment()) {break lineLoop}
+                if (skipCommaV2Expr()) {break lineLoop}
 
                 if (i === lineWhereCanConcat) {
                   findCommentsAndEndLine()
@@ -281,7 +281,7 @@ export default (content: string) => {
 
                 findVariableName()
                 recurseBetweenExpression()
-                if (skipCommaAssignment()) {break lineLoop}
+                if (skipCommaV2Expr()) {break lineLoop}
                 usingStartOfLineLoop = true
                 continue startOfLineLoop
                 // return everything
@@ -566,6 +566,7 @@ export default (content: string) => {
 
             const functionMidReturn = functionMid('function startOfLine')
             if (functionMidReturn === 1) {
+              if (skipCommaV2Expr()) {break lineLoop}
               usingStartOfLineLoop = true
               continue startOfLineLoop
             } else if (functionMidReturn === 2) {
@@ -667,7 +668,7 @@ export default (content: string) => {
           // d(`${assignedTo} assignment`)
           everything.splice(spliceStartIndex, 0, { type: 'assignment', text: assignedTo, i1: validNameLine, c1: validNameStart, c2: validNameEnd })
 
-          if (skipCommaAssignment()) {break lineLoop}
+          if (skipCommaV2Expr()) {break lineLoop}
 
           if (i === lineWhereCanConcat) {
             findCommentsAndEndLine()
@@ -789,6 +790,18 @@ export default (content: string) => {
         skipThroughEmptyLines()
       }
     }
+  }
+  //true if out of lines
+  function skipCommaV2Expr() {
+    while (i < howManyLines) {
+      if (lines[i][c] !== ',') {
+        return false
+      }
+      everything.push({ type: ', assignment', text: ',', i1: i, c1: c })
+      c++
+      if (!recurseBetweenExpression()) { findExpression() }
+    }
+    return true
   }
   function skipCommaAssignment() {
     while (i < howManyLines) {
