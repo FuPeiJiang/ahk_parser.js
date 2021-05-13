@@ -1769,7 +1769,7 @@ export default (content: string) => {
         }
 
         const arrSpliceStartIndex = everything.length
-        if (findExpression()) {
+        if (recurseBetweenExpression() || findExpression()) {
           if (isComma) {
             isComma = false
             everything.splice(arrSpliceStartIndex, 0, { type: ', ARRAY', text: ',', i1: i, c1: c })
@@ -1794,24 +1794,15 @@ export default (content: string) => {
 
     }
     if (i !== lineWhereCanConcat && lines[i][c] === '{') {
-      // d('{ object', char())
       everything.push({ type: '{ object', text: '{', i1: i, c1: c })
       legalObjLine = i
-      // const objStart: [number, number] = [c, i]
       colonDeep++, c++
-      //exprFoundLine = i
-      let kStart: [number, number], vStart: [number, number], k: string, v: string
-      const mapKeysAndValuesArr = []
-      let singleVar: boolean, afterSingleVar: number, beforeSkipSpaces: number, afterSkipSpaces: number, afterFindExpression = -1, haventFoundSingleVar: boolean
+
+      let haventFoundSingleVar: boolean
       let isComma = false
       while (true) {
 
-
-        // kStart = [c, i]
-
-        // beforeSkipSpaces = c
         if (!skipThroughEmptyLines()) { return false }
-        // afterSkipSpaces = c
 
         const objSpliceStartIndex = everything.length
         if (lines[i][c] === ',') {
@@ -1838,12 +1829,7 @@ export default (content: string) => {
           }
         }
 
-        afterSingleVar = c
-
-        if (findExpression()) {
-          singleVar = false
-        } else {
-          afterFindExpression = c
+        if (!(recurseBetweenExpression() || findExpression())) {
           // if haven't expression, it is only illegal if haventFoundSingleVar, which is a valid key
           if (haventFoundSingleVar) {
             if (isComma) {
@@ -1859,16 +1845,6 @@ export default (content: string) => {
             trailingAndRecurse()
             return true
 
-            /* if (lines[i][c] === ',') {
-              d('ILLEGAL trailling , OBJECT', char())
-              everything.push({ type: 'ILLEGAL trailling , OBJECT', text: ',', i1: i, c1: c })
-              c++
-            } else if (lines[i][c] === '}') {
-              // d('valid empty obj', char())
-            } else {
-              d('illegal obj1', char())
-            } */
-            // break
           }
         }
 
@@ -1878,41 +1854,14 @@ export default (content: string) => {
           c++ //skip :
           legalObjLine = i
           skipThroughWhiteSpaces()
-          findExpression()
+          if (!recurseBetweenExpression()) { findExpression() }
         } else {
           d('illegal obj2, key without : ', char())
           return false
         }
 
-        /* if (singleVar) {
-          k = `${lines[i].slice(beforeSkipSpaces, afterSkipSpaces)
-          }"${lines[i].slice(afterSkipSpaces, afterSingleVar)
-          }"${lines[i].slice(afterSingleVar, afterFindExpression)}`
-          // d('k',k)
-        } else {
-          k = textFromPosToCurrent(kStart)
-        }
-        // d('=====================\n',kStart,k,'\n=====================')
-        mapKeysAndValuesArr.push(k)
- */
-
-        // vStart = [c, i]
-
-
-        // v = textFromPosToCurrent(vStart)
-        // d('=====================\n',vStart,v,'\n=====================')
-        // mapKeysAndValuesArr.push(v)
       }
 
-      // d('} object', char())
-      everything.push({ type: '} object', text: '}', i1: i, c1: c })
-      // d(`]]]]]]]]]]]]]]]]]]]]\nMap(${mapKeysAndValuesArr.join(',')})`)
-      colonDeep--, c++
-      // d(']]]]]]]]]]]]]]]]]]]]\n',objStart,i,textFromPosToCurrent(objStart))
-      // rangeAndReplaceTextArr.push([[objStart,[c,i]],`Map(${mapKeysAndValuesArr.join(',')})`])
-      // objectsToconvertToMap.push({range:[objStart,[c,i]],textArr:mapKeysAndValuesArr})
-      recurseBetweenExpression()
-      return true
     }
 
   }

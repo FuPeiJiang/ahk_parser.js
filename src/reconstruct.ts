@@ -4,7 +4,8 @@ const d = console.debug.bind(console)
 
 
 const content: string =
-fs.readFileSync('tests2/arrIndex assignment skipCommaV2Expr.ahk')
+fs.readFileSync('tests2/idkAnymore9.ahk')
+// fs.readFileSync('tests2/arrIndex assignment skipCommaV2Expr.ahk')
 // fs.readFileSync('tests2/idkAnymore8.ahk')
 // fs.readFileSync('tests2/idkAnymore7.ahk')
 // fs.readFileSync('tests/func call.ahk')
