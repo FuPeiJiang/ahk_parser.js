@@ -563,82 +563,15 @@ export default (content: string) => {
             usingStartOfLineLoop = true
             continue startOfLineLoop
           } else {
-            //#FUNCTION CALL startOfLine
-            // d(`${validName}( function( startOfLine ${char()}`)
 
-            everything.push({ type: 'function( startOfLine', text: `${validName}(`, i1: i, c1: nonWhiteSpaceStart, c2: c + 1 })
-            legalObjLine = i
-            c++
-            // exprFoundLine = i
-            const endsWithComma = false
-            let isComma
-            while (true) {
-
-              if (!skipThroughEmptyLines()) {
-                d('ILLEGAL ) function CALL OUT OF LINES', char())
-                break lineLoop }
-              if (lines[i][c] === ',') {
-                c++
-                isComma = true
-                legalObjLine = i
-              } else {
-                if (i !== legalObjLine ) {
-                  d('ILLEGAL ) function CALL startOfLine i !== legalObjLine', char())
-                }
-              }
-
-              const arrSpliceStartIndex = everything.length
-              if (recurseBetweenExpression() || findExpression()) {
-                if (isComma) {
-                  isComma = false
-                  everything.splice(arrSpliceStartIndex, 0, { type: ', function CALL startOfLine', text: ',', i1: i, c1: c })
-                }
-              } else {
-                if (isComma) {
-                  isComma = false
-                  d('ILLEGAL trailling , function CALL startOfLine', char())
-                  everything.splice(arrSpliceStartIndex, 0, { type: 'ILLEGAL trailling , function CALL startOfLine', text: ',', i1: i, c1: c })
-                }
-
-                if (lines[i][c] !== ')') {
-                  d(`\`${lines[i][c]}\` illegal NOT ) function CALL startOfLine ${linesPlusChar()}`)
-                }
-                everything.push({ type: ') function CALL startOfLine', text: ')', i1: i, c1: c })
-                c++
-                if (!skipThroughEmptyLines()) { break lineLoop }
-                usingStartOfLineLoop = true
-                continue startOfLineLoop
-              }
-
-
-              /* if (!skipThroughEmptyLines()) { d('EOF Function startOfLine'); break lineLoop }
-              if (lines[i][c] === ',') {
-                endsWithComma = true
-                // d(', function CALL startOfLine', char())
-                everything.push({ type: ', function startOfLine', text: ',', i1: i, c1: c })
-                c++
-                continue
-              }
-              if (findExpression()) {
-                endsWithComma = false
-              } else {
-                if (endsWithComma) {
-                  d('ILLEGAL trailling , FUNCTION startOfLine', char())
-                }
-                break
-              } */
+            const functionMidReturn = functionMid()
+            if (functionMidReturn === 1) {
+              usingStartOfLineLoop = true
+              continue startOfLineLoop
+            } else if (functionMidReturn === 2) {
+              continue lineLoop
             }
 
-            /* if (i !== lineWhereCanConcat) {
-              d('ILLEGAL ) function startOfLine', char())
-            }
-            // d(') function startOfLine', char())
-            everything.push({ type: ') function startOfLine', text: ')', i1: i, c1: c })
-
-            c++
-
-            findCommentsAndEndLine()
-            continue lineLoop */
           }
 
           //#METHOD OR PROPERTY
@@ -787,6 +720,52 @@ export default (content: string) => {
   return everything
 
   // start of functions
+  function functionMid() {
+    everything.push({ type: 'function(', text: `${validName}(`, i1: i, c1: nonWhiteSpaceStart, c2: c + 1 })
+    legalObjLine = i
+    c++
+    // exprFoundLine = i
+    const endsWithComma = false
+    let isComma
+    while (true) {
+
+      if (!skipThroughEmptyLines()) {
+        d('ILLEGAL ) function CALL OUT OF LINES', char())
+        return 2
+      } if (lines[i][c] === ',') {
+        c++
+        isComma = true
+        legalObjLine = i
+      } else {
+        if (i !== legalObjLine ) {
+          d('ILLEGAL ) function CALL startOfLine i !== legalObjLine', char())
+        }
+      }
+
+      const arrSpliceStartIndex = everything.length
+      if (recurseBetweenExpression() || findExpression()) {
+        if (isComma) {
+          isComma = false
+          everything.splice(arrSpliceStartIndex, 0, { type: ', function CALL startOfLine', text: ',', i1: i, c1: c })
+        }
+      } else {
+        if (isComma) {
+          isComma = false
+          d('ILLEGAL trailling , function CALL startOfLine', char())
+          everything.splice(arrSpliceStartIndex, 0, { type: 'ILLEGAL trailling , function CALL startOfLine', text: ',', i1: i, c1: c })
+        }
+
+        if (lines[i][c] !== ')') {
+          d(`\`${lines[i][c]}\` illegal NOT ) function CALL startOfLine ${linesPlusChar()}`)
+        }
+        everything.push({ type: ') function CALL startOfLine', text: ')', i1: i, c1: c })
+        c++
+        if (!skipThroughEmptyLines()) { return 2 }
+        return 1
+      }
+
+    }
+  }
   function findCommaV1Expression(which: string) {
     if (lines[i][c] === ',') {
       everything.push({ type: which, text: ',', i1: i, c1: c })
@@ -1674,39 +1653,13 @@ export default (content: string) => {
       }
 
       //#FUNCTION CALL
-      if (lines[i][c] === '(') {
-        //#FUNCTION CALL
-        // d(`${validName}( function ${char()}`)
-        everything.push({ type: 'function(', text: `${validName}(`, i1: i, c1: nonWhiteSpaceStart, c2: c + 1 })
-        c++
-        //exprFoundLine = i
-        let endsWithComma = false
-        while (true) {
-          if (!skipThroughEmptyLines()) { return false }
-          if (lines[i][c] === ',') {
-            endsWithComma = true
-            // d(', function CALL', char())
-            everything.push({ type: ', function', text: ',', i1: i, c1: c })
-            c++
-            continue
-          }
-          if (findExpression()) {
-            endsWithComma = false
-          } else {
-            if (endsWithComma) {
-              d('ILLEGAL trailling , FUNCTION', char())
-            }
-            break
-          }
+      if (lines[i][c] === '(') {const functionMidReturn = functionMid()
+        if (functionMidReturn === 1) {
+          recurseBetweenExpression()
+          return true
+        } else if (functionMidReturn === 2) {
+          return false
         }
-        if (i !== lineWhereCanConcat) {
-          d('ILLEGAL ) function', char())
-        }
-        // d(') function', char())
-        everything.push({ type: ') function', text: ')', i1: i, c1: c })
-        c++
-        recurseBetweenExpression()
-        return true
       }
       if (findArrayAccess()) {
         recurseBetweenExpression()

@@ -4,8 +4,8 @@ const d = console.debug.bind(console)
 
 
 const content: string =
-fs.readFileSync('tests/func call.ahk')
-// fs.readFileSync('tests2/idkAnymore6.ahk')
+// fs.readFileSync('tests/func call.ahk')
+fs.readFileSync('tests2/idkAnymore6.ahk')
 // fs.readFileSync('tests2/function definition fix.ahk')
 // fs.readFileSync('tests2/class.ahk')
 // fs.readFileSync('tests/arrays.ahk')
