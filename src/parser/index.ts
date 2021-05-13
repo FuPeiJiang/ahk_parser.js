@@ -183,12 +183,13 @@ export default (content: string) => {
                     c++
                   }
                   const whiteSpacesTextc = c
+
+                  let validNamestart = c, spliceStartIndex = everything.length
+                  skipValidChar()
+                  validNameEnd = c, validNameLine = i
+                  let validName = lines[validNameLine].slice(validNamestart, validNameEnd)
                   findV1ExpressiondummyLoop:
-                  while (true) {
-                    let validNamestart = c, spliceStartIndex = everything.length
-                    skipValidChar()
-                    validNameEnd = c, validNameLine = i
-                    let validName = lines[validNameLine].slice(validNamestart, validNameEnd)
+                  while (validName) {
 
                     let checkThese = false
                     let text, cPlusLen

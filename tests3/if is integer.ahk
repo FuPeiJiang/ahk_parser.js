@@ -1,1 +1,4 @@
-If    a Is Integer
+; If    a Is Integer
+if hIcon
+{
+}
