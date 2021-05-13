@@ -1392,7 +1392,7 @@ export default (content: string) => {
         // d('? ternary', char())
         everything.push({ type: '? ternary', text: '?', i1: i, c1: c })
         colonDeep++, c++
-        recurseBetweenExpression()
+        if (!recurseBetweenExpression()) { findExpression() }
         if (i === howManyLines) { return false }
         //where findExpression stopped at
         if (lines[i][c] === ':') {
