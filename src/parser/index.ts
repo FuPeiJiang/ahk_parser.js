@@ -152,7 +152,6 @@ export default (content: string) => {
               usingStartOfLineLoop = true
               continue startOfLineLoop
             } else if (i === validNameLine && whiteSpaceObj[lines[validNameLine][validNameEnd]]) {
-              ch()
               // only directives and "if" override assignment and ONLY when there's a whiteSpace
               if (idkType === 1) {
                 // d(validName, 'whiteSpace DIRECTIVE', char())
@@ -244,7 +243,6 @@ export default (content: string) => {
                 // c++
                 if (i === howManyLines) { break lineLoop }
                 // I don't need to skip empty lines because the above does it for me
-                ch()
                 if (lines[i][c] === '{') {
                   everything.push({ type: '{ if', text: '{', i1: i, c1: c })
                   // d(lines[i][c])
@@ -1393,7 +1391,7 @@ export default (content: string) => {
           }
 
           if (lowerText === 'not') {
-            if (variableCharsObj[cPlusLen]) {
+            if (variableCharsObj[lines[i][cPlusLen]]) {
               break checkNext
             }
           }
@@ -1411,7 +1409,7 @@ export default (content: string) => {
         // d(lines[i].slice(c, c + 2), '2operator', char())
 
           if (lowerText === 'or') {
-            if (variableCharsObj[cPlusLen]) {
+            if (variableCharsObj[lines[i][cPlusLen]]) {
               break checkNext
             }
           }
@@ -1514,7 +1512,6 @@ export default (content: string) => {
   }
   //no lines are skipped
   function findBetween() {
-    const beforeConcatBak = beforeConcat, afterConcat = c, concatLineBak = i
     if (c === numberOfChars) {
       return false
     }
