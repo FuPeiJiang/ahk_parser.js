@@ -167,42 +167,49 @@ export default (content: string) => {
 
                 breakToGoFindV2:
                 while (variableCharsObj[lines[i][c]]) {
-                  const validNamestart = c, spliceStartIndex = everything.length
-                  c++
-                  skipValidChar()
-                  validNameEnd = c, validNameLine = i
-                  skipThroughWhiteSpaces()
+                  const saveC = c, saveI = i, saveNumChars = numberOfChars
+                  // c++
+                  while (findPercentVar() || variableCharsObj[lines[i][c]]) {
+                    c++
+                  }
+                  while (c < numberOfChars && whiteSpaceObj[lines[i][c]]) {
+                    c++
+                  }
                   findV1ExpressiondummyLoop:
                   while (true) {
+                    let validNamestart = c, spliceStartIndex = everything.length
+                    skipValidChar()
+                    validNameEnd = c, validNameLine = i
+                    let validName = lines[validNameLine].slice(validNamestart, validNameEnd)
+
                     let checkThese = false
                     let text, cPlusLen
-                    if ((text = lines[i].slice(c, cPlusLen = c + 3)).toLowerCase() === 'not' && (cPlusLen === numberOfChars || whiteSpaceObj[lines[i][cPlusLen]])) {
-                      everything.push({ type: 'legacyIf not', text: text, i1: i, c1: c, c2: cPlusLen })
-                      c += 3
+                    if (validName.toLowerCase() === 'not' && (c === numberOfChars || whiteSpaceObj[lines[i][c]])) {
+                      everything.push({ type: 'legacyIf not', text: validName, i1: i, c1: c, c2: cPlusLen })
                       skipThroughWhiteSpaces()
+                      validNamestart = c, spliceStartIndex = everything.length
+                      skipValidChar()
+                      validNameEnd = c, validNameLine = i
+                      validName = lines[validNameLine].slice(validNamestart, validNameEnd)
                     } else {
                       checkThese = true
                     }
 
-                    if ((text = lines[i].slice(c, cPlusLen = c + 2)).toLowerCase() === 'in' && (cPlusLen === numberOfChars || whiteSpaceObj[lines[i][cPlusLen]])) {
+                    if (validName.toLowerCase() === 'in' && (c === numberOfChars || whiteSpaceObj[lines[i][c]])) {
                       everything.push({ type: 'legacyIf in', text: text, i1: i, c1: c, c2: cPlusLen })
-                      c += 2
                       doubleComma = true
-                    } else if ((text = lines[i].slice(c, cPlusLen = c + 8)).toLowerCase() === 'contains' && (cPlusLen === numberOfChars || whiteSpaceObj[lines[i][cPlusLen]])) {
+                    } else if (validName.toLowerCase() === 'contains' && (c === numberOfChars || whiteSpaceObj[lines[i][c]])) {
                       everything.push({ type: 'legacyIf contains', text: text, i1: i, c1: c, c2: cPlusLen })
-                      c += 8
                       doubleComma = true
-                    } else if ((text = lines[i].slice(c, cPlusLen = c + 7)).toLowerCase() === 'between' && (cPlusLen === numberOfChars || whiteSpaceObj[lines[i][cPlusLen]])) {
+                    } else if (validName.toLowerCase() === 'between' && (c === numberOfChars || whiteSpaceObj[lines[i][c]])) {
                       everything.push({ type: 'legacyIf between', text: text, i1: i, c1: c, c2: cPlusLen })
-                      c += 7
                       lookingForAnd = true
                       break findV1ExpressiondummyLoop
                     }
 
                     if (checkThese) {
-                      if ((text = lines[i].slice(c, cPlusLen = c + 2)).toLowerCase() === 'is' && (cPlusLen === numberOfChars || whiteSpaceObj[lines[i][cPlusLen]])) {
+                      if (validName.toLowerCase() === 'is' && (c === numberOfChars || whiteSpaceObj[lines[i][c]])) {
                         everything.push({ type: 'legacyIf is', text: text, i1: i, c1: c, c2: cPlusLen })
-                        c += 2
                         skipThroughWhiteSpaces()
                         if ((text = lines[i].slice(c, cPlusLen = c + 3)).toLowerCase() === 'not' && (cPlusLen === numberOfChars || whiteSpaceObj[lines[i][cPlusLen]])) {
                           everything.push({ type: 'legacyIf (is) not', text: text, i1: i, c1: c, c2: cPlusLen })
@@ -223,8 +230,7 @@ export default (content: string) => {
                       c++
                       break findV1ExpressiondummyLoop
                     }
-                    everything.splice(spliceStartIndex, 0, { type: 'legacyIf var', text: lines[validNameLine].slice(validNamestart, validNameEnd), i1: validNameLine, c1: validNamestart, c2: validNameEnd })
-                    lineWhereCanConcat = i
+                    c = saveC, i = saveI , numberOfChars = saveNumChars
                     break breakToGoFindV2
                   }
                   everything.splice(spliceStartIndex, 0, { type: 'legacyIf var', text: lines[validNameLine].slice(validNamestart, validNameEnd), i1: validNameLine, c1: validNamestart, c2: validNameEnd })
