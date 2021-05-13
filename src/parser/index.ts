@@ -1679,10 +1679,15 @@ export default (content: string) => {
       let isComma = false
       while (true) {
 
+        skipThroughEmptyLines()
         if (lines[i][c] === ',') {
           c++
           isComma = true
           legalObjLine = i
+        } else {
+          if (i !== legalObjLine ) {
+            d('ILLEGAL ] Array i !== legalObjLine', char())
+          }
         }
 
         const arrSpliceStartIndex = everything.length
@@ -1697,10 +1702,6 @@ export default (content: string) => {
             d('ILLEGAL trailling , ARRAY', char())
             everything.splice(arrSpliceStartIndex, 0, { type: 'ILLEGAL trailling , ARRAY', text: ',', i1: i, c1: c })
           }
-          if (i !== legalObjLine ) {
-            d('ILLEGAL ] Array', char())
-          }
-          // d('] Array', char())
 
           if (lines[i][c] !== ']') {
             d(`\`${lines[i][c]}\` illegal NOT ] Array ${linesPlusChar()}`)
@@ -1724,14 +1725,23 @@ export default (content: string) => {
       let kStart: [number, number], vStart: [number, number], k: string, v: string
       const mapKeysAndValuesArr = []
       let singleVar: boolean, afterSingleVar: number, beforeSkipSpaces: number, afterSkipSpaces: number, afterFindExpression = -1, haventFoundSingleVar: boolean
+      let isComma = false
       while (true) {
+
+
         kStart = [c, i]
         singleVar = true
 
+        const objSpliceStartIndex = everything.length
         beforeSkipSpaces = c
-        skipThroughWhiteSpaces()
+        skipThroughEmptyLines()
         afterSkipSpaces = c
 
+        if (lines[i][c] === ',') {
+          c++
+          isComma = true
+          legalObjLine = i
+        }
         //skipSpaces
         // skip though propCharsObj
         // if found expression:
@@ -1751,7 +1761,23 @@ export default (content: string) => {
           afterFindExpression = c
           // if haven't expression, it is only illegal if haventFoundSingleVar, which is a valid key
           if (haventFoundSingleVar) {
-            if (lines[i][c] === ',') {
+            if (isComma) {
+              isComma = false
+              d('ILLEGAL trailling , object', char())
+              everything.splice(objSpliceStartIndex, 0, { type: 'ILLEGAL trailling , object', text: ',', i1: i, c1: c })
+            }
+            if (i !== legalObjLine) {
+              d('ILLEGAL } object i !== legalObjLine', char())
+            }
+            if (lines[i][c] !== '}') {
+              d(`\`${lines[i][c]}\` illegal NOT } object ${linesPlusChar()}`)
+            }
+            everything.push({ type: '} object', text: '}', i1: i, c1: c })
+            colonDeep--, c++
+            recurseBetweenExpression()
+            return true
+
+            /* if (lines[i][c] === ',') {
               d('ILLEGAL trailling , OBJECT', char())
               everything.push({ type: 'ILLEGAL trailling , OBJECT', text: ',', i1: i, c1: c })
               c++
@@ -1759,8 +1785,8 @@ export default (content: string) => {
               // d('valid empty obj', char())
             } else {
               d('illegal obj1', char())
-            }
-            break
+            } */
+            // break
           }
         }
 
@@ -1772,7 +1798,7 @@ export default (content: string) => {
           d('illegal obj2', char())
         }
 
-        if (singleVar) {
+        /* if (singleVar) {
           k = `${lines[i].slice(beforeSkipSpaces, afterSkipSpaces)
           }"${lines[i].slice(afterSkipSpaces, afterSingleVar)
           }"${lines[i].slice(afterSingleVar, afterFindExpression)}`
@@ -1782,29 +1808,18 @@ export default (content: string) => {
         }
         // d('=====================\n',kStart,k,'\n=====================')
         mapKeysAndValuesArr.push(k)
-
+ */
         c++ //skip :
 
-        vStart = [c, i]
+        // vStart = [c, i]
 
         findExpression()
 
-        v = textFromPosToCurrent(vStart)
+        // v = textFromPosToCurrent(vStart)
         // d('=====================\n',vStart,v,'\n=====================')
-        mapKeysAndValuesArr.push(v)
+        // mapKeysAndValuesArr.push(v)
+      }
 
-        if (lines[i][c] === ',') {
-          // d(', object', char())
-          everything.push({ type: ', object', text: ',', i1: i, c1: c })
-          legalObjLine = i
-        } else {
-          break
-        }
-        c++
-      }
-      if (i !== legalObjLine) {
-        d('ILLEGAL }', char())
-      }
       // d('} object', char())
       everything.push({ type: '} object', text: '}', i1: i, c1: c })
       // d(`]]]]]]]]]]]]]]]]]]]]\nMap(${mapKeysAndValuesArr.join(',')})`)
