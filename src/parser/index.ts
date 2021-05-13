@@ -353,8 +353,24 @@ export default (content: string) => {
                 everything.push({ type: 'newLine command', text: '\n', i1: i, c1: c })
                 i++
                 continue lineLoop
+                //class
+              } else if (idkType === 5) {
+                everything.splice(spliceStartIndex, 0, { type: 'class', text: validName, i1: validNameLine, c1: nonWhiteSpaceStart, c2: validNameEnd })
+                const classNameStart = c
+                skipValidChar()
+                everything.push({ type: 'className', text: lines[i].slice(classNameStart,c), i1: i, c1: classNameStart, c2: c })
+                if (!skipThroughEmptyLines()) { break lineLoop }
+                if (lines[i][c] === '{') {
+                  everything.push({ type: '{ class', text: '{', i1: i, c1: c })
+                  c++
+                  if (!skipThroughEmptyLines()) { break lineLoop }
+                } else {
+                  d('illegal class name', linesPlusChar())
+                }
+                usingStartOfLineLoop = true
+                continue startOfLineLoop
               } else {
-                d('this cannot happen because idkType must be in 1,2,3,4',linesPlusChar())
+                d('this cannot happen because idkType must be in 1,2,3,4,5',linesPlusChar())
               }
             }
           }

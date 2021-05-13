@@ -1822,7 +1822,7 @@ what about else { ? idk, block ?
 
 you cannot have a comma after else
 
-to do:
+DONE:
 loop % LV_GetCount()
 so
 Loop [, Count]
@@ -1831,7 +1831,7 @@ Loop [, v1Expression]
 to do:
 comma assignment should work for arrayIndex assignment
 
-to do:
+DONE:
 canConcat shouldn't be true
 This[HWND].Rows := {}
 
@@ -1842,3 +1842,9 @@ Detach(HWND) { shouldn't be Detach() {
 
 to do:
   startContinuation() was rewritten, retest it.
+
+to do:
+  class
+  must be space, cannot EOL, cannot comma
+  validName
+  not optional {
