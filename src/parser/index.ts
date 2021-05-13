@@ -702,9 +702,9 @@ export default (content: string) => {
   return everything
 
   // start of functions
-  function findCommaV1Expression(which) {
+  function findCommaV1Expression(which: string) {
     if (lines[i][c] === ',') {
-      everything.push({ type: `, ${which}`, text: ',', i1: i, c1: c })
+      everything.push({ type: which, text: ',', i1: i, c1: c })
       c++
       singleComma = true
       findV1Expression()
@@ -750,7 +750,14 @@ export default (content: string) => {
         breakToGoFindV1Expression:
         while (true) {
           let text, cPlusLen
-          if ((text = lines[i].slice(c, cPlusLen = c + 4)).toLowerCase() === 'files' && !variableCharsObj[lines[i][cPlusLen]]) {
+          if ((text = lines[i].slice(c, cPlusLen = c + 3)).toLowerCase() === 'reg' && !variableCharsObj[lines[i][cPlusLen]]) {
+            everything.push({ type: '(loop) Reg', text: text, i1: i, c1: c, c2: cPlusLen })
+            c += 3
+            if (!skipThroughEmptyLines()) { return 2 }
+            if (findCommaV1Expression(', 1 (loop) Reg')) {
+              findCommaV1Expression(', 2 (loop) Reg')
+            }
+          } else if ((text = lines[i].slice(c, cPlusLen = c + 4)).toLowerCase() === 'files' && !variableCharsObj[lines[i][cPlusLen]]) {
             everything.push({ type: '(loop) read', text: text, i1: i, c1: c, c2: cPlusLen })
             c += 4
             if (!skipThroughEmptyLines()) { return 2 }
@@ -768,9 +775,9 @@ export default (content: string) => {
             everything.push({ type: '(loop) parse', text: text, i1: i, c1: c, c2: cPlusLen })
             c += 5
             if (!skipThroughEmptyLines()) { return 2 }
-            if (findCommaV1Expression('1 (loop) parse')) {
-              if (findCommaV1Expression('2 (loop) parse')) {
-                findCommaV1Expression('3 (loop) parse')
+            if (findCommaV1Expression(', 1 (loop) parse')) {
+              if (findCommaV1Expression(', 2 (loop) parse')) {
+                findCommaV1Expression(', 3 (loop) parse')
               }
             }
           } else {
