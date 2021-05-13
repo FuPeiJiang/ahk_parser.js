@@ -140,6 +140,13 @@ export default (content: string) => {
                   continue lineLoop
                 }
 
+                const foundWhile = findWhile()
+                if (foundWhile === 1) {
+                  continue startOfLineLoop
+                } else if (foundWhile === 2) {
+                  continue lineLoop
+                }
+
                 if (validName.toLowerCase() === 'return') {
                   everything.splice(spliceStartIndex, 0, { type: 'return comma', text: validName, i1: validNameLine, c1: nonWhiteSpaceStart, c2: validNameEnd })
                   doReturn()
@@ -324,6 +331,13 @@ export default (content: string) => {
                 if (foundLoop === 1) {
                   continue startOfLineLoop
                 } else if (foundLoop === 2) {
+                  continue lineLoop
+                }
+
+                const foundWhile = findWhile()
+                if (foundWhile === 1) {
+                  continue startOfLineLoop
+                } else if (foundWhile === 2) {
                   continue lineLoop
                 }
 
@@ -770,9 +784,24 @@ export default (content: string) => {
     nonWhiteSpaceStart = c
     findV1ExpressionMid()
   }
+  function findWhile() {
+    if (validName.toLowerCase() === 'while') {
+      everything.splice(spliceStartIndex, 0, { type: 'while', text: validName, i1: validNameLine, c1: nonWhiteSpaceStart, c2: validNameEnd })
+
+      if (!recurseBetweenExpression()) { findExpression() }
+
+      if (lines[i][c] === '{') {
+        everything.push({ type: '{ loop', text: '{', i1: i, c1: c })
+        c++
+        if (!skipThroughEmptyLines()) { return 2 }
+      }
+      usingStartOfLineLoop = true
+      return 1
+    }
+  }
   function findLoop() {
     if (validName.toLowerCase() === 'loop') {
-      everything.splice(spliceStartIndex, 0, { type: 'loop whiteSpace', text: validName, i1: validNameLine, c1: nonWhiteSpaceStart, c2: validNameEnd })
+      everything.splice(spliceStartIndex, 0, { type: 'loop', text: validName, i1: validNameLine, c1: nonWhiteSpaceStart, c2: validNameEnd })
       if (!skipThroughEmptyLines()) { return 2 }
       if (variableCharsObj[lines[i][c]]) {
 

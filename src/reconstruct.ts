@@ -4,7 +4,8 @@ const d = console.debug.bind(console)
 
 
 const content: string =
-fs.readFileSync('tests3/if is integer.ahk')
+fs.readFileSync('tests3/while.ahk')
+// fs.readFileSync('tests3/if is integer.ahk')
 // fs.readFileSync('tests3/idkAnymore12.ahk')
 // fs.readFileSync('tests3/if func call.ahk')
 // fs.readFileSync('tests3/idkAnymore11.ahk')

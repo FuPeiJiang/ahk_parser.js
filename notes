@@ -1855,4 +1855,8 @@ to do:
   not optional {
 
 
+x:=","
+while
+, x = ","
+p(45)
 
