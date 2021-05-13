@@ -253,6 +253,13 @@ export default (content: string) => {
                   everything.splice(spliceStartIndex, 0, { type: 'legacyIf var', text: lines[saveI].slice(saveC, cendOfLegacyIfVar), i1: saveI, c1: saveC, c2: cendOfLegacyIfVar })
                   findV1Expression()
                   doubleComma = false
+
+                  if (lines[i][c] === '{') {
+                    everything.push({ type: '{ legacyIf', text: '{', i1: i, c1: c })
+                    c++
+                    if (!skipThroughEmptyLines()) { break lineLoop }
+                  }
+
                   usingStartOfLineLoop = true
                   continue startOfLineLoop
                 }
