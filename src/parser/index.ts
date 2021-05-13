@@ -171,7 +171,7 @@ export default (content: string) => {
               } else if (idkType === 2) {
                 // d(validName, 'if statement', char())
                 everything.splice(spliceStartIndex, 0, { type: 'if', text: validName, i1: validNameLine, c1: validNameStart, c2: validNameEnd })
-
+                spliceStartIndex = everything.length
                 breakToGoFindV2:
                 while (variableCharsObj[lines[i][c]]) {
                   const saveC = c, saveI = i, saveNumChars = numberOfChars
@@ -182,6 +182,7 @@ export default (content: string) => {
                   while (c < numberOfChars && whiteSpaceObj[lines[i][c]]) {
                     c++
                   }
+                  const whiteSpacesTextc = c
                   findV1ExpressiondummyLoop:
                   while (true) {
                     let validNamestart = c, spliceStartIndex = everything.length
@@ -192,7 +193,7 @@ export default (content: string) => {
                     let checkThese = false
                     let text, cPlusLen
                     if (validName.toLowerCase() === 'not' && (c === numberOfChars || whiteSpaceObj[lines[i][c]])) {
-                      everything.push({ type: 'legacyIf not', text: validName, i1: i, c1: c, c2: cPlusLen })
+                      everything.push({ type: 'legacyIf not', text: validName, i1: i, c1: validNamestart, c2: c })
                       skipThroughWhiteSpaces()
                       validNamestart = c, spliceStartIndex = everything.length
                       skipValidChar()
@@ -203,24 +204,28 @@ export default (content: string) => {
                     }
 
                     if (validName.toLowerCase() === 'in' && (c === numberOfChars || whiteSpaceObj[lines[i][c]])) {
-                      everything.push({ type: 'legacyIf in', text: text, i1: i, c1: c, c2: cPlusLen })
+                      everything.push({ type: 'legacyIf in', text: validName, i1: i, c1: validNamestart, c2: c })
                       doubleComma = true
                     } else if (validName.toLowerCase() === 'contains' && (c === numberOfChars || whiteSpaceObj[lines[i][c]])) {
-                      everything.push({ type: 'legacyIf contains', text: text, i1: i, c1: c, c2: cPlusLen })
+                      everything.push({ type: 'legacyIf contains', text: validName, i1: i, c1: validNamestart, c2: c })
                       doubleComma = true
                     } else if (validName.toLowerCase() === 'between' && (c === numberOfChars || whiteSpaceObj[lines[i][c]])) {
-                      everything.push({ type: 'legacyIf between', text: text, i1: i, c1: c, c2: cPlusLen })
+                      everything.push({ type: 'legacyIf between', text: validName, i1: i, c1: validNamestart, c2: c })
                       lookingForAnd = true
                       break findV1ExpressiondummyLoop
                     }
 
                     if (checkThese) {
                       if (validName.toLowerCase() === 'is' && (c === numberOfChars || whiteSpaceObj[lines[i][c]])) {
-                        everything.push({ type: 'legacyIf is', text: text, i1: i, c1: c, c2: cPlusLen })
+                        everything.push({ type: 'legacyIf is', text: validName, i1: i, c1: validNamestart, c2: c })
                         skipThroughWhiteSpaces()
-                        if ((text = lines[i].slice(c, cPlusLen = c + 3)).toLowerCase() === 'not' && (cPlusLen === numberOfChars || whiteSpaceObj[lines[i][cPlusLen]])) {
-                          everything.push({ type: 'legacyIf (is) not', text: text, i1: i, c1: c, c2: cPlusLen })
+
+
+                        validName = lines[i].slice(c, cPlusLen = c + 3)
+                        if (validName.toLowerCase() === 'not' && !variableCharsObj[lines[i][cPlusLen]]) {
+                          everything.push({ type: 'legacyIf (is) not', text: validName, i1: i, c1: c, c2: c + 3 })
                           c += 3
+                          skipThroughWhiteSpaces()
                         }
                         break findV1ExpressiondummyLoop
                       }
@@ -239,6 +244,11 @@ export default (content: string) => {
                     }
                     c = saveC, i = saveI , numberOfChars = saveNumChars
                     break breakToGoFindV2
+                  }
+
+                  const whiteSpacesText = lines[saveI].slice(cendOfLegacyIfVar, whiteSpacesTextc)
+                  if (whiteSpacesText) {
+                    everything.splice(spliceStartIndex, 0, { type: 'whiteSpaces', text: whiteSpacesText, i1: i, c1: cendOfLegacyIfVar, c2: c })
                   }
                   everything.splice(spliceStartIndex, 0, { type: 'legacyIf var', text: lines[saveI].slice(saveC, cendOfLegacyIfVar), i1: saveI, c1: saveC, c2: cendOfLegacyIfVar })
                   findV1Expression()
