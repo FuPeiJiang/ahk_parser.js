@@ -755,6 +755,11 @@ export default (content: string) => {
           everything.splice(arrSpliceStartIndex, 0, { type: `, ${which} CALL startOfLine`, text: ',', i1: i, c1: c })
         }
       } else {
+        if (lines[i][c] === ',') {
+          everything.splice(arrSpliceStartIndex, 0, { type: `, ${which} CALL startOfLine`, text: ',', i1: i, c1: c })
+          continue
+        }
+
         if (isComma) {
           isComma = false
           d(`ILLEGAL trailling , ${which} CALL startOfLine`, char())
