@@ -583,22 +583,28 @@ export default (content: string) => {
         } else if (lines[i][c] === '.' && variableCharsObj[lines[i][c + 1]]) {
           //can't have number on startOfLine
           if (isNaN(Number(validName))) {
-            everything.push({ type: 'obj with property startOfLine', text: validName, i1: i, c1: nonWhiteSpaceStart, c2: c })
+            // everything.push({ type: 'obj with property startOfLine', text: validName, i1: i, c1: nonWhiteSpaceStart, c2: c })
           } else {
-            everything.push({ type: 'Integer part of Decimal startOfLine', text: validName, i1: i, c1: nonWhiteSpaceStart, c2: c })
+            // everything.push({ type: 'Integer part of Decimal startOfLine', text: validName, i1: i, c1: nonWhiteSpaceStart, c2: c })
             d('illegal: can\'t have number on startOfLine')
           }
 
+          everything.push({ type: '. property startOfLine', text: '.', i1: i, c1: c })
           c++
 
-          everything.push({ type: '. property startOfLine', text: '.', i1: i, c1: c })
-          let isProp = false
+          const validNameStart = c
+          skipValidChar()
+          validName = lines[i].slice(validNameStart, c)
+          everything.push({ type: 'property startOfLine', text: validName, i1: i, c1: validNameStart, c2: c })
+          recurseFindTrailingExpr()
 
+          // let isProp = false
+          //
           // if (!findMethodOrProperty()) {
           // }
 
           //if not number and not property EOL
-          if (skipProperties()) {
+          /* if (skipProperties()) {
             //#METHOD CALL
             if (lines[i][c] === '(') {
               const functionMidReturn = functionMid('method startOfLine')
@@ -622,11 +628,11 @@ export default (content: string) => {
             }
           } else {
             isProp = true
-          }
+          } */
 
           //a method can actually be assigned... property too
           //if prop and no assignment
-          if (!recurseBetweenExpression() && isProp) {
+          /* if (!recurseBetweenExpression() && isProp) {
             d('illegal property on startOfLine', char())
           }
           if (i === lineWhereCanConcat) {
@@ -635,16 +641,15 @@ export default (content: string) => {
             usingStartOfLineLoop = true
             continue startOfLineLoop
           }
-          continue lineLoop
+          continue lineLoop */
           //#ARR ACCESS startofline
           //#ARRAY ACCESS startofline
         } else if (lines[i][c] === '[') {
           if (!isNaN(Number(validName))) {
             d('illegal ArrAccess on startOfLine: can\'t ArrAcess on Integer', validName)
           }
-          everything.push({ type: 'ArrAccess startOfLine', text: validName, i1: i, c1: propertyC1, c2: c })
-          endArrAccess()
-          recurseFindTrailingExpr()
+          // everything.push({ type: 'ArrAccess startOfLine', text: validName, i1: i, c1: propertyC1, c2: c })
+          arrayMid('ArrAccess startOfLine')
         }
 
         //out of lines
@@ -727,7 +732,8 @@ export default (content: string) => {
 
   // start of functions
   function functionMid(which: string) {
-    everything.push({ type: `${which}(`, text: `${validName}(`, i1: i, c1: nonWhiteSpaceStart, c2: c + 1 })
+    // everything.push({ type: `${which}(`, text: `${validName}(`, i1: i, c1: nonWhiteSpaceStart, c2: c + 1 })
+    everything.push({ type: `( ${which}`, text: '(', i1: i, c1: c })
     legalObjLine = i
     c++
     // exprFoundLine = i
@@ -1589,9 +1595,53 @@ export default (content: string) => {
   }
   function findArrayAccess() {
     if (lines[i][c] === '[') {
-      endArrAccess()
+      arrayMid('findArrayAccess')
       return true
     }
+  }
+  function arrayMid(which: string) {
+    everything.push({ type: `[ ${which}`, text: '[', i1: i, c1: c })
+    legalObjLine = i
+
+    c++
+
+    let isComma = false
+    while (true) {
+
+      if (!skipThroughEmptyLines()) { return false }
+      if (lines[i][c] === ',') {
+        c++
+        isComma = true
+        legalObjLine = i
+      } else {
+        if (i !== legalObjLine ) {
+          d(`ILLEGAL ] ${which} i !== legalObjLine`, char())
+        }
+      }
+
+      const arrSpliceStartIndex = everything.length
+      if (recurseBetweenExpression() || findExpression()) {
+        if (isComma) {
+          isComma = false
+          everything.splice(arrSpliceStartIndex, 0, { type: `, ${which}`, text: ',', i1: i, c1: c })
+        }
+      } else {
+        if (isComma) {
+          isComma = false
+          d('ILLEGAL trailling , ARRAY', char())
+          everything.splice(arrSpliceStartIndex, 0, { type: `ILLEGAL trailling , ${which}`, text: ',', i1: i, c1: c })
+        }
+
+        if (lines[i][c] !== ']') {
+          d(`\`${lines[i][c]}\` illegal NOT ] ${which} ${linesPlusChar()}`)
+        }
+        everything.push({ type: `] ${which}`, text: ']', i1: i, c1: c })
+        c++
+        recurseFindTrailingExpr()
+        return true
+      }
+    }
+
   }
   function endArrAccess() {
     // d(`${validName} ArrAccess ${char()}`)
@@ -1624,7 +1674,7 @@ export default (content: string) => {
       if (isNaN(Number(validName))) {
         // everything.push({ type: 'obj with property', text: validName, i1: i, c1: nonWhiteSpaceStart, c2: c })
       } else {
-        everything.push({ type: 'Integer part of Decimal', text: validName, i1: i, c1: nonWhiteSpaceStart, c2: c })
+        // everything.push({ type: 'Integer part of Decimal', text: validName, i1: i, c1: nonWhiteSpaceStart, c2: c })
       }
       c++
       everything.push({ type: '. property', text: '.', i1: i, c1: c })
@@ -1752,49 +1802,11 @@ export default (content: string) => {
     }
 
     if (lines[i][c] === '[') {
-      everything.push({ type: '[ Array', text: '[', i1: i, c1: c })
-      legalObjLine = i
-
-      c++
-
-      let isComma = false
-      while (true) {
-
-        if (!skipThroughEmptyLines()) { return false }
-        if (lines[i][c] === ',') {
-          c++
-          isComma = true
-          legalObjLine = i
-        } else {
-          if (i !== legalObjLine ) {
-            d('ILLEGAL ] Array i !== legalObjLine', char())
-          }
-        }
-
-        const arrSpliceStartIndex = everything.length
-        if (recurseBetweenExpression() || findExpression()) {
-          if (isComma) {
-            isComma = false
-            everything.splice(arrSpliceStartIndex, 0, { type: ', ARRAY', text: ',', i1: i, c1: c })
-          }
-        } else {
-          if (isComma) {
-            isComma = false
-            d('ILLEGAL trailling , ARRAY', char())
-            everything.splice(arrSpliceStartIndex, 0, { type: 'ILLEGAL trailling , ARRAY', text: ',', i1: i, c1: c })
-          }
-
-          if (lines[i][c] !== ']') {
-            d(`\`${lines[i][c]}\` illegal NOT ] Array ${linesPlusChar()}`)
-          }
-          everything.push({ type: '] Array', text: ']', i1: i, c1: c })
-          c++
-          trailingAndRecurse()
-          return true
-        }
-
+      if (arrayMid('Array')) {
+        recurseBetweenExpression()
+        return true
       }
-
+      return false
     }
     if (i !== lineWhereCanConcat && lines[i][c] === '{') {
       everything.push({ type: '{ object', text: '{', i1: i, c1: c })
