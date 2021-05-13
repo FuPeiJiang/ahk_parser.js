@@ -152,7 +152,8 @@ export default (content: string) => {
               usingStartOfLineLoop = true
               continue startOfLineLoop
             } else if (i === validNameLine && whiteSpaceObj[lines[validNameLine][validNameEnd]]) {
-            // only directives and "if" override assignment and ONLY when there's a whiteSpace
+              ch()
+              // only directives and "if" override assignment and ONLY when there's a whiteSpace
               if (idkType === 1) {
                 // d(validName, 'whiteSpace DIRECTIVE', char())
                 everything.splice(spliceStartIndex, 0, { type: 'directive', text: validName, i1: validNameLine, c1: validNameStart, c2: validNameEnd })
@@ -243,7 +244,7 @@ export default (content: string) => {
                 // c++
                 if (i === howManyLines) { break lineLoop }
                 // I don't need to skip empty lines because the above does it for me
-
+                ch()
                 if (lines[i][c] === '{') {
                   everything.push({ type: '{ if', text: '{', i1: i, c1: c })
                   // d(lines[i][c])
@@ -268,14 +269,8 @@ export default (content: string) => {
                 everything.splice(spliceStartIndex, 0, { type: 'assignment', text: assignedTo, i1: validNameLine, c1: validNameStart, c2: validNameEnd })
 
                 if (skipCommaV2Expr()) {break lineLoop}
-
-                if (i === lineWhereCanConcat) {
-                  findCommentsAndEndLine()
-                } else {
-                  usingStartOfLineLoop = true
-                  continue startOfLineLoop
-                }
-                continue lineLoop
+                usingStartOfLineLoop = true
+                continue startOfLineLoop
               } else if (idkType === 3) {
                 // d(validName, 'global local or static', char())
                 everything.splice(spliceStartIndex, 0, { type: 'global local or static{ws}', text: validName, i1: validNameLine, c1: validNameStart, c2: validNameEnd })
@@ -675,14 +670,8 @@ export default (content: string) => {
           everything.splice(spliceStartIndex, 0, { type: 'assignment', text: assignedTo, i1: validNameLine, c1: validNameStart, c2: validNameEnd })
 
           if (skipCommaV2Expr()) {break lineLoop}
-
-          if (i === lineWhereCanConcat) {
-            findCommentsAndEndLine()
-          } else {
-            usingStartOfLineLoop = true
-            continue startOfLineLoop
-          }
-          continue lineLoop
+          usingStartOfLineLoop = true
+          continue startOfLineLoop
         }
       }
 
@@ -1384,60 +1373,99 @@ export default (content: string) => {
   function findOperators() {
     //#VARIABLE ASSIGNMENT
     let toReturn = true
-    let text, lowerText
-    if (c < numberOfChars - 2 && operatorsObj[lowerText = (text = lines[i].slice(c, c + 3)).toLowerCase()]) {
-      // d(lines[i].slice(c, c + 3), '3operator', char())
-      if (lookingForAnd && lowerText === 'and') {
-        return false
-      } else {
-        everything.push({ type: '3operator', text: text, i1: i, c1: c, c2: c + 3 })
+    let text, lowerText, cPlusLen
+    dummyLoop:
+    while (true) {
+      checkNext:
+      while (true) {
+        if (c < numberOfChars - 2 && operatorsObj[lowerText = (text = lines[i].slice(c, cPlusLen = c + 3)).toLowerCase()]) {
+          // d(lines[i].slice(c, c + 3), '3operator', char())
+
+          if (lowerText === 'and') {
+
+            if (variableCharsObj[cPlusLen]) {
+              break checkNext
+            } else {
+              if (lookingForAnd) {
+                return false
+              }
+            }
+          }
+
+          if (lowerText === 'not') {
+            if (variableCharsObj[cPlusLen]) {
+              break checkNext
+            }
+          }
+
+          everything.push({ type: '3operator', text: text, i1: i, c1: c, c2: c + 3 })
+          c += 3
+          break dummyLoop
+        }
+        break checkNext
       }
-      c += 3
-    } else if (c < numberOfChars - 1 && operatorsObj[lines[i].slice(c, c + 2).toLowerCase()]) {
-      // d(lines[i].slice(c, c + 2), '2operator', char())
-      everything.push({ type: '2operator', text: lines[i].slice(c, c + 2), i1: i, c1: c, c2: c + 2 })
-      c += 2
-    } else if (c < numberOfChars && operatorsObj[lines[i][c].toLowerCase()]) {
-      //if ?, ternary, so expect :
-      if (lines[i][c] === '?') {
-        // d('? ternary', char())
-        everything.push({ type: '? ternary', text: '?', i1: i, c1: c })
-        colonDeep++, c++
-        if (!recurseBetweenExpression()) { findExpression() }
-        if (i === howManyLines) { return false }
-        //where findExpression stopped at
-        if (lines[i][c] === ':') {
-          // d(': ternary', char())
-          everything.push({ type: ': ternary', text: ':', i1: i, c1: c })
-          colonDeep--, c++
-        } else {
-          d('illegal: why is there no : after ? ternary', char())
-          //pretend it was legal
-          colonDeep--, c++, toReturn = false
-          //I don't know what returning false does
+
+      checkNext:
+      while (true) {
+        if (c < numberOfChars - 1 && operatorsObj[lowerText = (lines[i].slice(c, cPlusLen = c + 2).toLowerCase())]) {
+        // d(lines[i].slice(c, c + 2), '2operator', char())
+
+          if (lowerText === 'or') {
+            if (variableCharsObj[cPlusLen]) {
+              break checkNext
+            }
+          }
+
+          everything.push({ type: '2operator', text: lines[i].slice(c, c + 2), i1: i, c1: c, c2: c + 2 })
+          c += 2
+          break dummyLoop
         }
-      } else if (lines[i][c] === ':') {
-        //'?' will make colonDeep true
-        if (!colonDeep) {
-          //if encounter ':' in the wild BEFORE '?'
-          d('illegal: unexpected :', char())
-        }
-        toReturn = false
+        break checkNext
+      }
+
+      if (c < numberOfChars && operatorsObj[lines[i][c].toLowerCase()]) {
+        //if ?, ternary, so expect :
+        if (lines[i][c] === '?') {
+          // d('? ternary', char())
+          everything.push({ type: '? ternary', text: '?', i1: i, c1: c })
+          colonDeep++, c++
+          if (!recurseBetweenExpression()) { findExpression() }
+          if (i === howManyLines) { return false }
+          //where findExpression stopped at
+          if (lines[i][c] === ':') {
+            // d(': ternary', char())
+            everything.push({ type: ': ternary', text: ':', i1: i, c1: c })
+            colonDeep--, c++
+          } else {
+            d('illegal: why is there no : after ? ternary', char())
+            //pretend it was legal
+            colonDeep--, c++, toReturn = false
+            //I don't know what returning false does
+          }
+        } else if (lines[i][c] === ':') {
+          //'?' will make colonDeep true
+          if (!colonDeep) {
+            //if encounter ':' in the wild BEFORE '?'
+            d('illegal: unexpected :', char())
+          }
+          toReturn = false
         //for variadic function definition
-      } else if (variadicAsterisk && lines[i][c] === '*') {
-        // d('* variadic Argument', char())
-        everything.push({ type: '* variadic Argument', text: '*', i1: i, c1: c })
-        c++
-      } else {
-        // d(lines[i][c], '1operator', char())
+        } else if (variadicAsterisk && lines[i][c] === '*') {
+          // d('* variadic Argument', char())
+          everything.push({ type: '* variadic Argument', text: '*', i1: i, c1: c })
+          c++
+        } else {
+          // d(lines[i][c], '1operator', char())
 
 
-        everything.push({ type: '1operator', text: lines[i][c], i1: i, c1: c })
-        c++
+          everything.push({ type: '1operator', text: lines[i][c], i1: i, c1: c })
+          c++
+        }
+        break dummyLoop
       }
-    } else {
       return false
     }
+
     lineWhereCanConcat = -1
     legalObjLine = i
     return toReturn

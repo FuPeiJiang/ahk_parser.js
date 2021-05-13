@@ -4,7 +4,8 @@ const d = console.debug.bind(console)
 
 
 const content: string =
-fs.readFileSync('tests3/comma in arr access.ahk')
+fs.readFileSync('tests3/idkAnymore10.ahk')
+// fs.readFileSync('tests3/comma in arr access.ahk')
 // fs.readFileSync('tests3/comma are allowed in function call.ahk')
 // fs.readFileSync('tests3/ternary broken.ahk')
 // fs.readFileSync('tests2/idkAnymore9.ahk')
@@ -53,7 +54,7 @@ fs.readFileSync('tests3/comma in arr access.ahk')
 // fs.readFileSync('tests2/method call.ahk')
 // fs.readFileSync('tests2/not not.ahk')
 // fs.readFileSync('tests2/v1 assignment.ahk')
-fs.readFileSync('tests/ahk_explorer.ahk')
+// fs.readFileSync('tests/ahk_explorer.ahk')
 // fs.readFileSync('tests/fixes/concat.ahk')
 // fs.readFileSync('tests/fixes/assignment.ahk')
 // fs.readFileSync('tests/fixes/obj in obj.ahk')
