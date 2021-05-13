@@ -1,5 +1,5 @@
-            ; if ErrorLevel {
-                ; break
-            ; }
-; var := {}
-; var := a {}
+            if ErrorLevel {
+                break
+            }
+var := {}
+var := a {}

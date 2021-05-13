@@ -1633,6 +1633,7 @@ export default (content: string) => {
           return false
         } else {
           everything.push({ type: 'idkVariable', text: validName, i1: i, c1: nonWhiteSpaceStart, c2: c })
+          lineWhereCanConcat = i
         }
       } else {
         // d(`${validName} Integer ${char()}`)
