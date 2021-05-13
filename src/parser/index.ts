@@ -1775,17 +1775,17 @@ export default (content: string) => {
 
 
         // kStart = [c, i]
-        singleVar = true
 
-        const objSpliceStartIndex = everything.length
         // beforeSkipSpaces = c
         skipThroughEmptyLines()
         // afterSkipSpaces = c
 
+        const objSpliceStartIndex = everything.length
         if (lines[i][c] === ',') {
           c++
           isComma = true
           legalObjLine = i
+          skipThroughWhiteSpaces()
         } else {
           if (i !== legalObjLine ) {
             d('ILLEGAL ] Array i !== legalObjLine', char())
@@ -1797,9 +1797,12 @@ export default (content: string) => {
         // (another propCharsObj or anything)
         // it not NOT a singleVar anymore
         haventFoundSingleVar = true
-
         if (findSingleVar()) {
           haventFoundSingleVar = false
+          if (isComma) {
+            isComma = false
+            everything.splice(objSpliceStartIndex, 0, { type: ', object', text: ',', i1: i, c1: c })
+          }
         }
 
         afterSingleVar = c
@@ -1839,7 +1842,10 @@ export default (content: string) => {
         if (lines[i][c] === ':') {
           // d(': object', char())
           everything.push({ type: ': object', text: ':', i1: i, c1: c })
+          c++ //skip :
           legalObjLine = i
+          skipThroughWhiteSpaces()
+          findExpression()
         } else {
           d('illegal obj2, key without : ', char())
           return false
@@ -1856,11 +1862,9 @@ export default (content: string) => {
         // d('=====================\n',kStart,k,'\n=====================')
         mapKeysAndValuesArr.push(k)
  */
-        c++ //skip :
 
         // vStart = [c, i]
 
-        findExpression()
 
         // v = textFromPosToCurrent(vStart)
         // d('=====================\n',vStart,v,'\n=====================')
