@@ -1342,6 +1342,7 @@ export default (content: string) => {
     } else {
       return false
     }
+    legalObjLine = i
     return toReturn
 
   }
@@ -1669,6 +1670,7 @@ export default (content: string) => {
     if (lines[i][c] === '[') {
       //quick patch
       everything.push({ type: '[ Array', text: '[', i1: i, c1: c })
+      legalObjLine = i
 
       c++
 
@@ -1686,12 +1688,13 @@ export default (content: string) => {
         }
         if (lines[i][c] === ',') {
           everything.push({ type: ', ARRAY', text: ',', i1: i, c1: c })
+          legalObjLine = i
         } else {
           break
         }
         c++
       }
-      if (i !== lineWhereCanConcat) {
+      if (i !== legalObjLine ) {
         d('ILLEGAL ] Array', char())
       }
       // d('] Array', char())
@@ -1896,8 +1899,8 @@ export default (content: string) => {
   }
   function startContinuation() {
     if (!skipThroughEmptyLines()) {
-      d('illegal: startContinuation OutOfLines')
-      trace()
+      // d('illegal: startContinuation OutOfLines')
+      // trace()
       return false
     }
     if (lines[i][c] === '(') {
@@ -2012,7 +2015,18 @@ export default (content: string) => {
       if (c === numberOfChars) {
         //comment: next line
       } else if (lines[i][c] === ';' && (c === 0 || whiteSpaceObj[lines[i][c - 1]])) {
-        // d('comment while skipThroughEmptyLines', char())
+        //
+      } else if (c < numberOfChars - 1 && lines[i].slice(c, c + 2) === '/*') {
+        while (++i < howManyLines) {
+          c = 0
+          numberOfChars = lines[i].length
+          while (c < numberOfChars && whiteSpaceObj[lines[i][c]]) {
+            c++
+          }
+          if (c < numberOfChars - 1 && lines[i].slice(c, c + 2) === '*/') {
+            break
+          }
+        }
       } else {
         //anything else, return found
         const text = textFromPosToCurrent([c1, i1])
