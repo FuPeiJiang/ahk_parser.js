@@ -1912,3 +1912,10 @@ $="::
 
 to do:
   commands, recurse skipComma V1Expr
+
+:=-1
+looks for expression
+but -1 requires 
+if (assignmentOperatorReturnValue === 1) {
+      if (!recurseBetweenExpression()) { findExpression() }
+

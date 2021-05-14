@@ -609,7 +609,7 @@ export default (content: string) => {
           const assignmentOperatorReturnValue = findAssignmentOperators()
           if (assignmentOperatorReturnValue === 1) {
             everything.splice(spliceStartIndex, 0, { type: 'assignment', text: validName, i1: validNameLine, c1: validNameStart, c2: validNameEnd })
-            findExpression()
+            if (!recurseBetweenExpression()) { findExpression() }
             if (skipCommaV2Expr()) {break lineLoop}
             usingStartOfLineLoop = true
             continue startOfLineLoop
@@ -628,7 +628,7 @@ export default (content: string) => {
             const assignmentOperatorReturnValue = findAssignmentOperators()
             if (assignmentOperatorReturnValue === 1) {
               everything.splice(spliceStartIndex, 0, { type: 'assignment', text: validName, i1: validNameLine, c1: validNameStart, c2: validNameEnd })
-              findExpression()
+              if (!recurseBetweenExpression()) { findExpression() }
               if (skipCommaV2Expr()) {break lineLoop}
               usingStartOfLineLoop = true
               continue startOfLineLoop
