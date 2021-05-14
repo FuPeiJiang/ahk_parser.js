@@ -593,6 +593,10 @@ export default (content: string) => {
             const functionMidReturn = functionMid('function startOfLine')
             if (functionMidReturn === 1) {
               lastTrailingWasFunc = true
+              if (!skipThroughEmptyLines()) {
+                everything.splice(spliceStartIndex, 0, { type: 'function CALL', text: validName, i1: validNameLine, c1: validNameStart, c2: validNameEnd })
+                break lineLoop
+              }
             } else if (functionMidReturn === 2) {
               continue lineLoop
             }
@@ -723,7 +727,7 @@ export default (content: string) => {
     }
     //end of lineLoop
     d('end of lineLoop')
-    return everything
+    // return everything
     // everything.push({type: 'end of lineLoop', text:'\n',i1: i, c1:c})
     i++
     continue lineLoop

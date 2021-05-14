@@ -1910,3 +1910,5 @@ skipOperators, if ":", then hotkey
 $+="::
 $="::
 
+to do:
+  commands, recurse skipComma V1Expr
