@@ -1860,3 +1860,53 @@ while
 , x = ","
 p(45)
 
+
+$^+left::
+var : $
+operator : ^ : bitwise-exclusive-or (^)
+
+well 1+1 is illegal
+1+=1 is legal
+
+hotkey:
+$=::
+p($)
+string:
+$=`::
+$=:`:
+
+hotkey: SHIFT + EQUAL
+$+=::
+p(35)
+
+Invalid hotkey:
+#NoEnv::
+so hotkey takes precedence
+
+this works
+"::\
+"->\
+
+hotkey:
+msgbox::
+msgbox:
+msgbox ::
+
+msgbox:
+msgbox & e::
+
+hotkey:
+AppsKey Up::
+because this isn't a command..
+AppsKey & e::
+
+spaces are allowed in hotkey if not a command...
+
+check hotkey before assignment
+$+=::
+
+skipOperators, if ":", then hotkey
+
+$+="::
+$="::
+
