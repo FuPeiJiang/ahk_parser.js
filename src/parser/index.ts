@@ -707,12 +707,9 @@ export default (content: string) => {
 
   // start of functions
   function functionMid(which: string) {
-    // everything.push({ type: `${which}(`, text: `${validName}(`, i1: i, c1: nonWhiteSpaceStart, c2: c + 1 })
     everything.push({ type: `( ${which}`, text: '(', i1: i, c1: c })
     legalObjLine = i
     c++
-    // exprFoundLine = i
-    const endsWithComma = false
     let isComma
     while (true) {
 
@@ -752,6 +749,7 @@ export default (content: string) => {
         }
         everything.push({ type: `) ${which} CALL startOfLine`, text: ')', i1: i, c1: c })
         c++
+        lineWhereCanConcat = i
         return 1
       }
 
@@ -1519,7 +1517,6 @@ export default (content: string) => {
 
     if (i === howManyLines) {return false}
 
-    beforeConcat = c
     if (insideContinuation) {
       skipThroughWhiteSpaces()
       if (c !== numberOfChars && lines[i][c] === ';') {
@@ -1530,6 +1527,7 @@ export default (content: string) => {
       }
     } else {
       if (!skipThroughEmptyLines()) { return false }
+      // everythingConcatIndex = everything.length
     }
 
     if (findBetween()) {
@@ -1557,11 +1555,12 @@ export default (content: string) => {
     //look for concat, if no operators found
     //if the next thing is expr, it is a concat
     // if char before is whiteSpace concat
+    const everythingConcatIndex = everything.length - 1
     if (i === lineWhereCanConcat && whiteSpaceObj[lines[i][c - 1]] && findExpression()) {
       // const concatWhiteSpaces = lines[concatLineBak].slice(beforeConcatBak, afterConcat)
       // d(`concat "${concatWhiteSpaces}" ${concatWhiteSpaces.length}LENGHT ${beforeConcatBak + 1} line ${concatLineBak + 1}`)
       // I just have to replace the last whiteSpace with concat
-      everything[everything.length - 2].type = 'concat'
+      everything[everythingConcatIndex].type = 'concat'
       // everything.push({type: 'concat', text:concatWhiteSpaces,i1: concatLineBak, c1: beforeConcatBak,c2:afterConcat})
       return true
     }
