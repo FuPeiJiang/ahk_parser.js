@@ -595,7 +595,7 @@ export default (content: string) => {
         breakThisForHotkey:
         while (true) {
 
-          const assignmentOperatorReturnValue = findAssignmentOperators()
+          let assignmentOperatorReturnValue = findAssignmentOperators()
           if (assignmentOperatorReturnValue === 1) {
             everything.splice(spliceStartIndex, 0, { type: 'assignment', text: validName, i1: validNameLine, c1: validNameStart, c2: validNameEnd })
             if (!recurseBetweenExpression()) { findExpression() }
@@ -604,27 +604,6 @@ export default (content: string) => {
             continue startOfLineLoop
           } else if (assignmentOperatorReturnValue === 2) {
             break breakThisForHotkey
-          }
-
-          if (recurseFindTrailingExpr()) {
-            const assignmentOperatorReturnValue = findAssignmentOperators()
-            if (assignmentOperatorReturnValue === 1) {
-              everything.splice(spliceStartIndex, 0, { type: 'assignment', text: validName, i1: validNameLine, c1: validNameStart, c2: validNameEnd })
-              if (!recurseBetweenExpression()) { findExpression() }
-              if (skipCommaV2Expr()) {break lineLoop}
-              usingStartOfLineLoop = true
-              continue startOfLineLoop
-            } else if (assignmentOperatorReturnValue === 2) {
-              break breakThisForHotkey
-            } else {
-              if (lastTrailingWasFunc) {
-                everything.splice(spliceStartIndex, 0, { type: 'function CALL', text: validName, i1: validNameLine, c1: validNameStart, c2: validNameEnd })
-                if (!skipThroughEmptyLines()) {break lineLoop}
-                if (skipCommaV2Expr()) {break lineLoop}
-                usingStartOfLineLoop = true
-                continue startOfLineLoop
-              }
-            }
           }
 
           //out of lines
@@ -646,31 +625,29 @@ export default (content: string) => {
             continue startOfLineLoop
           }
 
-          break breakThisForHotkey
-        }
 
-        // ch()
-        // findAssignmentOperators()
-        // ch()
-
-
-
-        //#ASSIGNMENT
-        /* if (recurseBetweenExpression()) {
-          everything.splice(spliceStartIndex, 0, { type: 'assignment', text: validName, i1: validNameLine, c1: validNameStart, c2: validNameEnd })
-
-          if (skipCommaV2Expr()) {break lineLoop}
-          usingStartOfLineLoop = true
-          continue startOfLineLoop
-        } else {
-          if (lastTrailingWasFunc) {
-            everything.splice(spliceStartIndex, 0, { type: 'function CALL', text: validName, i1: validNameLine, c1: validNameStart, c2: validNameEnd })
+          //#ASSIGNMENT
+          assignmentOperatorReturnValue = findAssignmentOperators()
+          if (assignmentOperatorReturnValue === 1) {
+            everything.splice(spliceStartIndex, 0, { type: 'assignment', text: validName, i1: validNameLine, c1: validNameStart, c2: validNameEnd })
+            if (!recurseBetweenExpression()) { findExpression() }
             if (skipCommaV2Expr()) {break lineLoop}
             usingStartOfLineLoop = true
             continue startOfLineLoop
+          } else if (assignmentOperatorReturnValue === 2) {
+            break breakThisForHotkey
+          } else {
+            if (lastTrailingWasFunc) {
+              everything.splice(spliceStartIndex, 0, { type: 'function CALL', text: validName, i1: validNameLine, c1: validNameStart, c2: validNameEnd })
+              if (!skipThroughEmptyLines()) {break lineLoop}
+              if (skipCommaV2Expr()) {break lineLoop}
+              usingStartOfLineLoop = true
+              continue startOfLineLoop
+            }
           }
-        } */
 
+          break breakThisForHotkey
+        }
       }
 
       //#HOTKEYS
