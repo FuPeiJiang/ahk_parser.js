@@ -589,17 +589,6 @@ export default (content: string) => {
             variadicAsterisk = false
             usingStartOfLineLoop = true
             continue startOfLineLoop
-          } else {
-            const functionMidReturn = functionMid('function startOfLine')
-            if (functionMidReturn === 1) {
-              lastTrailingWasFunc = true
-              if (!skipThroughEmptyLines()) {
-                everything.splice(spliceStartIndex, 0, { type: 'function CALL', text: validName, i1: validNameLine, c1: validNameStart, c2: validNameEnd })
-                break lineLoop
-              }
-            } else if (functionMidReturn === 2) {
-              continue lineLoop
-            }
           }
 
         }
@@ -615,13 +604,6 @@ export default (content: string) => {
             continue startOfLineLoop
           } else if (assignmentOperatorReturnValue === 2) {
             break breakThisForHotkey
-          } else {
-            if (lastTrailingWasFunc) {
-              everything.splice(spliceStartIndex, 0, { type: 'function CALL', text: validName, i1: validNameLine, c1: validNameStart, c2: validNameEnd })
-              if (skipCommaV2Expr()) {break lineLoop}
-              usingStartOfLineLoop = true
-              continue startOfLineLoop
-            }
           }
 
           if (recurseFindTrailingExpr()) {
