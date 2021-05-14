@@ -619,6 +619,7 @@ export default (content: string) => {
             } else {
               if (lastTrailingWasFunc) {
                 everything.splice(spliceStartIndex, 0, { type: 'function CALL', text: validName, i1: validNameLine, c1: validNameStart, c2: validNameEnd })
+                if (!skipThroughEmptyLines()) {break lineLoop}
                 if (skipCommaV2Expr()) {break lineLoop}
                 usingStartOfLineLoop = true
                 continue startOfLineLoop
