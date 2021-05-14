@@ -4,7 +4,8 @@ const d = console.debug.bind(console)
 
 
 const content: string =
-fs.readFileSync('tests3/idkAnymore19.ahk')
+fs.readFileSync('tests3/idkAnymore20.ahk')
+// fs.readFileSync('tests3/idkAnymore19.ahk')
 // fs.readFileSync('tests3/idkAnymore18.ahk')
 // fs.readFileSync('tests3/idkAnymore17.ahk')
 // fs.readFileSync('tests3/idkAnymore16.ahk')

@@ -119,7 +119,7 @@ loop 2 {
     LV_ModifyCol(2, "Logical")
     LV_ModifyCol(6,"Integer")
 
-    (LV_ModifyCol(4,0) ; hides 3rd row)
+    LV_ModifyCol(4,0) ; hides 3rd row)
     LV_ModifyCol(6,0) ; hides 3rd row
     focused=flistView
     ImageListID%A_Index% := IL_Create(50)
@@ -1776,6 +1776,9 @@ getMultiRenameNames()
             charIndex++
         }
         for key, value in lessGreaters {
+            #SingleInstance, Force
+            SendMode Input
+            SetWorkingDir, %A_ScriptDir%
             #SingleInstance, Force
             SendMode Input
             SetWorkingDir, %A_ScriptDir%
