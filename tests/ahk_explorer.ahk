@@ -1776,7 +1776,10 @@ getMultiRenameNames()
             charIndex++
         }
         for key, value in lessGreaters {
-            nameInstance:=SubStr(nameInstance, 1, value[1]-1) SubStr(nameInstance, value[1] + value[2])
+            #SingleInstance, Force
+            SendMode Input
+            SetWorkingDir, %A_ScriptDir%
+            
         }
 
         SplitPath, v,,, OutExtension

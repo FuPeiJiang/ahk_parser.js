@@ -606,6 +606,8 @@ export default (content: string) => {
             break breakThisForHotkey
           }
 
+          recurseFindTrailingExpr()
+
           //out of lines
           if (!skipThroughEmptyLines()) {
             if (lastTrailingWasFunc) {
