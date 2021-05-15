@@ -1922,3 +1922,27 @@ if (assignmentOperatorReturnValue === 1) {
 ++i
 i++
 oof
+
+I bet hotkeys are preprocessed:
+e:=2
+v:=2+
++e
+p(v)
+
+v:=2+
++e::
+
+(+ is operator, so continue, BUT IT'S A HOTKEY)
+the line must start with an operator, and if it's another line than before. check what ?
+
+dumb solution, but it's what I got..
+splice off anything starting from hotkey line if hotkey found
+when operator not same line, save everything.length
+spliceIndexEverythingAtHotkeyLine = everything.length
+
+easy solutions
+if (i === operatorAtHotkeyLine) {
+
+to do:
+illegal: unexpected : 
+when hotkeyLine ?

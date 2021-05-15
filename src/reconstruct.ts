@@ -4,8 +4,10 @@ const d = console.debug.bind(console)
 
 
 const content: string =
+// fs.readFileSync('tests3/msgbox another line.ahk')
+fs.readFileSync('tests3/fix hotkey.ahk')
 // fs.readFileSync('tests3/group concat.ahk')
-fs.readFileSync('tests3/idkAnymore21.ahk')
+// fs.readFileSync('tests3/idkAnymore21.ahk')
 // fs.readFileSync('tests3/var plus plus2.ahk')
 // fs.readFileSync('tests3/var plus plus.ahk')
 // fs.readFileSync('tests3/3operator hotkey.ahk')

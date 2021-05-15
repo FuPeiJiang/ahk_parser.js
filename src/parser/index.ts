@@ -19,7 +19,7 @@ export default (content: string) => {
 
   let i = 0, c = 0, numberOfChars = 0, validName = '', strStartLine: number, strStartPos: number, insideContinuation = false, beforeConcat: number, nonWhiteSpaceStart: number, exprFoundLine = -1, colonDeep = 0, usingStartOfLineLoop = false, variadicAsterisk = false, lineWhereCanConcat = -1, v1ExpressionC1: number, cNotWhiteSpace: number, percentVarStart: number, propertyC1 = -1, lookingForAnd = false, doubleComma = false, singleComma = false, insideV1Continuation = false
   let everythingPushCounter: number; everythingPushCounter = 0
-  let spliceStartIndex: number, validNameLine: number, validNameEnd: number, findingVarName = false, varNameCanLtrimSpaces: false, idkVarC1 = 0, legalObjLine = -1, lastTrailingWasFunc = false
+  let spliceStartIndex: number, validNameLine: number, validNameEnd: number, findingVarName = false, varNameCanLtrimSpaces: false, idkVarC1 = 0, legalObjLine = -1, lastTrailingWasFunc = false, spliceIndexEverythingAtHotkeyLine: number|boolean = false, operatorAtHotkeyLine = -1
   lineLoop:
   while (i < howManyLines) {
     c = 0
@@ -80,6 +80,8 @@ export default (content: string) => {
         i++
         continue lineLoop
       }
+
+      // spliceIndexEverythingAtHotkeyLine = false
 
       //#function DEFINITION END
       if (lines[i][c] === '}') {
@@ -415,6 +417,8 @@ export default (content: string) => {
           }
           //EOL: ???    OR COMMENT ?????
           everything.splice(spliceStartIndex, 0, { type: 'command EOL or comment', text: validName, i1: validNameLine, c1: nonWhiteSpaceStart, c2: validNameEnd })
+          spliceIndexEverythingAtHotkeyLine = everything.length
+          operatorAtHotkeyLine = i
           if (recurseBetweenExpression()) {
             //ok..
           } else if (validName.toLowerCase() === 'else') {
@@ -666,6 +670,11 @@ export default (content: string) => {
           if (c < numberOfChars && lines[i][c] === ':') {
             c++
             const hotkey = lines[i].slice(nonWhiteSpaceStart, c)
+            if (i === operatorAtHotkeyLine) {
+              if (spliceIndexEverythingAtHotkeyLine !== false) {
+                everything.splice(spliceIndexEverythingAtHotkeyLine)
+              }
+            }
             everything.push({ type: 'hotkey', text: hotkey, i1: i, c1: nonWhiteSpaceStart, c2: c })
             const replacementChar = lines[i][c]
             const cPlueOne = c + 1
@@ -1529,7 +1538,7 @@ export default (content: string) => {
     // exprFoundLine = i
 
     if (i === howManyLines) {return false}
-
+    let lineBeforeSkipLines = i
     if (insideContinuation) {
       skipThroughWhiteSpaces()
       if (c !== numberOfChars && lines[i][c] === ';') {
@@ -1539,11 +1548,16 @@ export default (content: string) => {
         }
       }
     } else {
+      lineBeforeSkipLines = i
       if (!skipThroughEmptyLines()) { return false }
       // everythingConcatIndex = everything.length
     }
 
     if (findBetween()) {
+      if (i !== lineBeforeSkipLines) {
+        spliceIndexEverythingAtHotkeyLine = everything.length
+        operatorAtHotkeyLine = i
+      }
       return true
     } else {
       if (insideContinuation) {
