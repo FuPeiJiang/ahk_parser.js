@@ -1,5 +1,5 @@
 import { trace } from 'console'
-import { whiteSpaceObj, variableCharsObj, operatorsObj, legacyIfOperators, v1Continuator, typeOfValidVarName, whiteSpaceOverrideAssign, propCharsObj, namedIf, assignmentOperators } from './tokens'
+import { whiteSpaceObj, variableCharsObj, operatorsObj, legacyIfOperators, v1Continuator, typeOfValidVarName, whiteSpaceOverrideAssign, propCharsObj, namedIf, assignmentOperators, elseLoopReturn } from './tokens'
 const d = console.debug.bind(console)
 
 export default (content: string) => {
@@ -19,7 +19,7 @@ export default (content: string) => {
 
   let i = 0, c = 0, numberOfChars = 0, validName = '', strStartLine: number, strStartPos: number, insideContinuation = false, beforeConcat: number, nonWhiteSpaceStart: number, exprFoundLine = -1, colonDeep = 0, usingStartOfLineLoop = false, variadicAsterisk = false, lineWhereCanConcat = -1, v1ExpressionC1: number, cNotWhiteSpace: number, percentVarStart: number, propertyC1 = -1, lookingForAnd = false, doubleComma = false, singleComma = false, insideV1Continuation = false
   let everythingPushCounter: number; everythingPushCounter = 0
-  let spliceStartIndex: number, validNameLine: number, validNameEnd: number, findingVarName = false, varNameCanLtrimSpaces: false, idkVarC1 = 0, legalObjLine = -1, lastTrailingWasFunc = false, spliceIndexEverythingAtHotkeyLine: number|boolean = false, operatorAtHotkeyLine = -1
+  let spliceStartIndex: number, validNameLine: number, validNameEnd: number, findingVarName = false, varNameCanLtrimSpaces: false, idkVarC1 = 0, legalObjLine = -1, lastTrailingWasFunc = false, spliceIndexEverythingAtHotkeyLine: number|boolean = false, operatorAtHotkeyLine = -1, v1StartLine = -1
   lineLoop:
   while (i < howManyLines) {
     c = 0
@@ -117,7 +117,7 @@ export default (content: string) => {
         const idkType = typeOfValidVarName[validName.toLowerCase()]
 
         if (idkType) {
-
+          v1StartLine = i
           if (skipThroughEmptyLines()) {
             if (lines[i][c] === ',') {
               everything.push({ type: '(statement) ,', text: ',', i1: i, c1: c })
@@ -419,21 +419,28 @@ export default (content: string) => {
           everything.splice(spliceStartIndex, 0, { type: 'command EOL or comment', text: validName, i1: validNameLine, c1: nonWhiteSpaceStart, c2: validNameEnd })
           spliceIndexEverythingAtHotkeyLine = everything.length
           operatorAtHotkeyLine = i
-          if (recurseBetweenExpression()) {
-            //ok..
-          } else if (validName.toLowerCase() === 'else') {
-            if (lines[i][c] === '{') {
-              everything.push({ type: '{ else', text: '{', i1: i, c1: c })
-              c++
-              if (!skipThroughEmptyLines()) { break lineLoop }
+          // i = v1StartLine, c = validNameEnd
+          const validNameLowercase = validName.toLowerCase()
+          if (elseLoopReturn[validNameLowercase]) {
+            if (recurseBetweenExpression()) {
+              //ok..
+            } else if (validNameLowercase === 'else') {
+              if (lines[i][c] === '{') {
+                everything.push({ type: '{ else', text: '{', i1: i, c1: c })
+                c++
+                if (!skipThroughEmptyLines()) { break lineLoop }
+              }
+            } else if (validNameLowercase === 'loop') {
+              if (lines[i][c] === '{') {
+                everything.push({ type: '{ loop', text: '{', i1: i, c1: c })
+                c++
+                if (!skipThroughEmptyLines()) { break lineLoop }
+              }
             }
-          } else if (validName.toLowerCase() === 'loop') {
-            if (lines[i][c] === '{') {
-              everything.push({ type: '{ loop', text: '{', i1: i, c1: c })
-              c++
-              if (!skipThroughEmptyLines()) { break lineLoop }
-            }
+          } else {
+            resolveV1Continuation()
           }
+
           usingStartOfLineLoop = true
           continue startOfLineLoop
           //end of is statement
@@ -628,6 +635,7 @@ export default (content: string) => {
           everything.splice(spliceStartIndex, 0, { type: 'var at v1Assignment', text: validName, i1: validNameLine, c1: validNameStart, c2: validNameEnd })
           everything.push({ type: '= v1Assignment', text: '=', i1: i, c1: c })
           c++
+          v1StartLine = i
           findV1Expression()
           usingStartOfLineLoop = true
           continue startOfLineLoop
@@ -1235,35 +1243,73 @@ export default (content: string) => {
       return false
     }
 
-    while (c < numberOfChars && !whiteSpaceObj[lines[i][c]]) {
-      cNotWhiteSpace = c
+    if (i === v1StartLine) {
+      while (c < numberOfChars && !whiteSpaceObj[lines[i][c]]) {
+        cNotWhiteSpace = c
 
-      if (doubleComma) {
-        if (lines[i][c] === ',') {
-          beforeCommaV1Str(`${which} beforeDoubleComma`)
-          if (lines[i][c + 1] === ',') {
-            everything.push({ type: ',, legacyIf var in findV1Expression', text: ',,', i1: i, c1: c, c2: c + 2 })
-            c += 2
-          } else {
-            everything.push({ type: ', legacyIf var in findV1Expression', text: ',', i1: i, c1: c })
-            c++
+        if (doubleComma) {
+          if (lines[i][c] === ',') {
+            beforeCommaV1Str(`${which} beforeDoubleComma`)
+            if (lines[i][c + 1] === ',') {
+              everything.push({ type: ',, legacyIf var in findV1Expression', text: ',,', i1: i, c1: c, c2: c + 2 })
+              c += 2
+            } else {
+              everything.push({ type: ', legacyIf var in findV1Expression', text: ',', i1: i, c1: c })
+              c++
+            }
+            v1ExpressionC1 = c, cNotWhiteSpace = c - 1
+            continue
           }
-          v1ExpressionC1 = c, cNotWhiteSpace = c - 1
-          continue
+        } else if (singleComma && !insideV1Continuation) {
+          if (lines[i][c] === ',') {
+            beforeCommaV1Str(`${which} beforeSingleComma`)
+            v1ExpressionC1 = c, cNotWhiteSpace = c - 1
+            return true
+          }
         }
-      } else if (singleComma && !insideV1Continuation) {
-        if (lines[i][c] === ',') {
-          beforeCommaV1Str(`${which} beforeSingleComma`)
-          v1ExpressionC1 = c, cNotWhiteSpace = c - 1
+
+        if (findPercentVarV1Expression()) {
+          c++; v1ExpressionC1 = c; continue
+        }
+        c++
+      }
+    } else {
+      while (c < numberOfChars && !whiteSpaceObj[lines[i][c]]) {
+        cNotWhiteSpace = c
+
+        if (lines[i][c] === ':') {
+          operatorAtHotkeyLine = i
           return true
         }
-      }
 
-      if (findPercentVarV1Expression()) {
-        c++; v1ExpressionC1 = c; continue
+        if (doubleComma) {
+          if (lines[i][c] === ',') {
+            beforeCommaV1Str(`${which} beforeDoubleComma`)
+            if (lines[i][c + 1] === ',') {
+              everything.push({ type: ',, legacyIf var in findV1Expression', text: ',,', i1: i, c1: c, c2: c + 2 })
+              c += 2
+            } else {
+              everything.push({ type: ', legacyIf var in findV1Expression', text: ',', i1: i, c1: c })
+              c++
+            }
+            v1ExpressionC1 = c, cNotWhiteSpace = c - 1
+            continue
+          }
+        } else if (singleComma && !insideV1Continuation) {
+          if (lines[i][c] === ',') {
+            beforeCommaV1Str(`${which} beforeSingleComma`)
+            v1ExpressionC1 = c, cNotWhiteSpace = c - 1
+            return true
+          }
+        }
+
+        if (findPercentVarV1Expression()) {
+          c++; v1ExpressionC1 = c; continue
+        }
+        c++
       }
-      c++
     }
+
     while (c < numberOfChars && whiteSpaceObj[lines[i][c]]) {
       c++
     }
@@ -1376,6 +1422,9 @@ export default (content: string) => {
         return false
       }
       //if found v1Continuator, continue looking
+
+      //well, there may only be 1 v1 continuator
+      spliceIndexEverythingAtHotkeyLine = everything.length - 1
       findV1Expression()
       return false
     }

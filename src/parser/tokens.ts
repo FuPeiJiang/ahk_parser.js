@@ -21,3 +21,5 @@ export const operatorsObj: stringIndexBool = {'**':true,'!':true,'~':true,'&':tr
 export const assignmentOperators: stringIndexBool = {'++':true, '--':true, ':=':true,'+=':true,'-=':true,'*=':true,'/=':true,'//=':true,'.=':true,'|=':true,'&=':true,'^=':true,'>>=':true,'<<=':true}
 export const v1Continuator: stringIndexBool = {',':true, '**':true,'!':true,'~':true,'&':true,'*':true,'/':true,'//':true,'-':true,'+':true,'<<':true,'>>':true,'^':true,'|':true,'.':true,'~=':true,'>':true,'<':true,'>=':true,'<=':true,'=':true,'==':true,'<>':true,'!=':true,'&&':true,'||':true,'?':true,':=':true,'+=':true,'-=':true,'*=':true,'/=':true,'//=':true,'.=':true,'|=':true,'&=':true,'^=':true,'>>=':true,'<<=':true}
 export const legacyIfOperators: stringIndexBool = {'=':true,'<>':true,'!=':true,'>':true,'>=':true,'<':true,'<=':true}
+
+export const elseLoopReturn: stringIndexBool = {'else':true,'loop':true,'return':true}

@@ -1946,3 +1946,8 @@ if (i === operatorAtHotkeyLine) {
 to do:
 illegal: unexpected : 
 when hotkeyLine ?
+
+a=
++3::
+msgbox
++3::
