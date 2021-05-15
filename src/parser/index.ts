@@ -760,6 +760,7 @@ export default (content: string) => {
         c++
         isComma = true
         legalObjLine = i
+        lineWhereCanConcat = -1
       } else {
         if (i !== legalObjLine ) {
           d(`ILLEGAL ) ${which} CALL startOfLine i !== legalObjLine`, char())
@@ -1773,6 +1774,7 @@ export default (content: string) => {
         c++
         isComma = true
         legalObjLine = i
+        lineWhereCanConcat = -1
       } else {
         if (i !== legalObjLine ) {
           d(`ILLEGAL ] ${which} i !== legalObjLine`, char())
@@ -1980,8 +1982,8 @@ export default (content: string) => {
       legalObjLine = i
       colonDeep++, c++
 
-      let haventFoundSingleVar: boolean
       let isComma = false
+      const singleVarEverythingIndex = -1
       while (true) {
 
         if (!skipThroughEmptyLines()) { return false }
@@ -1991,6 +1993,7 @@ export default (content: string) => {
           c++
           isComma = true
           legalObjLine = i
+          lineWhereCanConcat = -1
           skipThroughWhiteSpaces()
         } else {
           if (i !== legalObjLine ) {
@@ -2002,34 +2005,45 @@ export default (content: string) => {
         // if found expression:
         // (another propCharsObj or anything)
         // it not NOT a singleVar anymore
-        haventFoundSingleVar = true
-        if (findSingleVar()) {
-          haventFoundSingleVar = false
+        // if (findSingleVar()) {
+        // singleVarEverythingIndex = everything.length
+        // }
+        const lengthBefore = everything.length
+        if (recurseBetweenExpression() || findExpression()) {
+          const lengthAfter = everything.length
+          const lengthDiff = lengthAfter - lengthBefore
+          if (lengthDiff === 2) {
+            if (everything[lengthBefore].type === 'emptyLines') {
+              if (everything[lengthBefore + 1].type === 'idkVariable') {
+                everything[lengthBefore + 1].type = 'singleVar'
+              }
+            }
+          } else if (lengthDiff === 1) {
+            if (everything[lengthBefore].type === 'idkVariable') {
+              everything[lengthBefore].type = 'singleVar'
+            }
+          }
           if (isComma) {
             isComma = false
             everything.splice(objSpliceStartIndex, 0, { type: ', object', text: ',', i1: i, c1: c })
           }
-        }
-
-        if (!(recurseBetweenExpression() || findExpression())) {
+        } else {
           // if haven't expression, it is only illegal if haventFoundSingleVar, which is a valid key
-          if (haventFoundSingleVar) {
-            if (isComma) {
-              isComma = false
-              d('ILLEGAL trailling , object', char())
-              everything.splice(objSpliceStartIndex, 0, { type: 'ILLEGAL trailling , object', text: ',', i1: i, c1: c })
-            }
-            if (lines[i][c] !== '}') {
-              d(`\`${lines[i][c]}\` illegal NOT } object ${linesPlusChar()}`)
-            }
-            everything.push({ type: '} object', text: '}', i1: i, c1: c })
-            lineWhereCanConcat = -1
-            colonDeep--, c++
-            trailingAndRecurse()
-            recurseBetweenExpression()
-            return true
-
+          if (isComma) {
+            isComma = false
+            d('ILLEGAL trailling , object', char())
+            everything.splice(objSpliceStartIndex, 0, { type: 'ILLEGAL trailling , object', text: ',', i1: i, c1: c })
           }
+          if (lines[i][c] !== '}') {
+            d(`\`${lines[i][c]}\` illegal NOT } object ${linesPlusChar()}`)
+          }
+          everything.push({ type: '} object', text: '}', i1: i, c1: c })
+          lineWhereCanConcat = -1
+          colonDeep--, c++
+          trailingAndRecurse()
+          recurseBetweenExpression()
+          return true
+
         }
 
         if (lines[i][c] === ':') {
