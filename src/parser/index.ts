@@ -1,5 +1,5 @@
 import { trace } from 'console'
-import { whiteSpaceObj, variableCharsObj, operatorsObj, legacyIfOperators, v1Continuator, typeOfValidVarName, whiteSpaceOverrideAssign, propCharsObj, namedIf, assignmentOperators, elseLoopReturn } from './tokens'
+import { whiteSpaceObj, variableCharsObj, operatorsObj, legacyIfOperators, v1Continuator, typeOfValidVarName, whiteSpaceOverrideAssign, propCharsObj, namedIf, assignmentOperators, elseLoopReturn, v2Continuator } from './tokens'
 const d = console.debug.bind(console)
 
 export default (content: string) => {
@@ -1498,6 +1498,105 @@ export default (content: string) => {
     return toReturn
 
   }
+  function findOperatorsNotSameLine() {
+    //#VARIABLE ASSIGNMENT
+    let toReturn = true
+    let text, lowerText, cPlusLen
+    dummyLoop:
+    while (true) {
+      checkNext:
+      while (true) {
+        if (c < numberOfChars - 2 && v2Continuator[lowerText = (text = lines[i].slice(c, cPlusLen = c + 3)).toLowerCase()]) {
+
+          if (lowerText === 'and') {
+
+            if (variableCharsObj[cPlusLen]) {
+              break checkNext
+            } else {
+              if (lookingForAnd) {
+                return false
+              }
+            }
+          }
+
+          everything.push({ type: '3operator', text: text, i1: i, c1: c, c2: c + 3 })
+          c += 3
+          break dummyLoop
+        }
+        break checkNext
+      }
+
+      checkNext:
+      while (true) {
+        if (c < numberOfChars - 1 && v2Continuator[lowerText = (lines[i].slice(c, cPlusLen = c + 2).toLowerCase())]) {
+
+          if (lowerText === 'or') {
+            if (variableCharsObj[lines[i][cPlusLen]]) {
+              break checkNext
+            }
+          }
+
+          everything.push({ type: '2operator', text: lines[i].slice(c, c + 2), i1: i, c1: c, c2: c + 2 })
+          c += 2
+          break dummyLoop
+        }
+        break checkNext
+      }
+
+      if (c < numberOfChars && v2Continuator[lines[i][c].toLowerCase()]) {
+        if (lines[i][c] === '+' && lines[i][c + 1] === '+') {
+          d('illegal v2Continuator `++`', linesPlusChar())
+        }
+        if (lines[i][c] === '-' && lines[i][c + 1] === '-') {
+          d('illegal v2Continuator `++`', linesPlusChar())
+        }
+        //if ?, ternary, so expect :
+        if (lines[i][c] === '?') {
+          // d('? ternary', char())
+          everything.push({ type: '? ternary', text: '?', i1: i, c1: c })
+          colonDeep++, c++
+          if (!recurseBetweenExpression()) { findExpression() }
+          if (i === howManyLines) { return false }
+          //where findExpression stopped at
+          if (lines[i][c] === ':') {
+            // d(': ternary', char())
+            everything.push({ type: ': ternary', text: ':', i1: i, c1: c })
+            colonDeep--, c++
+          } else {
+            d('illegal: why is there no : after ? ternary', char())
+            //pretend it was legal
+            colonDeep--, c++, toReturn = false
+            //I don't know what returning false does
+          }
+        } else if (lines[i][c] === ':') {
+          //'?' will make colonDeep true
+          if (!colonDeep) {
+            //if encounter ':' in the wild BEFORE '?'
+            d('illegal: unexpected :', char())
+          }
+          toReturn = false
+        //for variadic function definition
+        } else if (variadicAsterisk && lines[i][c] === '*') {
+          // d('* variadic Argument', char())
+          everything.push({ type: '* variadic Argument', text: '*', i1: i, c1: c })
+          c++
+        } else {
+          // d(lines[i][c], '1operator', char())
+
+
+          everything.push({ type: '1operator', text: lines[i][c], i1: i, c1: c })
+          c++
+        }
+        break dummyLoop
+      }
+      return false
+    }
+
+    lineWhereCanConcat = -1
+    legalObjLine = i
+    return toReturn
+
+  }
   function findOperators() {
     //#VARIABLE ASSIGNMENT
     let toReturn = true
@@ -1630,7 +1729,14 @@ export default (content: string) => {
       // everythingConcatIndex = everything.length
     }
 
-    if (findBetween()) {
+    let foundBetween
+    if (i === lineBeforeSkipLines) {
+      foundBetween = findBetween()
+    } else {
+      foundBetween = findBetweenNotSameLine()
+    }
+
+    if (foundBetween) {
       if (i !== lineBeforeSkipLines) {
         spliceIndexEverythingAtHotkeyLine = everything.length
         operatorAtHotkeyLine = i
@@ -1645,6 +1751,27 @@ export default (content: string) => {
     }
 
   }
+
+  function findBetweenNotSameLine() {
+    if (c === numberOfChars) {
+      return false
+    }
+
+    if (findOperatorsNotSameLine()) {
+      findExpression()
+      return true
+    }
+
+    if (insideContinuation) {
+      if (endExprContinuation()) {
+        findExpression()
+        return true
+      }
+    } else {
+      return false
+    }
+  }
+
   //no lines are skipped
   function findBetween() {
     if (c === numberOfChars) {

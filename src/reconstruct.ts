@@ -4,7 +4,8 @@ const d = console.debug.bind(console)
 
 
 const content: string =
-fs.readFileSync('tests3/decimal oof.ahk')
+fs.readFileSync('tests3/plus plus var.ahk')
+// fs.readFileSync('tests3/decimal oof.ahk')
 // fs.readFileSync('tests3/fix lineWhereCanConcat.ahk')
 // fs.readFileSync('obj to map/inside msgbox.ahk')
 // fs.readFileSync('tests3/if out of lines before recurseFindCommaV1Expression.ahk')
