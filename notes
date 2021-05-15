@@ -1196,7 +1196,7 @@ ILLEGAL ) function startOfLine 14 line 20
 
 'function( startOfLine' should do lineWhereCanConcat=i
 
-to do:
+DONE:
   fix findPercentVar()
   whichSide %VAR% 34 line 42 #988
   instead of 
@@ -1235,8 +1235,10 @@ but how does the rest of logic know if method or ArrAccess ?
 
 no, I can just make a logic that returns when not validName and not .
 
-to do:
+maybe to do:
 'Integer part of Decimal startOfLine', I'm not really parsing Decimal anymore, the error handling would be crazy
+correctly indicate/identify decimal
+WHY WOULD I
 
 ILLEGAL nonWhiteSpace '3' at findCommentsAndEndLine 31 line 177
         editPos:=[textSize[1]+30, 50]
@@ -1433,7 +1435,7 @@ d(a)
 
 tokens: v1Continuator
 
-to do:
+maybe maybe to do:
   not every operator will continuation: ++ will not, well it isn't an operator..
 
 
@@ -1828,11 +1830,11 @@ so
 Loop [, Count]
 Loop [, v1Expression]
 
-to do:
+DONE:
 fix arrIndex assignment
 ClrTx := This[H].Cells[Row][Col].T
 
-to do:
+DONE:
 skipCommaV2Expr should work for arrayIndex assignment
 This[H].CurTX := This[H].TX, This[H].CurTB := 
 
@@ -1840,15 +1842,15 @@ DONE:
 canConcat shouldn't be true
 This[HWND].Rows := {}
 
-to do:
+DONE:
 MapIndexToID(HWND, Row) { shouldn't be MapIndexToID(HWND, ) {
 AND
 Detach(HWND) { shouldn't be Detach() {
 
-to do:
+maybe maybe to do:
   startContinuation() was rewritten, retest it.
 
-to do:
+DONE:
   class
   must be space, cannot EOL, cannot comma
   validName
@@ -1910,7 +1912,7 @@ skipOperators, if ":", then hotkey
 $+="::
 $="::
 
-to do:
+DONE:
   commands, recurse skipComma V1Expr
 
 :=-1
@@ -1953,3 +1955,6 @@ msgbox
 +3::
 
 actually DO, the commands
+
+to do:
+++i, oof
