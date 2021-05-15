@@ -1,5 +1,5 @@
 import { trace } from 'console'
-import { whiteSpaceObj, variableCharsObj, operatorsObj, legacyIfOperators, v1Continuator, typeOfValidVarName, whiteSpaceOverrideAssign, propCharsObj, namedIf } from './tokens'
+import { whiteSpaceObj, variableCharsObj, operatorsObj, legacyIfOperators, v1Continuator, typeOfValidVarName, whiteSpaceOverrideAssign, propCharsObj, namedIf, assignmentOperators } from './tokens'
 const d = console.debug.bind(console)
 
 export default (content: string) => {
@@ -1373,7 +1373,7 @@ export default (content: string) => {
       if (lines[i][c + 3] === ':') {
         return 2
       } else {
-        if (c < numberOfChars - 2 && operatorsObj[text = lines[i].slice(c, c + 3)]) {
+        if (c < numberOfChars - 2 && assignmentOperators[text = lines[i].slice(c, c + 3)]) {
           // d(lines[i].slice(c, c + 3), '3operator', char())
           everything.push({ type: '3operator', text: text, i1: i, c1: c, c2: c + 3 })
           c += 3
@@ -1383,7 +1383,7 @@ export default (content: string) => {
         if (lines[i][c + 2] === ':') {
           return 2
         } else {
-          if (c < numberOfChars - 1 && operatorsObj[lines[i].slice(c, c + 2).toLowerCase()]) {
+          if (c < numberOfChars - 1 && assignmentOperators[lines[i].slice(c, c + 2).toLowerCase()]) {
             everything.push({ type: '2operator', text: lines[i].slice(c, c + 2), i1: i, c1: c, c2: c + 2 })
             c += 2
             break dummyLoop

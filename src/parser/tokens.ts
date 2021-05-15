@@ -18,6 +18,6 @@ export const typeOfValidVarName: stringIndexNum = {'class':5,'autotrim':4,'block
 export const whiteSpaceOverrideAssign: stringIndexBool = {1:true,2:true,3:true}
 
 export const operatorsObj: stringIndexBool = {'**':true,'!':true,'~':true,'&':true,'*':true,'/':true,'//':true,'-':true,'+':true,'<<':true,'>>':true,'^':true,'|':true,'.':true,'~=':true,'>':true,'<':true,'>=':true,'<=':true,'=':true,'==':true,'<>':true,'!=':true,'not':true,'and':true,'&&':true,'or':true,'||':true,'?':true,':':true,':=':true,'+=':true,'-=':true,'*=':true,'/=':true,'//=':true,'.=':true,'|=':true,'&=':true,'^=':true,'>>=':true,'<<=':true}
-export const assignmentOperators: stringIndexBool = {':=':true,'+=':true,'-=':true,'*=':true,'/=':true,'//=':true,'.=':true,'|=':true,'&=':true,'^=':true,'>>=':true,'<<=':true}
+export const assignmentOperators: stringIndexBool = {'++':true, '--':true, ':=':true,'+=':true,'-=':true,'*=':true,'/=':true,'//=':true,'.=':true,'|=':true,'&=':true,'^=':true,'>>=':true,'<<=':true}
 export const v1Continuator: stringIndexBool = {',':true, '**':true,'!':true,'~':true,'&':true,'*':true,'/':true,'//':true,'-':true,'+':true,'<<':true,'>>':true,'^':true,'|':true,'.':true,'~=':true,'>':true,'<':true,'>=':true,'<=':true,'=':true,'==':true,'<>':true,'!=':true,'&&':true,'||':true,'?':true,':=':true,'+=':true,'-=':true,'*=':true,'/=':true,'//=':true,'.=':true,'|=':true,'&=':true,'^=':true,'>>=':true,'<<=':true}
 export const legacyIfOperators: stringIndexBool = {'=':true,'<>':true,'!=':true,'>':true,'>=':true,'<':true,'<=':true}
