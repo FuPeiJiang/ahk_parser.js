@@ -4,7 +4,7 @@ const d = console.debug.bind(console)
 
 
 const content: string =
-fs.readFileSync('obj to map/inside msgbox.ahk')
+// fs.readFileSync('obj to map/inside msgbox.ahk')
 // fs.readFileSync('tests3/if out of lines before recurseFindCommaV1Expression.ahk')
 // fs.readFileSync('tests3/escape comma v1.ahk')
 // fs.readFileSync('tests3/msgbox recurse comma.ahk')
@@ -81,7 +81,7 @@ fs.readFileSync('obj to map/inside msgbox.ahk')
 // fs.readFileSync('tests2/method call.ahk')
 // fs.readFileSync('tests2/not not.ahk')
 // fs.readFileSync('tests2/v1 assignment.ahk')
-// fs.readFileSync('tests/ahk_explorer.ahk')
+fs.readFileSync('tests/ahk_explorer.ahk')
 // fs.readFileSync('tests/fixes/concat.ahk')
 // fs.readFileSync('tests/fixes/assignment.ahk')
 // fs.readFileSync('tests/fixes/obj in obj.ahk')
@@ -106,10 +106,11 @@ for (let i = 0, len = everything.length; i < len; i++) {
   } else if (everything[i].type === 'singleVar') {
     reconstructed += `"${everything[i].text}"`
   } else if (everything[i].type === '% v1->v2 expr') {
-    //
+    reconstructed += everything[i].text
   } else {
     reconstructed += everything[i].text
   }
+  // reconstructed += everything[i].text
 }
 // d(reconstructed)
 writeSync(reconstructed,'reconstructed.ahk')
