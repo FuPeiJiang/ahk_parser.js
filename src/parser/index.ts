@@ -1346,8 +1346,9 @@ export default (content: string) => {
     if (c < numberOfChars - 1 && lines[i].slice(c, c + 2) === '% ') {
       everything.push({ type: '% v1->v2 expr', text: '% ', i1: i, c1: c, c2: c + 2 })
       c += 2
+      lineWhereCanConcat = -1
       if (!recurseBetweenExpression()) { findExpression() }
-      return false
+      return true
     }
 
     findV1ExpressionMid()
@@ -2022,8 +2023,10 @@ export default (content: string) => {
               d(`\`${lines[i][c]}\` illegal NOT } object ${linesPlusChar()}`)
             }
             everything.push({ type: '} object', text: '}', i1: i, c1: c })
+            lineWhereCanConcat = -1
             colonDeep--, c++
             trailingAndRecurse()
+            recurseBetweenExpression()
             return true
 
           }

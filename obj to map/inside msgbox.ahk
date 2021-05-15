@@ -1,3 +1,1 @@
-#SingleInstance, Force
-SendMode Input
-SetWorkingDir, %A_ScriptDir%
+msgbox % "a", % {a:b}, % {a:b}
