@@ -1375,7 +1375,7 @@ export default (content: string) => {
     dummyLoop:
     while (true) {
 
-      if (lines[i][c + 2] === ':') {
+      if (lines[i][c + 3] === ':') {
         return 2
       } else {
         if (c < numberOfChars - 2 && operatorsObj[text = lines[i].slice(c, c + 3)]) {
@@ -1385,10 +1385,14 @@ export default (content: string) => {
           break dummyLoop
         }
 
-        if (c < numberOfChars - 1 && operatorsObj[lines[i].slice(c, c + 2).toLowerCase()]) {
-          everything.push({ type: '2operator', text: lines[i].slice(c, c + 2), i1: i, c1: c, c2: c + 2 })
-          c += 2
-          break dummyLoop
+        if (lines[i][c + 2] === ':') {
+          return 2
+        } else {
+          if (c < numberOfChars - 1 && operatorsObj[lines[i].slice(c, c + 2).toLowerCase()]) {
+            everything.push({ type: '2operator', text: lines[i].slice(c, c + 2), i1: i, c1: c, c2: c + 2 })
+            c += 2
+            break dummyLoop
+          }
         }
       }
 
