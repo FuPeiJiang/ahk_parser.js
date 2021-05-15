@@ -158,11 +158,18 @@ export default (content: string) => {
 
 
                 everything.splice(spliceStartIndex, 0, { type: 'comma DIRECTIVE OR COMMAND', text: validName, i1: validNameLine, c1: validNameStart, c2: validNameEnd })
-                const text = lines[validNameLine].slice(c, numberOfChars)
-                everything.push({ type: 'comma DIRECTIVE OR COMMAND to EOL', text: text, i1: validNameLine, c1: c, c2: numberOfChars })
-                everything.push({ type: 'newline DIRECTIVE OR COMMAND', text: '\n', i1: validNameLine, c1: numberOfChars })
-                i++
-                continue lineLoop
+                singleComma = true
+                findV1Expression()
+                singleComma = false
+                recurseFindCommaV1Expression('comma whiteSpace')
+                usingStartOfLineLoop = true
+                continue startOfLineLoop
+                // const text = lines[validNameLine].slice(c, numberOfChars)
+
+                // everything.push({ type: 'comma DIRECTIVE OR COMMAND to EOL', text: text, i1: validNameLine, c1: c, c2: numberOfChars })
+                // everything.push({ type: 'newline DIRECTIVE OR COMMAND', text: '\n', i1: validNameLine, c1: numberOfChars })
+                // i++
+                // continue lineLoop
               }
 
               usingStartOfLineLoop = true
@@ -387,8 +394,16 @@ export default (content: string) => {
                   continue startOfLineLoop
                 } else {
                   everything.splice(spliceStartIndex, 0, { type: 'command', text: validName, i1: validNameLine, c1: nonWhiteSpaceStart, c2: validNameEnd })
-                  const text = lines[validNameLine].slice(c, numberOfChars)
-                  everything.push({ type: 'command to EOL', text: text, i1: validNameLine, c1: c, c2: numberOfChars })
+                  singleComma = true
+                  findV1Expression()
+                  singleComma = false
+                  if (i === howManyLines) { break lineLoop }
+                  recurseFindCommaV1Expression('command whiteSpace')
+                  usingStartOfLineLoop = true
+                  continue startOfLineLoop
+                  // const text = lines[validNameLine].slice(c, numberOfChars)
+                  // everything.push({ type: 'command to EOL', text: text, i1: validNameLine, c1: c, c2: numberOfChars })
+
                 }
                 // untested c, i
                 everything.push({ type: 'newLine command', text: '\n', i1: i, c1: c })
@@ -439,6 +454,7 @@ export default (content: string) => {
             }
           } else {
             resolveV1Continuation()
+            recurseFindCommaV1Expression('command EOL or comment')
           }
 
           usingStartOfLineLoop = true
@@ -776,6 +792,15 @@ export default (content: string) => {
         return 1
       }
 
+    }
+  }
+  function recurseFindCommaV1Expression(which: string) {
+    if (findCommaV1Expression(which)) {
+      if (i === howManyLines) {return false}
+      while (findCommaV1Expression(which)) {
+        if (i === howManyLines) {return false}
+      }
+      return true
     }
   }
   function findCommaV1Expression(which: string) {
