@@ -161,6 +161,7 @@ export default (content: string) => {
                 singleComma = true
                 findV1Expression()
                 singleComma = false
+                if (i === howManyLines) {break lineLoop}
                 recurseFindCommaV1Expression(', command comma')
                 usingStartOfLineLoop = true
                 continue startOfLineLoop

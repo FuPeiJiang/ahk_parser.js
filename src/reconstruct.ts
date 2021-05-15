@@ -4,7 +4,9 @@ const d = console.debug.bind(console)
 
 
 const content: string =
-fs.readFileSync('tests3/escape comma v1.ahk')
+// fs.readFileSync('obj to map/inside msgbox.ahk')
+fs.readFileSync('tests3/if out of lines before recurseFindCommaV1Expression.ahk')
+// fs.readFileSync('tests3/escape comma v1.ahk')
 // fs.readFileSync('tests3/msgbox recurse comma.ahk')
 // fs.readFileSync('tests3/idkAnymore22.ahk')
 // fs.readFileSync('tests3/not same line colon v1Expression.ahk')
