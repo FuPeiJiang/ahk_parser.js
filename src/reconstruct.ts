@@ -97,17 +97,19 @@ const everything = ahkParser(content.toString().replace(/\r/g, ''))
 // d(everything)
 let reconstructed = ''
 for (let i = 0, len = everything.length; i < len; i++) {
-  // if (everything[i].type === '{ object') {
-  // reconstructed += 'Map('
-  // } else if (everything[i].type === '} object') {
-  // reconstructed += ')'
-  // } else if (everything[i].type === ': object') {
-  // reconstructed += ','
-  // } else if (everything[i].type === 'singleVar') {
-  // reconstructed += `"${everything[i].text}"`
-  // } else {
-  reconstructed += everything[i].text
-  // }
+  if (everything[i].type === '{ object') {
+    reconstructed += 'Map('
+  } else if (everything[i].type === '} object') {
+    reconstructed += ')'
+  } else if (everything[i].type === ': object') {
+    reconstructed += ','
+  } else if (everything[i].type === 'singleVar') {
+    reconstructed += `"${everything[i].text}"`
+  } else if (everything[i].type === '% v1->v2 expr') {
+    //
+  } else {
+    reconstructed += everything[i].text
+  }
 }
 // d(reconstructed)
 writeSync(reconstructed,'reconstructed.ahk')
