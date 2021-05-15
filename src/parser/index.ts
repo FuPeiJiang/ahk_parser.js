@@ -161,7 +161,7 @@ export default (content: string) => {
                 singleComma = true
                 findV1Expression()
                 singleComma = false
-                recurseFindCommaV1Expression('comma whiteSpace')
+                recurseFindCommaV1Expression(', command comma')
                 usingStartOfLineLoop = true
                 continue startOfLineLoop
                 // const text = lines[validNameLine].slice(c, numberOfChars)
@@ -398,7 +398,7 @@ export default (content: string) => {
                   findV1Expression()
                   singleComma = false
                   if (i === howManyLines) { break lineLoop }
-                  recurseFindCommaV1Expression('command whiteSpace')
+                  recurseFindCommaV1Expression(', command whiteSpace')
                   usingStartOfLineLoop = true
                   continue startOfLineLoop
                   // const text = lines[validNameLine].slice(c, numberOfChars)
@@ -1286,7 +1286,7 @@ export default (content: string) => {
             continue
           }
         } else if (singleComma && !insideV1Continuation) {
-          if (lines[i][c] === ',') {
+          if (lines[i][c] === ',' && lines[i][c - 1] !== '`') {
             beforeCommaV1Str(`${which} beforeSingleComma`)
             v1ExpressionC1 = c, cNotWhiteSpace = c - 1
             return true
@@ -1321,7 +1321,7 @@ export default (content: string) => {
             continue
           }
         } else if (singleComma && !insideV1Continuation) {
-          if (lines[i][c] === ',') {
+          if (lines[i][c] === ',' && lines[i][c - 1] !== '`') {
             beforeCommaV1Str(`${which} beforeSingleComma`)
             v1ExpressionC1 = c, cNotWhiteSpace = c - 1
             return true

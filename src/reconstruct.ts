@@ -4,7 +4,8 @@ const d = console.debug.bind(console)
 
 
 const content: string =
-fs.readFileSync('tests3/msgbox recurse comma.ahk')
+fs.readFileSync('tests3/escape comma v1.ahk')
+// fs.readFileSync('tests3/msgbox recurse comma.ahk')
 // fs.readFileSync('tests3/idkAnymore22.ahk')
 // fs.readFileSync('tests3/not same line colon v1Expression.ahk')
 // fs.readFileSync('tests3/msgbox another line.ahk')
@@ -78,7 +79,7 @@ fs.readFileSync('tests3/msgbox recurse comma.ahk')
 // fs.readFileSync('tests2/method call.ahk')
 // fs.readFileSync('tests2/not not.ahk')
 // fs.readFileSync('tests2/v1 assignment.ahk')
-fs.readFileSync('tests/ahk_explorer.ahk')
+// fs.readFileSync('tests/ahk_explorer.ahk')
 // fs.readFileSync('tests/fixes/concat.ahk')
 // fs.readFileSync('tests/fixes/assignment.ahk')
 // fs.readFileSync('tests/fixes/obj in obj.ahk')
