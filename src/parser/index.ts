@@ -593,7 +593,6 @@ export default (content: string) => {
 
         }
 
-        let doFindV2 = true
 
         let assignmentOperatorReturnValue = findAssignmentOperators()
         if (assignmentOperatorReturnValue === 1) {
@@ -602,8 +601,6 @@ export default (content: string) => {
           if (skipCommaV2Expr()) {break lineLoop}
           usingStartOfLineLoop = true
           continue startOfLineLoop
-        } else if (assignmentOperatorReturnValue === 2) {
-          doFindV2 = false
         }
 
         recurseFindTrailingExpr()
@@ -628,22 +625,20 @@ export default (content: string) => {
         }
 
         //#ASSIGNMENT
-        if (doFindV2) {
-          assignmentOperatorReturnValue = findAssignmentOperators()
-          if (assignmentOperatorReturnValue === 1) {
-            everything.splice(spliceStartIndex, 0, { type: 'assignment', text: validName, i1: validNameLine, c1: validNameStart, c2: validNameEnd })
-            if (!recurseBetweenExpression()) { findExpression() }
+        assignmentOperatorReturnValue = findAssignmentOperators()
+        if (assignmentOperatorReturnValue === 1) {
+          everything.splice(spliceStartIndex, 0, { type: 'assignment', text: validName, i1: validNameLine, c1: validNameStart, c2: validNameEnd })
+          if (!recurseBetweenExpression()) { findExpression() }
+          if (skipCommaV2Expr()) {break lineLoop}
+          usingStartOfLineLoop = true
+          continue startOfLineLoop
+        } else {
+          if (lastTrailingWasFunc) {
+            everything.splice(spliceStartIndex, 0, { type: 'function CALL', text: validName, i1: validNameLine, c1: validNameStart, c2: validNameEnd })
+            if (!skipThroughEmptyLines()) {break lineLoop}
             if (skipCommaV2Expr()) {break lineLoop}
             usingStartOfLineLoop = true
             continue startOfLineLoop
-          } else {
-            if (lastTrailingWasFunc) {
-              everything.splice(spliceStartIndex, 0, { type: 'function CALL', text: validName, i1: validNameLine, c1: validNameStart, c2: validNameEnd })
-              if (!skipThroughEmptyLines()) {break lineLoop}
-              if (skipCommaV2Expr()) {break lineLoop}
-              usingStartOfLineLoop = true
-              continue startOfLineLoop
-            }
           }
         }
 
