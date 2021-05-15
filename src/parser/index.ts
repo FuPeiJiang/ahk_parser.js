@@ -683,6 +683,19 @@ export default (content: string) => {
 
 
       }
+      //only for ++var or --var
+      const assignmentOperatorReturnValue = findAssignmentOperators()
+      if (assignmentOperatorReturnValue === 1) {
+        const legalExprLine = i
+        if (!recurseBetweenExpression()) {
+          if (i === legalExprLine) {
+            findExpression()
+          }
+        }
+        if (skipCommaV2Expr()) {break lineLoop}
+        usingStartOfLineLoop = true
+        continue startOfLineLoop
+      }
 
       //#HOTKEYS
       //skip first character to avoid matching ::, empty hotkey, or not matching :::, colon hotkey, because it matched only the first 2
