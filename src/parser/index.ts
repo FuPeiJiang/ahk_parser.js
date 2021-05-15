@@ -704,6 +704,7 @@ export default (content: string) => {
   function functionMid(which: string) {
     everything.push({ type: `( ${which}`, text: '(', i1: i, c1: c })
     legalObjLine = i
+    lineWhereCanConcat = -1
     c++
     let isComma
     while (true) {
@@ -1383,8 +1384,11 @@ export default (content: string) => {
         if (lines[i][c + 2] === ':') {
           return 2
         } else {
-          if (c < numberOfChars - 1 && assignmentOperators[lines[i].slice(c, c + 2).toLowerCase()]) {
-            everything.push({ type: '2operator', text: lines[i].slice(c, c + 2), i1: i, c1: c, c2: c + 2 })
+          if (c < numberOfChars - 1 && assignmentOperators[text = lines[i].slice(c, c + 2)]) {
+            // if (text === '++' || text === '--') {
+            //allow empty assignment
+            // }
+            everything.push({ type: '2operator', text: text, i1: i, c1: c, c2: c + 2 })
             c += 2
             break dummyLoop
           }

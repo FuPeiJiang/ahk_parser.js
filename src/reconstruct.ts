@@ -4,7 +4,8 @@ const d = console.debug.bind(console)
 
 
 const content: string =
-fs.readFileSync('tests3/var plus plus.ahk')
+fs.readFileSync('tests3/var plus plus2.ahk')
+// fs.readFileSync('tests3/var plus plus.ahk')
 // fs.readFileSync('tests3/3operator hotkey.ahk')
 // fs.readFileSync('tests3/idkAnymore20.ahk')
 // fs.readFileSync('tests3/idkAnymore19.ahk')
