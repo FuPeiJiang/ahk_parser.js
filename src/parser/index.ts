@@ -1859,6 +1859,7 @@ export default (content: string) => {
       // d('( group', char())
       everything.push({ type: '( group', text: '(', i1: i, c1: c })
       c++
+      lineWhereCanConcat = -1
       if (!recurseBetweenExpression()) { findExpression() }
       // d(') group', char())
       everything.push({ type: ') group', text: ')', i1: i, c1: c })
