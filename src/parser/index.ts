@@ -295,11 +295,12 @@ export default (content: string) => {
                 // c++
                 if (!recurseBetweenExpression()) { findExpression() }
 
-                let endIfIndex = everything.length - 1
-                if (everything[endIfIndex].type === 'emptyLines') {
-                  endIfIndex--
-                }
-                everything.splice(endIfIndex + 1, 0, { type: 'end if' })
+                //YOLO
+                // let endIfIndex = everything.length - 1
+                // if (everything[endIfIndex].type === 'emptyLines') {
+                // endIfIndex--
+                // }
+                everything.splice(everything.length - 1, 0, { type: 'end if' })
                 // d(') group', char())
                 // everything.push({ type: ') if', text: ')', i1: i, c1: c })
                 // c++
@@ -2050,7 +2051,7 @@ export default (content: string) => {
       c++
 
       skipValidChar()
-
+      everything.push({ type: 'start unit' })
       let fEvalidName = lines[i].slice(nonWhiteSpaceStart, c)
       if (c === numberOfChars) {
         if (isNaN(Number(fEvalidName))) {
@@ -2093,10 +2094,13 @@ export default (content: string) => {
       }
 
       if (recurseFindTrailingExpr()) {
+        everything.push({ type: 'end unit' })
+
         recurseBetweenExpression()
         return true
       }
 
+      everything.push({ type: 'end unit' })
       recurseBetweenExpression()
       return true
 

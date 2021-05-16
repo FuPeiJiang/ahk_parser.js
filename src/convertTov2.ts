@@ -60,7 +60,53 @@ while (i < len) {
 
   } else if (everything[i].type === '(.) property findTrailingExpr') {
     reconstructed.push(`["${everything[i].text}"]`)
-  } else if (everything[i].type === '] ArrAccess') {
+  } else if (everything[i].type === 'if') {
+    reconstructed.push(everything[i].text)
+    //skip 'emptyLines' after if
+    //'if' (single unit ending with access), transform into .Has()
+    b = i + 2
+    let next = everything[b]
+    if (next) {
+    //if '( if, skip'
+      let hasParen = false
+      if (next.type === '( if') {
+        b++
+        next = everything[b]
+        if (!next) {
+          continue outOfLen
+        }
+        hasParen = true
+      }
+      if (next.type === 'start unit') {
+        if (!nextSkipThrough('end unit','start unit')) { break outOfLen }
+      }
+      next = everything[b + (hasParen ? 2 : 1)]
+      if (next) {
+        if (next.type === 'end if') {
+          b--
+          next = everything[b]
+          if (next.type === '] ArrAccess') {
+            next.type = 'edit'
+            next.text = ')'
+            if (!skipThroughSomethingMid('[ ArrAccess', '] ArrAccess')) { break outOfLen }
+            const back = everything[b]
+            back.type = 'edit'
+            back.text = '.Has('
+          }
+        }
+      }
+
+    }
+
+  } else {
+    reconstructed.push(everything[i].text)
+  }
+  // reconstructed.push(everything[i].text)
+  i++
+
+}
+
+/* } else if (everything[i].type === '] ArrAccess') {
     const next = everything[i + 1]
     if (next) {
       if (next.type === ') if') {
@@ -85,14 +131,28 @@ while (i < len) {
           }
         }
       }
-    }
-  } else {
-    reconstructed.push(everything[i].text)
-  }
-  // reconstructed.push(everything[i].text)
-  i++
+    } */
 
+function nextSkipThrough(lookForThisToEnd: string, ohNoAddAnotherOne: string) {
+  let next, arrAccessDepth = 1
+  next = everything[++b]
+  while (next) {
+    const bType = next.type
+    if (arrAccessDepth) {
+      if (bType === lookForThisToEnd) {
+        arrAccessDepth--
+      } else if (bType === ohNoAddAnotherOne) {
+        arrAccessDepth++
+      }
+      if (arrAccessDepth === 0) {
+        return true
+      }
+    }
+    next = everything[++b]
+  }
+  return false
 }
+
 function skipThroughSomethingMid(lookForThisToEnd: string, ohNoAddAnotherOne: string) {
   let back, arrAccessDepth = 1
   while (b--) {
