@@ -3,7 +3,7 @@ import ahkParser from './parser/index'
 const d = console.debug.bind(console)
 
 
-const content: string =
+const content: Buffer =
 fs.readFileSync('tests3/plus plus var.ahk')
 // fs.readFileSync('tests3/decimal oof.ahk')
 // fs.readFileSync('tests3/fix lineWhereCanConcat.ahk')

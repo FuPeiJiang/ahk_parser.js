@@ -759,6 +759,7 @@ export default (content: string) => {
 
   // start of functions
   function functionMid(which: string) {
+    everything[everything.length - 1].type = 'functionName'
     everything.push({ type: `( ${which}`, text: '(', i1: i, c1: c })
     legalObjLine = i
     lineWhereCanConcat = -1
@@ -776,7 +777,7 @@ export default (content: string) => {
         lineWhereCanConcat = -1
       } else {
         if (i !== legalObjLine ) {
-          d(`ILLEGAL ) ${which} CALL startOfLine i !== legalObjLine`, char())
+          d(`ILLEGAL ) ${which} CALL i !== legalObjLine`, char())
         }
       }
 
@@ -784,24 +785,24 @@ export default (content: string) => {
       if (recurseBetweenExpression() || findExpression()) {
         if (isComma) {
           isComma = false
-          everything.splice(arrSpliceStartIndex, 0, { type: `, ${which} CALL startOfLine`, text: ',', i1: i, c1: c })
+          everything.splice(arrSpliceStartIndex, 0, { type: `, ${which} CALL`, text: ',', i1: i, c1: c })
         }
       } else {
         if (lines[i][c] === ',') {
-          everything.splice(arrSpliceStartIndex, 0, { type: `, ${which} CALL startOfLine`, text: ',', i1: i, c1: c })
+          everything.splice(arrSpliceStartIndex, 0, { type: `, ${which} CALL`, text: ',', i1: i, c1: c })
           continue
         }
 
         if (isComma) {
           isComma = false
-          d(`ILLEGAL trailling , ${which} CALL startOfLine`, char())
-          everything.splice(arrSpliceStartIndex, 0, { type: `ILLEGAL trailling , ${which} CALL startOfLine`, text: ',', i1: i, c1: c })
+          d(`ILLEGAL trailling , ${which} CALL`, char())
+          everything.splice(arrSpliceStartIndex, 0, { type: `ILLEGAL trailling , ${which} CALL`, text: ',', i1: i, c1: c })
         }
 
         if (lines[i][c] !== ')') {
-          d(`\`${lines[i][c]}\` illegal NOT ) ${which} CALL startOfLine ${linesPlusChar()}`)
+          d(`\`${lines[i][c]}\` illegal NOT ) ${which} CALL ${linesPlusChar()}`)
         }
-        everything.push({ type: `) ${which} CALL startOfLine`, text: ')', i1: i, c1: c })
+        everything.push({ type: `) ${which} CALL`, text: ')', i1: i, c1: c })
         c++
         lineWhereCanConcat = i
         return 1
@@ -1896,7 +1897,7 @@ export default (content: string) => {
   }
   function findArrayAccess() {
     if (lines[i][c] === '[') {
-      arrayMid('findArrayAccess')
+      arrayMid('ArrAccess')
       return true
     }
   }
@@ -2099,12 +2100,16 @@ export default (content: string) => {
 
     if (lines[i][c] === '(') {
       // d('( group', char())
-      everything.push({ type: '( group', text: '(', i1: i, c1: c })
+      let which = 'group'
+      if (everything[everything.length - 2].type === 'if') {
+        which = 'if'
+      }
+      everything.push({ type: `( ${which}`, text: '(', i1: i, c1: c })
       c++
       lineWhereCanConcat = -1
       if (!recurseBetweenExpression()) { findExpression() }
       // d(') group', char())
-      everything.push({ type: ') group', text: ')', i1: i, c1: c })
+      everything.push({ type: `) ${which}`, text: ')', i1: i, c1: c })
       c++
       recurseBetweenExpression()
       return true
