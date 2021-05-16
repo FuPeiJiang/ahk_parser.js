@@ -4,7 +4,7 @@ const d = console.debug.bind(console)
 
 
 const content: Buffer =
-// fs.readFileSync('tests3/test validName VARIABLE EOL.ahk')
+fs.readFileSync('tests3/test validName VARIABLE EOL.ahk')
 // fs.readFileSync('tov2/use_string.ahk')
 // fs.readFileSync('tests3/fix if no paren.ahk')
 fs.readFileSync('tov2/string.ahk')
@@ -16,6 +16,7 @@ let i = 0, b
 const len = everything.length
 const breakOrContinue = {'break':true,'continue':true}
 const anyCommand = {'DIRECTIVE OR COMMAND comma':true,'command EOL or comment':true,'command':true}
+const idkVariableOrAssignment = {'idkVariable':true,'assignment':true}
 outOfLen:
 while (i < len) {
   if (everything[i].type === '{ object') {
@@ -100,7 +101,7 @@ while (i < len) {
 
     }
 
-  } else if (everything[i].type === 'idkVariable') {
+  } else if (idkVariableOrAssignment[everything[i].type]) {
     const theText = everything[i].text
     const parsedIdkVar = parseIdkVariable(theText)
     if (parsedIdkVar) {
@@ -119,7 +120,7 @@ while (i < len) {
       if (theText.toLowerCase() === 'clipboard') {
         reconstructed.push('A_Clipboard')
       } else {
-        reconstructed.push(everything[i].text)
+        reconstructed.push(theText)
       }
     }
   } else if (everything[i].type === '(statement) ,') {
