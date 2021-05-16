@@ -4,8 +4,8 @@ const d = console.debug.bind(console)
 
 
 const content: Buffer =
-fs.readFileSync('tests3/test validName VARIABLE EOL.ahk')
-// fs.readFileSync('tov2/use_string.ahk')
+// fs.readFileSync('tests3/test validName VARIABLE EOL.ahk')
+fs.readFileSync('tov2/use_string.ahk')
 // fs.readFileSync('tests3/fix if no paren.ahk')
 fs.readFileSync('tov2/string.ahk')
 fs.readFileSync('tests/ahk_explorer.ahk')
@@ -108,9 +108,9 @@ while (i < len) {
         if (parsedIdkVar[i].type) {
           if (parsedIdkVar[i].text.toLowerCase() === 'clipboard') {
             reconstructed.push('%A_Clipboard%')
-            continue
+          } else {
+            reconstructed.push(`%${parsedIdkVar[i].text}%`)
           }
-          reconstructed.push(`%${parsedIdkVar[i].text}%`)
         } else {
           reconstructed.push(parsedIdkVar[i].text)
         }
@@ -118,10 +118,11 @@ while (i < len) {
     } else {
       if (theText.toLowerCase() === 'clipboard') {
         reconstructed.push('A_Clipboard')
+      } else {
+        reconstructed.push(everything[i].text)
       }
     }
   } else {
-
     reconstructed.push(everything[i].text)
   }
   // reconstructed.push(everything[i].text)
