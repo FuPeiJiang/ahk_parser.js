@@ -186,7 +186,6 @@ export default (content: string) => {
                 i++
                 continue lineLoop
               } else if (idkType === 2) {
-                // d(validName, 'if statement', char())
                 everything.splice(spliceStartIndex, 0, { type: 'if', text: validName, i1: validNameLine, c1: validNameStart, c2: validNameEnd })
                 spliceStartIndex = everything.length
                 breakToGoFindV2:
@@ -206,8 +205,11 @@ export default (content: string) => {
                   validNameEnd = c, validNameLine = i
                   let validName = lines[validNameLine].slice(validNamestart, validNameEnd)
                   findV1ExpressiondummyLoop:
-                  while (validName) {
-
+                  while (true) {
+                    if (!validName) {
+                      c = saveC, i = saveI , numberOfChars = saveNumChars
+                      break breakToGoFindV2
+                    }
                     let checkThese = false
                     let text, cPlusLen
                     if (validName.toLowerCase() === 'not' && (c === numberOfChars || whiteSpaceObj[lines[i][c]])) {
@@ -249,7 +251,11 @@ export default (content: string) => {
                       }
                     }
 
-                    if (!skipThroughEmptyLines()) { break lineLoop }
+                    if (!skipThroughEmptyLines()) {
+                      c = saveC, i = saveI , numberOfChars = saveNumChars
+                      everything.splice(everything.length - 1, 1)
+                      break breakToGoFindV2
+                    }
 
                     if (c < numberOfChars - 1 && legacyIfOperators[lines[i].slice(c, c + 2)]) {
                       everything.push({ type: '2legacyIfOperators', text: lines[i].slice(c, c + 2), i1: i, c1: c, c2: c + 2 })
@@ -261,8 +267,10 @@ export default (content: string) => {
                       break findV1ExpressiondummyLoop
                     }
                     c = saveC, i = saveI , numberOfChars = saveNumChars
+                    everything.splice(everything.length - 1, 1)
                     break breakToGoFindV2
                   }
+
 
                   const whiteSpacesText = lines[saveI].slice(cendOfLegacyIfVar, whiteSpacesTextc)
                   if (whiteSpacesText) {
@@ -286,6 +294,12 @@ export default (content: string) => {
                 // everything.push({ type: '( if', text: '(', i1: i, c1: c })
                 // c++
                 if (!recurseBetweenExpression()) { findExpression() }
+
+                let endIfIndex = everything.length - 1
+                if (everything[endIfIndex].type === 'emptyLines') {
+                  endIfIndex--
+                }
+                everything.splice(endIfIndex + 1, 0, { type: 'end if' })
                 // d(') group', char())
                 // everything.push({ type: ') if', text: ')', i1: i, c1: c })
                 // c++
@@ -760,7 +774,7 @@ export default (content: string) => {
   // start of functions
   function functionMid(which: string) {
     everything[everything.length - 1].type = 'functionName'
-    everything.push({ type: `( ${which}`, text: '(', i1: i, c1: c })
+    everything.push({ type: `( ${which} CALL`, text: '(', i1: i, c1: c })
     legalObjLine = i
     lineWhereCanConcat = -1
     c++

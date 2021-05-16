@@ -95,3 +95,12 @@ string_getUntilWithInBetweensULTRA(Byref string, Byref getUntil, inBetweens*) {
 string_times(Str, Count) {
     Return StrReplace( Format( "{:0" Count "}", "" ), 0, Str )
 }
+
+test(Str, Count) {
+    v:=idk%which%[a[indexcccc]] ;yes
+    v:=idk%which%[[indexcccc]] ;yes
+    v:=idk%which%.ok[[indexcccc]] ;yes
+    v:=idk%which%.ok()[[indexcccc]] ;yes
+    if idk%which%.ok(ok())[[indexcccc]] ;yes
+    Return idk%which%[indexcccc]
+}

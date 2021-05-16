@@ -4,6 +4,7 @@ const d = console.debug.bind(console)
 
 
 const content: Buffer =
+fs.readFileSync('tests3/fix if no paren.ahk')
 fs.readFileSync('tov2/string.ahk')
 fs.readFileSync('tests/ahk_explorer.ahk')
 
@@ -11,7 +12,7 @@ const everything = ahkParser(content.toString().replace(/\r/g, ''))
 // d(everything)
 
 const reconstructed = []
-let i = 0
+let i = 0, b
 const len = everything.length
 outOfLen:
 while (i < len) {
@@ -59,11 +60,56 @@ while (i < len) {
 
   } else if (everything[i].type === '(.) property findTrailingExpr') {
     reconstructed.push(`["${everything[i].text}"]`)
+  } else if (everything[i].type === '] ArrAccess') {
+    const next = everything[i + 1]
+    if (next) {
+      if (next.type === ') if') {
+        b = i
+        if (!skipThroughSomethingMid('[ ArrAccess', '] ArrAccess')) { break outOfLen }
+        const skipTheseObj = {'] ArrAccess':'[ ArrAccess', ') function CALL':'functionName'}
+        while (b--) {
+          const back = everything[b]
+          const theType = skipTheseObj[back.type]
+          if (!theType) {
+            break
+          }
+          if (!skipThroughSomethingMid(theType, back.type)) { break outOfLen }
+        }
+        const back = everything[b]
+        if (back) {
+          const bType = back.type
+          if (bType === 'idkVariable') {
+            //
+          } else if (bType === '(.) property findTrailingExpr') {
+            //
+          }
+        }
+      }
+    }
   } else {
     reconstructed.push(everything[i].text)
   }
   // reconstructed.push(everything[i].text)
   i++
+
+}
+function skipThroughSomethingMid(lookForThisToEnd: string, ohNoAddAnotherOne: string) {
+  let back, arrAccessDepth = 1
+  while (b--) {
+    back = everything[b]
+    const bType = back.type
+    if (arrAccessDepth) {
+      if (bType === lookForThisToEnd) {
+        arrAccessDepth--
+      } else if (bType === ohNoAddAnotherOne) {
+        arrAccessDepth++
+      }
+      if (arrAccessDepth === 0) {
+        return true
+      }
+    }
+  }
+  return false
 }
 // d(reconstructed)
 writeSync(reconstructed.join(''),'reconstructed.ahk')

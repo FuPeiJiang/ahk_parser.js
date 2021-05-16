@@ -1964,3 +1964,23 @@ quick patch
 
 to do:
 hotstrings
+
+to the left of arrAccess, must be 'idkVariable', right ?
+or '(.) property findTrailingExpr'
+or ') function CALL'
+OR ANOTHER '] ArrAccess'
+
+let's do it frontwards
+'if'
+if 'functionName' || '[ ArrAccess'
+skip through all,
+if '] ArrAccess'
+COOL,
+noooope, I need to check if the 'if' ENDED.
+newline doesn't end it.
+is there an operator ?
+or NOT, something
+or IS something
+
+I should probably implement this INSIDE the parser. way easier..
+I should simply indicate: END of 'if'
