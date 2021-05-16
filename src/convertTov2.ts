@@ -4,6 +4,8 @@ const d = console.debug.bind(console)
 
 
 const content: Buffer =
+fs.readFileSync('tests3/test validName VARIABLE EOL.ahk')
+// fs.readFileSync('tov2/use_string.ahk')
 // fs.readFileSync('tests3/fix if no paren.ahk')
 fs.readFileSync('tov2/string.ahk')
 fs.readFileSync('tests/ahk_explorer.ahk')

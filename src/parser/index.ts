@@ -2050,32 +2050,13 @@ export default (content: string) => {
     if (lines[i][c] === '%' || variableCharsObj[lines[i][c]]) {
       c++
 
-      skipValidChar()
       everything.push({ type: 'start unit' })
-      let fEvalidName = lines[i].slice(nonWhiteSpaceStart, c)
-      if (c === numberOfChars) {
-        if (isNaN(Number(fEvalidName))) {
-          // d(`${validName} validName VARIABLE EOL ${char()}`)
-          everything.push({ type: 'validName VARIABLE EOL', text: fEvalidName, i1: i, c1: nonWhiteSpaceStart, c2: c })
-        } else {
-          // d(`${validName} Integer EOL ${char()}`)
-          everything.push({ type: 'Integer', text: fEvalidName, i1: i, c1: nonWhiteSpaceStart, c2: c })
-        }
-        recurseBetweenExpression()
-        return true
-      }
 
       //skip through % OR valid variable Chars
       while (c < numberOfChars && (findPercentVar() || variableCharsObj[lines[i][c]])) {
         c++
       }
-      fEvalidName = lines[i].slice(nonWhiteSpaceStart, c)
-      if (c === numberOfChars) {
-        d(`${fEvalidName} %VARIABLE% EOL ${char()}`)
-        everything.push({ type: '%VARIABLE% EOL', text: fEvalidName, i1: i, c1: nonWhiteSpaceStart, c2: c })
-        recurseBetweenExpression()
-        return true
-      }
+      const fEvalidName = lines[i].slice(nonWhiteSpaceStart, c)
 
       if (isNaN(Number(fEvalidName))) {
         // d(`${validName} idkVariable ${char()}`)
