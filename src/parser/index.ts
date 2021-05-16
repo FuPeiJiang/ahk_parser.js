@@ -2175,15 +2175,18 @@ export default (content: string) => {
         if (recurseBetweenExpression() || findExpression()) {
           const lengthAfter = everything.length
           const lengthDiff = lengthAfter - lengthBefore
-          if (lengthDiff === 2) {
-            if (everything[lengthBefore].type === 'emptyLines') {
-              if (everything[lengthBefore + 1].type === 'idkVariable') {
-                everything[lengthBefore + 1].type = 'singleVar'
+          if (lengthDiff === 4) {
+            let next = everything[lengthBefore + 3]
+            if (next.type === 'emptyLines') {
+              next = everything[lengthBefore + 1]
+              if (next.type === 'idkVariable') {
+                next.type = 'singleVar'
               }
             }
-          } else if (lengthDiff === 1) {
-            if (everything[lengthBefore].type === 'idkVariable') {
-              everything[lengthBefore].type = 'singleVar'
+          } else if (lengthDiff === 3) {
+            const next = everything[lengthBefore + 1]
+            if (next.type === 'idkVariable') {
+              next.type = 'singleVar'
             }
           }
           if (isComma) {
