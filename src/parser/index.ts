@@ -469,6 +469,7 @@ export default (content: string) => {
               }
             }
           } else {
+            if (i === howManyLines) { break lineLoop }
             resolveV1Continuation()
             recurseFindCommaV1Expression('command EOL or comment')
           }
