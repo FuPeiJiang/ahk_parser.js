@@ -1985,4 +1985,9 @@ or IS something
 I should probably implement this INSIDE the parser. way easier..
 I should simply indicate: END of 'if'
 
+hotkey::
+find FIRST hotkey or return
 
+return enclosed within no block
+replace this return with }
+after found return, add { to the hotkey

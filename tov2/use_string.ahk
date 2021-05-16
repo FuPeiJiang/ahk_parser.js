@@ -1,3 +1,4 @@
+$f2::
 $f1::
     if winactive("ahk_exe code.exe") {
         realBak:=clipboard

@@ -4,8 +4,8 @@ const d = console.debug.bind(console)
 
 
 const content: Buffer =
-fs.readFileSync('tests3/test validName VARIABLE EOL.ahk')
-// fs.readFileSync('tov2/use_string.ahk')
+// fs.readFileSync('tests3/test validName VARIABLE EOL.ahk')
+fs.readFileSync('tov2/use_string.ahk')
 // fs.readFileSync('tests3/fix if no paren.ahk')
 fs.readFileSync('tov2/string.ahk')
 fs.readFileSync('tests/ahk_explorer.ahk')
@@ -13,12 +13,12 @@ const everything = ahkParser(content.toString().replace(/\r/g, ''))
 // d(everything)
 const reconstructed = []
 let i = 0, b
-const len = everything.length
 const breakOrContinue = {'break':true,'continue':true}
 const anyCommand = {'DIRECTIVE OR COMMAND comma':true,'command EOL or comment':true,'command':true}
 const idkVariableOrAssignment = {'idkVariable':true,'assignment':true}
+const startingBlock = {'{ legacyIf':true,'{ if':true,'{ for':true,'{ else':true,'{ loop':true,'{ namedIf':true}
 outOfLen:
-while (i < len) {
+while (i < everything.length) {
   if (everything[i].type === '{ object') {
     reconstructed.push('Map(')
   } else if (everything[i].type === '} object') {
@@ -161,6 +161,38 @@ while (i < len) {
         if (next.type === 'v1String findV1Expression') {
           if (!isNaN(next.text)) {
             next.type = 'edit'
+          }
+        }
+      }
+    }
+  } else if (everything[i].type === 'hotkey') {
+    reconstructed.push(everything[i].text)
+    b = i
+    const hotkeyI = i
+    let next
+    let blockDepth = 0
+    while (true) {
+      next = everything[++b]
+      if (!next) {
+        i++
+        continue outOfLen
+      }
+      const dType = next.type
+      if (startingBlock[dType]) {
+        blockDepth++
+      } else if (dType === '} unknown') {
+        blockDepth--
+      } else if (dType === 'hotkey') {
+        i++
+        continue outOfLen
+      } else if (anyCommand[dType]) {
+        if (blockDepth === 0) {
+          if (next.text.toLowerCase() === 'return') {
+            next.type = 'edit'
+            next.text = '}'
+            everything.splice(hotkeyI + 1,0,{text:'\n{',type:'edit'})
+            i++
+            continue outOfLen
           }
         }
       }
