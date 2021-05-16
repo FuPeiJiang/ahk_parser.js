@@ -35,7 +35,7 @@ while (i < len) {
 
         const next = everything[i + 1]
         if (next) {
-          if (next.type === '( function') {
+          if (next.type === '( function CALL') {
             i++
             let isThisEnd
             while (true) {
