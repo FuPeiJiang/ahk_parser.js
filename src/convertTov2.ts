@@ -100,14 +100,62 @@ while (i < len) {
 
     }
 
+  } else if (everything[i].type === 'idkVariable') {
+    const theText = everything[i].text
+    const parsedIdkVar = parseIdkVariable(theText)
+    if (parsedIdkVar) {
+      for (let i = 0, len = parsedIdkVar.length; i < len; i++) {
+        if (parsedIdkVar[i].type) {
+          if (parsedIdkVar[i].text.toLowerCase() === 'clipboard') {
+            reconstructed.push('%A_Clipboard%')
+            continue
+          }
+          reconstructed.push(`%${parsedIdkVar[i].text}%`)
+        } else {
+          reconstructed.push(parsedIdkVar[i].text)
+        }
+      }
+    } else {
+      if (theText.toLowerCase() === 'clipboard') {
+        reconstructed.push('A_Clipboard')
+      }
+    }
   } else {
+
     reconstructed.push(everything[i].text)
   }
   // reconstructed.push(everything[i].text)
   i++
 
 }
-
+function parseIdkVariable(text: string) {
+  let startIndex = text.indexOf('%')
+  let pVar, notVar, endIndex
+  const arrOfObj = []
+  if (startIndex !== -1) {
+    notVar = text.slice(0,startIndex)
+    arrOfObj.push({text:notVar})
+    endIndex = text.indexOf('%',startIndex + 1)
+    pVar = text.slice(startIndex + 1,endIndex)
+    arrOfObj.push({type:true,text:pVar})
+    while (true) {
+      startIndex = text.indexOf('%',endIndex + 1)
+      if (startIndex === -1) {
+        break
+      }
+      notVar = text.slice(endIndex + 1,startIndex)
+      arrOfObj.push({text:notVar})
+      endIndex = text.indexOf('%',startIndex + 1)
+      pVar = text.slice(startIndex + 1,endIndex)
+      arrOfObj.push({type:true,text:pVar})
+    }
+    notVar = text.slice(endIndex + 1)
+    arrOfObj.push({text:notVar})
+    return arrOfObj
+  } else {
+    return false
+  }
+}
 /* } else if (everything[i].type === '] ArrAccess') {
     const next = everything[i + 1]
     if (next) {

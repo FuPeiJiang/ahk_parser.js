@@ -1,2 +1,2 @@
-v:=a
-+2
+v:=a%clipboard%%afef%aa
++2+clipBoard
