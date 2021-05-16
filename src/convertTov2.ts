@@ -5,17 +5,17 @@ const d = console.debug.bind(console)
 
 const content: Buffer =
 // fs.readFileSync('tests3/test validName VARIABLE EOL.ahk')
-fs.readFileSync('tov2/use_string.ahk')
+// fs.readFileSync('tov2/use_string.ahk')
 // fs.readFileSync('tests3/fix if no paren.ahk')
 fs.readFileSync('tov2/string.ahk')
 fs.readFileSync('tests/ahk_explorer.ahk')
-
 const everything = ahkParser(content.toString().replace(/\r/g, ''))
 // d(everything)
-
 const reconstructed = []
 let i = 0, b
 const len = everything.length
+const breakOrContinue = {'break':true,'continue':true}
+const anyCommand = {'DIRECTIVE OR COMMAND comma':true,'command EOL or comment':true,'command':true}
 outOfLen:
 while (i < len) {
   if (everything[i].type === '{ object') {
@@ -120,6 +120,48 @@ while (i < len) {
         reconstructed.push('A_Clipboard')
       } else {
         reconstructed.push(everything[i].text)
+      }
+    }
+  } else if (everything[i].type === '(statement) ,') {
+    const next = everything[i + 1]
+    if (next.type !== 'whiteSpaces') {
+      reconstructed.push(' ')
+    }
+
+  } else if (everything[i].type === 'v1String findV1Expression') {
+    reconstructed.push(`"${everything[i].text}"`)
+  } else if (everything[i].type === 'String') {
+    reconstructed.push(`"${everything[i].text.slice(1,-1).replace(/""/g, '`"')}"`)
+  } else if (anyCommand[everything[i].type]) {
+    reconstructed.push(everything[i].text)
+    //if breakOrContinue, if is number, don't surround with quotes
+    if (breakOrContinue[everything[i].text.toLowerCase()]) {
+      b = i + 1
+      let next = everything[b]
+      if (next) {
+        if (next.type === 'emptyLines') {
+          next = everything[++b]
+          if (!next) {
+            continue outOfLen
+          }
+        }
+        if (next.type === '(statement) ,') {
+          next = everything[++b]
+          if (!next) {
+            continue outOfLen
+          }
+          if (next.type === 'whiteSpaces') {
+            next = everything[++b]
+            if (!next) {
+              continue outOfLen
+            }
+          }
+        }
+        if (next.type === 'v1String findV1Expression') {
+          if (!isNaN(next.text)) {
+            next.type = 'edit'
+          }
+        }
       }
     }
   } else {

@@ -1,4 +1,4 @@
-$^h::
+$f1::
     if winactive("ahk_exe code.exe") {
         realBak:=clipboard
         send, {Lctrl}{Lctrl}
@@ -28,6 +28,6 @@ $^h::
         send, {shift up}
         clipboard:=realBak
     } else {
-        send, ^h
+        send, {f1}
     }
 return

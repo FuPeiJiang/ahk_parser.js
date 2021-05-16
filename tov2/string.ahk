@@ -81,6 +81,8 @@ string_getUntilWithInBetweensULTRA(Byref string, Byref getUntil, inBetweens*) {
                                 lookingForArr.InsertAt(1, {level:indexArr, endDelim: delimArr.endDelims[index]})
                             }
                             continue 3
+                            continue, 3
+                            continue , 3
                         }
                     }
 

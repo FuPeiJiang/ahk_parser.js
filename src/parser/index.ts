@@ -157,7 +157,7 @@ export default (content: string) => {
                 }
 
 
-                everything.splice(spliceStartIndex, 0, { type: 'comma DIRECTIVE OR COMMAND', text: validName, i1: validNameLine, c1: validNameStart, c2: validNameEnd })
+                everything.splice(spliceStartIndex, 0, { type: 'DIRECTIVE OR COMMAND comma', text: validName, i1: validNameLine, c1: validNameStart, c2: validNameEnd })
                 singleComma = true
                 findV1Expression()
                 singleComma = false
