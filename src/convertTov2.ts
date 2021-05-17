@@ -9,7 +9,7 @@ fs.readFileSync('tov2/OpenInAhkExplorer.ahk')
 // fs.readFileSync('tov2/splitpath.ahk')
 // fs.readFileSync('tests3/not assignment operator.ahk')
 // fs.readFileSync('tests3/idkAnymore23.ahk')
-fs.readFileSync('tov2/jpgs to pdf.ahk')
+// fs.readFileSync('tov2/jpgs to pdf.ahk')
 // fs.readFileSync('tests3/command EOF.ahk')
 // fs.readFileSync('tests3/test validName VARIABLE EOL.ahk')
 // fs.readFileSync('tov2/use_string.ahk')
@@ -28,8 +28,9 @@ const v1Str = {'v1String findV1Expression':true,'v1String findPercentVarV1Expres
 const v1Percent = {'%START %Var%':true,'END% %Var%':true}
 // const removedDirectives = {'#noenv':true,'setbatchlines':true}
 const commandDelim = {', command comma':true,'end command':true }
+const funcCallDelim = {', function CALL':true,') function CALL':true }
 const wsOrEmptyLine = {'whiteSpaces':true,'emptyLines':true}
-let next
+let next, a
 outOfLen:
 while (i < everything.length) {
   if (everything[i].type === '{ object') {
@@ -45,9 +46,10 @@ while (i < everything.length) {
   } else if (everything[i].type === '% v1->v2 expr') {
     // reconstructed.push(everything[i].text)
   } else if (everything[i].type === 'functionName') {
+    const thisText = everything[i].text
     if (everything[i - 1].type === '. property') {
-      if (everything[i].text.toLowerCase() === 'length') {
-        reconstructed.push(`.${everything[i].text}`)
+      if (thisText.toLowerCase() === 'length') {
+        reconstructed.push(`.${thisText}`)
 
         const next = everything[i + 1]
         if (next) {
@@ -69,9 +71,31 @@ while (i < everything.length) {
         }
 
       }
-      reconstructed.push(`.${everything[i].text}`)
+      reconstructed.push(`.${thisText}`)
     } else {
-      reconstructed.push(everything[i].text)
+      if (thisText.toLowerCase() === 'varsetcapacity') {
+
+        // VarSetStrCapacity(TargetVar, RequestedCapacity, FillByte)
+        // TargetVar:=BufferAlloc(RequestedCapacity,FillByte)
+        //#function
+        if (!(a = getArgs())) { break outOfLen }
+        //
+        // let targetVar, requestedCapacity
+        // if (!(targetVar = getNextFuncArgOmitWhitespaces())) { break outOfLen }
+        // if (!(requestedCapacity = getNextFuncArgOmitWhitespaces())) { break outOfLen }
+        i = b - 2
+        // for (let n = 0, len = targetVar.length; n < len; n++) {
+        // reconstructed.push(targetVar[n].text)
+        // }
+        // reconstructed.push(':=BufferAlloc(')
+        // for (let n = 0, len = requestedCapacity.length; n < len; n++) {
+        // reconstructed.push(requestedCapacity[n].text)
+        // }
+        reconstructed.push(`${a[1]}:=BufferAlloc(${a[2]}${o(',',3)}${a[3]})`)
+      } else {
+        reconstructed.push(thisText)
+      }
+
     }
 
   } else if (everything[i].type === '(.) property findTrailingExpr') {
@@ -213,6 +237,7 @@ while (i < everything.length) {
       // StringTrimRight, OutputVar, InputVar, Count
       // OutputVar:=SubStr(InputVar,1,-Count)
       let outputVar, inputVar, count
+      //#command
       if (!(outputVar = getNextParamOmitWhitespaces())) { break outOfLen }
       if (!(inputVar = getNextParamOmitWhitespaces())) { break outOfLen }
       if (!(count = getNextParamOmitWhitespaces())) { break outOfLen }
@@ -367,6 +392,87 @@ function parseIdkVariable(text: string) {
         }
       }
     } */
+// function getArgs(maxArgs) {
+function o(str,index) {
+  return a[index] ? str : ''
+}
+function getArgs() {
+  b = i + 2
+
+  let next
+  const arrOfArgs = []
+  outerLoop:
+  //pretty useless maxArgs
+  // for (let n = 0; n < maxArgs; n++) {
+  while (true) {
+    const arrOfText = []
+    innerLoop:
+    while (true) {
+      next = everything[b++]
+      if (!next) {
+        return false
+      }
+      const bType = next.type
+
+      if (bType === 'functionName') {
+        arrOfText.push(next.text)
+        let arrAccessDepth = 1
+        next = everything[++b]
+        while (next) {
+          const bType = next.type
+          if (arrAccessDepth) {
+            if (bType === ') function CALL') {
+              arrAccessDepth--
+            } else if (bType === 'functionName') {
+              arrAccessDepth++
+            }
+            arrOfText.push(next.text)
+            if (arrAccessDepth === 0) {
+              b++
+              continue innerLoop
+            }
+          }
+          next = everything[++b]
+        }
+        return false
+      } else if (bType === ') function CALL') {
+        b++
+        arrOfArgs.push(arrOfText.join(''))
+        return arrOfArgs
+      } else if (bType === ', function CALL') {
+        b++
+        arrOfArgs.push(arrOfText.join(''))
+        continue outerLoop
+      } else if (!wsOrEmptyLine[bType]) {
+        arrOfText.push(next.text)
+      }
+    }
+  }
+}
+/* function stringFromArrOfObj(arr, key: string) {
+  const toJoin = []
+  for (let n = 0, len = arr.length; n < len; n++) {
+    toJoin.push(arr[n][key])
+  }
+  return toJoin.join('')
+} */
+function getNextFuncArgOmitWhitespaces() {
+  let next
+  const arrOfObj = []
+  while (true) {
+    next = everything[b++]
+    if (!next) {
+      return false
+    }
+    const bType = next.type
+    if (funcCallDelim[bType]) {
+      b++
+      return arrOfObj
+    } else if (!wsOrEmptyLine[bType]) {
+      arrOfObj.push(next)
+    }
+  }
+}
 function getNextParamOmitWhitespaces() {
   let next
   const arrOfObj = []

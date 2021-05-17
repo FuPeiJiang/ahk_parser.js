@@ -11,9 +11,9 @@ OpenInAhkExplorer(path)
 send_string(stringToSend) 
 {
     stringToSend .= "|1"
-    VarSetCapacity(message, size := StrPut(stringToSend, "UTF-16")*2, 0)
+    size:=StrPutstringToSend, "UTF-16")*2:=BufferAlloc(0
     StrPut(stringToSend, &message, "UTF-16")
-    VarSetCapacity(COPYDATASTRUCT, A_PtrSize*3)
+    A_PtrSize*3:=BufferAlloc(
     NumPut(size, COPYDATASTRUCT, A_PtrSize, "UInt")
     NumPut(&message, COPYDATASTRUCT, A_PtrSize*2)
     DetectHiddenWindows  "On" 
