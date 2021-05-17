@@ -19,7 +19,7 @@ fs.readFileSync('tov2/string.ahk')
 fs.readFileSync('tests/ahk_explorer.ahk')
 const everything = ahkParser(content.toString().replace(/\r/g, ''))
 // d(everything)
-const reconstructed = []
+let reconstructed = []
 let i = 0, b
 const numIfNum = {'break':true,'continue':true,'settitlematchmode':true}
 const anyCommand = {'DIRECTIVE OR COMMAND comma':true,'command EOL or comment':true,'command':true}
@@ -34,6 +34,17 @@ const wsOrEmptyLine = {'whiteSpaces':true,'emptyLines':true}
 let next, argsArr
 outOfLen:
 while (i < everything.length) {
+  const allReturn = all()
+  if (allReturn === 1) {
+    continue outOfLen
+  } else if (allReturn === 2) {
+    break outOfLen
+  }
+
+  reconstructed.push(everything[i].text)
+  i++
+}
+function all() {
   if (everything[i].type === '{ object') {
     reconstructed.push('Map(')
   } else if (everything[i].type === '} object') {
@@ -62,14 +73,14 @@ while (i < everything.length) {
               while (true) {
                 isThisEnd = everything[++i]
                 if (!isThisEnd) {
-                  break outOfLen
+                  return 2
                 }
                 if (isThisEnd.type === ') function CALL') {
                   i++
                   break
                 }
               }
-              continue outOfLen
+              return 1
             }
           }
 
@@ -82,10 +93,34 @@ while (i < everything.length) {
         // VarSetStrCapacity(TargetVar, RequestedCapacity, FillByte)
         // TargetVar:=BufferAlloc(RequestedCapacity,FillByte)
         //#function
-        if (!(argsArr = getArgs())) { break outOfLen }
-        reconstructed.push(`${a(1)}:=BufferAlloc(${a(2)}${o(',',3)}${a(3)})`)
+        if (!(argsArr = getArgs())) { return 2 }
+        // reconstructed.push(`${a(1)}:=BufferAlloc(${a(2)}${o(',',3)}${a(3)})`)
+        a(1); p(':=BufferAlloc('); a(2); o(',',3); a(3); p(')')
+        
       } else {
         reconstructed.push(thisText)
+        while (true) {
+          next = everything[++i]
+          if (!next) {
+            return 2
+          }
+          const bType = next.type
+
+          const allReturn = all()
+          if (allReturn) {
+            return allReturn
+          }
+
+          if (bType === ') function CALL') {
+            i++
+            return
+          } else if (bType === ', function CALL') {
+            i++
+            return
+          } else {
+            reconstructed.push(next.text)
+          }
+        }
       }
 
     }
@@ -105,12 +140,12 @@ while (i < everything.length) {
         b++
         next = everything[b]
         if (!next) {
-          continue outOfLen
+          return 1
         }
         hasParen = true
       }
       if (next.type === 'start unit') {
-        if (!nextSkipThrough('end unit','start unit')) { break outOfLen }
+        if (!nextSkipThrough('end unit','start unit')) { return 2 }
       }
       next = everything[b + (hasParen ? 2 : 1)]
       if (next) {
@@ -120,7 +155,7 @@ while (i < everything.length) {
           if (next.type === '] ArrAccess') {
             next.type = 'edit'
             next.text = ')'
-            if (!skipThroughSomethingMid('[ ArrAccess', '] ArrAccess')) { break outOfLen }
+            if (!skipThroughSomethingMid('[ ArrAccess', '] ArrAccess')) { return 2 }
             const back = everything[b]
             back.type = 'edit'
             back.text = '.Has('
@@ -182,7 +217,7 @@ while (i < everything.length) {
     //if breakOrContinue, if is number, don't surround with quotes
     if (numIfNum[everything[i].text.toLowerCase()]) {
       reconstructed.push(everything[i].text)
-      if (skipFirstSeparatorOfCommand()) { i++; continue outOfLen}
+      if (skipFirstSeparatorOfCommand()) { i++; return 1}
       if (next.type === 'v1String findV1Expression') {
         if (!isNaN(next.text)) {
           next.type = 'edit'
@@ -196,11 +231,11 @@ while (i < everything.length) {
         }
       }
     } else if (everything[i].text.toLowerCase() === 'setbatchlines') {
-      if (skipFirstSeparatorOfCommand()) { i++; continue outOfLen}
+      if (skipFirstSeparatorOfCommand()) { i++; return 1}
       i = b + 2
     } else if (everything[i].text.toLowerCase() === '#singleinstance') {
       reconstructed.push(everything[i].text)
-      if (skipFirstSeparatorOfCommand()) { i++; continue outOfLen}
+      if (skipFirstSeparatorOfCommand()) { i++; return 1}
       if (next.type === 'v1String findV1Expression') {
         next.type = 'edit'
       }
@@ -212,7 +247,7 @@ while (i < everything.length) {
         next = everything[++b]
         if (!next) {
           i++
-          continue outOfLen
+          return 1
         }
         const dType = next.type
         if (v1Percent[dType]) {
@@ -221,18 +256,18 @@ while (i < everything.length) {
           next.type = 'edit'
         } else if (dType === 'end command') {
           i++
-          continue outOfLen
+          return 1
         }
       }
     } else if (everything[i].text.toLowerCase() === 'stringtrimright') {
-      if (skipFirstSeparatorOfCommand()) { i++; continue outOfLen}
+      if (skipFirstSeparatorOfCommand()) { i++; return 1}
       // StringTrimRight, OutputVar, InputVar, Count
       // OutputVar:=SubStr(InputVar,1,-Count)
       let outputVar, inputVar, count
       //#command
-      if (!(outputVar = getNextParamOmitWhitespaces())) { break outOfLen }
-      if (!(inputVar = getNextParamOmitWhitespaces())) { break outOfLen }
-      if (!(count = getNextParamOmitWhitespaces())) { break outOfLen }
+      if (!(outputVar = getNextParamOmitWhitespaces())) { return 2 }
+      if (!(inputVar = getNextParamOmitWhitespaces())) { return 2 }
+      if (!(count = getNextParamOmitWhitespaces())) { return 2 }
       i = b - 2
       for (let n = 0, len = outputVar.length; n < len; n++) {
         reconstructed.push(outputVar[n].text)
@@ -275,7 +310,7 @@ while (i < everything.length) {
       next = everything[++b]
       if (!next) {
         i++
-        continue outOfLen
+        return 1
       }
       const dType = next.type
       if (startingBlock[dType]) {
@@ -284,7 +319,7 @@ while (i < everything.length) {
         blockDepth--
       } else if (dType === 'hotkey') {
         i++
-        continue outOfLen
+        return 1
       } else if (anyCommand[dType]) {
         if (blockDepth === 0) {
           if (next.text.toLowerCase() === 'return') {
@@ -292,17 +327,15 @@ while (i < everything.length) {
             next.text = '}'
             everything.splice(hotkeyI + 1,0,{text:'\n{',type:'edit'})
             i++
-            continue outOfLen
+            return 1
           }
         }
       }
     }
   } else {
-    reconstructed.push(everything[i].text)
+    return false
   }
-  // reconstructed.push(everything[i].text)
-  i++
-
+  return 3
 }
 function skipFirstSeparatorOfCommand() {
   b = i + 1
@@ -385,31 +418,76 @@ function parseIdkVariable(text: string) {
       }
     } */
 function a(index) {
-  return argsArr[index - 1] ? argsArr[index - 1] : ''
+  const idxMinus = index - 1
+  // return (argsArr[idxMinus] && argsArr[idxMinus].length) ? argsArr[idxMinus] : ''
+  if (argsArr[idxMinus] && argsArr[idxMinus].length) {
+    reconstructed = reconstructed.concat(argsArr[idxMinus])
+  }
+}
+function p(str) {
+  reconstructed.push(str)
 }
 function o(str,index) {
-  return argsArr[index - 1] ? str : ''
+  if (argsArr[index - 1]) {
+    reconstructed.push(str)
+  }
+  // return argsArr[index - 1] ? str : ''
 }
 function getArgs() {
   // function getArgs(maxArgs) {
-  b = i + 2
-
+  // b = i + 2
+  i ++
   let next
-  const arrOfArgs = []
+  // const arrOfArgs = []
+  const arrOfArrOfText = []
   outerLoop:
   //pretty useless maxArgs
   // for (let n = 0; n < maxArgs; n++) {
   while (true) {
-    const arrOfText = []
+    // const arrOfText = []
+    const lenReconstructed = reconstructed.length
     innerLoop:
     while (true) {
-      next = everything[b++]
+      next = everything[++i]
       if (!next) {
         return false
       }
       const bType = next.type
 
-      if (bType === 'functionName') {
+      const allReturn = all()
+      if (allReturn === 1) {
+        continue innerLoop
+      } else if (allReturn === 2) {
+        return false
+      } else if (allReturn === 3) {
+        continue innerLoop
+      }
+
+      if (bType === ') function CALL') {
+        // b++
+        i++
+        // arrOfArgs.push(arrOfText.join(''))
+
+        // i = b - 2
+        arrOfArrOfText.push(reconstructed.slice(lenReconstructed))
+        reconstructed.splice(lenReconstructed)
+        // i -= 2
+        return arrOfArrOfText
+      } else if (bType === ', function CALL') {
+        // b++
+        i++
+        // arrOfArgs.push(arrOfText.join(''))
+        arrOfArrOfText.push(reconstructed.slice(lenReconstructed))
+        reconstructed.splice(lenReconstructed)
+        continue outerLoop
+      } else if (!wsOrEmptyLine[bType]) {
+        // arrOfText.push(next.text)
+        reconstructed.push(next.text)
+      }
+    }
+  }
+}
+/* if (bType === 'functionName') {
         arrOfText.push(`${next.text}(`)
         let arrAccessDepth = 1
         next = everything[++b]
@@ -430,21 +508,7 @@ function getArgs() {
           next = everything[++b]
         }
         return false
-      } else if (bType === ') function CALL') {
-        b++
-        arrOfArgs.push(arrOfText.join(''))
-        i = b - 2
-        return arrOfArgs
-      } else if (bType === ', function CALL') {
-        b++
-        arrOfArgs.push(arrOfText.join(''))
-        continue outerLoop
-      } else if (!wsOrEmptyLine[bType]) {
-        arrOfText.push(next.text)
-      }
-    }
-  }
-}
+      } else  */
 /* function stringFromArrOfObj(arr, key: string) {
   const toJoin = []
   for (let n = 0, len = arr.length; n < len; n++) {

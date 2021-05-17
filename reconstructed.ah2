@@ -1,2 +1,3 @@
-a:=BufferAlloc(VarSetCapacity(a, b, c),c)
-((a, b, b)
+a:=BufferAlloc(b,c)
+; VarSetCapacity(a, VarSetCapacity(a, b, c), c)
+; VarSetCapacity(VarSetCapacity(a, b, b)
