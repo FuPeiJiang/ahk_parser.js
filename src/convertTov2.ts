@@ -231,6 +231,22 @@ while (i < everything.length) {
     } else {
       reconstructed.push(everything[i].text)
     }
+  } else if (everything[i].type === 'legacyIf var') {
+    let next = everything[i + 2]
+    if (next) {
+      if (next.type === 'legacyIf is') {
+        next = everything[i + 4]
+        if (next.type === 'v1String findV1Expression') {
+          if (next.text.toLowerCase() === 'number') {
+            // if var is number
+            // if IsNumber(var)
+            reconstructed.push(`IsNumber(${everything[i].text})`)
+            i += 4
+          }
+        }
+      }
+    }
+    //#HERE
   } else if (everything[i].type === 'hotkey') {
     reconstructed.push(everything[i].text)
     b = i

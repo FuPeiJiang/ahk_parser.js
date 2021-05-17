@@ -4,7 +4,7 @@ sortAr(ar) {
         str.=v "|"
     }
     lastValue:=ar[ar.Length]
-    if lastValue is  "number" 
+    if IsNumber(lastValue)
     {
         sortType := "N"
     }
