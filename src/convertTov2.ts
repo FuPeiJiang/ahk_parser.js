@@ -23,6 +23,7 @@ const anyCommand = {'DIRECTIVE OR COMMAND comma':true,'command EOL or comment':t
 const idkVariableOrAssignment = {'idkVariable':true,'assignment':true}
 const startingBlock = {'{ legacyIf':true,'{ if':true,'{ for':true,'{ else':true,'{ loop':true,'{ namedIf':true}
 const v1Str = {'v1String findV1Expression':true,'v1String findPercentVarV1Expression':true}
+const v1Percent = {'%START %Var%':true,'END% %Var%':true}
 // const removedDirectives = {'#noenv':true,'setbatchlines':true}
 let next
 outOfLen:
@@ -136,9 +137,7 @@ while (i < everything.length) {
     if (next.type !== 'whiteSpaces') {
       reconstructed.push(' ')
     }
-  } else if (everything[i].type === '%START %Var%') {
-    //ignore
-  } else if (everything[i].type === 'END% %Var%') {
+  } else if (v1Percent[everything[i].type]) {
     //ignore
   } else if (v1Str[everything[i].type]) {
     const theText = everything[i].text
@@ -176,6 +175,26 @@ while (i < everything.length) {
       if (skipFirstSeparatorOfCommand()) { i++; continue outOfLen}
       if (next.type === 'v1String findV1Expression') {
         next.type = 'edit'
+      }
+    } else if (everything[i].text.toLowerCase() === 'splitpath') {
+      //until 'end command', do not quote every v1 expr
+      reconstructed.push(everything[i].text)
+      b = i
+      while (true) {
+        next = everything[++b]
+        if (!next) {
+          i++
+          continue outOfLen
+        }
+        const dType = next.type
+        if (v1Percent[dType]) {
+          next.type = 'edit'
+        } else if (v1Str[dType]) {
+          next.type = 'edit'
+        } else if (dType === 'end command') {
+          i++
+          continue outOfLen
+        }
       }
     } else {
       reconstructed.push(everything[i].text)
