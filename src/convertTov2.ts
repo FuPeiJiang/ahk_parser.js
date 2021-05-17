@@ -4,7 +4,7 @@ const d = console.debug.bind(console)
 
 
 const content: Buffer =
-fs.readFileSync('tests3/not assignment operator.ahk')
+// fs.readFileSync('tests3/not assignment operator.ahk')
 // fs.readFileSync('tests3/idkAnymore23.ahk')
 fs.readFileSync('tov2/jpgs to pdf.ahk')
 // fs.readFileSync('tests3/command EOF.ahk')
@@ -22,6 +22,7 @@ const anyCommand = {'DIRECTIVE OR COMMAND comma':true,'command EOL or comment':t
 const idkVariableOrAssignment = {'idkVariable':true,'assignment':true}
 const startingBlock = {'{ legacyIf':true,'{ if':true,'{ for':true,'{ else':true,'{ loop':true,'{ namedIf':true}
 const v1Str = {'v1String findV1Expression':true,'v1String findPercentVarV1Expression':true}
+// const removedDirectives = {'#noenv':true,'setbatchlines':true}
 let next
 outOfLen:
 while (i < everything.length) {
@@ -159,14 +160,17 @@ while (i < everything.length) {
           next.type = 'edit'
         }
       }
-    } else if (everything[i].text === '#NoEnv') {
+    } else if (everything[i].text.toLowerCase() === '#noenv') {
       const next = everything[i + 1]
       if (next) {
         if (next.type === 'emptyLines') {
           i++
         }
       }
-    } else if (everything[i].text === '#SingleInstance') {
+    } else if (everything[i].text.toLowerCase() === 'setbatchlines') {
+      if (skipFirstSeparatorOfCommand()) { i++; continue outOfLen}
+      i = b + 1
+    } else if (everything[i].text.toLowerCase() === '#singleinstance') {
       reconstructed.push(everything[i].text)
       if (skipFirstSeparatorOfCommand()) { i++; continue outOfLen}
       if (next.type === 'v1String findV1Expression') {
