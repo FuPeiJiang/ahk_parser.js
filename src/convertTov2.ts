@@ -30,7 +30,7 @@ const v1Percent = {'%START %Var%':true,'END% %Var%':true}
 const commandDelim = {', command comma':true,'end command':true }
 const funcCallDelim = {', function CALL':true,') function CALL':true }
 const wsOrEmptyLine = {'whiteSpaces':true,'emptyLines':true}
-let next, a
+let next, argsArr
 outOfLen:
 while (i < everything.length) {
   if (everything[i].type === '{ object') {
@@ -78,20 +78,8 @@ while (i < everything.length) {
         // VarSetStrCapacity(TargetVar, RequestedCapacity, FillByte)
         // TargetVar:=BufferAlloc(RequestedCapacity,FillByte)
         //#function
-        if (!(a = getArgs())) { break outOfLen }
-        //
-        // let targetVar, requestedCapacity
-        // if (!(targetVar = getNextFuncArgOmitWhitespaces())) { break outOfLen }
-        // if (!(requestedCapacity = getNextFuncArgOmitWhitespaces())) { break outOfLen }
-        i = b - 2
-        // for (let n = 0, len = targetVar.length; n < len; n++) {
-        // reconstructed.push(targetVar[n].text)
-        // }
-        // reconstructed.push(':=BufferAlloc(')
-        // for (let n = 0, len = requestedCapacity.length; n < len; n++) {
-        // reconstructed.push(requestedCapacity[n].text)
-        // }
-        reconstructed.push(`${a[1]}:=BufferAlloc(${a[2]}${o(',',3)}${a[3]})`)
+        if (!(argsArr = getArgs())) { break outOfLen }
+        reconstructed.push(`${a(1)}:=BufferAlloc(${a(2)}${o(',',3)}${a(3)})`)
       } else {
         reconstructed.push(thisText)
       }
@@ -392,11 +380,14 @@ function parseIdkVariable(text: string) {
         }
       }
     } */
-// function getArgs(maxArgs) {
+function a(index) {
+  return argsArr[index - 1] ? argsArr[index - 1] : ''
+}
 function o(str,index) {
-  return a[index] ? str : ''
+  return argsArr[index - 1] ? str : ''
 }
 function getArgs() {
+  // function getArgs(maxArgs) {
   b = i + 2
 
   let next
@@ -438,6 +429,7 @@ function getArgs() {
       } else if (bType === ') function CALL') {
         b++
         arrOfArgs.push(arrOfText.join(''))
+        i = b - 2
         return arrOfArgs
       } else if (bType === ', function CALL') {
         b++
