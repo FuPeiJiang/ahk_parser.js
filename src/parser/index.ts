@@ -325,11 +325,14 @@ export default (content: string) => {
                 findV1Expression()
                 usingStartOfLineLoop = true
                 continue startOfLineLoop
-              } else if (recurseBetweenExpression()) {
-                const assignedTo = lines[validNameLine].slice(validNameStart, validNameEnd)
-                // d(`${assignedTo} assignment`)
-                everything.splice(spliceStartIndex, 0, { type: 'assignment', text: assignedTo, i1: validNameLine, c1: validNameStart, c2: validNameEnd })
-
+              } else if (findAssignmentOperators() === 1) {
+                everything.splice(spliceStartIndex, 0, { type: 'assignment', text: validName, i1: validNameLine, c1: validNameStart, c2: validNameEnd })
+                const legalExprLine = i
+                if (!recurseBetweenExpression()) {
+                  if (i === legalExprLine) {
+                    findExpression()
+                  }
+                }
                 if (skipCommaV2Expr()) {break lineLoop}
                 usingStartOfLineLoop = true
                 continue startOfLineLoop

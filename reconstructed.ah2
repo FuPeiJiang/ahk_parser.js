@@ -1,3 +1,1 @@
-    for k, v in ar {
-        input:=v
-    }
+soundplay  "*-1" 

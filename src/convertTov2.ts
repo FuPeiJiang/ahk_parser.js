@@ -4,7 +4,9 @@ const d = console.debug.bind(console)
 
 
 const content: Buffer =
-fs.readFileSync('tests3/idkAnymore23.ahk')
+fs.readFileSync('tests3/not assignment operator.ahk')
+// fs.readFileSync('tests3/idkAnymore23.ahk')
+fs.readFileSync('tov2/jpgs to pdf.ahk')
 // fs.readFileSync('tests3/command EOF.ahk')
 // fs.readFileSync('tests3/test validName VARIABLE EOL.ahk')
 // fs.readFileSync('tov2/use_string.ahk')
@@ -19,6 +21,7 @@ const breakOrContinue = {'break':true,'continue':true}
 const anyCommand = {'DIRECTIVE OR COMMAND comma':true,'command EOL or comment':true,'command':true}
 const idkVariableOrAssignment = {'idkVariable':true,'assignment':true}
 const startingBlock = {'{ legacyIf':true,'{ if':true,'{ for':true,'{ else':true,'{ loop':true,'{ namedIf':true}
+const v1Str = {'v1String findV1Expression':true,'v1String findPercentVarV1Expression':true}
 let next
 outOfLen:
 while (i < everything.length) {
@@ -131,17 +134,11 @@ while (i < everything.length) {
     if (next.type !== 'whiteSpaces') {
       reconstructed.push(' ')
     }
-
-  } else if (everything[i].type === 'v1String findV1Expression') {
-    const theText = everything[i].text
-    if (theText !== '') {
-      reconstructed.push(`"${theText}"`)
-    }
   } else if (everything[i].type === '%START %Var%') {
     //ignore
   } else if (everything[i].type === 'END% %Var%') {
     //ignore
-  } else if (everything[i].type === 'v1String findPercentVarV1Expression') {
+  } else if (v1Str[everything[i].type]) {
     const theText = everything[i].text
     if (theText !== '') {
       reconstructed.push(` "${theText.replace(/"/g, '`"')}" `)
