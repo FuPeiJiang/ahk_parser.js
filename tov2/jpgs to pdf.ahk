@@ -5,7 +5,7 @@ SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
 SetBatchLines, -1
 #KeyHistory 0
 ListLines Off
-#include <biga>
+; #include <biga>
 
 darkenWithIrfanView:=true
 tempAR:=[]
@@ -34,7 +34,7 @@ if (tempAR.Length()) {
     ar := StrSplit(clipboard, "`n", "`r")
 }
 
-ar:=A.sortBy(ar)
+; ar:=A.sortBy(ar)
 
 ; /contrast=-30 /gamma=0.35 /convert=
 ; /convert

@@ -4,7 +4,8 @@ const d = console.debug.bind(console)
 
 
 const content: Buffer =
-fs.readFileSync('tov2/sortAr.ahk')
+fs.readFileSync('tov2/OpenInAhkExplorer.ahk')
+// fs.readFileSync('tov2/sortAr.ahk')
 // fs.readFileSync('tov2/splitpath.ahk')
 // fs.readFileSync('tests3/not assignment operator.ahk')
 // fs.readFileSync('tests3/idkAnymore23.ahk')
@@ -19,7 +20,7 @@ const everything = ahkParser(content.toString().replace(/\r/g, ''))
 // d(everything)
 const reconstructed = []
 let i = 0, b
-const breakOrContinue = {'break':true,'continue':true}
+const numIfNum = {'break':true,'continue':true,'settitlematchmode':true}
 const anyCommand = {'DIRECTIVE OR COMMAND comma':true,'command EOL or comment':true,'command':true}
 const idkVariableOrAssignment = {'idkVariable':true,'assignment':true}
 const startingBlock = {'{ legacyIf':true,'{ if':true,'{ for':true,'{ else':true,'{ loop':true,'{ namedIf':true}
@@ -163,7 +164,7 @@ while (i < everything.length) {
     reconstructed.push(`"${everything[i].text.slice(1,-1).replace(/""/g, '`"')}"`)
   } else if (anyCommand[everything[i].type]) {
     //if breakOrContinue, if is number, don't surround with quotes
-    if (breakOrContinue[everything[i].text.toLowerCase()]) {
+    if (numIfNum[everything[i].text.toLowerCase()]) {
       reconstructed.push(everything[i].text)
       if (skipFirstSeparatorOfCommand()) { i++; continue outOfLen}
       if (next.type === 'v1String findV1Expression') {
@@ -180,7 +181,7 @@ while (i < everything.length) {
       }
     } else if (everything[i].text.toLowerCase() === 'setbatchlines') {
       if (skipFirstSeparatorOfCommand()) { i++; continue outOfLen}
-      i = b + 1
+      i = b + 2
     } else if (everything[i].text.toLowerCase() === '#singleinstance') {
       reconstructed.push(everything[i].text)
       if (skipFirstSeparatorOfCommand()) { i++; continue outOfLen}
