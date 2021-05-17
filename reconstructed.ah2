@@ -11,7 +11,7 @@ OpenInAhkExplorer(path)
 send_string(stringToSend) 
 {
     stringToSend .= "|1"
-    message:=BufferAlloc(size:=StrPutstringToSend, "UTF-16")*2,0)
+    message:=BufferAlloc(size:=StrPut(stringToSend, "UTF-16")*2,0)
     StrPut(stringToSend, &message, "UTF-16")
     COPYDATASTRUCT:=BufferAlloc(A_PtrSize*3)
     NumPut(size, COPYDATASTRUCT, A_PtrSize, "UInt")

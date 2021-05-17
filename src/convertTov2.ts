@@ -406,7 +406,7 @@ function getArgs() {
       const bType = next.type
 
       if (bType === 'functionName') {
-        arrOfText.push(next.text)
+        arrOfText.push(`${next.text}(`)
         let arrAccessDepth = 1
         next = everything[++b]
         while (next) {
