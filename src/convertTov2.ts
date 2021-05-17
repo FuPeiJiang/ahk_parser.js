@@ -4,8 +4,8 @@ const d = console.debug.bind(console)
 
 
 const content: Buffer =
-// fs.readFileSync('tov2/sortAr.ahk')
-fs.readFileSync('tov2/splitpath.ahk')
+fs.readFileSync('tov2/sortAr.ahk')
+// fs.readFileSync('tov2/splitpath.ahk')
 // fs.readFileSync('tests3/not assignment operator.ahk')
 // fs.readFileSync('tests3/idkAnymore23.ahk')
 fs.readFileSync('tov2/jpgs to pdf.ahk')
@@ -26,6 +26,8 @@ const startingBlock = {'{ legacyIf':true,'{ if':true,'{ for':true,'{ else':true,
 const v1Str = {'v1String findV1Expression':true,'v1String findPercentVarV1Expression':true}
 const v1Percent = {'%START %Var%':true,'END% %Var%':true}
 // const removedDirectives = {'#noenv':true,'setbatchlines':true}
+const commandDelim = {', command comma':true,'end command':true }
+const wsOrEmptyLine = {'whiteSpaces':true,'emptyLines':true}
 let next
 outOfLen:
 while (i < everything.length) {
@@ -205,6 +207,27 @@ while (i < everything.length) {
           continue outOfLen
         }
       }
+    } else if (everything[i].text.toLowerCase() === 'stringtrimright') {
+      if (skipFirstSeparatorOfCommand()) { i++; continue outOfLen}
+      // StringTrimRight, OutputVar, InputVar, Count
+      // OutputVar:=SubStr(InputVar,1,-Count)
+      let outputVar, inputVar, count
+      if (!(outputVar = getNextParamOmitWhitespaces())) { break outOfLen }
+      if (!(inputVar = getNextParamOmitWhitespaces())) { break outOfLen }
+      if (!(count = getNextParamOmitWhitespaces())) { break outOfLen }
+      i = b - 2
+      for (let n = 0, len = outputVar.length; n < len; n++) {
+        reconstructed.push(outputVar[n].text)
+      }
+      reconstructed.push(':=SubStr(')
+      for (let n = 0, len = inputVar.length; n < len; n++) {
+        reconstructed.push(inputVar[n].text)
+      }
+      reconstructed.push(',1,-')
+      for (let n = 0, len = count.length; n < len; n++) {
+        reconstructed.push(count[n].text)
+      }
+      reconstructed.push(')')
     } else {
       reconstructed.push(everything[i].text)
     }
@@ -327,7 +350,23 @@ function parseIdkVariable(text: string) {
         }
       }
     } */
-
+function getNextParamOmitWhitespaces() {
+  let next
+  const arrOfObj = []
+  while (true) {
+    next = everything[b++]
+    if (!next) {
+      return false
+    }
+    const bType = next.type
+    if (commandDelim[bType]) {
+      b++
+      return arrOfObj
+    } else if (!wsOrEmptyLine[bType]) {
+      arrOfObj.push(next)
+    }
+  }
+}
 function nextSkipThrough(lookForThisToEnd: string, ohNoAddAnotherOne: string) {
   let next, arrAccessDepth = 1
   next = everything[++b]
