@@ -118,6 +118,7 @@ export default (content: string) => {
 
         if (idkType) {
           v1StartLine = i
+          const lenghtBeforeSkipLine = everything.length
           if (skipThroughEmptyLines()) {
             if (lines[i][c] === ',') {
               everything.push({ type: '(statement) ,', text: ',', i1: i, c1: c })
@@ -446,37 +447,40 @@ export default (content: string) => {
               }
             }
           }
-          //EOL: ???    OR COMMENT ?????
-          everything.splice(spliceStartIndex, 0, { type: 'command EOL or comment', text: validName, i1: validNameLine, c1: nonWhiteSpaceStart, c2: validNameEnd })
-          spliceIndexEverythingAtHotkeyLine = everything.length
-          operatorAtHotkeyLine = i
-          // i = v1StartLine, c = validNameEnd
-          const validNameLowercase = validName.toLowerCase()
-          if (elseLoopReturn[validNameLowercase]) {
-            if (recurseBetweenExpression()) {
-              //ok..
-            } else if (validNameLowercase === 'else') {
-              if (lines[i][c] === '{') {
-                everything.push({ type: '{ else', text: '{', i1: i, c1: c })
-                c++
-                if (!skipThroughEmptyLines()) { break lineLoop }
+          //can only be from skipThroughEmptyLines()
+          if (everything.length === lenghtBeforeSkipLine + 1 || i === howManyLines) {
+            //EOL: ???    OR COMMENT ?????
+            everything.splice(spliceStartIndex, 0, { type: 'command EOL or comment', text: validName, i1: validNameLine, c1: nonWhiteSpaceStart, c2: validNameEnd })
+            spliceIndexEverythingAtHotkeyLine = everything.length
+            operatorAtHotkeyLine = i
+            // i = v1StartLine, c = validNameEnd
+            const validNameLowercase = validName.toLowerCase()
+            if (elseLoopReturn[validNameLowercase]) {
+              if (recurseBetweenExpression()) {
+                //ok..
+              } else if (validNameLowercase === 'else') {
+                if (lines[i][c] === '{') {
+                  everything.push({ type: '{ else', text: '{', i1: i, c1: c })
+                  c++
+                  if (!skipThroughEmptyLines()) { break lineLoop }
+                }
+              } else if (validNameLowercase === 'loop') {
+                if (lines[i][c] === '{') {
+                  everything.push({ type: '{ loop', text: '{', i1: i, c1: c })
+                  c++
+                  if (!skipThroughEmptyLines()) { break lineLoop }
+                }
               }
-            } else if (validNameLowercase === 'loop') {
-              if (lines[i][c] === '{') {
-                everything.push({ type: '{ loop', text: '{', i1: i, c1: c })
-                c++
-                if (!skipThroughEmptyLines()) { break lineLoop }
-              }
+            } else {
+              if (i === howManyLines) { break lineLoop }
+              resolveV1Continuation()
+              recurseFindCommaV1Expression('command EOL or comment')
             }
-          } else {
-            if (i === howManyLines) { break lineLoop }
-            resolveV1Continuation()
-            recurseFindCommaV1Expression('command EOL or comment')
-          }
 
-          usingStartOfLineLoop = true
-          continue startOfLineLoop
-          //end of is statement
+            usingStartOfLineLoop = true
+            continue startOfLineLoop
+            //end of is statement
+          }
         }
         if (i === validNameLine && lines[i][c] === ':' && (c + 1 === numberOfChars || whiteSpaceObj[lines[i][c + 1]])) {
           c++

@@ -4,7 +4,8 @@ const d = console.debug.bind(console)
 
 
 const content: Buffer =
-fs.readFileSync('tests3/command EOF.ahk')
+fs.readFileSync('tests3/idkAnymore23.ahk')
+// fs.readFileSync('tests3/command EOF.ahk')
 // fs.readFileSync('tests3/test validName VARIABLE EOL.ahk')
 // fs.readFileSync('tov2/use_string.ahk')
 // fs.readFileSync('tests3/fix if no paren.ahk')
@@ -18,6 +19,7 @@ const breakOrContinue = {'break':true,'continue':true}
 const anyCommand = {'DIRECTIVE OR COMMAND comma':true,'command EOL or comment':true,'command':true}
 const idkVariableOrAssignment = {'idkVariable':true,'assignment':true}
 const startingBlock = {'{ legacyIf':true,'{ if':true,'{ for':true,'{ else':true,'{ loop':true,'{ namedIf':true}
+let next
 outOfLen:
 while (i < everything.length) {
   if (everything[i].type === '{ object') {
@@ -131,40 +133,50 @@ while (i < everything.length) {
     }
 
   } else if (everything[i].type === 'v1String findV1Expression') {
-    reconstructed.push(`"${everything[i].text}"`)
+    const theText = everything[i].text
+    if (theText !== '') {
+      reconstructed.push(`"${theText}"`)
+    }
+  } else if (everything[i].type === '%START %Var%') {
+    //ignore
+  } else if (everything[i].type === 'END% %Var%') {
+    //ignore
+  } else if (everything[i].type === 'v1String findPercentVarV1Expression') {
+    const theText = everything[i].text
+    if (theText !== '') {
+      reconstructed.push(` "${theText.replace(/"/g, '`"')}" `)
+    }
+  } else if (everything[i].type === 'percentVar v1Expression') {
+    reconstructed.push(everything[i].text)
+  } else if (everything[i].type === '= v1Assignment') {
+    reconstructed.push(':=')
   } else if (everything[i].type === 'String') {
     reconstructed.push(`"${everything[i].text.slice(1,-1).replace(/""/g, '`"')}"`)
   } else if (anyCommand[everything[i].type]) {
-    reconstructed.push(everything[i].text)
     //if breakOrContinue, if is number, don't surround with quotes
     if (breakOrContinue[everything[i].text.toLowerCase()]) {
-      b = i + 1
-      let next = everything[b]
-      if (next) {
-        if (next.type === 'emptyLines') {
-          next = everything[++b]
-          if (!next) {
-            continue outOfLen
-          }
-        }
-        if (next.type === '(statement) ,') {
-          next = everything[++b]
-          if (!next) {
-            continue outOfLen
-          }
-          if (next.type === 'whiteSpaces') {
-            next = everything[++b]
-            if (!next) {
-              continue outOfLen
-            }
-          }
-        }
-        if (next.type === 'v1String findV1Expression') {
-          if (!isNaN(next.text)) {
-            next.type = 'edit'
-          }
+      reconstructed.push(everything[i].text)
+      if (skipFirstSeparatorOfCommand()) { i++; continue outOfLen}
+      if (next.type === 'v1String findV1Expression') {
+        if (!isNaN(next.text)) {
+          next.type = 'edit'
         }
       }
+    } else if (everything[i].text === '#NoEnv') {
+      const next = everything[i + 1]
+      if (next) {
+        if (next.type === 'emptyLines') {
+          i++
+        }
+      }
+    } else if (everything[i].text === '#SingleInstance') {
+      reconstructed.push(everything[i].text)
+      if (skipFirstSeparatorOfCommand()) { i++; continue outOfLen}
+      if (next.type === 'v1String findV1Expression') {
+        next.type = 'edit'
+      }
+    } else {
+      reconstructed.push(everything[i].text)
     }
   } else if (everything[i].type === 'hotkey') {
     reconstructed.push(everything[i].text)
@@ -203,6 +215,32 @@ while (i < everything.length) {
   }
   // reconstructed.push(everything[i].text)
   i++
+
+}
+function skipFirstSeparatorOfCommand() {
+  b = i + 1
+  next = everything[b]
+  if (!next) {
+    return true
+  }
+  if (next.type === 'emptyLines') {
+    next = everything[++b]
+    if (!next) {
+      return true
+    }
+  }
+  if (next.type === '(statement) ,') {
+    next = everything[++b]
+    if (!next) {
+      return true
+    }
+    if (next.type === 'whiteSpaces') {
+      next = everything[++b]
+      if (!next) {
+        return true
+      }
+    }
+  }
 
 }
 function parseIdkVariable(text: string) {
@@ -299,7 +337,7 @@ function skipThroughSomethingMid(lookForThisToEnd: string, ohNoAddAnotherOne: st
   return false
 }
 // d(reconstructed)
-writeSync(reconstructed.join(''),'reconstructed.ahk')
+writeSync(reconstructed.join(''),'reconstructed.ah2')
 writeSync(arrOrObjToString(everything),'everything.txt')
 
 function arrOrObjToString(obj) {
