@@ -1,5 +1,5 @@
 import { trace } from 'console'
-import { whiteSpaceObj, variableCharsObj, operatorsObj, legacyIfOperators, v1Continuator, typeOfValidVarName, whiteSpaceOverrideAssign, propCharsObj, namedIf, assignmentOperators, elseLoopReturn, v2Continuator } from './tokens'
+import { whiteSpaceObj, variableCharsObj, operatorsObj, legacyIfOperators, v1Continuator, typeOfValidVarName, whiteSpaceOverrideAssign, propCharsObj, namedIf, assignmentOperators, elseLoopReturn, v2Continuator, thisCouldBeFuncName } from './tokens'
 const d = console.debug.bind(console)
 
 export default (content: string) => {
@@ -164,6 +164,8 @@ export default (content: string) => {
                 singleComma = false
                 if (i === howManyLines) {break lineLoop}
                 recurseFindCommaV1Expression(', command comma')
+                const eLen = everything.length - 1
+                everything.splice(everything.length - (everything[eLen].type === 'emptyLines' ? 1 : 0), 0, {type:'end command'})
                 usingStartOfLineLoop = true
                 continue startOfLineLoop
                 // const text = lines[validNameLine].slice(c, numberOfChars)
@@ -478,6 +480,7 @@ export default (content: string) => {
               if (i === howManyLines) { break lineLoop }
               resolveV1Continuation()
               recurseFindCommaV1Expression('command EOL or comment')
+              everything.push({type:'command end'})
             }
 
             usingStartOfLineLoop = true
@@ -664,7 +667,7 @@ export default (content: string) => {
         //out of lines
         if (!skipThroughEmptyLines()) {
           if (lastTrailingWasFunc) {
-            everything.splice(spliceStartIndex, 0, { type: 'function CALL', text: validName, i1: validNameLine, c1: validNameStart, c2: validNameEnd })
+            everything.splice(spliceStartIndex, 0, { type: 'functionName', text: validName, i1: validNameLine, c1: validNameStart, c2: validNameEnd })
           }
           break lineLoop
         }
@@ -696,7 +699,7 @@ export default (content: string) => {
           continue startOfLineLoop
         } else {
           if (lastTrailingWasFunc) {
-            everything.splice(spliceStartIndex, 0, { type: 'function CALL', text: validName, i1: validNameLine, c1: validNameStart, c2: validNameEnd })
+            everything.splice(spliceStartIndex, 0, { type: 'functionName', text: validName, i1: validNameLine, c1: validNameStart, c2: validNameEnd })
             if (!skipThroughEmptyLines()) {break lineLoop}
             if (skipCommaV2Expr()) {break lineLoop}
             usingStartOfLineLoop = true
@@ -782,7 +785,10 @@ export default (content: string) => {
 
   // start of functions
   function functionMid(which: string) {
-    everything[everything.length - 1].type = 'functionName'
+    const back = everything[everything.length - 1]
+    if (thisCouldBeFuncName[back.type]) {
+      back.type = 'functionName'
+    }
     everything.push({ type: `( ${which} CALL`, text: '(', i1: i, c1: c })
     legalObjLine = i
     lineWhereCanConcat = -1

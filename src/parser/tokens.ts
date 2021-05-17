@@ -24,3 +24,5 @@ export const v2Continuator: stringIndexBool = {'**':true,'!':true,'~':true,'&':t
 export const legacyIfOperators: stringIndexBool = {'=':true,'<>':true,'!=':true,'>':true,'>=':true,'<':true,'<=':true}
 
 export const elseLoopReturn: stringIndexBool = {'else':true,'loop':true,'return':true}
+
+export const thisCouldBeFuncName: stringIndexBool = {'idkVariable':true,'(.) property findTrailingExpr':true}

@@ -1991,3 +1991,7 @@ find FIRST hotkey or return
 return enclosed within no block
 replace this return with }
 after found return, add { to the hotkey
+
+mark start and end of commands:
+'start command'
+'end command'
