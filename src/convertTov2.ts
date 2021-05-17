@@ -4,8 +4,8 @@ const d = console.debug.bind(console)
 
 
 const content: Buffer =
-fs.readFileSync('tov2/sortAr.ahk')
-// fs.readFileSync('tov2/splitpath.ahk')
+// fs.readFileSync('tov2/sortAr.ahk')
+fs.readFileSync('tov2/splitpath.ahk')
 // fs.readFileSync('tests3/not assignment operator.ahk')
 // fs.readFileSync('tests3/idkAnymore23.ahk')
 fs.readFileSync('tov2/jpgs to pdf.ahk')

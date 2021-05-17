@@ -164,8 +164,10 @@ export default (content: string) => {
                 singleComma = false
                 if (i === howManyLines) {break lineLoop}
                 recurseFindCommaV1Expression(', command comma')
+
                 const eLen = everything.length - 1
                 everything.splice(everything.length - (everything[eLen].type === 'emptyLines' ? 1 : 0), 0, {type:'end command'})
+
                 usingStartOfLineLoop = true
                 continue startOfLineLoop
               }
@@ -385,6 +387,10 @@ export default (content: string) => {
 
                   if (!recurseBetweenExpression()) { findExpression() }
                   if (i === howManyLines) { break lineLoop }
+
+                  const eLen = everything.length - 1
+                  everything.splice(everything.length - (everything[eLen].type === 'emptyLines' ? 1 : 0), 0, {type:'end command'})
+
                   if (lines[i][c] === '{') {
                     everything.push({ type: '{ for', text: '{', i1: i, c1: c })
                     c++
