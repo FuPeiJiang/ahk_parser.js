@@ -4,7 +4,8 @@ const d = console.debug.bind(console)
 
 
 const content: Buffer =
-fs.readFileSync('tov2/splitpath.ahk')
+fs.readFileSync('tov2/sortAr.ahk')
+// fs.readFileSync('tov2/splitpath.ahk')
 // fs.readFileSync('tests3/not assignment operator.ahk')
 // fs.readFileSync('tests3/idkAnymore23.ahk')
 fs.readFileSync('tov2/jpgs to pdf.ahk')
@@ -148,6 +149,14 @@ while (i < everything.length) {
     reconstructed.push(everything[i].text)
   } else if (everything[i].type === '= v1Assignment') {
     reconstructed.push(':=')
+    const next = everything[i + 1]
+    // var = -> var:=""
+    if (next.type === 'v1String findV1Expression') {
+      if (next.text === '') {
+        next.type = 'edit'
+        next.text = '""'
+      }
+    }
   } else if (everything[i].type === 'String') {
     reconstructed.push(`"${everything[i].text.slice(1,-1).replace(/""/g, '`"')}"`)
   } else if (anyCommand[everything[i].type]) {
