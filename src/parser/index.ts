@@ -621,7 +621,8 @@ export default (content: string) => {
         recurseFindTrailingExpr()
 
         //out of lines
-        if (!skipThroughEmptyLines()) {
+
+        if (i === howManyLines || !skipThroughEmptyLines()) {
           if (lastTrailingWasFunc) {
             everything.splice(spliceStartIndex, 0, { type: 'functionName', text: validName, i1: validNameLine, c1: validNameStart, c2: validNameEnd })
           }
@@ -742,8 +743,10 @@ export default (content: string) => {
   // start of functions
   function functionMid(which: string) {
     const back = everything[everything.length - 1]
-    if (thisCouldBeFuncName[back.type]) {
-      back.type = 'functionName'
+    if (back) {
+      if (thisCouldBeFuncName[back.type]) {
+        back.type = 'functionName'
+      }
     }
     everything.push({ type: `( ${which} CALL`, text: '(', i1: i, c1: c })
     legalObjLine = i
@@ -755,7 +758,7 @@ export default (content: string) => {
       if (!skipThroughEmptyLines()) {
         d(`ILLEGAL ) ${which} CALL OUT OF LINES`, char())
         return 2
-      } if (lines[i][c] === ',') {
+      } else if (lines[i][c] === ',') {
         c++
         isComma = true
         legalObjLine = i
@@ -771,6 +774,9 @@ export default (content: string) => {
         if (isComma) {
           isComma = false
           everything.splice(arrSpliceStartIndex, 0, { type: `, ${which} CALL`, text: ',', i1: i, c1: c })
+        }
+        if (i === howManyLines) {
+          return 2
         }
       } else {
         if (lines[i][c] === ',') {

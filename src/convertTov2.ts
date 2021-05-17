@@ -4,9 +4,10 @@ const d = console.debug.bind(console)
 
 
 const content: Buffer =
-fs.readFileSync('tov2/OpenInAhkExplorer.ahk')
+fs.readFileSync('tests3/recurse VarSetCapacity replacement.ahk')
+// fs.readFileSync('tov2/OpenInAhkExplorer.ahk')
 // fs.readFileSync('tov2/sortAr.ahk')
-// fs.readFileSync('tov2/splitpath.ahk')
+// fs.readFileSync('tests3/splitpath.ahk')
 // fs.readFileSync('tests3/not assignment operator.ahk')
 // fs.readFileSync('tests3/idkAnymore23.ahk')
 // fs.readFileSync('tov2/jpgs to pdf.ahk')
@@ -47,31 +48,34 @@ while (i < everything.length) {
     // reconstructed.push(everything[i].text)
   } else if (everything[i].type === 'functionName') {
     const thisText = everything[i].text
-    if (everything[i - 1].type === '. property') {
-      if (thisText.toLowerCase() === 'length') {
-        reconstructed.push(`.${thisText}`)
+    const back = everything[i - 1]
+    if (back) {
+      if (everything[i - 1].type === '. property') {
+        if (thisText.toLowerCase() === 'length') {
+          reconstructed.push(`.${thisText}`)
 
-        const next = everything[i + 1]
-        if (next) {
-          if (next.type === '( function CALL') {
-            i++
-            let isThisEnd
-            while (true) {
-              isThisEnd = everything[++i]
-              if (!isThisEnd) {
-                break outOfLen
+          const next = everything[i + 1]
+          if (next) {
+            if (next.type === '( function CALL') {
+              i++
+              let isThisEnd
+              while (true) {
+                isThisEnd = everything[++i]
+                if (!isThisEnd) {
+                  break outOfLen
+                }
+                if (isThisEnd.type === ') function CALL') {
+                  i++
+                  break
+                }
               }
-              if (isThisEnd.type === ') function CALL') {
-                i++
-                break
-              }
+              continue outOfLen
             }
-            continue outOfLen
           }
-        }
 
+        }
+        reconstructed.push(`.${thisText}`)
       }
-      reconstructed.push(`.${thisText}`)
     } else {
       if (thisText.toLowerCase() === 'varsetcapacity') {
 
