@@ -118,9 +118,8 @@ function all() {
         }
 
         if (bType === ') function CALL') {
-          //idk how but this fixes it
-          i--
-          break
+          reconstructed.push(')')
+          return 3
         } else {
           reconstructed.push(next.text)
         }
