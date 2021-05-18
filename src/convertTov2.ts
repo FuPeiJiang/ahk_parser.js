@@ -4,7 +4,8 @@ const d = console.debug.bind(console)
 
 
 const content: Buffer =
-fs.readFileSync('tests3/recurse VarSetCapacity replacement.ahk')
+fs.readFileSync('tests3/VarSetCapacity with func inside.ahk')
+// fs.readFileSync('tests3/recurse VarSetCapacity replacement.ahk')
 // fs.readFileSync('tov2/OpenInAhkExplorer.ahk')
 // fs.readFileSync('tov2/sortAr.ahk')
 // fs.readFileSync('tests3/splitpath.ahk')
@@ -117,11 +118,9 @@ function all() {
         }
 
         if (bType === ') function CALL') {
-          i++
-          return
-        } else if (bType === ', function CALL') {
-          i++
-          return
+          //idk how but this fixes it
+          i--
+          break
         } else {
           reconstructed.push(next.text)
         }
