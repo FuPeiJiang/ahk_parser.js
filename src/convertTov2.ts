@@ -39,6 +39,9 @@ while (i < everything.length) {
     continue outOfLen
   } else if (allReturn === 2) {
     break outOfLen
+  } else if (allReturn === 3) {
+    i++
+    continue outOfLen
   }
 
   reconstructed.push(everything[i].text)
@@ -87,43 +90,44 @@ function all() {
         }
         reconstructed.push(`.${thisText}`)
       }
+    }
+    if (thisText.toLowerCase() === 'varsetcapacity') {
+
+      // VarSetStrCapacity(TargetVar, RequestedCapacity, FillByte)
+      // TargetVar:=BufferAlloc(RequestedCapacity,FillByte)
+      //#function
+      if (!(argsArr = getArgs())) { return 2 }
+      // reconstructed.push(`${a(1)}:=BufferAlloc(${a(2)}${o(',',3)}${a(3)})`)
+      a(1); p(':=BufferAlloc('); a(2); o(',',3); a(3); p(')')
+
     } else {
-      if (thisText.toLowerCase() === 'varsetcapacity') {
+      reconstructed.push(thisText)
+      while (true) {
+        next = everything[++i]
+        if (!next) {
+          return 2
+        }
+        const bType = next.type
 
-        // VarSetStrCapacity(TargetVar, RequestedCapacity, FillByte)
-        // TargetVar:=BufferAlloc(RequestedCapacity,FillByte)
-        //#function
-        if (!(argsArr = getArgs())) { return 2 }
-        // reconstructed.push(`${a(1)}:=BufferAlloc(${a(2)}${o(',',3)}${a(3)})`)
-        a(1); p(':=BufferAlloc('); a(2); o(',',3); a(3); p(')')
-        
-      } else {
-        reconstructed.push(thisText)
-        while (true) {
-          next = everything[++i]
-          if (!next) {
-            return 2
-          }
-          const bType = next.type
+        const allReturn = all()
+        if (allReturn === 3) {
+          continue
+        } else if (allReturn) {
+          return allReturn
+        }
 
-          const allReturn = all()
-          if (allReturn) {
-            return allReturn
-          }
-
-          if (bType === ') function CALL') {
-            i++
-            return
-          } else if (bType === ', function CALL') {
-            i++
-            return
-          } else {
-            reconstructed.push(next.text)
-          }
+        if (bType === ') function CALL') {
+          i++
+          return
+        } else if (bType === ', function CALL') {
+          i++
+          return
+        } else {
+          reconstructed.push(next.text)
         }
       }
-
     }
+
 
   } else if (everything[i].type === '(.) property findTrailingExpr') {
     reconstructed.push(`["${everything[i].text}"]`)
@@ -465,7 +469,7 @@ function getArgs() {
 
       if (bType === ') function CALL') {
         // b++
-        i++
+        // i++
         // arrOfArgs.push(arrOfText.join(''))
 
         // i = b - 2
