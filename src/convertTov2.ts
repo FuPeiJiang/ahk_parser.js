@@ -4,7 +4,7 @@ const d = console.debug.bind(console)
 
 
 const content: Buffer =
-fs.readFileSync('tests3/listlines.ahk')
+// fs.readFileSync('tests3/listlines.ahk')
 // fs.readFileSync('tests3/ampersand to .Ptr.ahk')
 // fs.readFileSync('tests3/VarSetCapacity with func inside.ahk')
 // fs.readFileSync('tests3/recurse VarSetCapacity replacement.ahk')
@@ -250,9 +250,9 @@ function all() {
       if (skipFirstSeparatorOfCommand()) { i++; return 1}
       if (next.type === 'v1String findV1Expression') {
         const dText = next.text
-        if (on1off0[dText]) {
+        if (on1off0[dText.toLowerCase()]) {
           next.type = 'edit'
-          next.text = on1off0[dText]
+          next.text = on1off0[dText.toLowerCase()]
         } else if (!isNaN(dText)) {
           next.type = 'edit'
         }
