@@ -94,6 +94,7 @@ function all() {
 
         }
         reconstructed.push(`.${thisText}`)
+        return 3
       }
     }
     if (thisText.toLowerCase() === 'varsetcapacity') {
