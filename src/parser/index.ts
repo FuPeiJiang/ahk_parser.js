@@ -792,6 +792,17 @@ export default (content: string) => {
       return true
     }
   }
+  function doThrow() {
+    if (!recurseBetweenExpression()) { findExpression() }
+    //this is, NOT while
+    if (i < howManyLines) {
+      if (lines[i][c] === ',') {
+        everything.push({ type: ', doThrow', text: ',', i1: i, c1: c })
+        c++
+        skipThroughEmptyLines()
+      }
+    }
+  }
   function doReturn() {
     if (!recurseBetweenExpression()) { findExpression() }
     //this is, NOT while
@@ -850,6 +861,13 @@ export default (content: string) => {
     if (validName.toLowerCase() === 'return') {
       everything.splice(spliceStartIndex, 0, { type: 'return', text: validName, i1: validNameLine, c1: nonWhiteSpaceStart, c2: validNameEnd })
       doReturn()
+      usingStartOfLineLoop = true
+      return 1
+    }
+
+    if (validName.toLowerCase() === 'throw') {
+      everything.splice(spliceStartIndex, 0, { type: 'throw', text: validName, i1: validNameLine, c1: nonWhiteSpaceStart, c2: validNameEnd })
+      doThrow()
       usingStartOfLineLoop = true
       return 1
     }
