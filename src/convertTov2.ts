@@ -8,7 +8,7 @@ const content: Buffer =
 // fs.readFileSync('tests3/ampersand to .Ptr.ahk')
 // fs.readFileSync('tests3/VarSetCapacity with func inside.ahk')
 // fs.readFileSync('tests3/recurse VarSetCapacity replacement.ahk')
-// fs.readFileSync('tov2/OpenInAhkExplorer.ahk')
+fs.readFileSync('tov2/OpenInAhkExplorer.ahk')
 // fs.readFileSync('tov2/sortAr.ahk')
 // fs.readFileSync('tests3/splitpath.ahk')
 // fs.readFileSync('tests3/not assignment operator.ahk')
@@ -105,7 +105,23 @@ function all() {
       if (!(argsArr = getArgs())) { return 2 }
       // reconstructed.push(`${a(1)}:=BufferAlloc(${a(2)}${o(',',3)}${a(3)})`)
       a(1); p(':=BufferAlloc('); a(2); o(',',3); a(3); p(')')
-
+    } else if (thisText.toLowerCase() === 'numput') {
+      // NumPut(Number, VarOrAddress [, Offset := 0][, Type := "UPtr"])
+      // NumPut Type, Number, [Type2, Number2, ...] VarOrAddress [, Offset]
+      if (!(argsArr = getArgs())) { return 2 }
+      const len = argsArr.length
+      p('NumPut(')
+      if (len === 4) {
+        a(4)
+      } else {
+        p('"UPtr"')
+      }
+      p(','); a(1); p(','); a(2)
+      if (len > 2) {
+        p(',')
+        a(3)
+      }
+      p(')')
     } else {
       reconstructed.push(thisText)
       while (true) {
