@@ -390,6 +390,19 @@ export default (content: string) => {
                 skipValidChar()
                 everything.push({ type: 'className', text: lines[i].slice(classNameStart,c), i1: i, c1: classNameStart, c2: c })
                 if (!skipThroughEmptyLines()) { break lineLoop }
+                let extendsText
+                if ((extendsText = lines[i].slice(c, c + 7)).toLowerCase() === 'extends') {
+                  everything.push({ type: 'className', text: extendsText, i1: i, c1: c, c2: c + 7 })
+                  c += 7
+                  skipThroughWhiteSpaces()
+                  const extendedClassNameStart = c
+                  skipValidChar()
+                  const extendedClassName = lines[i].slice(extendedClassNameStart,c)
+                  if (extendedClassName) {
+                    everything.push({ type: 'extendedClassName', text: extendedClassName, i1: i, c1: extendedClassNameStart, c2: c })
+                  }
+                  if (!skipThroughEmptyLines()) { break lineLoop }
+                }
                 if (lines[i][c] === '{') {
                   everything.push({ type: '{ class', text: '{', i1: i, c1: c })
                   c++
