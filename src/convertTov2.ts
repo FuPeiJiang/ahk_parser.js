@@ -5,7 +5,7 @@ import { whiteSpaceObj } from './parser/tokens'
 
 
 const content: Buffer =
-fs.readFileSync('v2tests/v1concat space or not.ahk')
+// fs.readFileSync('v2tests/v1concat space or not.ahk')
 // fs.readFileSync('tests3/listlines.ahk')
 // fs.readFileSync('tests3/ampersand to .Ptr.ahk')
 // fs.readFileSync('tests3/VarSetCapacity with func inside.ahk')
@@ -222,8 +222,24 @@ function all() {
   } else if (v1Str[everything[i].type]) {
     const theText = everything[i].text
     if (theText !== '') {
-      let next, firstChar
-      reconstructed.push(`${whiteSpaceObj[everything[i - 1].text.slice(-1)] ? '' : ' '}"${theText.replace(/"/g, '`"')}"${(next = everything[i + 1]) ? ((whiteSpaceObj[firstChar = next.text[0]] || firstChar === '\n') ? '' : ' ') : ''}`)
+      let next, putAtEnd = ''
+      next = everything[i + 1]
+      // skip through stuff like 'end command' which .text === undefined
+      outerLoop:
+      while (true) {
+        while (next) {
+          if (next.text) {
+            const firstChar = next.text[0]
+            if (!(whiteSpaceObj[firstChar] || firstChar === '\n')) {
+              putAtEnd = ' '
+            }
+            break outerLoop
+          }
+          next = everything[++b]
+        }
+        break outerLoop
+      }
+      reconstructed.push(`${whiteSpaceObj[everything[i - 1].text.slice(-1)] ? '' : ' '}"${theText.replace(/"/g, '`"')}"${putAtEnd}`)
     }
   } else if (everything[i].type === 'percentVar v1Expression') {
     reconstructed.push(everything[i].text)
