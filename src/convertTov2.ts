@@ -4,15 +4,16 @@ const d = console.debug.bind(console)
 
 
 const content: Buffer =
+fs.readFileSync('tests3/listlines.ahk')
 // fs.readFileSync('tests3/ampersand to .Ptr.ahk')
 // fs.readFileSync('tests3/VarSetCapacity with func inside.ahk')
 // fs.readFileSync('tests3/recurse VarSetCapacity replacement.ahk')
-fs.readFileSync('tov2/OpenInAhkExplorer.ahk')
+// fs.readFileSync('tov2/OpenInAhkExplorer.ahk')
 // fs.readFileSync('tov2/sortAr.ahk')
 // fs.readFileSync('tests3/splitpath.ahk')
 // fs.readFileSync('tests3/not assignment operator.ahk')
 // fs.readFileSync('tests3/idkAnymore23.ahk')
-// fs.readFileSync('tov2/jpgs to pdf.ahk')
+fs.readFileSync('tov2/jpgs to pdf.ahk')
 // fs.readFileSync('tests3/command EOF.ahk')
 // fs.readFileSync('tests3/test validName VARIABLE EOL.ahk')
 // fs.readFileSync('tov2/use_string.ahk')
@@ -34,6 +35,7 @@ const commandDelim = {', command comma':true,'end command':true }
 const funcCallDelim = {', function CALL':true,') function CALL':true }
 const wsOrEmptyLine = {'whiteSpaces':true,'emptyLines':true}
 const startGroupOrUnit = {'( group':') group','start unit':'end unit'}
+const on1off0 = {'on':'1','off':'0'}
 let next, argsArr
 outOfLen:
 while (i < everything.length) {
@@ -242,6 +244,18 @@ function all() {
       if (skipFirstSeparatorOfCommand()) { i++; return 1}
       if (next.type === 'v1String findV1Expression') {
         next.type = 'edit'
+      }
+    } else if (everything[i].text.toLowerCase() === 'listlines') {
+      reconstructed.push(everything[i].text)
+      if (skipFirstSeparatorOfCommand()) { i++; return 1}
+      if (next.type === 'v1String findV1Expression') {
+        const dText = next.text
+        if (on1off0[dText]) {
+          next.type = 'edit'
+          next.text = on1off0[dText]
+        } else if (!isNaN(dText)) {
+          next.type = 'edit'
+        }
       }
     } else if (everything[i].text.toLowerCase() === 'splitpath') {
       //until 'end command', do not quote every v1 expr
