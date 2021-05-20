@@ -214,7 +214,7 @@ function all() {
     }
   } else if (everything[i].type === '(statement) ,') {
     const next = everything[i + 1]
-    if (next.type !== 'whiteSpaces') {
+    if (!wsOrEmptyLine[next.type]) {
       reconstructed.push(' ')
     }
   } else if (v1Percent[everything[i].type]) {
