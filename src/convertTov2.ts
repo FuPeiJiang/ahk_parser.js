@@ -4,7 +4,8 @@ const d = console.debug.bind(console)
 
 
 const content: Buffer =
-fs.readFileSync('tests3/VarSetCapacity with func inside.ahk')
+fs.readFileSync('tests3/ampersand to .Ptr.ahk')
+// fs.readFileSync('tests3/VarSetCapacity with func inside.ahk')
 // fs.readFileSync('tests3/recurse VarSetCapacity replacement.ahk')
 // fs.readFileSync('tov2/OpenInAhkExplorer.ahk')
 // fs.readFileSync('tov2/sortAr.ahk')
@@ -32,6 +33,7 @@ const v1Percent = {'%START %Var%':true,'END% %Var%':true}
 const commandDelim = {', command comma':true,'end command':true }
 const funcCallDelim = {', function CALL':true,') function CALL':true }
 const wsOrEmptyLine = {'whiteSpaces':true,'emptyLines':true}
+const startGroupOrUnit = {'( group':') group','start unit':'end unit'}
 let next, argsArr
 outOfLen:
 while (i < everything.length) {
@@ -302,6 +304,16 @@ function all() {
       }
     }
     //#HERE
+  } else if (everything[i].type === '1operator') {
+    if (everything[i].text === '&') {
+      let bType
+      b = i
+      if (!(bType = findNextAnyInObj(startGroupOrUnit))) { return 2 }
+      if (!nextSkipThrough(startGroupOrUnit[bType],bType)) { return 2 }
+      everything.splice(b + 1,0,{type:'edit',text:'.Ptr'})
+    } else {
+      reconstructed.push(everything[i].text)
+    }
   } else if (everything[i].type === 'hotkey') {
     reconstructed.push(everything[i].text)
     b = i
@@ -339,6 +351,7 @@ function all() {
   }
   return 3
 }
+// functions
 function skipFirstSeparatorOfCommand() {
   b = i + 1
   next = everything[b]
@@ -551,6 +564,30 @@ function getNextParamOmitWhitespaces() {
       arrOfObj.push(next)
     }
   }
+}
+function findNextAnyInObj(insideThisObj) {
+  let next
+  next = everything[++b]
+  while (next) {
+    const bType = next.type
+    if (insideThisObj[bType]) {
+      return bType
+    }
+    next = everything[++b]
+  }
+  return false
+}
+function findNext(stopAtThis: string) {
+  let next
+  next = everything[++b]
+  while (next) {
+    const bType = next.type
+    if (bType === stopAtThis) {
+      return true
+    }
+    next = everything[++b]
+  }
+  return false
 }
 function nextSkipThrough(lookForThisToEnd: string, ohNoAddAnotherOne: string) {
   let next, arrAccessDepth = 1
