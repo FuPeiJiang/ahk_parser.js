@@ -4,10 +4,10 @@ const d = console.debug.bind(console)
 
 
 const content: Buffer =
-fs.readFileSync('tests3/ampersand to .Ptr.ahk')
+// fs.readFileSync('tests3/ampersand to .Ptr.ahk')
 // fs.readFileSync('tests3/VarSetCapacity with func inside.ahk')
 // fs.readFileSync('tests3/recurse VarSetCapacity replacement.ahk')
-// fs.readFileSync('tov2/OpenInAhkExplorer.ahk')
+fs.readFileSync('tov2/OpenInAhkExplorer.ahk')
 // fs.readFileSync('tov2/sortAr.ahk')
 // fs.readFileSync('tests3/splitpath.ahk')
 // fs.readFileSync('tests3/not assignment operator.ahk')

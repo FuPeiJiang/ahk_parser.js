@@ -1995,3 +1995,16 @@ after found return, add { to the hotkey
 mark start and end of commands:
 'start command'
 'end command'
+
+SendMessage, 0x0115, 1, 0, %control%, A
+
+SendMessage, Msg , wParam, lParam, [rest is recurseV1Comma]
+SendMessage, v2, v2, v2, [rest is recurseV1Comma]
+
+comma Command & whitespace Command (which is strangely 'command' instead of 'whitespace command'):
+  findNamedIf()
+  findLoop()
+  findWhile()
+  validName.toLowerCase() === 'return'
+
+let's replace this with sameCommaOrWhitespaceCommand()

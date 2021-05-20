@@ -129,34 +129,12 @@ export default (content: string) => {
                 // d(validName, 'comma DIRECTIVE OR COMMAND', char())
                 // #validName = lines[validNameLine].slice(validNameStart, validNameEnd)
                 // everything.push({ type: 'newLine comma DIRECTIVE OR COMMAND', text: '\n', i1: i, c1: c + 1 })
-                const foundNamedIf = findNamedIf()
-                if (foundNamedIf === 1) {
+                const sameReturned = sameCommaOrWhitespaceCommand()
+                if (sameReturned === 1) {
                   continue startOfLineLoop
-                } else if (foundNamedIf === 2) {
+                } else if (sameReturned === 2) {
                   continue lineLoop
                 }
-
-                const foundLoop = findLoop()
-                if (foundLoop === 1) {
-                  continue startOfLineLoop
-                } else if (foundLoop === 2) {
-                  continue lineLoop
-                }
-
-                const foundWhile = findWhile()
-                if (foundWhile === 1) {
-                  continue startOfLineLoop
-                } else if (foundWhile === 2) {
-                  continue lineLoop
-                }
-
-                if (validName.toLowerCase() === 'return') {
-                  everything.splice(spliceStartIndex, 0, { type: 'return comma', text: validName, i1: validNameLine, c1: nonWhiteSpaceStart, c2: validNameEnd })
-                  doReturn()
-                  usingStartOfLineLoop = true
-                  continue startOfLineLoop
-                }
-
 
                 everything.splice(spliceStartIndex, 0, { type: 'DIRECTIVE OR COMMAND comma', text: validName, i1: validNameLine, c1: validNameStart, c2: validNameEnd })
                 singleComma = true
@@ -347,24 +325,10 @@ export default (content: string) => {
               } else if (idkType === 4) {
                 // d(validName, 'whiteSpace COMMAND', nonWhiteSpaceStart + 1, lineBeforeSkip + 1, 'line')
               // statement can't have Expr if line changed...
-                const foundNamedIf = findNamedIf()
-                if (foundNamedIf === 1) {
+                const sameReturned = sameCommaOrWhitespaceCommand()
+                if (sameReturned === 1) {
                   continue startOfLineLoop
-                } else if (foundNamedIf === 2) {
-                  continue lineLoop
-                }
-
-                const foundLoop = findLoop()
-                if (foundLoop === 1) {
-                  continue startOfLineLoop
-                } else if (foundLoop === 2) {
-                  continue lineLoop
-                }
-
-                const foundWhile = findWhile()
-                if (foundWhile === 1) {
-                  continue startOfLineLoop
-                } else if (foundWhile === 2) {
+                } else if (sameReturned === 2) {
                   continue lineLoop
                 }
 
@@ -400,12 +364,7 @@ export default (content: string) => {
                   continue startOfLineLoop
                 }
 
-                if (validName.toLowerCase() === 'return') {
-                  everything.splice(spliceStartIndex, 0, { type: 'return whiteSpace', text: validName, i1: validNameLine, c1: nonWhiteSpaceStart, c2: validNameEnd })
-                  doReturn()
-                  usingStartOfLineLoop = true
-                  continue startOfLineLoop
-                } else if (validName.toLowerCase() === 'else') {
+                if (validName.toLowerCase() === 'else') {
                   everything.splice(spliceStartIndex, 0, { type: 'else whiteSpace', text: validName, i1: validNameLine, c1: nonWhiteSpaceStart, c2: validNameEnd })
                   if (lines[i][c] === '{') {
                     everything.push({ type: '{ else', text: '{', i1: i, c1: c })
@@ -414,16 +373,16 @@ export default (content: string) => {
                   }
                   usingStartOfLineLoop = true
                   continue startOfLineLoop
-                } else {
-                  everything.splice(spliceStartIndex, 0, { type: 'command', text: validName, i1: validNameLine, c1: nonWhiteSpaceStart, c2: validNameEnd })
-                  singleComma = true
-                  findV1Expression()
-                  singleComma = false
-                  if (i === howManyLines) { break lineLoop }
-                  recurseFindCommaV1Expression(', command whiteSpace')
-                  usingStartOfLineLoop = true
-                  continue startOfLineLoop
                 }
+
+                everything.splice(spliceStartIndex, 0, { type: 'command', text: validName, i1: validNameLine, c1: nonWhiteSpaceStart, c2: validNameEnd })
+                singleComma = true
+                findV1Expression()
+                singleComma = false
+                if (i === howManyLines) { break lineLoop }
+                recurseFindCommaV1Expression(', command whiteSpace')
+                usingStartOfLineLoop = true
+                continue startOfLineLoop
                 //class
               } else if (idkType === 5) {
                 everything.splice(spliceStartIndex, 0, { type: 'class', text: validName, i1: validNameLine, c1: nonWhiteSpaceStart, c2: validNameEnd })
@@ -861,6 +820,29 @@ export default (content: string) => {
     nonWhiteSpaceStart = c
     findV1ExpressionMid()
   }
+  function sameCommaOrWhitespaceCommand() {
+    const foundNamedIf = findNamedIf()
+    if (foundNamedIf) {
+      return foundNamedIf
+    }
+
+    const foundLoop = findLoop()
+    if (foundLoop) {
+      return foundLoop
+    }
+
+    const foundWhile = findWhile()
+    if (foundWhile) {
+      return foundWhile
+    }
+
+    if (validName.toLowerCase() === 'return') {
+      everything.splice(spliceStartIndex, 0, { type: 'return', text: validName, i1: validNameLine, c1: nonWhiteSpaceStart, c2: validNameEnd })
+      doReturn()
+      usingStartOfLineLoop = true
+      return 1
+    }
+  }
   function findWhile() {
     if (validName.toLowerCase() === 'while') {
       everything.splice(spliceStartIndex, 0, { type: 'while', text: validName, i1: validNameLine, c1: nonWhiteSpaceStart, c2: validNameEnd })
@@ -947,6 +929,11 @@ export default (content: string) => {
       }
       usingStartOfLineLoop = true
       return 1
+    }
+  }
+  function findSendMessage() {
+    if (validName.toLowerCase() === 'sendmessage') {
+
     }
   }
   function findNamedIf() {
