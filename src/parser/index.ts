@@ -781,6 +781,7 @@ export default (content: string) => {
   }
   function doReturn() {
     if (!recurseBetweenExpression()) { findExpression() }
+    //this is, NOT while
     if (i < howManyLines) {
       if (lines[i][c] === ',') {
         everything.push({ type: ', doReturn', text: ',', i1: i, c1: c })
@@ -822,19 +823,16 @@ export default (content: string) => {
   }
   function sameCommaOrWhitespaceCommand() {
     const foundNamedIf = findNamedIf()
-    if (foundNamedIf) {
-      return foundNamedIf
-    }
+    if (foundNamedIf) { return foundNamedIf }
 
     const foundLoop = findLoop()
-    if (foundLoop) {
-      return foundLoop
-    }
+    if (foundLoop) { return foundLoop }
 
     const foundWhile = findWhile()
-    if (foundWhile) {
-      return foundWhile
-    }
+    if (foundWhile) { return foundWhile }
+
+    const foundSendMessage = findSendMessage()
+    if (foundSendMessage) { return foundSendMessage }
 
     if (validName.toLowerCase() === 'return') {
       everything.splice(spliceStartIndex, 0, { type: 'return', text: validName, i1: validNameLine, c1: nonWhiteSpaceStart, c2: validNameEnd })
@@ -933,7 +931,22 @@ export default (content: string) => {
   }
   function findSendMessage() {
     if (validName.toLowerCase() === 'sendmessage') {
-
+      everything.splice(spliceStartIndex, 0, { type: 'sendmessage', text: validName, i1: validNameLine, c1: nonWhiteSpaceStart, c2: validNameEnd })
+      if (!recurseBetweenExpression()) { findExpression() }
+      if (findCommaV2Expr(', 2 sendmessage')) {
+        if (findCommaV2Expr(', 3 sendmessage')) {
+          recurseFindCommaV1Expression(', sendmessage v1Expr')
+        }
+      }
+      return 1
+    }
+  }
+  function findCommaV2Expr(which: string) {
+    if (lines[i][c] === ',') {
+      everything.push({ type: which, text: ',', i1: i, c1: c })
+      c++
+      if (!recurseBetweenExpression()) { findExpression() }
+      return true
     }
   }
   function findNamedIf() {
