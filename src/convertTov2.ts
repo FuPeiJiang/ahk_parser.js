@@ -5,7 +5,7 @@ import { variableCharsObj, whiteSpaceObj } from './parser/tokens'
 
 
 const content: Buffer =
-fs.readFileSync('v2tests/fix if not.ahk')
+// fs.readFileSync('v2tests/fix if not.ahk')
 // fs.readFileSync('tov2/WinClip.ahk')
 fs.readFileSync('tov2/WinClipAPI.ahk')
 // fs.readFileSync('v2tests/v1concat space or not.ahk')

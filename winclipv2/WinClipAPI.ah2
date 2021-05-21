@@ -134,7 +134,7 @@ class WinClipAPI extends WinClip_base
         GuiThreadInfo:=BufferAlloc(GUITHREADINFO_cbsize,0)    ;GuiThreadInfoSize = 48
         NumPut("UInt",GUITHREADINFO_cbsize,GuiThreadInfo,0)
         threadWnd := this.GetWindowThreadProcessId( hwnd )
-        ifnot DllCall( "GetGUIThreadInfo", "uint", threadWnd, "UPtr", GuiThreadInfo.Ptr )
+        if not DllCall( "GetGUIThreadInfo", "uint", threadWnd, "UPtr", GuiThreadInfo.Ptr )
                 return 0
         return NumGet( GuiThreadInfo, 8+A_PtrSize,"UPtr")  ; Retrieve the hwndFocus field from the struct.
     }
