@@ -2,8 +2,8 @@ class WinClip extends WinClip_base
 {
     __New()
     {
-        this.isinstance := 1
-        this.allData := ""
+        this["isinstance"] := 1
+        this["allData"] := ""
     }
  
     _toclipboard( ByRef data, size )
@@ -29,14 +29,14 @@ class WinClip extends WinClip_base
                 continue
             }
             WinClipAPI.memcopy( pData, data.Ptr + offset, dataSize )
-            if ( fmt == this.ClipboardFormats.CF_ENHMETAFILE )
+            if ( fmt == this["ClipboardFormats"]["CF_ENHMETAFILE"] )
                 pClipData := WinClipAPI.SetEnhMetaFileBits( pData, dataSize )
             else
                 pClipData := pData
             if !pClipData
                 continue
             WinClipAPI.SetClipboardData( fmt, pClipData )
-            if ( fmt == this.ClipboardFormats.CF_ENHMETAFILE )
+            if ( fmt == this["ClipboardFormats"]["CF_ENHMETAFILE"] )
                 WinClipAPI.DeleteEnhMetaFile( pClipData )
             WinClipAPI.GlobalUnlock( pData )
             offset += dataSize
@@ -51,17 +51,17 @@ class WinClip extends WinClip_base
         if !WinClipAPI.OpenClipboard()
             return 0
         nextformat := 0
-        objFormats := Map()
+        objFormats := object()
         clipSize := 0
         formatsNum := 0
         while ( nextformat := WinClipAPI.EnumClipboardFormats( nextformat ) )
         {
-            if this.skipFormats.HasOwnProp( nextformat )
+            if this["skipFormats"].hasKey( nextformat )
                 continue
             if ( dataHandle := WinClipAPI.GetClipboardData( nextformat ) )
             {
                 pObjPtr := 0, nObjSize := 0
-                if ( nextformat == this.ClipboardFormats.CF_ENHMETAFILE )
+                if ( nextformat == this["ClipboardFormats"]["CF_ENHMETAFILE"] )
                 {
                     if ( bufSize := WinClipAPI.GetEnhMetaFileBits( dataHandle, hemfBuf ) )
                         pObjPtr := hemfBuf.Ptr, nObjSize := bufSize
@@ -72,7 +72,7 @@ class WinClip extends WinClip_base
                     continue
                 if !( pObjPtr && nObjSize )
                     continue
-                objFormats[ nextformat ] := { handle : pObjPtr, size : nObjSize }
+                objFormats[ nextformat ] := Map( "handle" , pObjPtr, "size" , nObjSize )
                 clipSize += nObjSize
                 formatsNum++
             }
@@ -83,7 +83,7 @@ class WinClip extends WinClip_base
             WinClipAPI.CloseClipboard()
             return 0
         }
-        clipData:=BufferAlloc(structSize)
+        clipData:=BufferAlloc(structSize,0)
         ; array in form of:
         ; format   UInt
         ; dataSize UInt
@@ -93,11 +93,11 @@ class WinClip extends WinClip_base
         {
             NumPut("UInt",fmt,clipData.Ptr,offset)
             offset += 4
-            NumPut("UInt",params.size,clipData.Ptr,offset)
+            NumPut("UInt",params["size"],clipData.Ptr,offset)
             offset += 4
-            WinClipAPI.memcopy( clipData.Ptr + offset, params.handle, params.size )
-            offset += params.size
-            WinClipAPI.GlobalUnlock( params.handle )
+            WinClipAPI.memcopy( clipData.Ptr + offset, params["handle"], params["size"] )
+            offset += params["size"]
+            WinClipAPI.GlobalUnlock( params["handle"] )
         }
         WinClipAPI.CloseClipboard()
         return structSize
@@ -105,7 +105,7 @@ class WinClip extends WinClip_base
     
     _IsInstance( funcName )
     {
-        if !this.isinstance
+        if !this["isinstance"]
         {
             throw Exception( "Error in '" funcName "':`nInstantiate the object first to use this method!", -1 )
             return 0
@@ -118,8 +118,8 @@ class WinClip extends WinClip_base
         f := FileOpen( filePath, "r","CP0" )
         if !IsObject( f )
             return 0
-        f.Pos := 0
-        dataSize := f.RawRead( Data, f.Length )
+        f["Pos"] := 0
+        dataSize := f.RawRead( Data, f["Length"] )
         f.close()
         return dataSize
     }
@@ -136,9 +136,9 @@ class WinClip extends WinClip_base
     {
         if !size
             return 0
-        if !this["allData"].Size := size
+        if !ObjSetCapacity( this, "allData", size )
             return 0
-        if !( pData := this["allData"].Ptr )
+        if !( pData := ObjGetAddress( this, "allData" ) )
             return 0
         WinClipAPI.memcopy( pData, data.Ptr, size )
         return size
@@ -146,25 +146,25 @@ class WinClip extends WinClip_base
     
     _getClipData( ByRef data )
     {
-        if !( clipSize := this["allData"].Size )
+        if !( clipSize := ObjGetCapacity( this, "allData" ) )
             return 0
-        if !( pData := this["allData"].Ptr )
+        if !( pData := ObjGetAddress( this, "allData" ) )
             return 0
-        data:=BufferAlloc(clipSize)
+        data:=BufferAlloc(clipSize,0)
         WinClipAPI.memcopy( data.Ptr, pData, clipSize )
         return clipSize
     }
     
     __Delete()
     {
-        this["allData"].Size := 0
+        ObjSetCapacity( this, "allData", 0 )
         return
     }
     
     _parseClipboardData( ByRef data, size )
     {
         offset := 0
-        formats := Map()
+        formats := object()
         while ( offset < size )
         {
             if !( fmt := NumGet( data, offset, "UInt" ) )
@@ -175,9 +175,9 @@ class WinClip extends WinClip_base
             offset += 4
             if ( ( offset + dataSize ) > size )
                 break
-            params := { name : this._getFormatName( fmt ), size : dataSize }
-            params["buffer"].Size := dataSize
-            pBuf := params["buffer"].Ptr
+            params := Map( "name" , this._getFormatName( fmt ), "size" , dataSize )
+            ObjSetCapacity( params, "buffer", dataSize )
+            pBuf := ObjGetAddress( params, "buffer" )
             WinClipAPI.memcopy( pBuf, data.Ptr + offset, dataSize )
             formats[ fmt ] := params
             offset += dataSize
@@ -192,17 +192,17 @@ class WinClip extends WinClip_base
         ;calculating required data size
         clipSize := 0
         for fmt, params in objClip
-            clipSize += 8 + params.size
-        out_data:=BufferAlloc(clipSize)
+            clipSize += 8 + params["size"]
+        out_data:=BufferAlloc(clipSize,0)
         offset := 0
         for fmt, params in objClip
         {
             NumPut("UInt",fmt,out_data,offset)
             offset += 4
-            NumPut("UInt",params.size,out_data,offset)
+            NumPut("UInt",params["size"],out_data,offset)
             offset += 4
-            WinClipAPI.memcopy( out_data.Ptr + offset, params["buffer"].Ptr, params.size )
-            offset += params.size
+            WinClipAPI.memcopy( out_data.Ptr + offset, ObjGetAddress( params, "buffer" ), params["size"] )
+            offset += params["size"]
         }
         return clipSize
     }
@@ -237,7 +237,7 @@ class WinClip extends WinClip_base
 
     Restore( ByRef clipData )
     {
-        clipSize := clipData.Size
+        clipSize := clipData:=BufferAlloc()
         return this._toclipboard( clipData, clipSize )
     }
 
@@ -291,18 +291,18 @@ class WinClip extends WinClip_base
     iClear()
     {
         this._IsInstance( A_ThisFunc )
-        this["allData"].Size := 0
+        ObjSetCapacity( this, "allData", 0 )
     }
     
     Copy( timeout := 1, method := 1 )
     {
         this.Snap( data )
-        this.Clear()    ;clearing the A_Clipboard
+        this.Clear()    ;clearing the clipboard
         if( method = 1 )
-            SendInput "^{Ins}"
+            SendInput "^{Ins}" 
         else
             SendInput "^{vk43sc02E}" ;ctrl+c
-        ClipWait timeout, 1
+        ClipWait timeout, "1" 
         if ( ret := this._isClipEmpty() )
             this.Restore( data )
         return !ret
@@ -312,16 +312,16 @@ class WinClip extends WinClip_base
     {
         this._IsInstance( A_ThisFunc )
         this.Snap( data )
-        this.Clear()    ;clearing the A_Clipboard
+        this.Clear()    ;clearing the clipboard
         if( method = 1 )
-            SendInput "^{Ins}"
+            SendInput "^{Ins}" 
         else
             SendInput "^{vk43sc02E}" ;ctrl+c
-        ClipWait timeout, 1
+        ClipWait timeout, "1"
         bytesCopied := 0
         if !this._isClipEmpty()
         {
-            this.iClear()   ;clearing the variable containing the A_Clipboard data
+            this.iClear()   ;clearing the variable containing the clipboard data
             bytesCopied := this.iSnap()
         }
         this.Restore( data )
@@ -338,7 +338,7 @@ class WinClip extends WinClip_base
             ret := this.SetText( plainText )
         }
         if( method = 1 )
-            SendInput "+{Ins}"
+            SendInput "+{Ins}" 
         else
             SendInput "^{vk56sc02F}" ;ctrl+v
         this._waitClipReady( 3000 )
@@ -358,7 +358,7 @@ class WinClip extends WinClip_base
         if !( bytesRestored := this.iRestore() )
             return 0
         if( method = 1 )
-            SendInput "+{Ins}"
+            SendInput "+{Ins}" 
         else
             SendInput "^{vk56sc02F}" ;ctrl+v
         this._waitClipReady( 3000 )
@@ -384,9 +384,9 @@ class WinClip extends WinClip_base
     _waitClipReady( timeout := 10000 )
     {
         start_time := A_TickCount
-        sleep 100
+        sleep "100"
         while ( WinClipAPI.GetOpenClipboardWindow() && ( A_TickCount - start_time < timeout ) )
-            sleep 100
+            sleep "100"
     }
 
     iSetText( textData )
@@ -454,11 +454,11 @@ class WinClip extends WinClip_base
     {
         objFormats := this._parseClipboardData( clipData, clipSize )
         uFmt := WinClipAPI.RegisterClipboardFormat( "Rich Text Format" )
-        objFormats[ uFmt ] := Map()
+        objFormats[ uFmt ] := object()
         sLen := StrLen( textData )
-        objFormats[ uFmt ]["buffer"].Size := sLen
-        StrPut( textData, objFormats[ uFmt ]["buffer"].Ptr, sLen, "CP0" )
-        objFormats[ uFmt ].size := sLen
+        ObjSetCapacity( objFormats[ uFmt ], "buffer", sLen )
+        StrPut( textData, ObjGetAddress( objFormats[ uFmt ], "buffer" ), sLen, "CP0" )
+        objFormats[ uFmt ]["size"] := sLen
         return this._compileClipData( clipData, objFormats )
     }
 
@@ -515,7 +515,7 @@ class WinClip extends WinClip_base
     {
         objFormats := this._parseClipboardData( clipData, clipSize )
         uFmt := WinClipAPI.RegisterClipboardFormat( "HTML Format" )
-        objFormats[ uFmt ] := Map()
+        objFormats[ uFmt ] := object()
         encoding := "UTF-8"
         htmlLen := StrPut( htmlData, encoding ) - 1   ;substract null
         srcLen := 2 + 10 + StrPut( source, encoding ) - 1      ;substract null
@@ -540,26 +540,26 @@ class WinClip extends WinClip_base
         html .= "</html>`r`n"
 
         sLen := StrPut( html, encoding )
-        objFormats[ uFmt ]["buffer"].Size := sLen
-        StrPut( html, objFormats[ uFmt ]["buffer"].Ptr, sLen, encoding )
-        objFormats[ uFmt ].size := sLen
+        ObjSetCapacity( objFormats[ uFmt ], "buffer", sLen )
+        StrPut( html, ObjGetAddress( objFormats[ uFmt ], "buffer" ), sLen, encoding )
+        objFormats[ uFmt ]["size"] := sLen
         return this._compileClipData( clipData, objFormats )
     }
     
     _appendText( ByRef clipData, clipSize, textData, IsSet := 0 )
     {
         objFormats := this._parseClipboardData( clipData, clipSize )
-        uFmt := this.ClipboardFormats.CF_UNICODETEXT
+        uFmt := this["ClipboardFormats"]["CF_UNICODETEXT"]
         str := ""
-        if ( objFormats.HasOwnProp( uFmt ) && !IsSet )
-            str := strget( objFormats[ uFmt ]["buffer"].Ptr, "UTF-16" )
+        if ( objFormats.haskey( uFmt ) && !IsSet )
+            str := strget( ObjGetAddress( objFormats[ uFmt ],  "buffer" ), "UTF-16" )
         else
-            objFormats[ uFmt ] := Map()
+            objFormats[ uFmt ] := object()
         str .= textData
         sLen := ( StrLen( str ) + 1 ) * 2
-        objFormats[ uFmt ]["buffer"].Size := sLen
-        StrPut( str, objFormats[ uFmt ]["buffer"].Ptr, sLen, "UTF-16" )
-        objFormats[ uFmt ].size := sLen
+        ObjSetCapacity( objFormats[ uFmt ], "buffer", sLen )
+        StrPut( str, ObjGetAddress( objFormats[ uFmt ], "buffer" ), sLen, "UTF-16" )
+        objFormats[ uFmt ]["size"] := sLen
         return this._compileClipData( clipData, objFormats )
     }
     
@@ -580,33 +580,33 @@ class WinClip extends WinClip_base
     _setFiles( ByRef clipData, clipSize, files, append := 0, isCut := 0 )
     {
         objFormats := this._parseClipboardData( clipData, clipSize )
-        uFmt := this.ClipboardFormats.CF_HDROP
-        if ( append && objFormats.HasOwnProp( uFmt ) )
-            prevList := this._getFiles( objFormats[ uFmt ]["buffer"].Ptr ) "`n"
+        uFmt := this["ClipboardFormats"]["CF_HDROP"]
+        if ( append && objFormats.haskey( uFmt ) )
+            prevList := this._getFiles( ObjGetAddress( objFormats[ uFmt ], "buffer" ) ) "`n"
         objFiles := WinClipAPI.StrSplit( prevList . files, "`n", A_Space A_Tab )
         objFiles := WinClipAPI.RemoveDubls( objFiles )
         if !objFiles.MaxIndex()
             return 0
-        objFormats[ uFmt ] := Map()
+        objFormats[ uFmt ] := object()
         DROP_size := 20 + 2
         for i,str in objFiles
             DROP_size += ( StrLen( str ) + 1 ) * 2
-        DROPFILES:=BufferAlloc(DROP_size)
+        DROPFILES:=BufferAlloc(DROP_size,0)
         NumPut("UInt",20,DROPFILES,0)  ;offset
-        NumPut("uchar",1,DROPFILES,16) ;NumPut("UInt",20,DROPFILES,0)
+        NumPut("uchar",1,DROPFILES,16) ;NumPut( 20, DROPFILES, 0, "UInt" )
         offset := DROPFILES.Ptr + 20
         for i,str in objFiles
         {
             StrPut( str, offset, "UTF-16" )
             offset += ( StrLen( str ) + 1 ) * 2
         }
-        objFormats[ uFmt ]["buffer"].Size := DROP_size
-        WinClipAPI.memcopy( objFormats[ uFmt ]["buffer"].Ptr, DROPFILES.Ptr, DROP_size )
-        objFormats[ uFmt ].size := DROP_size
+        ObjSetCapacity( objFormats[ uFmt ], "buffer", DROP_size )
+        WinClipAPI.memcopy( ObjGetAddress( objFormats[ uFmt ], "buffer" ), DROPFILES.Ptr, DROP_size )
+        objFormats[ uFmt ]["size"] := DROP_size
         prefFmt := WinClipAPI.RegisterClipboardFormat( "Preferred DropEffect" )
-        objFormats[ prefFmt ] := { size : 4 }
-        objFormats[ prefFmt ]["buffer"].Size := 4
-        NumPut( isCut ? 2 : 5, objFormats[ prefFmt ]["buffer"].Ptr, 0, "UInt" )
+        objFormats[ prefFmt ] := Map( "size" , 4 )
+        ObjSetCapacity( objFormats[ prefFmt ], "buffer", 4 )
+        NumPut("UInt",isCut? 2:5,ObjGetAddress( objFormats[ prefFmt ], "buffer" ),0)
         return this._compileClipData( clipData, objFormats )
     }
     
@@ -656,7 +656,7 @@ class WinClip extends WinClip_base
     {
         if !( clipSize := this._fromclipboard( clipData ) )
             return ""
-        if !( out_size := this._getFormatData( out_data, clipData, clipSize, this.ClipboardFormats.CF_HDROP ) )
+        if !( out_size := this._getFormatData( out_data, clipData, clipSize, this["ClipboardFormats"]["CF_HDROP"] ) )
             return ""
         return this._getFiles( out_data.Ptr )
     }
@@ -666,7 +666,7 @@ class WinClip extends WinClip_base
         this._IsInstance( A_ThisFunc )
         if !( clipSize := this._getClipData( clipData ) )
             return ""
-        if !( out_size := this._getFormatData( out_data, clipData, clipSize, this.ClipboardFormats.CF_HDROP ) )
+        if !( out_size := this._getFormatData( out_data, clipData, clipSize, this["ClipboardFormats"]["CF_HDROP"] ) )
             return ""
         return this._getFiles( out_data.Ptr )
     }
@@ -687,7 +687,7 @@ class WinClip extends WinClip_base
             offset += 4
             if ( fmt == needleFormat )
             {
-                out_data:=BufferAlloc(dataSize)
+                out_data:=BufferAlloc(dataSize,0)
                 WinClipAPI.memcopy( out_data.Ptr, data.Ptr + offset, dataSize )
                 return dataSize
             }
@@ -712,7 +712,7 @@ class WinClip extends WinClip_base
     {
         if !( clipSize := this._fromclipboard( clipData ) )
             return ""
-        if !( out_size := this._getFormatData( out_data, clipData, clipSize, this.ClipboardFormats.CF_DIB ) )
+        if !( out_size := this._getFormatData( out_data, clipData, clipSize, this["ClipboardFormats"]["CF_DIB"] ) )
             return ""
         return this._DIBtoHBITMAP( out_data )
     }
@@ -722,7 +722,7 @@ class WinClip extends WinClip_base
         this._IsInstance( A_ThisFunc )
         if !( clipSize := this._getClipData( clipData ) )
             return ""
-        if !( out_size := this._getFormatData( out_data, clipData, clipSize, this.ClipboardFormats.CF_DIB ) )
+        if !( out_size := this._getFormatData( out_data, clipData, clipSize, this["ClipboardFormats"]["CF_DIB"] ) )
             return ""
         return this._DIBtoHBITMAP( out_data )
     }
@@ -746,23 +746,23 @@ class WinClip extends WinClip_base
                 return 0
         ;http://www.codeguru.com/Cpp/G-M/bitmap/article.php/c1765
         if !( hdc := DllCall( "GetDC", "Ptr", 0 ) )
-            Goto _BITMAPtoDIB_cleanup
+            goto "_BITMAPtoDIB_cleanup" 
         hPal := DllCall( "GetStockObject", "UInt", 15 ) ;DEFAULT_PALLETE
         hPal := DllCall( "SelectPalette", "ptr", hdc, "ptr", hPal, "Uint", 0 )
         DllCall( "RealizePalette", "ptr", hdc )
         size := DllCall( "GetObject", "Ptr", hBitmap, "Uint", 0, "ptr", 0 )
-        bm:=BufferAlloc(size)
+        bm:=BufferAlloc(size,0)
         DllCall( "GetObject", "Ptr", hBitmap, "Uint", size, "ptr", bm.Ptr )
         biBitCount := NumGet( bm, 16, "UShort" )*NumGet( bm, 18, "UShort" )
         nColors := (1 << biBitCount)
     if ( nColors > 256 ) 
         nColors := 0
     bmiLen  := 40 + nColors * 4
-        bmi:=BufferAlloc(bmiLen)
+        bmi:=BufferAlloc(bmiLen,0)
         ;BITMAPINFOHEADER initialization
         NumPut("Uint",40,bmi,0)
-        NumPut( NumGet( bm, 4, "Uint" ), bmi, 4, "Uint" )   ;width
-        NumPut( biHeight := NumGet( bm, 8, "Uint" ), bmi, 8, "Uint" ) ;height
+        NumPut("Uint",NumGet( bm, 4, "Uint" ),bmi,4)   ;width
+        NumPut("Uint",biHeight:=NumGet( bm, 8, "Uint" ),bmi,8) ;height
         NumPut("UShort",1,bmi,12)
         NumPut("UShort",biBitCount,bmi,14)
         NumPut("UInt",0,bmi,16) ;compression must be BI_RGB
@@ -776,21 +776,21 @@ class WinClip extends WinClip_base
                             ,"ptr",0      ;lpvBits 
                             ,"ptr",bmi.Ptr  ;lpbi 
                             ,"uint",0)    ;DIB_RGB_COLORS
-            Goto _BITMAPtoDIB_cleanup
+            goto "_BITMAPtoDIB_cleanup" 
         biSizeImage := NumGet( bmi.Ptr, 20, "UInt" )
         if ( biSizeImage = 0 )
         {
             biBitCount := numget( bmi.Ptr, 14, "UShort" )
             biWidth := numget( bmi.Ptr, 4, "UInt" )
             biHeight := numget( bmi.Ptr, 8, "UInt" )
-            biSizeImage := (((( biWidth * biBitCount + 31 ) & ~31 ) >> 3 ) * biHeight )
+            biSizeImage := (((( biWidth * biBitCount + 31 )  ~31.Ptr ) >> 3 ) * biHeight )
             ;~ dwCompression := numget( bmi, 16, "UInt" )
             ;~ if ( dwCompression != 0 ) ;BI_RGB
                 ;~ biSizeImage := ( biSizeImage * 3 ) / 2
             NumPut("UInt",biSizeImage,bmi.Ptr,20)
         }
         DIBLen := bmiLen + biSizeImage
-        DIB:=BufferAlloc(DIBLen)
+        DIB:=BufferAlloc(DIBLen,0)
         WinClipAPI.memcopy( DIB.Ptr, bmi.Ptr, bmiLen )
         if !DllCall("GetDIBits"
                             ,"ptr",hdc
@@ -800,7 +800,7 @@ class WinClip extends WinClip_base
                             ,"ptr",DIB.Ptr + bmiLen     ;lpvBits 
                             ,"ptr",DIB.Ptr  ;lpbi 
                             ,"uint",0)    ;DIB_RGB_COLORS
-            Goto _BITMAPtoDIB_cleanup
+            goto "_BITMAPtoDIB_cleanup" 
 _BITMAPtoDIB_cleanup:
         if bmMade
             DllCall( "DeleteObject", "ptr", hBitmap )
@@ -815,10 +815,10 @@ _BITMAPtoDIB_cleanup:
     _setBitmap( ByRef DIB, DIBSize, ByRef clipData, clipSize )
     {
         objFormats := this._parseClipboardData( clipData, clipSize )
-        uFmt := this.ClipboardFormats.CF_DIB
-        objFormats[ uFmt ] := { size : DIBSize }
-        objFormats[ uFmt ]["buffer"].Size := DIBSize
-        WinClipAPI.memcopy( objFormats[ uFmt ]["buffer"].Ptr, DIB.Ptr, DIBSize )
+        uFmt := this["ClipboardFormats"]["CF_DIB"]
+        objFormats[ uFmt ] := Map( "size" , DIBSize )
+        ObjSetCapacity( objFormats[ uFmt ], "buffer", DIBSize )
+        WinClipAPI.memcopy( ObjGetAddress( objFormats[ uFmt ], "buffer" ), DIB.Ptr, DIBSize )
         return this._compileClipData( clipData, objFormats )
     }
     
@@ -849,7 +849,7 @@ _BITMAPtoDIB_cleanup:
     {
         if !( clipSize := this._fromclipboard( clipData ) )
             return ""
-        if !( out_size := this._getFormatData( out_data, clipData, clipSize, this.ClipboardFormats.CF_UNICODETEXT ) )
+        if !( out_size := this._getFormatData( out_data, clipData, clipSize, this["ClipboardFormats"]["CF_UNICODETEXT"] ) )
             return ""
         return strget( out_data.Ptr, out_size / 2, "UTF-16" )
     }
@@ -859,7 +859,7 @@ _BITMAPtoDIB_cleanup:
         this._IsInstance( A_ThisFunc )
         if !( clipSize := this._getClipData( clipData ) )
             return ""
-        if !( out_size := this._getFormatData( out_data, clipData, clipSize, this.ClipboardFormats.CF_UNICODETEXT ) )
+        if !( out_size := this._getFormatData( out_data, clipData, clipSize, this["ClipboardFormats"]["CF_UNICODETEXT"] ) )
             return ""
         return strget( out_data.Ptr, out_size / 2, "UTF-16" )
     }
@@ -885,8 +885,8 @@ _BITMAPtoDIB_cleanup:
     
     _getFormatName( iformat )
     {
-        if this.formatByValue.HasOwnProp( iformat )
-            return this.formatByValue[ iformat ]
+        if this["formatByValue"].HasKey( iformat )
+            return this["formatByValue"][ iformat ]
         else
             return WinClipAPI.GetClipboardFormatName( iformat )
     }
@@ -900,13 +900,13 @@ _BITMAPtoDIB_cleanup:
     iSetData( ByRef data )
     {
         this._IsInstance( A_ThisFunc )
-        return this._setClipData( data, data.Size )
+        return this._setClipData( data, data:=BufferAlloc() )
     }
     
     iGetSize()
     {
         this._IsInstance( A_ThisFunc )
-        return this["alldata"].Size
+        return ObjGetCapacity( this, "alldata" )
     }
     
     HasFormat( fmt )
@@ -951,7 +951,7 @@ _BITMAPtoDIB_cleanup:
             return 0
         if !( clipSize := this._getClipData( clipData ) )
             return 0
-        if !( DIBsize := this._getFormatData( DIB, clipData, clipSize, this.ClipboardFormats.CF_DIB ) )
+        if !( DIBsize := this._getFormatData( DIB, clipData, clipSize, this["ClipboardFormats"]["CF_DIB"] ) )
             return 0
         gdip_token := WinClipAPI.Gdip_Startup()
         if !WinClipAPI.GetEncoderClsid( format, CLSID )
@@ -969,7 +969,7 @@ _BITMAPtoDIB_cleanup:
             return 0
         if !( clipSize := this._fromclipboard( clipData ) )
             return 0
-        if !( DIBsize := this._getFormatData( DIB, clipData, clipSize, this.ClipboardFormats.CF_DIB ) )
+        if !( DIBsize := this._getFormatData( DIB, clipData, clipSize, this["ClipboardFormats"]["CF_DIB"] ) )
             return 0
         gdip_token := WinClipAPI.Gdip_Startup()
         if !WinClipAPI.GetEncoderClsid( format, CLSID )
@@ -981,73 +981,73 @@ _BITMAPtoDIB_cleanup:
         return 1
     }
     
-    static ClipboardFormats := { CF_BITMAP : 2 ;A handle to a bitmap (HBITMAP).
-                                ,CF_DIB : 8  ;A memory object containing a BITMAPINFO structure followed by the bitmap bits.
-                                ,CF_DIBV5 : 17 ;A memory object containing a BITMAPV5HEADER structure followed by the bitmap color space information and the bitmap bits.
-                                ,CF_DIF : 5 ;Software Arts' Data Interchange Format.
-                                ,CF_DSPBITMAP : 0x0082 ;Bitmap display format associated with a private format. The hMem parameter must be a handle to data that can be displayed in bitmap format in lieu of the privately formatted data.
-                                ,CF_DSPENHMETAFILE : 0x008E ;Enhanced metafile display format associated with a private format. The hMem parameter must be a handle to data that can be displayed in enhanced metafile format in lieu of the privately formatted data.
-                                ,CF_DSPMETAFILEPICT : 0x0083 ;Metafile-picture display format associated with a private format. The hMem parameter must be a handle to data that can be displayed in metafile-picture format in lieu of the privately formatted data.
-                                ,CF_DSPTEXT : 0x0081 ;Text display format associated with a private format. The hMem parameter must be a handle to data that can be displayed in text format in lieu of the privately formatted data.
-                                ,CF_ENHMETAFILE : 14 ;A handle to an enhanced metafile (HENHMETAFILE).
-                                ,CF_GDIOBJFIRST : 0x0300 ;Start of a range of integer values for application-defined GDI object A_Clipboard formats. The end of the range is CF_GDIOBJLAST.Handles associated with A_Clipboard formats in this range are not automatically deleted using the GlobalFree function when the A_Clipboard is emptied. Also, when using values in this range, the hMem parameter is not a handle to a GDI object, but is a handle allocated by the GlobalAlloc function with the GMEM_MOVEABLE flag.
-                                ,CF_GDIOBJLAST : 0x03FF ;See CF_GDIOBJFIRST.
-                                ,CF_HDROP : 15 ;A handle to type HDROP that identifies a list of files. An application can retrieve information about the files by passing the handle to the DragQueryFile function.
-                                ,CF_LOCALE : 16 ;The data is a handle to the locale identifier associated with text in the A_Clipboard. When you close the A_Clipboard, if it contains CF_TEXT data but no CF_LOCALE data, the system automatically sets the CF_LOCALE format to the current input language. You can use the CF_LOCALE format to associate a different locale with the A_Clipboard text. An application that pastes text from the A_Clipboard can retrieve this format to determine which character set was used to generate the text. Note that the A_Clipboard does not support plain text in multiple character sets. To achieve this, use a formatted text data type such as RTF instead. The system uses the code page associated with CF_LOCALE to implicitly convert from CF_TEXT to CF_UNICODETEXT. Therefore, the correct code page table is used for the conversion.
-                                ,CF_METAFILEPICT : 3 ;Handle to a metafile picture format as defined by the METAFILEPICT structure. When passing a CF_METAFILEPICT handle by means of DDE, the application responsible for deleting hMem should also free the metafile referred to by the CF_METAFILEPICT handle.
-                                ,CF_OEMTEXT : 7 ;Text format containing characters in the OEM character set. Each line ends with a carriage return/linefeed (CR-LF) combination. A null character signals the end of the data.
-                                ,CF_OWNERDISPLAY : 0x0080 ;Owner-display format. The A_Clipboard owner must display and update the A_Clipboard viewer window, and receive the WM_ASKCBFORMATNAME, WM_HSCROLLCLIPBOARD, WM_PAINTCLIPBOARD, WM_SIZECLIPBOARD, and WM_VSCROLLCLIPBOARD messages. The hMem parameter must be NULL.
-                                ,CF_PALETTE : 9 ;Handle to a color palette. Whenever an application places data in the A_Clipboard that depends on or assumes a color palette, it should place the palette on the A_Clipboard as well.If the A_Clipboard contains data in the CF_PALETTE (logical color palette) format, the application should use the SelectPalette and RealizePalette functions to realize (compare) any other data in the A_Clipboard against that logical palette.When displaying A_Clipboard data, the A_Clipboard always uses as its current palette any object on the A_Clipboard that is in the CF_PALETTE format.
-                                ,CF_PENDATA : 10 ;Data for the pen extensions to the Microsoft Windows for Pen Computing.
-                                ,CF_PRIVATEFIRST : 0x0200 ;Start of a range of integer values for private A_Clipboard formats. The range ends with CF_PRIVATELAST. Handles associated with private A_Clipboard formats are not freed automatically; the A_Clipboard owner must free such handles, typically in response to the WM_DESTROYCLIPBOARD message.
-                                ,CF_PRIVATELAST : 0x02FF ;See CF_PRIVATEFIRST.
-                                ,CF_RIFF : 11 ;Represents audio data more complex than can be represented in a CF_WAVE standard wave format.
-                                ,CF_SYLK : 4 ;Microsoft Symbolic Link (SYLK) format.
-                                ,CF_TEXT : 1 ;Text format. Each line ends with a carriage return/linefeed (CR-LF) combination. A null character signals the end of the data. Use this format for ANSI text.
-                                ,CF_TIFF : 6 ;Tagged-image file format.
-                                ,CF_UNICODETEXT : 13 ;Unicode text format. Each line ends with a carriage return/linefeed (CR-LF) combination. A null character signals the end of the data.
-                                ,CF_WAVE : 12 } ;Represents audio data in one of the standard wave formats, such as 11 kHz or 22 kHz PCM.
+    static ClipboardFormats := Map( "CF_BITMAP" , 2 ;A handle to a bitmap (HBITMAP).
+                                ,"CF_DIB" , 8  ;A memory object containing a BITMAPINFO structure followed by the bitmap bits.
+                                ,"CF_DIBV5" , 17 ;A memory object containing a BITMAPV5HEADER structure followed by the bitmap color space information and the bitmap bits.
+                                ,"CF_DIF" , 5 ;Software Arts' Data Interchange Format.
+                                ,"CF_DSPBITMAP" , 0x0082 ;Bitmap display format associated with a private format. The hMem parameter must be a handle to data that can be displayed in bitmap format in lieu of the privately formatted data.
+                                ,"CF_DSPENHMETAFILE" , 0x008E ;Enhanced metafile display format associated with a private format. The hMem parameter must be a handle to data that can be displayed in enhanced metafile format in lieu of the privately formatted data.
+                                ,"CF_DSPMETAFILEPICT" , 0x0083 ;Metafile-picture display format associated with a private format. The hMem parameter must be a handle to data that can be displayed in metafile-picture format in lieu of the privately formatted data.
+                                ,"CF_DSPTEXT" , 0x0081 ;Text display format associated with a private format. The hMem parameter must be a handle to data that can be displayed in text format in lieu of the privately formatted data.
+                                ,"CF_ENHMETAFILE" , 14 ;A handle to an enhanced metafile (HENHMETAFILE).
+                                ,"CF_GDIOBJFIRST" , 0x0300 ;Start of a range of integer values for application-defined GDI object clipboard formats. The end of the range is CF_GDIOBJLAST.Handles associated with clipboard formats in this range are not automatically deleted using the GlobalFree function when the clipboard is emptied. Also, when using values in this range, the hMem parameter is not a handle to a GDI object, but is a handle allocated by the GlobalAlloc function with the GMEM_MOVEABLE flag.
+                                ,"CF_GDIOBJLAST" , 0x03FF ;See CF_GDIOBJFIRST.
+                                ,"CF_HDROP" , 15 ;A handle to type HDROP that identifies a list of files. An application can retrieve information about the files by passing the handle to the DragQueryFile function.
+                                ,"CF_LOCALE" , 16 ;The data is a handle to the locale identifier associated with text in the clipboard. When you close the clipboard, if it contains CF_TEXT data but no CF_LOCALE data, the system automatically sets the CF_LOCALE format to the current input language. You can use the CF_LOCALE format to associate a different locale with the clipboard text. An application that pastes text from the clipboard can retrieve this format to determine which character set was used to generate the text. Note that the clipboard does not support plain text in multiple character sets. To achieve this, use a formatted text data type such as RTF instead. The system uses the code page associated with CF_LOCALE to implicitly convert from CF_TEXT to CF_UNICODETEXT. Therefore, the correct code page table is used for the conversion.
+                                ,"CF_METAFILEPICT" , 3 ;Handle to a metafile picture format as defined by the METAFILEPICT structure. When passing a CF_METAFILEPICT handle by means of DDE, the application responsible for deleting hMem should also free the metafile referred to by the CF_METAFILEPICT handle.
+                                ,"CF_OEMTEXT" , 7 ;Text format containing characters in the OEM character set. Each line ends with a carriage return/linefeed (CR-LF) combination. A null character signals the end of the data.
+                                ,"CF_OWNERDISPLAY" , 0x0080 ;Owner-display format. The clipboard owner must display and update the clipboard viewer window, and receive the WM_ASKCBFORMATNAME, WM_HSCROLLCLIPBOARD, WM_PAINTCLIPBOARD, WM_SIZECLIPBOARD, and WM_VSCROLLCLIPBOARD messages. The hMem parameter must be NULL.
+                                ,"CF_PALETTE" , 9 ;Handle to a color palette. Whenever an application places data in the clipboard that depends on or assumes a color palette, it should place the palette on the clipboard as well.If the clipboard contains data in the CF_PALETTE (logical color palette) format, the application should use the SelectPalette and RealizePalette functions to realize (compare) any other data in the clipboard against that logical palette.When displaying clipboard data, the clipboard always uses as its current palette any object on the clipboard that is in the CF_PALETTE format.
+                                ,"CF_PENDATA" , 10 ;Data for the pen extensions to the Microsoft Windows for Pen Computing.
+                                ,"CF_PRIVATEFIRST" , 0x0200 ;Start of a range of integer values for private clipboard formats. The range ends with CF_PRIVATELAST. Handles associated with private clipboard formats are not freed automatically; the clipboard owner must free such handles, typically in response to the WM_DESTROYCLIPBOARD message.
+                                ,"CF_PRIVATELAST" , 0x02FF ;See CF_PRIVATEFIRST.
+                                ,"CF_RIFF" , 11 ;Represents audio data more complex than can be represented in a CF_WAVE standard wave format.
+                                ,"CF_SYLK" , 4 ;Microsoft Symbolic Link (SYLK) format.
+                                ,"CF_TEXT" , 1 ;Text format. Each line ends with a carriage return/linefeed (CR-LF) combination. A null character signals the end of the data. Use this format for ANSI text.
+                                ,"CF_TIFF" , 6 ;Tagged-image file format.
+                                ,"CF_UNICODETEXT" , 13 ;Unicode text format. Each line ends with a carriage return/linefeed (CR-LF) combination. A null character signals the end of the data.
+                                ,"CF_WAVE" , 12 ) ;Represents audio data in one of the standard wave formats, such as 11 kHz or 22 kHz PCM.
     
     static                       WM_COPY := 0x301
                                 ,WM_CLEAR := 0x0303
                                 ,WM_CUT := 0x0300
                                 ,WM_PASTE := 0x0302
     
-    static skipFormats := {      2      : 0 ;"CF_BITMAP"
-                                ,17     : 0 ;"CF_DIBV5"
-                                ,0x0082 : 0 ;"CF_DSPBITMAP"
-                                ,0x008E : 0 ;"CF_DSPENHMETAFILE"
-                                ,0x0083 : 0 ;"CF_DSPMETAFILEPICT"
-                                ,0x0081 : 0 ;"CF_DSPTEXT"
-                                ,0x0080 : 0 ;"CF_OWNERDISPLAY"
-                                ,3      : 0 ;"CF_METAFILEPICT"
-                                ,7      : 0 ;"CF_OEMTEXT"
-                                ,1      : 0 } ;"CF_TEXT"
+    static skipFormats := Map(      2      , 0 ;"CF_BITMAP"
+                                ,17     , 0 ;"CF_DIBV5"
+                                ,0x0082 , 0 ;"CF_DSPBITMAP"
+                                ,0x008E , 0 ;"CF_DSPENHMETAFILE"
+                                ,0x0083 , 0 ;"CF_DSPMETAFILEPICT"
+                                ,0x0081 , 0 ;"CF_DSPTEXT"
+                                ,0x0080 , 0 ;"CF_OWNERDISPLAY"
+                                ,3      , 0 ;"CF_METAFILEPICT"
+                                ,7      , 0 ;"CF_OEMTEXT"
+                                ,1      , 0 ) ;"CF_TEXT"
                                                             
-    static formatByValue := {    2 : "CF_BITMAP"
-                                ,8 : "CF_DIB"
-                                ,17 : "CF_DIBV5"
-                                ,5 : "CF_DIF"
-                                ,0x0082 : "CF_DSPBITMAP"
-                                ,0x008E : "CF_DSPENHMETAFILE"
-                                ,0x0083 : "CF_DSPMETAFILEPICT"
-                                ,0x0081 : "CF_DSPTEXT"
-                                ,14 : "CF_ENHMETAFILE"
-                                ,0x0300 : "CF_GDIOBJFIRST"
-                                ,0x03FF : "CF_GDIOBJLAST"
-                                ,15 : "CF_HDROP"
-                                ,16 : "CF_LOCALE"
-                                ,3 : "CF_METAFILEPICT"
-                                ,7 : "CF_OEMTEXT"
-                                ,0x0080 : "CF_OWNERDISPLAY"
-                                ,9 : "CF_PALETTE"
-                                ,10 : "CF_PENDATA"
-                                ,0x0200 : "CF_PRIVATEFIRST"
-                                ,0x02FF : "CF_PRIVATELAST"
-                                ,11 : "CF_RIFF"
-                                ,4 : "CF_SYLK"
-                                ,1 : "CF_TEXT"
-                                ,6 : "CF_TIFF"
-                                ,13 : "CF_UNICODETEXT"
-                                ,12 : "CF_WAVE" }
+    static formatByValue := Map(    2 , "CF_BITMAP"
+                                ,8 , "CF_DIB"
+                                ,17 , "CF_DIBV5"
+                                ,5 , "CF_DIF"
+                                ,0x0082 , "CF_DSPBITMAP"
+                                ,0x008E , "CF_DSPENHMETAFILE"
+                                ,0x0083 , "CF_DSPMETAFILEPICT"
+                                ,0x0081 , "CF_DSPTEXT"
+                                ,14 , "CF_ENHMETAFILE"
+                                ,0x0300 , "CF_GDIOBJFIRST"
+                                ,0x03FF , "CF_GDIOBJLAST"
+                                ,15 , "CF_HDROP"
+                                ,16 , "CF_LOCALE"
+                                ,3 , "CF_METAFILEPICT"
+                                ,7 , "CF_OEMTEXT"
+                                ,0x0080 , "CF_OWNERDISPLAY"
+                                ,9 , "CF_PALETTE"
+                                ,10 , "CF_PENDATA"
+                                ,0x0200 , "CF_PRIVATEFIRST"
+                                ,0x02FF , "CF_PRIVATELAST"
+                                ,11 , "CF_RIFF"
+                                ,4 , "CF_SYLK"
+                                ,1 , "CF_TEXT"
+                                ,6 , "CF_TIFF"
+                                ,13 , "CF_UNICODETEXT"
+                                ,12 , "CF_WAVE" )
 }

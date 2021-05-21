@@ -5,8 +5,8 @@ SetWorkingDir A_ScriptDir ; Ensures a consistent starting directory.
 ListLines 0
 
 ; https://www.autohotkey.com/boards/viewtopic.php?f=6&t=29314
-#Include WinClipAPI.ahk
-#Include WinClip.ahk
+#Include WinClipAPI.ah2
+#Include WinClip.ah2
 
 d WinClip.GetHtml()
 
