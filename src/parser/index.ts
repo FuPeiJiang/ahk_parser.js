@@ -56,7 +56,7 @@ export default (content: string) => {
           }
         }
       } else if (lines[i].slice(c, c + 2) === '*/') {
-          everything.push({ type: 'emptyLines', text: text, i1: multiLineCommentLineStart, c1: multiLineCommentColStart, i2: i, c2: c })
+        everything.push({ type: 'emptyLines', text: text, i1: multiLineCommentLineStart, c1: multiLineCommentColStart, i2: i, c2: c })
       }
     }
 
@@ -1611,6 +1611,9 @@ export default (content: string) => {
           // d('? ternary', char())
           everything.push({ type: '? ternary', text: '?', i1: i, c1: c })
           colonDeep++, c++
+
+          lineWhereCanConcat = -1
+          legalObjLine = i
           if (!recurseBetweenExpression()) { findExpression() }
           if (i === howManyLines) { return false }
           //where findExpression stopped at
@@ -1712,6 +1715,9 @@ export default (content: string) => {
           // d('? ternary', char())
           everything.push({ type: '? ternary', text: '?', i1: i, c1: c })
           colonDeep++, c++
+
+          lineWhereCanConcat = -1
+          legalObjLine = i
           if (!recurseBetweenExpression()) { findExpression() }
           if (i === howManyLines) { return false }
           //where findExpression stopped at

@@ -5,6 +5,7 @@ import { variableCharsObj, whiteSpaceObj } from './parser/tokens'
 
 
 const content: Buffer =
+fs.readFileSync('v2tests/A_IsUnicode start group space.ahk')
 fs.readFileSync('v2tests/A_IsUnicode.ahk')
 // fs.readFileSync('v2tests/fix numput.ahk')
 // fs.readFileSync('v2tests/fix if not.ahk')
@@ -269,11 +270,13 @@ function all() {
             }
             const ternaryTrueStart = b
             let findGroupEnd: boolean|number = false
+            let groupStart
             while (true) {
               b = i
               if (!backEmptyLinesEmptyText()) {break}
               if (everything[b].type === '( group') {
                 findGroupEnd = i - b
+                groupStart = b
               }
               break
             }
@@ -292,7 +295,6 @@ function all() {
             if (findGroupEnd) {
               if (!nextSkipThrough(') group','( group')) {break}
               ternaryFalseEnd = b + 1
-              d(everything[b])
               reconstructed.splice(reconstructed.length - findGroupEnd)
             } else {
               if (!findNextAnyInObj(ternaryColonEndDelim)) {break}
@@ -313,6 +315,10 @@ function all() {
             // remove " ? "
             everything.splice(i,ternaryTrueStart - i)
             // should become foo( bufName, 510)
+            if (findGroupEnd) {
+              //idk if this should be -1 or -2 , I think -1
+              everything.splice(groupStart,findGroupEnd - 1)
+            }
 
             return 3
             // reconstructed.push('')
