@@ -102,13 +102,17 @@ function all() {
       }
     }
     if (thisText.toLowerCase() === 'varsetcapacity') {
-
-      // VarSetStrCapacity(TargetVar, RequestedCapacity, FillByte)
-      // TargetVar:=BufferAlloc(RequestedCapacity,FillByte)
       //#function
       if (!(argsArr = getArgs())) { return 2 }
-      // reconstructed.push(`${a(1)}:=BufferAlloc(${a(2)}${o(',',3)}${a(3)})`)
-      a(1); p(':=BufferAlloc('); a(2); o(',',3); a(3); p(')')
+      if (argsArr.length === 1) {
+        // VarSetCapacity(TargetVar)
+        // TargetVar.Size
+        a(1); p('.Size')
+      } else {
+        // VarSetStrCapacity(TargetVar, RequestedCapacity, FillByte)
+        // TargetVar:=BufferAlloc(RequestedCapacity,FillByte)
+        a(1); p(':=BufferAlloc('); a(2); o(',',3); a(3); p(')')
+      }
     } else if (thisText.toLowerCase() === 'numput') {
       // NumPut(Number, VarOrAddress [, Offset := 0][, Type := "UPtr"])
       // NumPut Type, Number, [Type2, Number2, ...] VarOrAddress [, Offset]

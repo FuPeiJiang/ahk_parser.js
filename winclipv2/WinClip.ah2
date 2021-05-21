@@ -237,7 +237,7 @@ class WinClip extends WinClip_base
 
     Restore( ByRef clipData )
     {
-        clipSize := clipData:=BufferAlloc()
+        clipSize := clipData.Size
         return this._toclipboard( clipData, clipSize )
     }
 
@@ -900,7 +900,7 @@ _BITMAPtoDIB_cleanup:
     iSetData( ByRef data )
     {
         this._IsInstance( A_ThisFunc )
-        return this._setClipData( data, data:=BufferAlloc() )
+        return this._setClipData( data, data.Size )
     }
     
     iGetSize()
