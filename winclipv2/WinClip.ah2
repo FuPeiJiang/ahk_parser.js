@@ -146,7 +146,7 @@ class WinClip extends WinClip_base
     
     _getClipData( ByRef data )
     {
-        if !( clipSize := ObjGetCapacity( this, "allData" ) )
+        if !( clipSize := this["allData"].Size )
             return 0
         if !( pData := this["allData"].Ptr )
             return 0
@@ -906,7 +906,7 @@ _BITMAPtoDIB_cleanup:
     iGetSize()
     {
         this._IsInstance( A_ThisFunc )
-        return ObjGetCapacity( this, "alldata" )
+        return this["alldata"].Size
     }
     
     HasFormat( fmt )

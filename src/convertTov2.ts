@@ -132,7 +132,6 @@ function all() {
       if (!(argsArr = getArgs())) { return 2 }
       a(1); p('['); a(2); p('].Ptr')
     } else if (thisText.toLowerCase() === 'objsetcapacity') {
-
       if (!(argsArr = getArgs())) { return 2 }
       if (argsArr.length === 3) {
         // ObjSetCapacity( this, "allData", newSize )
@@ -140,6 +139,15 @@ function all() {
         a(1); p('['); a(2); p('].Size := '); a(3)
       } else {
         p('ObjSetCapacity('); a(1); p(','); a(2); p(')')
+      }
+    } else if (thisText.toLowerCase() === 'objgetcapacity') {
+      if (!(argsArr = getArgs())) { return 2 }
+      if (argsArr.length === 2) {
+        // ObjGetCapacity( this, "allData")
+        // this["allData"].Size
+        a(1); p('['); a(2); p('].Size')
+      } else {
+        p('ObjGetCapacity('); a(1); p(')')
       }
     } else {
       reconstructed.push(thisText)
