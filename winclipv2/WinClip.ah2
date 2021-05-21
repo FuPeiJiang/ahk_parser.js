@@ -746,7 +746,7 @@ class WinClip extends WinClip_base
                 return 0
         ;http://www.codeguru.com/Cpp/G-M/bitmap/article.php/c1765
         if !( hdc := DllCall( "GetDC", "Ptr", 0 ) )
-            goto "_BITMAPtoDIB_cleanup" 
+            goto _BITMAPtoDIB_cleanup
         hPal := DllCall( "GetStockObject", "UInt", 15 ) ;DEFAULT_PALLETE
         hPal := DllCall( "SelectPalette", "ptr", hdc, "ptr", hPal, "Uint", 0 )
         DllCall( "RealizePalette", "ptr", hdc )
@@ -776,7 +776,7 @@ class WinClip extends WinClip_base
                             ,"ptr",0      ;lpvBits 
                             ,"ptr",bmi.Ptr  ;lpbi 
                             ,"uint",0)    ;DIB_RGB_COLORS
-            goto "_BITMAPtoDIB_cleanup" 
+            goto _BITMAPtoDIB_cleanup
         biSizeImage := NumGet( bmi.Ptr, 20, "UInt" )
         if ( biSizeImage = 0 )
         {
@@ -800,7 +800,7 @@ class WinClip extends WinClip_base
                             ,"ptr",DIB.Ptr + bmiLen     ;lpvBits 
                             ,"ptr",DIB.Ptr  ;lpbi 
                             ,"uint",0)    ;DIB_RGB_COLORS
-            goto "_BITMAPtoDIB_cleanup" 
+            goto _BITMAPtoDIB_cleanup
 _BITMAPtoDIB_cleanup:
         if bmMade
             DllCall( "DeleteObject", "ptr", hBitmap )

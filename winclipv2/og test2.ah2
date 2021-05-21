@@ -3,6 +3,7 @@ SendMode "Input" ; Recommended for new scripts due to its superior speed and rel
 SetWorkingDir A_ScriptDir ; Ensures a consistent starting directory.
 #KeyHistory 0
 ListLines 0
+#Warn All, Off                    ; Disable all warnings.  Not recommended.
 
 ; https://www.autohotkey.com/boards/viewtopic.php?f=6&t=29314
 #Include WinClipAPI.ah2

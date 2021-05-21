@@ -40,6 +40,7 @@ const funcCallDelim = {', function CALL':true,') function CALL':true }
 const wsOrEmptyLine = {'whiteSpaces':true,'emptyLines':true}
 const startGroupOrUnit = {'( group':') group','start unit':'end unit'}
 const on1off0 = {'on':'1','off':'0'}
+const v1ExprToEdit = {'goto':true,'#singleinstance':true}
 let next, argsArr
 outOfLen:
 while (i < everything.length) {
@@ -304,7 +305,7 @@ function all() {
     } else if (everything[i].text.toLowerCase() === 'setbatchlines') {
       if (skipFirstSeparatorOfCommand()) { i++; return 1}
       i = b + 2
-    } else if (everything[i].text.toLowerCase() === '#singleinstance') {
+    } else if (v1ExprToEdit[everything[i].text.toLowerCase()]) {
       reconstructed.push(everything[i].text)
       if (skipFirstSeparatorOfCommand()) { i++; return 1}
       if (next.type === 'v1String findV1Expression') {
