@@ -5,6 +5,7 @@ import { variableCharsObj, whiteSpaceObj } from './parser/tokens'
 
 
 const content: Buffer =
+fs.readFileSync('tov2/Biga.ahk')
 // fs.readFileSync('v2tests/A_IsUnicode from WinClipAPI.ahk')
 // fs.readFileSync('v2tests/A_IsUnicode start group space.ahk')
 // fs.readFileSync('v2tests/A_IsUnicode.ahk')

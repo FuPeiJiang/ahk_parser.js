@@ -545,7 +545,7 @@ export default (content: string) => {
                   everything.push({ type: 'Param', text: validName, i1: i, c1: nonWhiteSpaceStart, c2: c })
                 }
                 if (!skipThroughEmptyLines()) { break lineLoop }
-                findBetween()
+                recurseBetweenExpression()
 
                 // }
                 if (isComma) {
