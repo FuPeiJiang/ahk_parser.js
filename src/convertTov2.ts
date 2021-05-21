@@ -5,6 +5,7 @@ import { variableCharsObj, whiteSpaceObj } from './parser/tokens'
 
 
 const content: Buffer =
+fs.readFileSync('v2tests/fix if not.ahk')
 // fs.readFileSync('tov2/WinClip.ahk')
 fs.readFileSync('tov2/WinClipAPI.ahk')
 // fs.readFileSync('v2tests/v1concat space or not.ahk')
@@ -15,7 +16,7 @@ fs.readFileSync('tov2/WinClipAPI.ahk')
 fs.readFileSync('tov2/OpenInAhkExplorer.ahk')
 // fs.readFileSync('tov2/sortAr.ahk')
 // fs.readFileSync('tests3/splitpath.ahk')
-// fs.readFileSync('tests3/not assignment operator.ahk')
+// fs.readFileSync('tests3/not assignment operatEor.ahk')
 // fs.readFileSync('tests3/idkAnymore23.ahk')
 fs.readFileSync('tov2/jpgs to pdf.ahk')
 // fs.readFileSync('tests3/command EOF.ahk')
@@ -227,6 +228,7 @@ function all() {
             back.type = 'edit'
             back.text = '.Has('
           }
+          return 3
         }
       }
 

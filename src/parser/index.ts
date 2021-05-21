@@ -228,10 +228,15 @@ export default (content: string) => {
                       }
                     }
 
+                    const cBeforeSkipLines = c, iBeforeSkipLines = i
                     if (!skipThroughEmptyLines()) {
                       c = saveC, i = saveI , numberOfChars = saveNumChars
                       everything.splice(everything.length - 1, 1)
                       break breakToGoFindV2
+                    }
+                    let removeTheEmptyLines = true
+                    if (c === cBeforeSkipLines && i === iBeforeSkipLines) {
+                      removeTheEmptyLines = false
                     }
 
                     if (c < numberOfChars - 1 && legacyIfOperators[lines[i].slice(c, c + 2)]) {
@@ -244,7 +249,9 @@ export default (content: string) => {
                       break findV1ExpressiondummyLoop
                     }
                     c = saveC, i = saveI , numberOfChars = saveNumChars
-                    everything.splice(everything.length - 1, 1)
+                    if (removeTheEmptyLines) {
+                      everything.splice(everything.length - 1, 1)
+                    }
                     break breakToGoFindV2
                   }
 
