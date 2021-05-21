@@ -2103,3 +2103,9 @@ if there's no ) group AND ( group, to know where the ternary ends, I could look 
 ') function CALL'
 
 I'd need to recursive find ), because there may be () in between
+
+look for front AND back in everything[]
+
+how would you automatically simplefy THIS : 
+; ahkdll-v2-release-master\Compiler\Compiler.ahk
+VarSetCapacity(fullpath, 260 * (!!A_IsUnicode + 1))

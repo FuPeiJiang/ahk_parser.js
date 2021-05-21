@@ -261,8 +261,12 @@ function all() {
           b = i
           if (!skipEmptyLinesEmptyText()) {break}
           if (everything[b].type === '? ternary') {
-            if (!skipEmptyLines()) {break}
-
+            next = everything[b + 1]
+            if (next) {
+              if (next.type === 'emptyLines' && !next.text.includes('\n')) {
+                b++
+              }
+            }
             const ternaryTrueStart = b
             let findGroupEnd: boolean|number = false
             while (true) {
@@ -276,7 +280,12 @@ function all() {
             b = ternaryTrueStart
             if (!findNext(': ternary')) {break}
             const colonIndex = b
-            if (!backEmptyLines()) {break}
+            const back = everything[b - 1]
+            if (back) {
+              if (back.type === 'emptyLines' && !back.text.includes('\n')) {
+                b--
+              }
+            }
             const emptyLineBeforeColon = b
             b = colonIndex
             let ternaryFalseEnd
@@ -289,11 +298,18 @@ function all() {
               if (!findNextAnyInObj(ternaryColonEndDelim)) {break}
               ternaryFalseEnd = b
             }
-            // const arrOfText = []
+
+            // A_IsUnicode doesn't delete multiline emptyLines
+            let ternaryEnd = ternaryFalseEnd - emptyLineBeforeColon
+            b = ternaryFalseEnd
+            backFindWithText()
+            if (everything[b].text.includes('\n')) {
+              ternaryEnd--
+            }
 
             // foo( bufName, A_IsUnicode ? 510 : 255  )
             // remove ": 255  "
-            everything.splice(emptyLineBeforeColon,ternaryFalseEnd - emptyLineBeforeColon)
+            everything.splice(emptyLineBeforeColon,ternaryEnd)
             // remove " ? "
             everything.splice(i,ternaryTrueStart - i)
             // should become foo( bufName, 510)
@@ -769,11 +785,22 @@ function findNext(stopAtThis: string) {
   }
   return false
 }
-function backEmptyLines() {
+function backFindWithText() {
   let next
   next = everything[--b]
   while (next) {
-    if (next.type !== 'emptyLines') {
+    if (next.text !== undefined) {
+      return true
+    }
+    next = everything[--b]
+  }
+  return false
+}
+/* function backEmptyLines() {
+  let next
+  next = everything[--b]
+  while (next) {
+    if (next.type !== 'emptyLines' || next.text.includes('\n')) {
       return true
     }
     next = everything[--b]
@@ -784,13 +811,13 @@ function skipEmptyLines() {
   let next
   next = everything[++b]
   while (next) {
-    if (next.type !== 'emptyLines') {
+    if (next.type !== 'emptyLines' || next.text.includes('\n')) {
       return true
     }
     next = everything[++b]
   }
   return false
-}
+} */
 function backEmptyLinesEmptyText() {
   let next
   next = everything[--b]
