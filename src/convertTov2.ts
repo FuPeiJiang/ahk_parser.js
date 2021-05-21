@@ -1,7 +1,7 @@
 import fs from 'fs'
 import ahkParser from './parser/index'
 const d = console.debug.bind(console)
-import { whiteSpaceObj } from './parser/tokens'
+import { variableCharsObj, whiteSpaceObj } from './parser/tokens'
 
 
 const content: Buffer =
@@ -375,9 +375,28 @@ function all() {
     if (everything[i].text === '&') {
       let bType
       b = i
+      const bSave = b
       if (!(bType = findNextAnyInObj(startGroupOrUnit))) { return 2 }
       if (!nextSkipThrough(startGroupOrUnit[bType],bType)) { return 2 }
-      everything.splice(b + 1,0,{type:'edit',text:'.Ptr'})
+      const sliced = everything.slice(bSave + 1, b)
+      const allVariableCharsArr = []
+      for (let n = 0, len = sliced.length; n < len; n++) {
+        const dText = sliced[n].text
+        if (dText) {
+          for (let c = 0, len = dText.length; c < len; c++) {
+            if (variableCharsObj[dText[c]]) {
+              allVariableCharsArr.push(dText[c])
+            }
+          }
+        }
+
+      }
+      const validVarStr = allVariableCharsArr.join('')
+      if (isNaN(Number(validVarStr))) {
+        everything.splice(b + 1,0,{type:'edit',text:'.Ptr'})
+      } else {
+        reconstructed.push('&')
+      }
     } else {
       reconstructed.push(everything[i].text)
     }

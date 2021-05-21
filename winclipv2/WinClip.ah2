@@ -136,7 +136,6 @@ class WinClip extends WinClip_base
     {
         if !size
             return 0
-        if !ObjSetCapacity(this,"allData")
         if !this["allData"].Size := size
             return 0
         if !( pData := this["allData"].Ptr )
@@ -784,7 +783,7 @@ class WinClip extends WinClip_base
             biBitCount := numget( bmi.Ptr, 14, "UShort" )
             biWidth := numget( bmi.Ptr, 4, "UInt" )
             biHeight := numget( bmi.Ptr, 8, "UInt" )
-            biSizeImage := (((( biWidth * biBitCount + 31 )  ~31.Ptr ) >> 3 ) * biHeight )
+            biSizeImage := (((( biWidth * biBitCount + 31 ) & ~31 ) >> 3 ) * biHeight )
             ;~ dwCompression := numget( bmi, 16, "UInt" )
             ;~ if ( dwCompression != 0 ) ;BI_RGB
                 ;~ biSizeImage := ( biSizeImage * 3 ) / 2
