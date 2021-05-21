@@ -119,6 +119,9 @@ function all() {
         // TargetVar:=BufferAlloc(RequestedCapacity,FillByte)
         a(1); p(':=BufferAlloc('); a(2); o(',',3); a(3); p(')')
       }
+    } else if (thisText.toLowerCase() === 'object') {
+      // Object() -> Map()  OR  Object("key",value) -> Map("key",value)
+      reconstructed.push('Map')
     } else if (thisText.toLowerCase() === 'numput') {
       // NumPut(Number, VarOrAddress [, Offset := 0][, Type := "UPtr"])
       // NumPut Type, Number, [Type2, Number2, ...] VarOrAddress [, Offset]

@@ -51,7 +51,7 @@ class WinClip extends WinClip_base
         if !WinClipAPI.OpenClipboard()
             return 0
         nextformat := 0
-        objFormats := object()
+        objFormats := Map()
         clipSize := 0
         formatsNum := 0
         while ( nextformat := WinClipAPI.EnumClipboardFormats( nextformat ) )
@@ -164,7 +164,7 @@ class WinClip extends WinClip_base
     static _parseClipboardData( ByRef data, size )
     {
         offset := 0
-        formats := object()
+        formats := Map()
         while ( offset < size )
         {
             if !( fmt := NumGet( data, offset, "UInt" ) )
@@ -454,7 +454,7 @@ class WinClip extends WinClip_base
     {
         objFormats := this._parseClipboardData( clipData, clipSize )
         uFmt := WinClipAPI.RegisterClipboardFormat( "Rich Text Format" )
-        objFormats[ uFmt ] := object()
+        objFormats[ uFmt ] := Map()
         sLen := StrLen( textData )
         objFormats[ uFmt]["buffer"].Size := sLen
         StrPut( textData, objFormats[ uFmt]["buffer"].Ptr, sLen, "CP0" )
@@ -515,7 +515,7 @@ class WinClip extends WinClip_base
     {
         objFormats := this._parseClipboardData( clipData, clipSize )
         uFmt := WinClipAPI.RegisterClipboardFormat( "HTML Format" )
-        objFormats[ uFmt ] := object()
+        objFormats[ uFmt ] := Map()
         encoding := "UTF-8"
         htmlLen := StrPut( htmlData, encoding ) - 1   ;substract null
         srcLen := 2 + 10 + StrPut( source, encoding ) - 1      ;substract null
@@ -554,7 +554,7 @@ class WinClip extends WinClip_base
         if ( objFormats.Has( uFmt ) && !IsSet )
             str := strget( objFormats[ uFmt]["buffer"].Ptr, "UTF-16" )
         else
-            objFormats[ uFmt ] := object()
+            objFormats[ uFmt ] := Map()
         str .= textData
         sLen := ( StrLen( str ) + 1 ) * 2
         objFormats[ uFmt]["buffer"].Size := sLen
@@ -587,7 +587,7 @@ class WinClip extends WinClip_base
         objFiles := WinClipAPI.RemoveDubls( objFiles )
         if !objFiles.MaxIndex()
             return 0
-        objFormats[ uFmt ] := object()
+        objFormats[ uFmt ] := Map()
         DROP_size := 20 + 2
         for i,str in objFiles
             DROP_size += ( StrLen( str ) + 1 ) * 2
