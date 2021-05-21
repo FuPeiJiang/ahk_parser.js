@@ -126,6 +126,11 @@ function all() {
         a(3)
       }
       p(')')
+    } else if (thisText.toLowerCase() === 'objgetaddress') {
+      // ObjGetAddress( this, "allData" )
+      // this["allData"].Ptr
+      if (!(argsArr = getArgs())) { return 2 }
+      a(1); p('['); a(2); p('].Ptr')
     } else {
       reconstructed.push(thisText)
       while (true) {

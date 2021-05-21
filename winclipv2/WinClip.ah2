@@ -138,7 +138,7 @@ class WinClip extends WinClip_base
             return 0
         if !ObjSetCapacity( this, "allData", size )
             return 0
-        if !( pData := ObjGetAddress( this, "allData" ) )
+        if !( pData := this["allData"].Ptr )
             return 0
         WinClipAPI.memcopy( pData, data.Ptr, size )
         return size
@@ -148,7 +148,7 @@ class WinClip extends WinClip_base
     {
         if !( clipSize := ObjGetCapacity( this, "allData" ) )
             return 0
-        if !( pData := ObjGetAddress( this, "allData" ) )
+        if !( pData := this["allData"].Ptr )
             return 0
         data:=BufferAlloc(clipSize,0)
         WinClipAPI.memcopy( data.Ptr, pData, clipSize )
@@ -177,7 +177,7 @@ class WinClip extends WinClip_base
                 break
             params := Map( "name" , this._getFormatName( fmt ), "size" , dataSize )
             ObjSetCapacity( params, "buffer", dataSize )
-            pBuf := ObjGetAddress( params, "buffer" )
+            pBuf := params["buffer"].Ptr
             WinClipAPI.memcopy( pBuf, data.Ptr + offset, dataSize )
             formats[ fmt ] := params
             offset += dataSize
@@ -201,7 +201,7 @@ class WinClip extends WinClip_base
             offset += 4
             NumPut("UInt",params["size"],out_data,offset)
             offset += 4
-            WinClipAPI.memcopy( out_data.Ptr + offset, ObjGetAddress( params, "buffer" ), params["size"] )
+            WinClipAPI.memcopy( out_data.Ptr + offset, params["buffer"].Ptr, params["size"] )
             offset += params["size"]
         }
         return clipSize
@@ -457,7 +457,7 @@ class WinClip extends WinClip_base
         objFormats[ uFmt ] := object()
         sLen := StrLen( textData )
         ObjSetCapacity( objFormats[ uFmt ], "buffer", sLen )
-        StrPut( textData, ObjGetAddress( objFormats[ uFmt ], "buffer" ), sLen, "CP0" )
+        StrPut( textData, objFormats[ uFmt]["buffer"].Ptr, sLen, "CP0" )
         objFormats[ uFmt ]["size"] := sLen
         return this._compileClipData( clipData, objFormats )
     }
@@ -541,7 +541,7 @@ class WinClip extends WinClip_base
 
         sLen := StrPut( html, encoding )
         ObjSetCapacity( objFormats[ uFmt ], "buffer", sLen )
-        StrPut( html, ObjGetAddress( objFormats[ uFmt ], "buffer" ), sLen, encoding )
+        StrPut( html, objFormats[ uFmt]["buffer"].Ptr, sLen, encoding )
         objFormats[ uFmt ]["size"] := sLen
         return this._compileClipData( clipData, objFormats )
     }
@@ -552,13 +552,13 @@ class WinClip extends WinClip_base
         uFmt := this["ClipboardFormats"]["CF_UNICODETEXT"]
         str := ""
         if ( objFormats.haskey( uFmt ) && !IsSet )
-            str := strget( ObjGetAddress( objFormats[ uFmt ],  "buffer" ), "UTF-16" )
+            str := strget( objFormats[ uFmt]["buffer"].Ptr, "UTF-16" )
         else
             objFormats[ uFmt ] := object()
         str .= textData
         sLen := ( StrLen( str ) + 1 ) * 2
         ObjSetCapacity( objFormats[ uFmt ], "buffer", sLen )
-        StrPut( str, ObjGetAddress( objFormats[ uFmt ], "buffer" ), sLen, "UTF-16" )
+        StrPut( str, objFormats[ uFmt]["buffer"].Ptr, sLen, "UTF-16" )
         objFormats[ uFmt ]["size"] := sLen
         return this._compileClipData( clipData, objFormats )
     }
@@ -582,7 +582,7 @@ class WinClip extends WinClip_base
         objFormats := this._parseClipboardData( clipData, clipSize )
         uFmt := this["ClipboardFormats"]["CF_HDROP"]
         if ( append && objFormats.haskey( uFmt ) )
-            prevList := this._getFiles( ObjGetAddress( objFormats[ uFmt ], "buffer" ) ) "`n"
+            prevList := this._getFiles( objFormats[ uFmt]["buffer"].Ptr ) "`n"
         objFiles := WinClipAPI.StrSplit( prevList . files, "`n", A_Space A_Tab )
         objFiles := WinClipAPI.RemoveDubls( objFiles )
         if !objFiles.MaxIndex()
@@ -601,12 +601,12 @@ class WinClip extends WinClip_base
             offset += ( StrLen( str ) + 1 ) * 2
         }
         ObjSetCapacity( objFormats[ uFmt ], "buffer", DROP_size )
-        WinClipAPI.memcopy( ObjGetAddress( objFormats[ uFmt ], "buffer" ), DROPFILES.Ptr, DROP_size )
+        WinClipAPI.memcopy( objFormats[ uFmt]["buffer"].Ptr, DROPFILES.Ptr, DROP_size )
         objFormats[ uFmt ]["size"] := DROP_size
         prefFmt := WinClipAPI.RegisterClipboardFormat( "Preferred DropEffect" )
         objFormats[ prefFmt ] := Map( "size" , 4 )
         ObjSetCapacity( objFormats[ prefFmt ], "buffer", 4 )
-        NumPut("UInt",isCut? 2:5,ObjGetAddress( objFormats[ prefFmt ], "buffer" ),0)
+        NumPut("UInt",isCut? 2:5,objFormats[ prefFmt]["buffer"].Ptr,0)
         return this._compileClipData( clipData, objFormats )
     }
     
@@ -818,7 +818,7 @@ _BITMAPtoDIB_cleanup:
         uFmt := this["ClipboardFormats"]["CF_DIB"]
         objFormats[ uFmt ] := Map( "size" , DIBSize )
         ObjSetCapacity( objFormats[ uFmt ], "buffer", DIBSize )
-        WinClipAPI.memcopy( ObjGetAddress( objFormats[ uFmt ], "buffer" ), DIB.Ptr, DIBSize )
+        WinClipAPI.memcopy( objFormats[ uFmt]["buffer"].Ptr, DIB.Ptr, DIBSize )
         return this._compileClipData( clipData, objFormats )
     }
     
