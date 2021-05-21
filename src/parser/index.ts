@@ -316,6 +316,9 @@ export default (content: string) => {
                     findExpression()
                   }
                 }
+                const eLen = everything.length - 1
+                everything.splice(everything.length - (everything[eLen].type === 'emptyLines' ? 1 : 0), 0, { type: 'end assignment'})
+
                 if (skipCommaV2Expr()) {break lineLoop}
                 usingStartOfLineLoop = true
                 continue startOfLineLoop
@@ -592,6 +595,8 @@ export default (content: string) => {
               findExpression()
             }
           }
+          const eLen = everything.length - 1
+          everything.splice(everything.length - (everything[eLen].type === 'emptyLines' ? 1 : 0), 0, { type: 'end assignment'})
           if (skipCommaV2Expr()) {break lineLoop}
           usingStartOfLineLoop = true
           continue startOfLineLoop
@@ -630,6 +635,8 @@ export default (content: string) => {
               findExpression()
             }
           }
+          const eLen = everything.length - 1
+          everything.splice(everything.length - (everything[eLen].type === 'emptyLines' ? 1 : 0), 0, { type: 'end assignment'})
           if (skipCommaV2Expr()) {break lineLoop}
           usingStartOfLineLoop = true
           continue startOfLineLoop
@@ -654,6 +661,8 @@ export default (content: string) => {
             findExpression()
           }
         }
+        const eLen = everything.length - 1
+        everything.splice(everything.length - (everything[eLen].type === 'emptyLines' ? 1 : 0), 0, { type: 'end assignment'})
         if (skipCommaV2Expr()) {break lineLoop}
         usingStartOfLineLoop = true
         continue startOfLineLoop

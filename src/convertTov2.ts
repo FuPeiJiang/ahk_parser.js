@@ -5,10 +5,11 @@ import { variableCharsObj, whiteSpaceObj } from './parser/tokens'
 
 
 const content: Buffer =
+fs.readFileSync('v2tests/A_IsUnicode.ahk')
 // fs.readFileSync('v2tests/fix numput.ahk')
 // fs.readFileSync('v2tests/fix if not.ahk')
 // fs.readFileSync('tov2/WinClip.ahk')
-fs.readFileSync('tov2/WinClipAPI.ahk')
+// fs.readFileSync('tov2/WinClipAPI.ahk')
 // fs.readFileSync('v2tests/v1concat space or not.ahk')
 // fs.readFileSync('tests3/listlines.ahk')
 // fs.readFileSync('tests3/ampersand to .Ptr.ahk')
@@ -46,6 +47,7 @@ const wsOrEmptyLine = {'whiteSpaces':true,'emptyLines':true}
 const startGroupOrUnit = {'( group':') group','start unit':'end unit'}
 const on1off0 = {'on':'1','off':'0'}
 const v1ExprToEdit = {'goto':true,'#singleinstance':true}
+const ternaryColonEndDelim = {'end assignment':true,', function CALL':true,') function CALL':true}
 let next, argsArr
 outOfLen:
 while (i < everything.length) {
@@ -253,6 +255,56 @@ function all() {
     } else {
       if (theText.toLowerCase() === 'clipboard') {
         reconstructed.push('A_Clipboard')
+      } else if (theText.toLowerCase() === 'a_isunicode') {
+
+        while (true) {
+          b = i
+          if (!skipEmptyLinesEmptyText()) {break}
+          if (everything[b].type === '? ternary') {
+            if (!skipEmptyLines()) {break}
+
+            const ternaryTrueStart = b
+            let findGroupEnd: boolean|number = false
+            while (true) {
+              b = i
+              if (!backEmptyLinesEmptyText()) {break}
+              if (everything[b].type === '( group') {
+                findGroupEnd = i - b
+              }
+              break
+            }
+            b = ternaryTrueStart
+            if (!findNext(': ternary')) {break}
+            const colonIndex = b
+            if (!backEmptyLines()) {break}
+            const emptyLineBeforeColon = b
+            b = colonIndex
+            let ternaryFalseEnd
+            if (findGroupEnd) {
+              if (!nextSkipThrough(') group','( group')) {break}
+              ternaryFalseEnd = b + 1
+              d(everything[b])
+              reconstructed.splice(reconstructed.length - findGroupEnd)
+            } else {
+              if (!findNextAnyInObj(ternaryColonEndDelim)) {break}
+              ternaryFalseEnd = b
+            }
+            // const arrOfText = []
+
+            // foo( bufName, A_IsUnicode ? 510 : 255  )
+            // remove ": 255  "
+            everything.splice(emptyLineBeforeColon,ternaryFalseEnd - emptyLineBeforeColon)
+            // remove " ? "
+            everything.splice(i,ternaryTrueStart - i)
+            // should become foo( bufName, 510)
+
+            return 3
+            // reconstructed.push('')
+            // ternaryFalseEnd
+          }
+          break
+        }
+        reconstructed.push('true')
       } else {
         reconstructed.push(theText)
       }
@@ -711,6 +763,50 @@ function findNext(stopAtThis: string) {
   while (next) {
     const bType = next.type
     if (bType === stopAtThis) {
+      return true
+    }
+    next = everything[++b]
+  }
+  return false
+}
+function backEmptyLines() {
+  let next
+  next = everything[--b]
+  while (next) {
+    if (next.type !== 'emptyLines') {
+      return true
+    }
+    next = everything[--b]
+  }
+  return false
+}
+function skipEmptyLines() {
+  let next
+  next = everything[++b]
+  while (next) {
+    if (next.type !== 'emptyLines') {
+      return true
+    }
+    next = everything[++b]
+  }
+  return false
+}
+function backEmptyLinesEmptyText() {
+  let next
+  next = everything[--b]
+  while (next) {
+    if (next.type !== 'emptyLines' && next.text !== undefined) {
+      return true
+    }
+    next = everything[--b]
+  }
+  return false
+}
+function skipEmptyLinesEmptyText() {
+  let next
+  next = everything[++b]
+  while (next) {
+    if (next.type !== 'emptyLines' && next.text !== undefined) {
       return true
     }
     next = everything[++b]

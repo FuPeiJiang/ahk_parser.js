@@ -2049,3 +2049,57 @@ Yes   No
 ---------------------------
 
 ima edit the DllCall to simply use "Str" !
+
+---------------------------
+src in clip.ah2
+---------------------------
+Warning in #include file "ahk_parser.js\winclipv2\WinClipAPI.ah2":
+     This variable appears to never be assigned a value.
+
+Specifically: local A_IsUnicode
+
+	Line#
+	070: {
+	071: Return DllCall( "EnumClipboardFormats", "UInt", format )
+	072: }
+	073: {
+	074: Return DllCall( "CountClipboardFormats" )
+	075: }
+	076: {
+--->	077: size := bufName:=BufferAlloc(255*(A_IsUnicode? 2:1),0)
+	078: DllCall( "GetClipboardFormatName", "Uint", iFormat, "str", bufName, "Uint", size )
+	079: Return bufName
+	080: }
+	081: {
+	082: if !( bufSize := DllCall( "GetEnhMetaFileBits", "Ptr", hemf, "Uint", 0, "Ptr", 0 ) )
+	083: Return 0
+	084: buf := BufferAlloc(bufSize,0)
+
+For more details, read the documentation for #Warn.
+---------------------------
+OK   
+---------------------------
+
+AHK_H v2 is always unicode
+so A_IsUnicode was removed
+I could replace it with true, but you may want to optimize it yourself.
+well I could optimize ternaries automatically
+
+source : 255*(A_IsUnicode? 2:1)
+
+lv 1 : 255*(true? 2:1)
+lv 2 : 255*(2)
+lv 3 : 255*2
+lv omg : 510
+
+yup, let's do lv omg : if can evaluate the math ?, simplify it
+
+let's start with lv2
+if ternary (skip whitespaces), else replace with true
+
+if there's no ) group AND ( group, to know where the ternary ends, I could look for
+'end assignment'
+', function CALL'
+') function CALL'
+
+I'd need to recursive find ), because there may be () in between
