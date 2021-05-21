@@ -270,13 +270,11 @@ function all() {
             }
             const ternaryTrueStart = b
             let findGroupEnd: boolean|number = false
-            let groupStart
             while (true) {
               b = i
               if (!backEmptyLinesEmptyText()) {break}
               if (everything[b].type === '( group') {
                 findGroupEnd = i - b
-                groupStart = b
               }
               break
             }
@@ -315,10 +313,6 @@ function all() {
             // remove " ? "
             everything.splice(i,ternaryTrueStart - i)
             // should become foo( bufName, 510)
-            if (findGroupEnd) {
-              //idk if this should be -1 or -2 , I think -1
-              everything.splice(groupStart,findGroupEnd - 1)
-            }
 
             return 3
             // reconstructed.push('')
