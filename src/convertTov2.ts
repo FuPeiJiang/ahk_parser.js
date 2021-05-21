@@ -131,6 +131,16 @@ function all() {
       // this["allData"].Ptr
       if (!(argsArr = getArgs())) { return 2 }
       a(1); p('['); a(2); p('].Ptr')
+    } else if (thisText.toLowerCase() === 'objsetcapacity') {
+
+      if (!(argsArr = getArgs())) { return 2 }
+      if (argsArr.length === 3) {
+        // ObjSetCapacity( this, "allData", newSize )
+        // this["allData"].Size := newSize
+        a(1); p('['); a(2); p('].Size := '); a(3)
+      } else {
+        p('ObjSetCapacity('); a(1); p(','); a(2); p(')')
+      }
     } else {
       reconstructed.push(thisText)
       while (true) {
