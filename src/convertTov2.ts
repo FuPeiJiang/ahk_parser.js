@@ -7,10 +7,10 @@ import { variableCharsObj, whiteSpaceObj } from './parser/tokens'
 const content: Buffer =
 // fs.readFileSync('v2tests/A_IsUnicode from WinClipAPI.ahk')
 // fs.readFileSync('v2tests/A_IsUnicode start group space.ahk')
-fs.readFileSync('v2tests/A_IsUnicode.ahk')
+// fs.readFileSync('v2tests/A_IsUnicode.ahk')
 // fs.readFileSync('v2tests/fix numput.ahk')
 // fs.readFileSync('v2tests/fix if not.ahk')
-// fs.readFileSync('tov2/WinClip.ahk')
+fs.readFileSync('tov2/WinClip.ahk')
 fs.readFileSync('tov2/WinClipAPI.ahk')
 // fs.readFileSync('v2tests/v1concat space or not.ahk')
 // fs.readFileSync('tests3/listlines.ahk')
@@ -154,8 +154,9 @@ function all() {
       if (!(argsArr = getArgs())) { return 2 }
       if (argsArr.length === 3) {
         // ObjSetCapacity( this, "allData", newSize )
-        // this["allData"].Size := newSize
-        a(1); p('['); a(2); p('].Size := '); a(3)
+        // NOPE: this["allData"].Size := newSize
+        // this["allData"]:=BufferAlloc(newSize)
+        a(1); p('['); a(2); p(']:=BufferAlloc('); a(3); p(')')
       } else {
         p('ObjSetCapacity('); a(1); p(','); a(2); p(')')
       }

@@ -74,7 +74,7 @@ class WinClipAPI extends WinClip_base
         return DllCall( "CountClipboardFormats" )
     }
     static GetClipboardFormatName( iFormat ) {
-        size := bufName:=BufferAlloc(2552,0)
+        size := bufName:=BufferAlloc(255*2,0)
         DllCall( "GetClipboardFormatName", "Uint", iFormat, "str", bufName, "Uint", size )
         return bufName
     }
