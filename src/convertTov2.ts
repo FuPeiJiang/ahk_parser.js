@@ -5,7 +5,7 @@ import { variableCharsObj, whiteSpaceObj } from './parser/tokens'
 
 
 const content: Buffer =
-fs.readFileSync('v2tests/A_IsUnicode start group space.ahk')
+// fs.readFileSync('v2tests/A_IsUnicode start group space.ahk')
 fs.readFileSync('v2tests/A_IsUnicode.ahk')
 // fs.readFileSync('v2tests/fix numput.ahk')
 // fs.readFileSync('v2tests/fix if not.ahk')
@@ -48,7 +48,7 @@ const wsOrEmptyLine = {'whiteSpaces':true,'emptyLines':true}
 const startGroupOrUnit = {'( group':') group','start unit':'end unit'}
 const on1off0 = {'on':'1','off':'0'}
 const v1ExprToEdit = {'goto':true,'#singleinstance':true}
-const ternaryColonEndDelim = {'end assignment':true,', function CALL':true,') function CALL':true}
+const ternaryColonEndDelim = {'end assignment':true,', function CALL':true,') function CALL':true,', assignment':true,'end comma assignment':true}
 let next, argsArr
 outOfLen:
 while (i < everything.length) {

@@ -4,7 +4,7 @@ v:=a+25+255*(A_IsUnicode ? 2:1)
 static PTR:=A_PtrSize
     ,TBYTE:=A_IsUnicode?2:1,TCHAR:=A_IsUnicode?2:1
 ; Acc.ahk
-VarSetCapacity(sRole, (A_IsUnicode?2:1)*nSize)
+/* VarSetCapacity(sRole, (A_IsUnicode?2:1)*nSize)
 v:=(A_IsUnicode?2:1)*234
 ; AHK-Studio.ahk
 VarSetCapacity(str,cp*(A_IsUnicode?2:1))
@@ -13,7 +13,7 @@ if ((A_PtrSize=8&&A_IsCompiled="")||!A_IsUnicode){
 ; ahk_explorer.ahk
 VarSetCapacity(downloads, (261 + !A_IsUnicode) << !!A_IsUnicode)
 DllCall("shlwapi\PathCreateFromUrl" (A_IsUnicode?"W":"A"), "Str",vPathUrl, "Str",vPath, "UInt*",vChars, "UInt",0)
-
+ */
 ; ahkdll-v2-release-master\Compiler\Lib\AHKType.ahk
 ; Get IsUnicode based on the presence of a string matching our encoding
 ; Type.IsUnicode := (!RegExMatch(exeData, "MsgBox\0") = !A_IsUnicode) ? 1 : ""

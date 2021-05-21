@@ -843,6 +843,8 @@ export default (content: string) => {
       everything.push({ type: ', assignment', text: ',', i1: i, c1: c })
       c++
       if (!recurseBetweenExpression()) { findExpression() }
+      const eLen = everything.length - 1
+      everything.splice(everything.length - (everything[eLen].type === 'end comma assignment' ? 1 : 0), 0, { type: 'end assignment'})
     }
     return true
   }
