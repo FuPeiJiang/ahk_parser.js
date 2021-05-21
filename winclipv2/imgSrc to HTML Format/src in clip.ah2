@@ -3,7 +3,7 @@ SendMode "Input" ; Recommended for new scripts due to its superior speed and rel
 SetWorkingDir A_ScriptDir ; Ensures a consistent starting directory.
 #KeyHistory 0
 ListLines 0
-#Warn All, Off                    ; Disable all warnings.  Not recommended.
+; #Warn All, Off                    ; Disable all warnings.  Not recommended.
 
 #Include "..\WinClipAPI.ah2"
 #Include "..\WinClip.ah2"
