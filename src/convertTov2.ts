@@ -79,6 +79,7 @@ function all() {
     if (back) {
       if (everything[i - 1].type === '. property') {
         if (thisText.toLowerCase() === 'length') {
+          // .Length() -> .Length
           reconstructed.push(`.${thisText}`)
 
           const next = everything[i + 1]
@@ -92,14 +93,15 @@ function all() {
                   return 2
                 }
                 if (isThisEnd.type === ') function CALL') {
-                  i++
-                  break
+                  return 3
                 }
               }
-              return 1
             }
           }
-
+        } else if (thisText.toLowerCase() === 'haskey') {
+          // .HasKey() -> .Has()
+          reconstructed.push('.Has')
+          return 3
         }
         reconstructed.push(`.${thisText}`)
         return 3

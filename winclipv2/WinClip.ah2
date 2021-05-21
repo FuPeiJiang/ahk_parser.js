@@ -56,7 +56,7 @@ class WinClip extends WinClip_base
         formatsNum := 0
         while ( nextformat := WinClipAPI.EnumClipboardFormats( nextformat ) )
         {
-            if this["skipFormats"].hasKey( nextformat )
+            if this["skipFormats"].Has( nextformat )
                 continue
             if ( dataHandle := WinClipAPI.GetClipboardData( nextformat ) )
             {
@@ -551,7 +551,7 @@ class WinClip extends WinClip_base
         objFormats := this._parseClipboardData( clipData, clipSize )
         uFmt := this["ClipboardFormats"]["CF_UNICODETEXT"]
         str := ""
-        if ( objFormats.haskey( uFmt ) && !IsSet )
+        if ( objFormats.Has( uFmt ) && !IsSet )
             str := strget( objFormats[ uFmt]["buffer"].Ptr, "UTF-16" )
         else
             objFormats[ uFmt ] := object()
@@ -581,7 +581,7 @@ class WinClip extends WinClip_base
     {
         objFormats := this._parseClipboardData( clipData, clipSize )
         uFmt := this["ClipboardFormats"]["CF_HDROP"]
-        if ( append && objFormats.haskey( uFmt ) )
+        if ( append && objFormats.Has( uFmt ) )
             prevList := this._getFiles( objFormats[ uFmt]["buffer"].Ptr ) "`n"
         objFiles := WinClipAPI.StrSplit( prevList . files, "`n", A_Space A_Tab )
         objFiles := WinClipAPI.RemoveDubls( objFiles )
@@ -885,7 +885,7 @@ _BITMAPtoDIB_cleanup:
     
     static _getFormatName( iformat )
     {
-        if this["formatByValue"].HasKey( iformat )
+        if this["formatByValue"].Has( iformat )
             return this["formatByValue"][ iformat ]
         else
             return WinClipAPI.GetClipboardFormatName( iformat )
