@@ -810,9 +810,9 @@ _BITMAPtoDIB_cleanup:
         DllCall( "SelectPalette", "ptr", hdc, "ptr", hPal, "Uint", 0 )
         DllCall( "RealizePalette", "ptr", hdc )
         DllCall("ReleaseDC","ptr",hdc)
-        if ( A_ThisLabel = "_BITMAPtoDIB_cleanup" )
-            return 0
-        return DIBLen
+        ; if ( A_ThisLabel = "_BITMAPtoDIB_cleanup" )
+        return 0
+        ; return DIBLen
     }
     
     static _setBitmap( ByRef DIB, DIBSize, ByRef clipData, clipSize )
