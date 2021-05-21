@@ -2008,3 +2008,44 @@ comma Command & whitespace Command (which is strangely 'command' instead of 'whi
   validName.toLowerCase() === 'return'
 
 let's replace this with sameCommaOrWhitespaceCommand()
+
+uh oh
+&var -> var.Ptr doesn't work for EVERY
+doesn't work for strings..
+
+let's try StrPtr(var) for EVERYTHING
+and replace BufferAlloc with VarSetStrCapacity
+
+but VarSetStrCapacity doesn't have FillByte param
+I refuse, I will use BufferAlloc 
+quote:"but this function is optimized for the native Buffer object"
+
+---------------------------
+og test2.ah2
+---------------------------
+Error in #include file "ahk_parser.js\winclipv2\WinClipAPI.ah2":
+     This value of type "String" has no property named "Ptr".
+
+	Line#
+	208: }
+	209: if nodubls
+	210: Break
+	211: }
+	212: Return objArray
+	213: }
+	214: {
+--->	215: Return DllCall( "RegisterClipboardFormat", "ptr", fmtName.Ptr )
+	216: }
+	217: {
+	218: Return DllCall( "GetOpenClipboardWindow" )
+	219: }
+	220: {
+	221: Return DllCall( "IsClipboardFormatAvailable", "UInt", iFmt )
+	222: }
+
+Try to continue anyway?
+---------------------------
+Yes   No   
+---------------------------
+
+ima edit the DllCall to simply use "Str" !

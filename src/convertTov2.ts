@@ -7,8 +7,8 @@ import { variableCharsObj, whiteSpaceObj } from './parser/tokens'
 const content: Buffer =
 // fs.readFileSync('v2tests/fix numput.ahk')
 // fs.readFileSync('v2tests/fix if not.ahk')
-fs.readFileSync('tov2/WinClip.ahk')
-// fs.readFileSync('tov2/WinClipAPI.ahk')
+// fs.readFileSync('tov2/WinClip.ahk')
+fs.readFileSync('tov2/WinClipAPI.ahk')
 // fs.readFileSync('v2tests/v1concat space or not.ahk')
 // fs.readFileSync('tests3/listlines.ahk')
 // fs.readFileSync('tests3/ampersand to .Ptr.ahk')
@@ -421,6 +421,8 @@ function all() {
       const validVarStr = allVariableCharsArr.join('')
       if (isNaN(Number(validVarStr))) {
         everything.splice(b + 1,0,{type:'edit',text:'.Ptr'})
+        // reconstructed.push('StrPtr(')
+        // everything.splice(b + 1,0,{type:'edit',text:')'})
       } else {
         reconstructed.push('&')
       }

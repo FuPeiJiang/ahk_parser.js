@@ -212,7 +212,7 @@ class WinClipAPI extends WinClip_base
         return objArray
     }
     static RegisterClipboardFormat( fmtName ) {
-        return DllCall( "RegisterClipboardFormat", "ptr", fmtName.Ptr )
+        return DllCall( "RegisterClipboardFormat", "Str", fmtName )
     }
     static GetOpenClipboardWindow() {
         return DllCall( "GetOpenClipboardWindow" )
