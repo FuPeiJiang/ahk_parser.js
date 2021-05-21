@@ -104,12 +104,6 @@ class WinClipAPI extends WinClip_base
             return
         return  strget(&msg,len)
     }
-    IsInteger( var ) {
-        if (var+0 == var) && (Floor(var) == var) ;test for integer while remaining v1 and v2 compatible
-            return True
-        else 
-            return False
-    }
     LoadDllFunction( file, function ) {
             if !hModule := DllCall( "GetModuleHandleW", "Wstr", file, "UPtr" )
                     hModule := DllCall( "LoadLibraryW", "Wstr", file, "UPtr" )

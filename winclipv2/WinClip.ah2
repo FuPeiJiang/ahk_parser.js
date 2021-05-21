@@ -673,7 +673,7 @@ class WinClip extends WinClip_base
     
     static _getFormatData( ByRef out_data, ByRef data, size, needleFormat )
     {
-        needleFormat := (WinClipAPI.IsInteger( needleFormat ) ? needleFormat : WinClipAPI.RegisterClipboardFormat( needleFormat ))
+        needleFormat := (IsInteger( needleFormat ) ? needleFormat : WinClipAPI.RegisterClipboardFormat( needleFormat ))
         if !needleFormat
             return 0
         offset := 0
@@ -731,7 +731,7 @@ class WinClip extends WinClip_base
     {
         if !bitmap
             return 0
-        if !WinClipAPI.IsInteger( bitmap )
+        if !IsInteger( bitmap )
         {
             gdip_token := WinClipAPI.Gdip_Startup()
             DllCall("gdiplus\GdipCreateBitmapFromFileICM", "wstr", bitmap, "Ptr*", pBitmap )
@@ -913,7 +913,7 @@ _BITMAPtoDIB_cleanup:
     {
         if !fmt
             return 0
-        return WinClipAPI.IsClipboardFormatAvailable( WinClipAPI.IsInteger( fmt ) ? fmt : WinClipAPI.RegisterClipboardFormat( fmt )  )
+        return WinClipAPI.IsClipboardFormatAvailable( IsInteger( fmt ) ? fmt : WinClipAPI.RegisterClipboardFormat( fmt )  )
     }
     
     static iHasFormat( fmt )
@@ -926,7 +926,7 @@ _BITMAPtoDIB_cleanup:
 
     static _hasFormat( ByRef data, size, needleFormat )
     {
-        needleFormat := WinClipAPI.IsInteger( needleFormat ) ? needleFormat : WinClipAPI.RegisterClipboardFormat( needleFormat )
+        needleFormat := IsInteger( needleFormat ) ? needleFormat : WinClipAPI.RegisterClipboardFormat( needleFormat )
         if !needleFormat
             return 0
         offset := 0

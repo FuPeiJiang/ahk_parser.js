@@ -104,12 +104,6 @@ class WinClipAPI extends WinClip_base
             return
         return  strget(msg.Ptr,len)
     }
-    static IsInteger( var ) {
-        if (var+0 == var) && (Floor(var) == var) ;test for integer while remaining v1 and v2 compatible
-            return True
-        else 
-            return False
-    }
     static LoadDllFunction( file, function ) {
             if !hModule := DllCall( "GetModuleHandleW", "Wstr", file, "UPtr" )
                     hModule := DllCall( "LoadLibraryW", "Wstr", file, "UPtr" )
@@ -174,7 +168,7 @@ class WinClipAPI extends WinClip_base
         if !DllCall( "GetModuleHandleW", "Wstr", "gdiplus", "UPtr" )
                     DllCall( "LoadLibraryW", "Wstr", "gdiplus", "UPtr" )
         
-        GdiplusStartupInput:=BufferAlloc(3*A_PtrSize,0), NumPut(,1,GdiplusStartupInput,0) ; GdiplusVersion = 1
+        GdiplusStartupInput:=BufferAlloc(3*A_PtrSize,0), NumPut("UInt",1,GdiplusStartupInput,0) ; GdiplusVersion = 1
         DllCall("gdiplus\GdiplusStartup", "Ptr*", pToken, "Ptr", GdiplusStartupInput.Ptr, "Ptr", 0)
         return pToken
     }
