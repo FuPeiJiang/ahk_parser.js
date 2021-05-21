@@ -985,13 +985,36 @@ export default (content: string) => {
   function findSendMessage() {
     if (validName.toLowerCase() === 'sendmessage') {
       everything.splice(spliceStartIndex, 0, { type: 'sendmessage', text: validName, i1: validNameLine, c1: nonWhiteSpaceStart, c2: validNameEnd })
+
+      skipThroughWhiteSpaces()
+      let whiteSpaceText
+      if (c < numberOfChars - 1 && lines[i][c] === '%' && whiteSpaceObj[whiteSpaceText = lines[i][c + 1]]) {
+        everything.push({ type: '% v1->v2 expr', text: `%${whiteSpaceText}`, i1: i, c1: c, c2: c + 2 })
+        c += 2
+        lineWhereCanConcat = -1
+      }
       if (!recurseBetweenExpression()) { findExpression() }
-      if (findCommaV2Expr(', 2 sendmessage')) {
-        if (findCommaV2Expr(', 3 sendmessage')) {
+      if (findCommaV2ExprMaybePercent(', 2 sendmessage')) {
+        if (findCommaV2ExprMaybePercent(', 3 sendmessage')) {
           recurseFindCommaV1Expression(', sendmessage v1Expr')
         }
       }
       return 1
+    }
+  }
+  function findCommaV2ExprMaybePercent(which: string) {
+    if (lines[i][c] === ',') {
+      everything.push({ type: which, text: ',', i1: i, c1: c })
+      c++
+      skipThroughWhiteSpaces()
+      let whiteSpaceText
+      if (c < numberOfChars - 1 && lines[i][c] === '%' && whiteSpaceObj[whiteSpaceText = lines[i][c + 1]]) {
+        everything.push({ type: '% v1->v2 expr', text: `%${whiteSpaceText}`, i1: i, c1: c, c2: c + 2 })
+        c += 2
+        lineWhereCanConcat = -1
+      }
+      if (!recurseBetweenExpression()) { findExpression() }
+      return true
     }
   }
   function findCommaV2Expr(which: string) {
@@ -1402,8 +1425,9 @@ export default (content: string) => {
   function findV1Expression() {
     skipThroughWhiteSpaces()
 
-    if (c < numberOfChars - 1 && lines[i].slice(c, c + 2) === '% ') {
-      everything.push({ type: '% v1->v2 expr', text: '% ', i1: i, c1: c, c2: c + 2 })
+    let whiteSpaceText
+    if (c < numberOfChars - 1 && lines[i][c] === '%' && whiteSpaceObj[whiteSpaceText = lines[i][c + 1]]) {
+      everything.push({ type: '% v1->v2 expr', text: `%${whiteSpaceText}`, i1: i, c1: c, c2: c + 2 })
       c += 2
       lineWhereCanConcat = -1
       if (!recurseBetweenExpression()) { findExpression() }

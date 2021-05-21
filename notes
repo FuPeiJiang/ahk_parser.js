@@ -2109,3 +2109,6 @@ look for front AND back in everything[]
 how would you automatically simplefy THIS : 
 ; ahkdll-v2-release-master\Compiler\Compiler.ahk
 VarSetCapacity(fullpath, 260 * (!!A_IsUnicode + 1))
+
+maybe one day to do:
+I will do lv omg one day..

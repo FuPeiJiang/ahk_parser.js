@@ -16,10 +16,10 @@ DllCall("shlwapi\PathCreateFromUrl" (A_IsUnicode?"W":"A"), "Str",vPathUrl, "Str"
 
 ; ahkdll-v2-release-master\Compiler\Lib\AHKType.ahk
 ; Get IsUnicode based on the presence of a string matching our encoding
-; Type.IsUnicode := (!RegExMatch(exeData, "MsgBox\0") = !A_IsUnicode) ? 1 : ""
+Type.IsUnicode := (!RegExMatch(exeData, "MsgBox\0") = !A_IsUnicode) ? 1 : ""
 
  ; Class_LV_InCellEdit.ahk
-; SendMessage, % (A_IsUnicode ? 0x1057 : 0x1011), 0, % &EditText, , % "ahk_id " . This.HWND
+SendMessage, % (A_IsUnicode ? 0x1057 : 0x1011), 0, % &EditText, , % "ahk_id " . This.HWND
 ; Gdip.ahk
 	return DllCall("gdiplus\GdipDrawString"
 					, Ptr, pGraphics
