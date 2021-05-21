@@ -162,6 +162,10 @@ function all() {
       } else {
         p('ObjGetCapacity('); a(1); p(')')
       }
+    } else if (thisText.toLowerCase() === 'objhaskey') {
+      // objhaskey(obj,key) -> obj.Has(key)
+      if (!(argsArr = getArgs())) { return 2 }
+      a(1); p('.Has('); a(2); p(')')
     } else {
       reconstructed.push(thisText)
       while (true) {

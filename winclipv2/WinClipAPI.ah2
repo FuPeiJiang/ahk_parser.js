@@ -1,7 +1,7 @@
 class WinClip_base
 {
     __Call( aTarget, aParams* ) {
-        if ObjHasKey( WinClip_base, aTarget )
+        if WinClip_base.Has(aTarget)
             return WinClip_base[ aTarget ].Call( this, aParams* ) ;updated for AHKv2 compatibility
             ;return WinClip_base[ aTarget ].( this, aParams* )
         throw Exception( "Unknown function '" aTarget "' requested from object '" this["__Class"] "'", -1 )
@@ -28,7 +28,7 @@ class WinClip_base
 class WinClipAPI_base extends WinClip_base
 {
     __Get( name ) {
-        if !ObjHasKey( this, initialized )
+        if !this.Has(initialized)
             this.Init()
         else
             throw Exception( "Unknown field '" name "' requested from object '" this["__Class"] "'", -1 )
