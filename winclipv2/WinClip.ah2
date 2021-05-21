@@ -1,12 +1,12 @@
 class WinClip extends WinClip_base
 {
-    __New()
+    static __New()
     {
         this["isinstance"] := 1
         this["allData"] := ""
     }
  
-    _toclipboard( ByRef data, size )
+    static _toclipboard( ByRef data, size )
     {
         if !WinClipAPI.OpenClipboard()
             return 0
@@ -46,7 +46,7 @@ class WinClip extends WinClip_base
         return lastPartOffset
     }
     
-    _fromclipboard( ByRef clipData )
+    static _fromclipboard( ByRef clipData )
     {
         if !WinClipAPI.OpenClipboard()
             return 0
@@ -103,7 +103,7 @@ class WinClip extends WinClip_base
         return structSize
     }
     
-    _IsInstance( funcName )
+    static _IsInstance( funcName )
     {
         if !this["isinstance"]
         {
@@ -113,7 +113,7 @@ class WinClip extends WinClip_base
         return 1
     }
     
-    _loadFile( filePath, ByRef Data )
+    static _loadFile( filePath, ByRef Data )
     {
         f := FileOpen( filePath, "r","CP0" )
         if !IsObject( f )
@@ -124,7 +124,7 @@ class WinClip extends WinClip_base
         return dataSize
     }
 
-    _saveFile( filepath, byRef data, size )
+    static _saveFile( filepath, byRef data, size )
     {
         f := FileOpen( filepath, "w","CP0" )
         bytes := f.RawWrite( data.Ptr, size )
@@ -132,7 +132,7 @@ class WinClip extends WinClip_base
         return bytes
     }
 
-    _setClipData( ByRef data, size )
+    static _setClipData( ByRef data, size )
     {
         if !size
             return 0
@@ -144,7 +144,7 @@ class WinClip extends WinClip_base
         return size
     }
     
-    _getClipData( ByRef data )
+    static _getClipData( ByRef data )
     {
         if !( clipSize := this["allData"].Size )
             return 0
@@ -155,13 +155,13 @@ class WinClip extends WinClip_base
         return clipSize
     }
     
-    __Delete()
+    static __Delete()
     {
         this["allData"].Size := 0
         return
     }
     
-    _parseClipboardData( ByRef data, size )
+    static _parseClipboardData( ByRef data, size )
     {
         offset := 0
         formats := object()
@@ -185,7 +185,7 @@ class WinClip extends WinClip_base
         return formats
     }
     
-    _compileClipData( ByRef out_data, objClip )
+    static _compileClipData( ByRef out_data, objClip )
     {
         if !IsObject( objClip )
             return 0
@@ -207,14 +207,14 @@ class WinClip extends WinClip_base
         return clipSize
     }
     
-    GetFormats()
+    static GetFormats()
     {
         if !( clipSize := this._fromclipboard( clipData ) )
             return 0
         return this._parseClipboardData( clipData, clipSize )
     }
     
-    iGetFormats()
+    static iGetFormats()
     {
         this._IsInstance( A_ThisFunc )
         if !( clipSize := this._getClipData( clipData ) )
@@ -222,12 +222,12 @@ class WinClip extends WinClip_base
         return this._parseClipboardData( clipData, clipSize )
     }
     
-    Snap( ByRef data )
+    static Snap( ByRef data )
     {
         return this._fromclipboard( data )
     }
     
-    iSnap()
+    static iSnap()
     {
         this._IsInstance( A_ThisFunc )
         if !( dataSize := this._fromclipboard( clipData ) )
@@ -235,13 +235,13 @@ class WinClip extends WinClip_base
         return this._setClipData( clipData, dataSize )
     }
 
-    Restore( ByRef clipData )
+    static Restore( ByRef clipData )
     {
         clipSize := clipData.Size
         return this._toclipboard( clipData, clipSize )
     }
 
-    iRestore()
+    static iRestore()
     {
         this._IsInstance( A_ThisFunc )
         if !( clipSize := this._getClipData( clipData ) )
@@ -249,14 +249,14 @@ class WinClip extends WinClip_base
         return this._toclipboard( clipData, clipSize )
     }
 
-    Save( filePath )
+    static Save( filePath )
     {
         if !( size := this._fromclipboard( data ) )
             return 0
         return this._saveFile( filePath, data, size )
     }
     
-    iSave( filePath )
+    static iSave( filePath )
     {
         this._IsInstance( A_ThisFunc )
         if !( clipSize := this._getClipData( clipData ) )
@@ -264,14 +264,14 @@ class WinClip extends WinClip_base
         return this._saveFile( filePath, clipData, clipSize )
     }
 
-    Load( filePath )
+    static Load( filePath )
     {
         if !( dataSize := this._loadFile( filePath, dataBuf ) )
             return 0
         return this._toclipboard( dataBuf, dataSize )
     }
 
-    iLoad( filePath )
+    static iLoad( filePath )
     {
         this._IsInstance( A_ThisFunc )
         if !( dataSize := this._loadFile( filePath, dataBuf ) )
@@ -279,7 +279,7 @@ class WinClip extends WinClip_base
         return this._setClipData( dataBuf, dataSize )
     }
 
-    Clear()
+    static Clear()
     {
         if !WinClipAPI.OpenClipboard()
             return 0
@@ -288,13 +288,13 @@ class WinClip extends WinClip_base
         return 1
     }
     
-    iClear()
+    static iClear()
     {
         this._IsInstance( A_ThisFunc )
         this["allData"].Size := 0
     }
     
-    Copy( timeout := 1, method := 1 )
+    static Copy( timeout := 1, method := 1 )
     {
         this.Snap( data )
         this.Clear()    ;clearing the clipboard
@@ -308,7 +308,7 @@ class WinClip extends WinClip_base
         return !ret
     }
     
-    iCopy( timeout := 1, method := 1 )
+    static iCopy( timeout := 1, method := 1 )
     {
         this._IsInstance( A_ThisFunc )
         this.Snap( data )
@@ -328,7 +328,7 @@ class WinClip extends WinClip_base
         return bytesCopied
     }
     
-    Paste( plainText := "", method := 1 )
+    static Paste( plainText := "", method := 1 )
     {
         ret := 0
         if ( plainText != "" )
@@ -351,7 +351,7 @@ class WinClip extends WinClip_base
         return ret
     }
     
-    iPaste( method := 1 )
+    static iPaste( method := 1 )
     {
         this._IsInstance( A_ThisFunc )
         this.Snap( data )
@@ -366,22 +366,22 @@ class WinClip extends WinClip_base
         return bytesRestored
     }
     
-    IsEmpty()
+    static IsEmpty()
     {
         return this._isClipEmpty()
     }
     
-    iIsEmpty()
+    static iIsEmpty()
     {
         return !this.iGetSize()
     }
     
-    _isClipEmpty()
+    static _isClipEmpty()
     {
         return !WinClipAPI.CountClipboardFormats()
     }
     
-    _waitClipReady( timeout := 10000 )
+    static _waitClipReady( timeout := 10000 )
     {
         start_time := A_TickCount
         sleep "100"
@@ -389,7 +389,7 @@ class WinClip extends WinClip_base
             sleep "100"
     }
 
-    iSetText( textData )
+    static iSetText( textData )
     {
         if ( textData = "" )
             return 0
@@ -400,7 +400,7 @@ class WinClip extends WinClip_base
         return this._setClipData( clipData, clipSize )
     }
     
-    SetText( textData )
+    static SetText( textData )
     {
         if ( textData = "" )
             return 0
@@ -410,7 +410,7 @@ class WinClip extends WinClip_base
         return this._toclipboard( clipData, clipSize )
     }
 
-    GetRTF()
+    static GetRTF()
     {
         if !( clipSize := this._fromclipboard( clipData ) )
             return ""
@@ -419,7 +419,7 @@ class WinClip extends WinClip_base
         return strget( out_data.Ptr, out_size, "CP0" )
     }
     
-    iGetRTF()
+    static iGetRTF()
     {
         this._IsInstance( A_ThisFunc )
         if !( clipSize := this._getClipData( clipData ) )
@@ -429,7 +429,7 @@ class WinClip extends WinClip_base
         return strget( out_data.Ptr, out_size, "CP0" )
     }
     
-    SetRTF( textData )
+    static SetRTF( textData )
     {
         if ( textData = "" )
             return 0
@@ -439,7 +439,7 @@ class WinClip extends WinClip_base
         return this._toclipboard( clipData, clipSize )
     }
     
-    iSetRTF( textData )
+    static iSetRTF( textData )
     {
         if ( textData = "" )
             return 0
@@ -450,7 +450,7 @@ class WinClip extends WinClip_base
         return this._setClipData( clipData, clipSize )
     }
 
-    _setRTF( ByRef clipData, clipSize, textData )
+    static _setRTF( ByRef clipData, clipSize, textData )
     {
         objFormats := this._parseClipboardData( clipData, clipSize )
         uFmt := WinClipAPI.RegisterClipboardFormat( "Rich Text Format" )
@@ -462,7 +462,7 @@ class WinClip extends WinClip_base
         return this._compileClipData( clipData, objFormats )
     }
 
-    iAppendText( textData )
+    static iAppendText( textData )
     {
         if ( textData = "" )
             return 0
@@ -473,7 +473,7 @@ class WinClip extends WinClip_base
         return this._setClipData( clipData, clipSize )
     }
     
-    AppendText( textData )
+    static AppendText( textData )
     {
         if ( textData = "" )
             return 0
@@ -483,7 +483,7 @@ class WinClip extends WinClip_base
         return this._toclipboard( clipData, clipSize )
     }
 
-    SetHTML( html, source := "" )
+    static SetHTML( html, source := "" )
     {
         if ( html = "" )
             return 0
@@ -493,7 +493,7 @@ class WinClip extends WinClip_base
         return this._toclipboard( clipData, clipSize )
     }
 
-    iSetHTML( html, source := "" )
+    static iSetHTML( html, source := "" )
     {
         if ( html = "" )
             return 0
@@ -504,14 +504,14 @@ class WinClip extends WinClip_base
         return this._setClipData( clipData, clipSize )
     }
 
-    _calcHTMLLen( num )
+    static _calcHTMLLen( num )
     {
         while ( StrLen( num ) < 10 )
             num := "0" . num
         return num
     }
 
-    _setHTML( ByRef clipData, clipSize, htmlData, source )
+    static _setHTML( ByRef clipData, clipSize, htmlData, source )
     {
         objFormats := this._parseClipboardData( clipData, clipSize )
         uFmt := WinClipAPI.RegisterClipboardFormat( "HTML Format" )
@@ -546,7 +546,7 @@ class WinClip extends WinClip_base
         return this._compileClipData( clipData, objFormats )
     }
     
-    _appendText( ByRef clipData, clipSize, textData, IsSet := 0 )
+    static _appendText( ByRef clipData, clipSize, textData, IsSet := 0 )
     {
         objFormats := this._parseClipboardData( clipData, clipSize )
         uFmt := this["ClipboardFormats"]["CF_UNICODETEXT"]
@@ -563,7 +563,7 @@ class WinClip extends WinClip_base
         return this._compileClipData( clipData, objFormats )
     }
     
-    _getFiles( pDROPFILES )
+    static _getFiles( pDROPFILES )
     {
         fWide := numget( pDROPFILES + 0, 16, "uchar" ) ;getting fWide value from DROPFILES struct
         pFiles := numget( pDROPFILES + 0, 0, "UInt" ) + pDROPFILES  ;getting address of files list
@@ -577,7 +577,7 @@ class WinClip extends WinClip_base
         return list
     }
     
-    _setFiles( ByRef clipData, clipSize, files, append := 0, isCut := 0 )
+    static _setFiles( ByRef clipData, clipSize, files, append := 0, isCut := 0 )
     {
         objFormats := this._parseClipboardData( clipData, clipSize )
         uFmt := this["ClipboardFormats"]["CF_HDROP"]
@@ -610,7 +610,7 @@ class WinClip extends WinClip_base
         return this._compileClipData( clipData, objFormats )
     }
     
-    SetFiles( files, isCut := 0 )
+    static SetFiles( files, isCut := 0 )
     {
         if ( files = "" )
             return 0
@@ -620,7 +620,7 @@ class WinClip extends WinClip_base
         return this._toclipboard( clipData, clipSize )
     }
     
-    iSetFiles( files, isCut := 0 )
+    static iSetFiles( files, isCut := 0 )
     {
         this._IsInstance( A_ThisFunc )
         if ( files = "" )
@@ -631,7 +631,7 @@ class WinClip extends WinClip_base
         return this._setClipData( clipData, clipSize )
     }
     
-    AppendFiles( files, isCut := 0 )
+    static AppendFiles( files, isCut := 0 )
     {
         if ( files = "" )
             return 0
@@ -641,7 +641,7 @@ class WinClip extends WinClip_base
         return this._toclipboard( clipData, clipSize )
     }
     
-    iAppendFiles( files, isCut := 0 )
+    static iAppendFiles( files, isCut := 0 )
     {
         this._IsInstance( A_ThisFunc )
         if ( files = "" )
@@ -652,7 +652,7 @@ class WinClip extends WinClip_base
         return this._setClipData( clipData, clipSize )
     }
     
-    GetFiles()
+    static GetFiles()
     {
         if !( clipSize := this._fromclipboard( clipData ) )
             return ""
@@ -661,7 +661,7 @@ class WinClip extends WinClip_base
         return this._getFiles( out_data.Ptr )
     }
     
-    iGetFiles()
+    static iGetFiles()
     {
         this._IsInstance( A_ThisFunc )
         if !( clipSize := this._getClipData( clipData ) )
@@ -671,7 +671,7 @@ class WinClip extends WinClip_base
         return this._getFiles( out_data.Ptr )
     }
     
-    _getFormatData( ByRef out_data, ByRef data, size, needleFormat )
+    static _getFormatData( ByRef out_data, ByRef data, size, needleFormat )
     {
         needleFormat := (WinClipAPI.IsInteger( needleFormat ) ? needleFormat : WinClipAPI.RegisterClipboardFormat( needleFormat ))
         if !needleFormat
@@ -696,7 +696,7 @@ class WinClip extends WinClip_base
         return 0
     }
     
-    _DIBtoHBITMAP( ByRef dibData )
+    static _DIBtoHBITMAP( ByRef dibData )
     {
         ;http://ebersys.blogspot.com/2009/06/how-to-convert-dib-to-bitmap.html
         pPix := WinClipAPI.GetPixelInfo( dibData )
@@ -708,7 +708,7 @@ class WinClip extends WinClip_base
         return hBitmap
     }
     
-    GetBitmap()
+    static GetBitmap()
     {
         if !( clipSize := this._fromclipboard( clipData ) )
             return ""
@@ -717,7 +717,7 @@ class WinClip extends WinClip_base
         return this._DIBtoHBITMAP( out_data )
     }
     
-    iGetBitmap()
+    static iGetBitmap()
     {
         this._IsInstance( A_ThisFunc )
         if !( clipSize := this._getClipData( clipData ) )
@@ -727,7 +727,7 @@ class WinClip extends WinClip_base
         return this._DIBtoHBITMAP( out_data )
     }
     
-    _BITMAPtoDIB( bitmap, ByRef DIB )
+    static _BITMAPtoDIB( bitmap, ByRef DIB )
     {
         if !bitmap
             return 0
@@ -812,7 +812,7 @@ _BITMAPtoDIB_cleanup:
         return DIBLen
     }
     
-    _setBitmap( ByRef DIB, DIBSize, ByRef clipData, clipSize )
+    static _setBitmap( ByRef DIB, DIBSize, ByRef clipData, clipSize )
     {
         objFormats := this._parseClipboardData( clipData, clipSize )
         uFmt := this["ClipboardFormats"]["CF_DIB"]
@@ -822,7 +822,7 @@ _BITMAPtoDIB_cleanup:
         return this._compileClipData( clipData, objFormats )
     }
     
-    SetBitmap( bitmap )
+    static SetBitmap( bitmap )
     {
         if ( DIBSize := this._BITMAPtoDIB( bitmap, DIB ) )
         {
@@ -833,7 +833,7 @@ _BITMAPtoDIB_cleanup:
         return 0
     }
     
-    iSetBitmap( bitmap )
+    static iSetBitmap( bitmap )
     {
         this._IsInstance( A_ThisFunc )
         if ( DIBSize := this._BITMAPtoDIB( bitmap, DIB ) )
@@ -845,7 +845,7 @@ _BITMAPtoDIB_cleanup:
         return 0
     }
     
-    GetText()
+    static GetText()
     {
         if !( clipSize := this._fromclipboard( clipData ) )
             return ""
@@ -854,7 +854,7 @@ _BITMAPtoDIB_cleanup:
         return strget( out_data.Ptr, out_size / 2, "UTF-16" )
     }
 
-    iGetText()
+    static iGetText()
     {
         this._IsInstance( A_ThisFunc )
         if !( clipSize := this._getClipData( clipData ) )
@@ -864,7 +864,7 @@ _BITMAPtoDIB_cleanup:
         return strget( out_data.Ptr, out_size / 2, "UTF-16" )
     }
     
-    GetHtml()
+    static GetHtml()
     {
         if !( clipSize := this._fromclipboard( clipData ) )
             return ""
@@ -873,7 +873,7 @@ _BITMAPtoDIB_cleanup:
         return strget( out_data.Ptr, out_size, "CP0" )
     }
     
-    iGetHtml()
+    static iGetHtml()
     {
         this._IsInstance( A_ThisFunc )
         if !( clipSize := this._getClipData( clipData ) )
@@ -883,7 +883,7 @@ _BITMAPtoDIB_cleanup:
         return strget( out_data.Ptr, out_size, "CP0" )
     }
     
-    _getFormatName( iformat )
+    static _getFormatName( iformat )
     {
         if this["formatByValue"].HasKey( iformat )
             return this["formatByValue"][ iformat ]
@@ -891,32 +891,32 @@ _BITMAPtoDIB_cleanup:
             return WinClipAPI.GetClipboardFormatName( iformat )
     }
     
-    iGetData( ByRef Data )
+    static iGetData( ByRef Data )
     {
         this._IsInstance( A_ThisFunc )
         return this._getClipData( Data )
     }
     
-    iSetData( ByRef data )
+    static iSetData( ByRef data )
     {
         this._IsInstance( A_ThisFunc )
         return this._setClipData( data, data.Size )
     }
     
-    iGetSize()
+    static iGetSize()
     {
         this._IsInstance( A_ThisFunc )
         return this["alldata"].Size
     }
     
-    HasFormat( fmt )
+    static HasFormat( fmt )
     {
         if !fmt
             return 0
         return WinClipAPI.IsClipboardFormatAvailable( WinClipAPI.IsInteger( fmt ) ? fmt : WinClipAPI.RegisterClipboardFormat( fmt )  )
     }
     
-    iHasFormat( fmt )
+    static iHasFormat( fmt )
     {
         this._IsInstance( A_ThisFunc )
         if !( clipSize := this._getClipData( clipData ) )
@@ -924,7 +924,7 @@ _BITMAPtoDIB_cleanup:
         return this._hasFormat( clipData, clipSize, fmt )
     }
 
-    _hasFormat( ByRef data, size, needleFormat )
+    static _hasFormat( ByRef data, size, needleFormat )
     {
         needleFormat := WinClipAPI.IsInteger( needleFormat ) ? needleFormat : WinClipAPI.RegisterClipboardFormat( needleFormat )
         if !needleFormat
@@ -944,7 +944,7 @@ _BITMAPtoDIB_cleanup:
         return 0
     }
     
-    iSaveBitmap( filePath, format )
+    static iSaveBitmap( filePath, format )
     {
         this._IsInstance( A_ThisFunc )
         if ( filePath = "" || format = "" )
@@ -963,7 +963,7 @@ _BITMAPtoDIB_cleanup:
         return 1
     }
     
-    SaveBitmap( filePath, format )
+    static SaveBitmap( filePath, format )
     {
         if ( filePath = "" || format = "" )
             return 0

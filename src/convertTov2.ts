@@ -28,10 +28,13 @@ const everything = ahkParser(content.toString().replace(/\r/g, ''))
 // d(everything)
 let reconstructed = []
 let i = 0, b
+const classToStatic = {'WinClip':true}
+
 const numIfNum = {'break':true,'continue':true,'settitlematchmode':true}
 const anyCommand = {'DIRECTIVE OR COMMAND comma':true,'command EOL or comment':true,'command':true}
 const idkVariableOrAssignment = {'idkVariable':true,'assignment':true}
 const startingBlock = {'{ legacyIf':true,'{ if':true,'{ for':true,'{ else':true,'{ loop':true,'{ namedIf':true}
+const startingBlockForClass = {'{ class':true,'{ function DEFINITION':true,'{ legacyIf':true,'{ if':true,'{ for':true,'{ else':true,'{ loop':true,'{ namedIf':true}
 const v1Str = {'v1String findV1Expression':true,'v1String findPercentVarV1Expression':true}
 const v1Percent = {'%START %Var%':true,'END% %Var%':true}
 // const removedDirectives = {'#noenv':true,'setbatchlines':true}
@@ -383,7 +386,6 @@ function all() {
         }
       }
     }
-    //#HERE
   } else if (everything[i].type === '1operator') {
     if (everything[i].text === '&') {
       let bType
@@ -443,6 +445,29 @@ function all() {
             return 1
           }
         }
+      }
+    }
+  //#HERE
+  } else if (everything[i].type === 'className') {
+    reconstructed.push(everything[i].text)
+    if (classToStatic[everything[i].text]) {
+      b = i + 1
+      let next, arrAccessDepth = 0
+      next = everything[++b]
+      while (next) {
+        const bType = next.type
+        if (bType === '} unknown') {
+          arrAccessDepth--
+          if (arrAccessDepth === 0) {
+            return 3
+          }
+        } else if (startingBlockForClass[bType]) {
+          arrAccessDepth++
+        } else if (bType === 'function( definition') {
+          everything.splice(b,0,{type:'edit',text:'static '})
+          b++
+        }
+        next = everything[++b]
       }
     }
   } else {
