@@ -169,10 +169,12 @@ class WinClipAPI extends WinClip_base
                     DllCall( "LoadLibraryW", "Wstr", "gdiplus", "UPtr" )
         
         GdiplusStartupInput:=BufferAlloc(3*A_PtrSize,0), NumPut("UInt",1,GdiplusStartupInput,0) ; GdiplusVersion = 1
+        pToken:=0
         DllCall("gdiplus\GdiplusStartup", "Ptr*", pToken, "Ptr", GdiplusStartupInput.Ptr, "Ptr", 0)
         return pToken
     }
     static Gdip_Shutdown(pToken) {
+        pToken:=0
         DllCall("gdiplus\GdiplusShutdown", "Ptr", pToken)
         if hModule := DllCall( "GetModuleHandleW", "Wstr", "gdiplus", "UPtr" )
             DllCall("FreeLibrary", "Ptr", hModule)

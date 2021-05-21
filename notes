@@ -2112,3 +2112,34 @@ VarSetCapacity(fullpath, 260 * (!!A_IsUnicode + 1))
 
 maybe one day to do:
 I will do lv omg one day..
+
+---------------------------
+og test2.ah2
+---------------------------
+Warning in #include file "ahk_parser.js\winclipv2\WinClip.ah2":
+     This variable appears to never be assigned a value.
+
+Specifically: local pBitmap
+
+	Line#
+	974: if !( clipSize := this._fromclipboard( clipData ) )
+	975: Return 0
+	976: if !( DIBsize := this._getFormatData( DIB, clipData, clipSize, this["ClipboardFormats"]["CF_DIB"] ) )
+	977: Return 0
+	978: gdip_token := WinClipAPI.Gdip_Startup()
+	979: if !WinClipAPI.GetEncoderClsid( format, CLSID )
+	980: Return 0
+--->	981: DllCall("gdiplus\GdipCreateBitmapFromGdiDib", "Ptr", DIB.Ptr, "Ptr", WinClipAPI.GetPixelInfo( DIB ), "Ptr*", pBitmap )
+	982: DllCall("gdiplus\GdipSaveImageToFile", "Ptr", pBitmap, "wstr", filePath, "Ptr", CLSID.Ptr, "Ptr", 0 )
+	983: DllCall("gdiplus\GdipDisposeImage", "Ptr", pBitmap)
+	984: WinClipAPI.Gdip_Shutdown( gdip_token )
+	985: Return 1
+	986: }
+	012: d(WinClip.GetHtml())
+	014: Return
+
+For more details, read the documentation for #Warn.
+---------------------------
+OK   
+---------------------------
+

@@ -701,7 +701,9 @@ class WinClip extends WinClip_base
         ;http://ebersys.blogspot.com/2009/06/how-to-convert-dib-to-bitmap.html
         pPix := WinClipAPI.GetPixelInfo( dibData )
         gdip_token := WinClipAPI.Gdip_Startup()
+        pBitmap:=0
         DllCall("gdiplus\GdipCreateBitmapFromGdiDib", "Ptr", dibData.Ptr, "Ptr", pPix, "Ptr*", pBitmap )
+        hBitmap:=0
         DllCall("gdiplus\GdipCreateHBITMAPFromBitmap", "Ptr", pBitmap, "Ptr*", hBitmap, "int", 0xffffffff )
         DllCall("gdiplus\GdipDisposeImage", "Ptr", pBitmap)
         WinClipAPI.Gdip_Shutdown( gdip_token )
@@ -734,6 +736,7 @@ class WinClip extends WinClip_base
         if !IsInteger( bitmap )
         {
             gdip_token := WinClipAPI.Gdip_Startup()
+            pBitmap:=0
             DllCall("gdiplus\GdipCreateBitmapFromFileICM", "wstr", bitmap, "Ptr*", pBitmap )
             DllCall("gdiplus\GdipCreateHBITMAPFromBitmap", "Ptr", pBitmap, "Ptr*", hBitmap, "int", 0xffffffff )
             DllCall("gdiplus\GdipDisposeImage", "Ptr", pBitmap)
@@ -956,6 +959,7 @@ _BITMAPtoDIB_cleanup:
         gdip_token := WinClipAPI.Gdip_Startup()
         if !WinClipAPI.GetEncoderClsid( format, CLSID )
             return 0
+        pBitmap:=0
         DllCall("gdiplus\GdipCreateBitmapFromGdiDib", "Ptr", DIB.Ptr, "Ptr", WinClipAPI.GetPixelInfo( DIB ), "Ptr*", pBitmap )
         DllCall("gdiplus\GdipSaveImageToFile", "Ptr", pBitmap, "wstr", filePath, "Ptr", CLSID.Ptr, "Ptr", 0 )
         DllCall("gdiplus\GdipDisposeImage", "Ptr", pBitmap)
@@ -974,6 +978,7 @@ _BITMAPtoDIB_cleanup:
         gdip_token := WinClipAPI.Gdip_Startup()
         if !WinClipAPI.GetEncoderClsid( format, CLSID )
             return 0
+        pBitmap:=0
         DllCall("gdiplus\GdipCreateBitmapFromGdiDib", "Ptr", DIB.Ptr, "Ptr", WinClipAPI.GetPixelInfo( DIB ), "Ptr*", pBitmap )
         DllCall("gdiplus\GdipSaveImageToFile", "Ptr", pBitmap, "wstr", filePath, "Ptr", CLSID.Ptr, "Ptr", 0 )
         DllCall("gdiplus\GdipDisposeImage", "Ptr", pBitmap)
