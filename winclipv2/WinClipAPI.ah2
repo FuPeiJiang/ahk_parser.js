@@ -1,37 +1,37 @@
 class WinClip_base
 {
     __Call( aTarget, aParams* ) {
-        if WinClip_base.HasOwnProp(aTarget)
+        if ObjHasKey( WinClip_base, aTarget )
             return WinClip_base[ aTarget ].Call( this, aParams* ) ;updated for AHKv2 compatibility
             ;return WinClip_base[ aTarget ].( this, aParams* )
-        throw Exception( "Unknown function '" aTarget "' requested from object '" this.__Class "'", -1 )
+        throw Exception( "Unknown function '" aTarget "' requested from object '" this["__Class"] "'", -1 )
     }
     
     Err( msg ) {
-        throw Exception( this.__Class " : " msg ( A_LastError != 0 ? "`n" this.ErrorFormat( A_LastError ) : "" ), -2 )
+        throw Exception( this["__Class"] " : " msg ( A_LastError != 0 ? "`n" this.ErrorFormat( A_LastError ) : "" ), -2 )
     }
     
     ErrorFormat( error_id ) {
-        VarSetStrCapacity(msg,1000)
+        msg:=BufferAlloc(1000,0)
         if !len := DllCall("FormatMessageW"
                     ,"UInt",FORMAT_MESSAGE_FROM_SYSTEM := 0x00001000 | FORMAT_MESSAGE_IGNORE_INSERTS := 0x00000200      ;dwflags
                     ,"Ptr",0        ;lpSource
                     ,"UInt",error_id    ;dwMessageId
                     ,"UInt",0           ;dwLanguageId
-                    ,"Ptr",StrPtr(msg)         ;lpBuffer
+                    ,"Ptr",msg.Ptr         ;lpBuffer
                     ,"UInt",500)            ;nSize
             return
-        return  strget(StrPtr(msg),len)
+        return  strget(msg.Ptr,len)
     }
 }
 
 class WinClipAPI_base extends WinClip_base
 {
     __Get( name ) {
-        if !this.HasOwnProp(initialized)
+        if !ObjHasKey( this, initialized )
             this.Init()
         else
-            throw Exception( "Unknown field '" name "' requested from object '" this.__Class "'", -1 )
+            throw Exception( "Unknown field '" name "' requested from object '" this["__Class"] "'", -1 )
     }
 }
 
@@ -74,16 +74,15 @@ class WinClipAPI extends WinClip_base
         return DllCall( "CountClipboardFormats" )
     }
     static GetClipboardFormatName( iFormat ) {
-        size := VarSetStrCapacity(bufName,510)
-        ; size := VarSetStrCapacity(bufName,255*( A_IsUnicode ? 2 : 1 ))
+        size := bufName:=BufferAlloc(255*(A_IsUnicode? 2:1),0)
         DllCall( "GetClipboardFormatName", "Uint", iFormat, "str", bufName, "Uint", size )
         return bufName
     }
     static GetEnhMetaFileBits( hemf, ByRef buf ) {
         if !( bufSize := DllCall( "GetEnhMetaFileBits", "Ptr", hemf, "Uint", 0, "Ptr", 0 ) )
             return 0
-        VarSetStrCapacity(buf,bufSize)
-        if !( bytesCopied := DllCall( "GetEnhMetaFileBits", "Ptr", hemf, "Uint", bufSize, "Ptr", StrPtr(buf) ) )
+        buf:=BufferAlloc(bufSize,0)
+        if !( bytesCopied := DllCall( "GetEnhMetaFileBits", "Ptr", hemf, "Uint", bufSize, "Ptr", buf.Ptr ) )
             return 0
         return bytesCopied
     }
@@ -94,25 +93,23 @@ class WinClipAPI extends WinClip_base
         return DllCall( "DeleteEnhMetaFile", "Ptr", hemf )
     }
     static ErrorFormat(error_id) {
-        VarSetStrCapacity(msg,1000)
+        msg:=BufferAlloc(1000,0)
         if !len := DllCall("FormatMessageW"
                     ,"UInt",FORMAT_MESSAGE_FROM_SYSTEM := 0x00001000 | FORMAT_MESSAGE_IGNORE_INSERTS := 0x00000200      ;dwflags
                     ,"Ptr",0        ;lpSource
                     ,"UInt",error_id    ;dwMessageId
                     ,"UInt",0           ;dwLanguageId
-                    ,"Ptr",StrPtr(msg)         ;lpBuffer
+                    ,"Ptr",msg.Ptr         ;lpBuffer
                     ,"UInt",500)            ;nSize
             return
-        return  strget(StrPtr(msg),len)
+        return  strget(msg.Ptr,len)
     }
-    ; static IsInteger( var ) {
-        ; if (type(var)=="String")
-        ; wtf 3
-        ; if (var+0 == var) && (Floor(var) == var) ;test for integer while remaining v1 and v2 compatible
-            ; return True
-        ; else 
-            ; return False
-    ; }
+    static IsInteger( var ) {
+        if (var+0 == var) && (Floor(var) == var) ;test for integer while remaining v1 and v2 compatible
+            return True
+        else 
+            return False
+    }
     static LoadDllFunction( file, function ) {
             if !hModule := DllCall( "GetModuleHandleW", "Wstr", file, "UPtr" )
                     hModule := DllCall( "LoadLibraryW", "Wstr", file, "UPtr" )
@@ -134,10 +131,10 @@ class WinClipAPI extends WinClip_base
     }
     static WinGetFocus( hwnd ) {
         GUITHREADINFO_cbsize := 24 + A_PtrSize*6
-        VarSetStrCapacity(GuiThreadInfo,GUITHREADINFO_cbsize)    ;GuiThreadInfoSize = 48
-        NumPut(GUITHREADINFO_cbsize, GuiThreadInfo, 0, "UInt")
+        GuiThreadInfo:=BufferAlloc(GUITHREADINFO_cbsize,0)    ;GuiThreadInfoSize = 48
+        NumPut("UInt",GUITHREADINFO_cbsize,GuiThreadInfo,0)
         threadWnd := this.GetWindowThreadProcessId( hwnd )
-        if not DllCall( "GetGUIThreadInfo", "uint", threadWnd, "UPtr", StrPtr(GuiThreadInfo) )
+        ifnot DllCall( "GetGUIThreadInfo", "uint", threadWnd, "UPtr", GuiThreadInfo.Ptr )
                 return 0
         return NumGet( GuiThreadInfo, 8+A_PtrSize,"UPtr")  ; Retrieve the hwndFocus field from the struct.
     }
@@ -155,7 +152,7 @@ class WinClipAPI extends WinClip_base
         ;~ DWORD biClrUsed;           32
         ;~ DWORD biClrImportant;      36
         
-        bmi := StrPtr(DIB)  ;BITMAPINFOHEADER  pointer from DIB
+        bmi := DIB.Ptr  ;BITMAPINFOHEADER  pointer from DIB
         biSize := numget( bmi+0, 0, "UInt" )
         ;~ return bmi + biSize
         biSizeImage := numget( bmi+0, 20, "UInt" )
@@ -165,7 +162,7 @@ class WinClipAPI extends WinClip_base
             biWidth := numget( bmi+0, 4, "UInt" )
             biHeight := numget( bmi+0, 8, "UInt" )
             biSizeImage := (((( biWidth * biBitCount + 31 ) & ~31 ) >> 3 ) * biHeight )
-            numput( biSizeImage, bmi+0, 20, "UInt" )
+            NumPut("UInt",biSizeImage,bmi+0,20)
         }
         p := numget( bmi+0, 32, "UInt" )  ;biClrUsed
         if ( p == 0 && biBitCount <= 8 )
@@ -177,9 +174,8 @@ class WinClipAPI extends WinClip_base
         if !DllCall( "GetModuleHandleW", "Wstr", "gdiplus", "UPtr" )
                     DllCall( "LoadLibraryW", "Wstr", "gdiplus", "UPtr" )
         
-        VarSetStrCapacity(GdiplusStartupInput,3*A_PtrSize), NumPut(1,GdiplusStartupInput ,0,"UInt") ; GdiplusVersion = 1
-        pToken:=0 ;empty receiving var
-        DllCall("gdiplus\GdiplusStartup", "Ptr*", pToken, "Ptr", StrPtr(GdiplusStartupInput), "Ptr", 0)
+        GdiplusStartupInput:=BufferAlloc(3*A_PtrSize,0), NumPut(,1,GdiplusStartupInput,0) ; GdiplusVersion = 1
+        DllCall("gdiplus\GdiplusStartup", "Ptr*", pToken, "Ptr", GdiplusStartupInput.Ptr, "Ptr", 0)
         return pToken
     }
     static Gdip_Shutdown(pToken) {
@@ -191,12 +187,12 @@ class WinClipAPI extends WinClip_base
     static StrSplit(str,delim,omit := "") {
         if (strlen(delim) > 1)
         {
-            ;StringReplace,str,str, delim,ƒ,1      ;■¶╬
+            ;StringReplace,str,str,% delim,ƒ,1      ;■¶╬
             str := StrReplace(str, delim, "ƒ")
             delim := "ƒ"
         }
         ra := Array()
-        Loop Parse str, delim, omit
+        loop parse,str,delim,omit
             if (A_LoopField != "")
                 ra.Insert(A_LoopField)
         return ra
@@ -205,10 +201,10 @@ class WinClipAPI extends WinClip_base
         while True
         {
             nodubls := 1
-            tempArr := Object()
+            tempArr := Map()
             for i,val in objArray
             {
-                if tempArr.HasOwnProp( val )
+                if tempArr.Has( val )
                 {
                     nodubls := 0
                     objArray.Remove( i )
@@ -222,7 +218,7 @@ class WinClipAPI extends WinClip_base
         return objArray
     }
     static RegisterClipboardFormat( fmtName ) {
-        return DllCall( "RegisterClipboardFormat", "ptr", StrPtr(fmtName) )
+        return DllCall( "RegisterClipboardFormat", "ptr", fmtName.Ptr )
     }
     static GetOpenClipboardWindow() {
         return DllCall( "GetOpenClipboardWindow" )
@@ -249,17 +245,17 @@ class WinClipAPI extends WinClip_base
         this.GetImageEncodersSize( num, size )
         if ( size = 0 )
             return 0
-        VarSetStrCapacity(ImageCodecInfo,size)
-        this.GetImageEncoders( num, size, StrPtr(ImageCodecInfo) )
+        ImageCodecInfo:=BufferAlloc(size,0)
+        this.GetImageEncoders( num, size, ImageCodecInfo.Ptr )
         loop num
         {
-            pici := StrPtr(ImageCodecInfo) + ( 48+7*A_PtrSize )*(A_Index-1)
+            pici := ImageCodecInfo.Ptr + ( 48+7*A_PtrSize )*(A_Index-1)
             pMime := NumGet( pici+0, 32+4*A_PtrSize, "UPtr" )
             MimeType := StrGet( pMime, "UTF-16")
             if ( MimeType = format )
             {
-                VarSetStrCapacity(CLSID,16)
-                this.memcopy( StrPtr(CLSID), pici, 16 )
+                CLSID:=BufferAlloc(16,0)
+                this.memcopy( CLSID.Ptr, pici, 16 )
                 return 1
             }
         }

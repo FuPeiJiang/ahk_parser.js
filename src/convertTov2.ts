@@ -5,7 +5,7 @@ import { variableCharsObj, whiteSpaceObj } from './parser/tokens'
 
 
 const content: Buffer =
-fs.readFileSync('tov2/WinClip.ahk')
+// fs.readFileSync('tov2/WinClip.ahk')
 fs.readFileSync('tov2/WinClipAPI.ahk')
 // fs.readFileSync('v2tests/v1concat space or not.ahk')
 // fs.readFileSync('tests3/listlines.ahk')
@@ -28,7 +28,7 @@ const everything = ahkParser(content.toString().replace(/\r/g, ''))
 // d(everything)
 let reconstructed = []
 let i = 0, b
-const classToStatic = {'WinClip':true}
+const classToStatic = {'WinClip':true,'WinClipAPI':true}
 
 const numIfNum = {'break':true,'continue':true,'settitlematchmode':true}
 const anyCommand = {'DIRECTIVE OR COMMAND comma':true,'command EOL or comment':true,'command':true}
