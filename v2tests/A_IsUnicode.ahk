@@ -1,3 +1,5 @@
+size := VarSetCapacity( bufName, 255*( A_IsUnicode ? 2 : 1 ), 0 )
+
 v:=25+255*(A_IsUnicode ? 2:1)
 v:=a+25+255*(A_IsUnicode ? 2:1)
 ; _Struct.ahk

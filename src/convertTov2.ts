@@ -5,12 +5,13 @@ import { variableCharsObj, whiteSpaceObj } from './parser/tokens'
 
 
 const content: Buffer =
+// fs.readFileSync('v2tests/A_IsUnicode from WinClipAPI.ahk')
 // fs.readFileSync('v2tests/A_IsUnicode start group space.ahk')
 fs.readFileSync('v2tests/A_IsUnicode.ahk')
 // fs.readFileSync('v2tests/fix numput.ahk')
 // fs.readFileSync('v2tests/fix if not.ahk')
 // fs.readFileSync('tov2/WinClip.ahk')
-// fs.readFileSync('tov2/WinClipAPI.ahk')
+fs.readFileSync('tov2/WinClipAPI.ahk')
 // fs.readFileSync('v2tests/v1concat space or not.ahk')
 // fs.readFileSync('tests3/listlines.ahk')
 // fs.readFileSync('tests3/ampersand to .Ptr.ahk')
@@ -270,11 +271,17 @@ function all() {
             }
             const ternaryTrueStart = b
             let findGroupEnd: boolean|number = false
+            let reconstructSpliceIndex
             while (true) {
               b = i
               if (!backEmptyLinesEmptyText()) {break}
               if (everything[b].type === '( group') {
-                findGroupEnd = i - b
+                findGroupEnd = true
+                let r = reconstructed.length
+                while (reconstructed[--r] !== '(') {
+                  //
+                }
+                reconstructSpliceIndex = r
               }
               break
             }
@@ -293,7 +300,7 @@ function all() {
             if (findGroupEnd) {
               if (!nextSkipThrough(') group','( group')) {break}
               ternaryFalseEnd = b + 1
-              reconstructed.splice(reconstructed.length - findGroupEnd)
+              reconstructed.splice(reconstructSpliceIndex)
             } else {
               if (!findNextAnyInObj(ternaryColonEndDelim)) {break}
               ternaryFalseEnd = b

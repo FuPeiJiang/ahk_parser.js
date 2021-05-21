@@ -1,0 +1,1 @@
+size := VarSetCapacity( bufName, 255*( A_IsUnicode ? 2 : 1 ), 0 )
