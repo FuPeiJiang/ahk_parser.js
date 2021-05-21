@@ -5,6 +5,7 @@ import { variableCharsObj, whiteSpaceObj } from './parser/tokens'
 
 
 const content: Buffer =
+fs.readFileSync('v2tests/fix numput.ahk')
 // fs.readFileSync('v2tests/fix if not.ahk')
 // fs.readFileSync('tov2/WinClip.ahk')
 fs.readFileSync('tov2/WinClipAPI.ahk')
@@ -614,24 +615,14 @@ function getArgs() {
       }
 
       if (bType === ') function CALL') {
-        // b++
-        // i++
-        // arrOfArgs.push(arrOfText.join(''))
-
-        // i = b - 2
         arrOfArrOfText.push(reconstructed.slice(lenReconstructed))
         reconstructed.splice(lenReconstructed)
-        // i -= 2
         return arrOfArrOfText
       } else if (bType === ', function CALL') {
-        // b++
-        i++
-        // arrOfArgs.push(arrOfText.join(''))
         arrOfArrOfText.push(reconstructed.slice(lenReconstructed))
         reconstructed.splice(lenReconstructed)
         continue outerLoop
       } else if (!wsOrEmptyLine[bType]) {
-        // arrOfText.push(next.text)
         reconstructed.push(next.text)
       }
     }

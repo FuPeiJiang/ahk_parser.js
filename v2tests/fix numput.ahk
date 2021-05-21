@@ -1,0 +1,1 @@
+NumPut(1,GdiplusStartupInput ,0,"UInt") ; GdiplusVersion = 1
