@@ -2143,3 +2143,28 @@ For more details, read the documentation for #Warn.
 OK   
 ---------------------------
 
+A_ThisLabel was removed in v2
+
+---------------------------
+
+
+    This line will never execute, due to Throw preceeding it.
+
+	Line#
+	102: WinClipAPI.CloseClipboard()
+	103: Return structSize
+	104: }
+	107: {
+	108: if !this["isinstance"]
+	109: {
+	110: Throw Exception( "Error in '" funcName "':
+Instantiate the object first to use this method!", -1 )
+--->	111: Return 0
+	112: }
+	113: Return 1
+	114: }
+	117: {
+	118: f := FileOpen( filePath, "r","CP0" )
+	119: if !IsObject( f )
+	120: Return 0
+
