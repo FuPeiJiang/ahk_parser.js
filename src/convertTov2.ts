@@ -136,7 +136,7 @@ charactersLength)))
   return result.join('')
 }
 
-let next, argsArr, commandParamsArr
+let next, argsArr, gArgsEInsertIndex, arrFromArgsToInsert,commandParamsArr, cParamsEInsertIndex
 outOfLen:
 while (i < everything.length) {
   const allReturn = all()
@@ -202,7 +202,7 @@ function all() {
       // StrReplace(Haystack, Needle [, ReplaceText, OutputVarCount, Limit])
       // StrReplace(Haystack, Needle [, ReplaceText, CaseSense, OutputVarCount, Limit := -1])
       if (!(argsArr = getArgs())) { return 2 }
-      p('StrReplace('); a(1); p(','); a(2); o(',',3); a(3); o(',0,',4); a(4); o(',',5); a(5); p(')')
+      p('StrReplace('); a(1); p(','); a(2); o(',',3); a(3); o(',0,',4); a(4); o(',',5); a(5); p(')'); s()
     } else if (thisLowered === 'object') {
       // Object() -> Map()  OR  Object("key",value) -> Map("key",value)
       reconstructed.push('Map')
@@ -820,6 +820,43 @@ function c_o(str,index) {
   }
 }
 function a(index) {
+  const paramArr = argsArr[index - 1]
+  if (paramArr && paramArr.length) {
+    arrFromArgsToInsert.push(...paramArr)
+  }
+}
+function p(str) {
+  arrFromArgsToInsert.push({text:str})
+}
+function o(str,index) {
+  if (argsArr[index - 1]) {
+    arrFromArgsToInsert.push({text:str})
+  }
+}
+function s() {
+  everything.splice(gArgsEInsertIndex, 0, ...arrFromArgsToInsert)
+}
+/* function a(index) {
+  const idxMinus = index - 1
+  const paramArr = argsArr[idxMinus]
+  let paramsLength
+  if (paramArr && (paramsLength = paramArr.length)) {
+    everything.splice(gArgsEInsertIndex, 0, ...paramArr)
+    gArgsEInsertIndex += paramsLength
+  }
+}
+function p(str) {
+  everything.splice(gArgsEInsertIndex, 0, {text:str})
+  gArgsEInsertIndex ++
+}
+function o(str,index) {
+  if (argsArr[index - 1]) {
+    everything.splice(gArgsEInsertIndex, 0, {text:str})
+    gArgsEInsertIndex ++
+  }
+} */
+
+/* function a(index) {
   const idxMinus = index - 1
   // return (argsArr[idxMinus] && argsArr[idxMinus].length) ? argsArr[idxMinus] : ''
   if (argsArr[idxMinus] && argsArr[idxMinus].length) {
@@ -834,9 +871,10 @@ function o(str,index) {
     reconstructed.push(str)
   }
   // return argsArr[index - 1] ? str : ''
-}
+} */
+
 function getCommandParams() {
-  i ++
+  i++
   let next
   const arrOfArrOfText = []
   outerLoop:
@@ -874,18 +912,14 @@ function getCommandParams() {
   }
 }
 function getArgs() {
-  // function getArgs(maxArgs) {
-  // b = i + 2
-  i ++
+  const functionStartIndex = gArgsEInsertIndex = i
+  i++
+  arrFromArgsToInsert = []
+  let paramStartIndex = i + 1
   let next
-  // const arrOfArgs = []
-  const arrOfArrOfText = []
+  const arrOfArrOfE = []
   outerLoop:
-  //pretty useless maxArgs
-  // for (let n = 0; n < maxArgs; n++) {
   while (true) {
-    // const arrOfText = []
-    const lenReconstructed = reconstructed.length
     innerLoop:
     while (true) {
       next = everything[++i]
@@ -904,12 +938,14 @@ function getArgs() {
       }
 
       if (bType === ') function CALL') {
-        arrOfArrOfText.push(reconstructed.slice(lenReconstructed))
-        reconstructed.splice(lenReconstructed)
-        return arrOfArrOfText
+        const spliceLen = i + 1 - functionStartIndex
+        arrOfArrOfE.push(everything.slice(paramStartIndex, i))
+        everything.splice(functionStartIndex, spliceLen)
+        i -= spliceLen + 1
+        return arrOfArrOfE
       } else if (bType === ', function CALL') {
-        arrOfArrOfText.push(reconstructed.slice(lenReconstructed))
-        reconstructed.splice(lenReconstructed)
+        arrOfArrOfE.push(everything.slice(paramStartIndex, i))
+        paramStartIndex = i + 1
         continue outerLoop
       } else if (!wsOrEmptyLine[bType]) {
         reconstructed.push(next.text)
