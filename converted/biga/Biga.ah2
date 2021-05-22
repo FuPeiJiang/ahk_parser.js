@@ -924,7 +924,7 @@ class biga {
 					vIteratee := param_iteratee.call(value, key, collectionClone)
 				}
 			}
-			objRawSet(l_obj, vIteratee, value)
+			l_obj[vIteratee]:=value
 		}
 		return l_obj
 	}

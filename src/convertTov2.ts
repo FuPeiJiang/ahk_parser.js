@@ -234,6 +234,11 @@ function all() {
       // objhaskey(obj,key) -> obj.Has(key)
       if (!(argsArr = getArgs())) { return 2 }
       a(1); p('.Has('); a(2); p(')')
+    } else if (thisText.toLowerCase() === 'objrawset') {
+      if (!(argsArr = getArgs())) { return 2 }
+      // ObjRawSet(Object, Key, Value)
+      // Object[Key]:=Value
+      a(1); p('['); a(2); p(']:='); a(3)
     } else {
       reconstructed.push(thisText)
       while (true) {
