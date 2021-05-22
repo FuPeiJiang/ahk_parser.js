@@ -36,7 +36,7 @@ fs.readFileSync('tov2/string.ahk')
 fs.readFileSync('tests/ahk_explorer.ahk')
 const everything = ahkParser(content.toString().replace(/\r/g, ''))
 // d(everything)
-let reconstructed = []
+const reconstructed = []
 let i = 0, b
 const classToStatic = {'biga':true,'WinClip':true,'WinClipAPI':true}
 
@@ -136,7 +136,8 @@ charactersLength)))
   return result.join('')
 }
 
-let next, argsArr, gArgsEInsertIndex, arrFromArgsToInsert,commandParamsArr, cParamsEInsertIndex
+let next, argsArr, gArgsEInsertIndex, arrFromArgsToInsert
+  ,commandParamsArr, cParamsEInsertIndex, arrFromCParamsToInsert
 outOfLen:
 while (i < everything.length) {
   const allReturn = all()
@@ -527,8 +528,8 @@ function all() {
       //#command
       commandAllEdit()
       if (!(commandParamsArr = getCommandParams())) { return 2 }
-      c_a(1); p(':=SubStr('); c_a(2); p(',1,-'); c_a(3); p(')')
-      spaceIfComment()
+      c_a(1); c_p(':=SubStr('); c_a(2); c_p(',1,-'); c_a(3); c_p(')')
+      spaceIfComment(); c_s()
     } else if (objValue = stringUpperLower[dTextLowered]) {
       if (skipFirstSeparatorOfCommand()) { i++; return 1}
       commandAllEditChoose({1:true,2:true})
@@ -536,15 +537,15 @@ function all() {
       // OutputVar:=StrUpper(InputVar,"T")
       //#command
       if (!(commandParamsArr = getCommandParams())) { return 2 }
-      c_a(1); p(`:=${objValue}(`); c_a(2); c_o(',',3); c_a(3); p(')')
-      spaceIfComment()
+      c_a(1); c_p(`:=${objValue}(`); c_a(2); c_o(',',3); c_a(3); c_p(')')
+      spaceIfComment(); c_s()
     } else if (dTextLowered === 'random') {
       // Random, OutputVar [, Min, Max]
       // OutputVar:=Random([Min, Max])
       commandAllEdit()
       if (!(commandParamsArr = getCommandParams())) { return 2 }
-      c_a(1); p(':=Random('); c_a(2); c_o(',',3); c_a(3); p(')')
-      spaceIfComment()
+      c_a(1); c_p(':=Random('); c_a(2); c_o(',',3); c_a(3); c_p(')')
+      spaceIfComment(); c_s()
     } else {
       reconstructed.push(everything[i].text)
     }
@@ -687,7 +688,7 @@ function spaceIfComment() {
   if (next) {
     if (next.type === 'emptyLines') {
       if (next.text[0] === ';') {
-        p(' ')
+        c_p(' ')
       }
     }
   }
@@ -807,7 +808,7 @@ function commandAllEdit() {
     }
   }
 }
-function c_a(index) {
+/* function c_a(index) {
   const idxMinus = index - 1
   // return (commandParamsArr[idxMinus] && commandParamsArr[idxMinus].length) ? commandParamsArr[idxMinus] : ''
   if (commandParamsArr[idxMinus] && commandParamsArr[idxMinus].length) {
@@ -818,7 +819,25 @@ function c_o(str,index) {
   if (commandParamsArr[index - 1]) {
     reconstructed.push(str)
   }
+} */
+function c_a(index) {
+  const paramArr = commandParamsArr[index - 1]
+  if (paramArr && paramArr.length) {
+    arrFromCParamsToInsert.push(...paramArr)
+  }
 }
+function c_p(str) {
+  arrFromCParamsToInsert.push({text:str})
+}
+function c_o(str,index) {
+  if (commandParamsArr[index - 1]) {
+    arrFromCParamsToInsert.push({text:str})
+  }
+}
+function c_s() {
+  everything.splice(cParamsEInsertIndex, 0, ...arrFromCParamsToInsert)
+}
+
 function a(index) {
   const paramArr = argsArr[index - 1]
   if (paramArr && paramArr.length) {
@@ -874,12 +893,14 @@ function o(str,index) {
 } */
 
 function getCommandParams() {
+  const functionStartIndex = cParamsEInsertIndex = i
   i++
+  arrFromCParamsToInsert = []
+  let paramStartIndex = i + 1
   let next
-  const arrOfArrOfText = []
+  const arrOfArrOfE = []
   outerLoop:
   while (true) {
-    const lenReconstructed = reconstructed.length
     innerLoop:
     while (true) {
       next = everything[++i]
@@ -898,12 +919,14 @@ function getCommandParams() {
       }
 
       if (bType === 'end command') {
-        arrOfArrOfText.push(reconstructed.slice(lenReconstructed))
-        reconstructed.splice(lenReconstructed)
-        return arrOfArrOfText
+        const spliceLen = i + 1 - functionStartIndex
+        arrOfArrOfE.push(everything.slice(paramStartIndex, i))
+        everything.splice(functionStartIndex, spliceLen)
+        i -= spliceLen + 1
+        return arrOfArrOfE
       } else if (bType === ', command comma') {
-        arrOfArrOfText.push(reconstructed.slice(lenReconstructed))
-        reconstructed.splice(lenReconstructed)
+        arrOfArrOfE.push(everything.slice(paramStartIndex, i))
+        paramStartIndex = i + 1
         continue outerLoop
       } else if (!wsOrEmptyLine[bType]) {
         reconstructed.push(next.text)
