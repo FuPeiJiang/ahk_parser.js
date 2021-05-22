@@ -192,11 +192,11 @@ function all() {
       if (argsArr.length === 1) {
         // VarSetCapacity(TargetVar)
         // TargetVar.Size
-        a(1); p('.Size')
+        a(1); p('.Size'); s()
       } else {
         // VarSetStrCapacity(TargetVar, RequestedCapacity, FillByte)
         // TargetVar:=BufferAlloc(RequestedCapacity,FillByte)
-        a(1); p(':=BufferAlloc('); a(2); o(',',3); a(3); p(')')
+        a(1); p(':=BufferAlloc('); a(2); o(',',3); a(3); p(')'); s()
       }
     } else if (thisLowered === 'strreplace') {
       // StrReplace(Haystack, Needle [, ReplaceText, OutputVarCount, Limit])
@@ -222,45 +222,45 @@ function all() {
         p(',')
         a(3)
       }
-      p(')')
+      p(')'); s()
     } else if (thisLowered === 'objgetaddress') {
       // ObjGetAddress( this, "allData" )
       // this["allData"].Ptr
       if (!(argsArr = getArgs())) { return 2 }
-      a(1); p('['); a(2); p('].Ptr')
+      a(1); p('['); a(2); p('].Ptr'); s()
     } else if (thisLowered === 'objsetcapacity') {
       if (!(argsArr = getArgs())) { return 2 }
       if (argsArr.length === 3) {
         // ObjSetCapacity( this, "allData", newSize )
         // NOPE: this["allData"].Size := newSize
         // this["allData"]:=BufferAlloc(newSize)
-        a(1); p('['); a(2); p(']:=BufferAlloc('); a(3); p(')')
+        a(1); p('['); a(2); p(']:=BufferAlloc('); a(3); p(')'); s()
       } else {
-        p('ObjSetCapacity('); a(1); p(','); a(2); p(')')
+        p('ObjSetCapacity('); a(1); p(','); a(2); p(')'); s()
       }
     } else if (thisLowered === 'objgetcapacity') {
       if (!(argsArr = getArgs())) { return 2 }
       if (argsArr.length === 2) {
         // ObjGetCapacity( this, "allData")
         // this["allData"].Size
-        a(1); p('['); a(2); p('].Size')
+        a(1); p('['); a(2); p('].Size'); s()
       } else {
-        p('ObjGetCapacity('); a(1); p(')')
+        p('ObjGetCapacity('); a(1); p(')'); s()
       }
     } else if (thisLowered === 'objhaskey') {
       // objhaskey(obj,key) -> obj.Has(key)
       if (!(argsArr = getArgs())) { return 2 }
-      a(1); p('.Has('); a(2); p(')')
+      a(1); p('.Has('); a(2); p(')'); s()
     } else if (thisLowered === 'objrawset') {
       // ObjRawSet(Object, Key, Value)
       // Object[Key]:=Value
       if (!(argsArr = getArgs())) { return 2 }
-      a(1); p('['); a(2); p(']:='); a(3)
+      a(1); p('['); a(2); p(']:='); a(3); s()
     } else if (thisLowered === 'objrawget') {
       // ObjRawGet(Object, Key)
       // Object[Key]
       if (!(argsArr = getArgs())) { return 2 }
-      a(1); p('['); a(2); p(']')
+      a(1); p('['); a(2); p(']'); s()
     } else {
       reconstructed.push(thisText)
       while (true) {
