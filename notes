@@ -2204,3 +2204,8 @@ StringUpper, l_string, l_string, T
 StringUpper l_string, l_string, "T" 
 
 element.1 successfully becomes -> element["1"]
+
+maybe to do:
+ if (x > y, p(2))
+ is legal
+ but I won't, excuse: "it decreases performance"

@@ -829,6 +829,16 @@ export default (content: string) => {
       return true
     }
   }
+  function doUntil() {
+    if (!recurseBetweenExpression()) { findExpression() }
+    if (i < howManyLines) {
+      if (lines[i][c] === ',') {
+        everything.push({ type: ', doUntil', text: ',', i1: i, c1: c })
+        c++
+        skipThroughEmptyLines()
+      }
+    }
+  }
   function doThrow() {
     if (!recurseBetweenExpression()) { findExpression() }
     //this is, NOT while
@@ -909,6 +919,13 @@ export default (content: string) => {
     if (validName.toLowerCase() === 'throw') {
       everything.splice(spliceStartIndex, 0, { type: 'throw', text: validName, i1: validNameLine, c1: nonWhiteSpaceStart, c2: validNameEnd })
       doThrow()
+      usingStartOfLineLoop = true
+      return 1
+    }
+
+    if (validName.toLowerCase() === 'until') {
+      everything.splice(spliceStartIndex, 0, { type: 'until', text: validName, i1: validNameLine, c1: nonWhiteSpaceStart, c2: validNameEnd })
+      doUntil()
       usingStartOfLineLoop = true
       return 1
     }
