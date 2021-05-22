@@ -289,10 +289,10 @@ function all() {
     }
 
   } else if (eType === '(.) property findTrailingExpr') {
-    if (everything[i - 2].type === 'Integer') {
-      reconstructed.push(`.${everything[i].text}`)
-    } else {
-      reconstructed.push(`["${everything[i].text}"]`)
+    if (everything[i - 2].type !== 'Integer') {
+      everything[i - 1].text = ''
+      thisE.text = `["${everything[i].text}"]`
+      thisE.type = 'v2: arrAccess'
     }
   } else if (eType === 'if') {
     reconstructed.push(everything[i].text)
