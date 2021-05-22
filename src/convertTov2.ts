@@ -350,6 +350,7 @@ function all() {
         while (true) {
           b = i
           if (!skipEmptyLinesEmptyText()) {break}
+          let spliceStart = i
           if (everything[b].type === '? ternary') {
             next = everything[b + 1]
             if (next) {
@@ -357,23 +358,20 @@ function all() {
                 b++
               }
             }
-            const ternaryTrueStart = b
-            let findGroupEnd: boolean|number = false
-            let reconstructSpliceIndex
+            const ifTrueStart = b + 1
+            let findGroupEnd = false
+            let spliceEnd
+            //splice off start to end and insert the ifTrue
             while (true) {
               b = i
               if (!backEmptyLinesEmptyText()) {break}
               if (everything[b].type === '( group') {
                 findGroupEnd = true
-                let r = reconstructed.length
-                while (reconstructed[--r] !== '(') {
-                  //
-                }
-                reconstructSpliceIndex = r
+                spliceStart = b
               }
               break
             }
-            b = ternaryTrueStart
+            b = spliceStart
             if (!findNext(': ternary')) {break}
             const colonIndex = b
             const back = everything[b - 1]
@@ -382,42 +380,31 @@ function all() {
                 b--
               }
             }
-            const emptyLineBeforeColon = b
+            const ifTrueEnd = b
             b = colonIndex
-            let ternaryFalseEnd
             if (findGroupEnd) {
               if (!nextSkipThrough(') group','( group')) {break}
-              ternaryFalseEnd = b + 1
-              reconstructed.splice(reconstructSpliceIndex)
+              spliceEnd = b + 1
+              reconstructed.splice(spliceEnd)
             } else {
               if (!findNextAnyInObj(ternaryColonEndDelim)) {break}
-              ternaryFalseEnd = b
+              spliceEnd = b
             }
 
             // A_IsUnicode doesn't delete multiline emptyLines
-            let ternaryEnd = ternaryFalseEnd - emptyLineBeforeColon
-            b = ternaryFalseEnd
+            let spliceLen = spliceEnd - spliceStart
+            b = spliceEnd
             backFindWithText()
             if (everything[b].text.includes('\n')) {
-              ternaryEnd--
+              spliceLen--
             }
-
-            // foo( bufName, A_IsUnicode ? 510 : 255  )
-            // remove ": 255  "
-            everything.splice(emptyLineBeforeColon,ternaryEnd)
-            // remove " ? "
-            everything.splice(i,ternaryTrueStart - i)
-            // should become foo( bufName, 510)
+            everything.splice(spliceStart,spliceLen, ...(everything.slice(ifTrueStart,ifTrueEnd)))
 
             return 3
-            // reconstructed.push('')
-            // ternaryFalseEnd
           }
           break
         }
-        reconstructed.push('true')
-      } else {
-        reconstructed.push(theText)
+        thisE.text = 'true'
       }
     }
   } else if (eType === '(statement) ,') {

@@ -1,6 +1,6 @@
 size := VarSetCapacity( bufName, 255*( A_IsUnicode ? 2 : 1 ), 0 )
 
-/* v:=25+255*(A_IsUnicode ? 2:1)
+v:=25+255*(A_IsUnicode ? 2:1)
 v:=a+25+255*(A_IsUnicode ? 2:1)
 ; _Struct.ahk
 static PTR:=A_PtrSize
@@ -37,4 +37,4 @@ if (A_IsUnicode) {
   v:=510
 } else {
   v:=255
-} */
+}
