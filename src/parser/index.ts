@@ -444,7 +444,17 @@ export default (content: string) => {
                 continue lineLoop
               }
 
+            } else if (lines[i][c] === '{') {
+              if (validName.toLowerCase() === 'loop') {
+                everything.splice(spliceStartIndex, 0, { type: 'loop', text: validName, i1: validNameLine, c1: nonWhiteSpaceStart, c2: validNameEnd })
+                everything.push({ type: '{ loop', text: '{', i1: i, c1: c })
+                c++
+                if (!skipThroughEmptyLines()) { break lineLoop }
+                usingStartOfLineLoop = true
+                continue startOfLineLoop
+              }
             }
+
           }
           //can only be from skipThroughEmptyLines()
           if (everything.length === lenghtBeforeSkipLine + 1 || i === howManyLines) {
@@ -971,6 +981,14 @@ export default (content: string) => {
 
         }
 
+      }
+
+      if (lines[i][c] === '{') {
+        everything.push({ type: '{ loop', text: '{', i1: i, c1: c })
+        c++
+        if (!skipThroughEmptyLines()) { return 2 }
+        usingStartOfLineLoop = true
+        return 1
       }
 
       singleComma = true
