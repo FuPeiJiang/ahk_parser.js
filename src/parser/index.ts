@@ -19,7 +19,7 @@ export default (content: string) => {
 
   let i = 0, c = 0, numberOfChars = 0, validName = '', strStartLine: number, strStartPos: number, insideContinuation = false, beforeConcat: number, nonWhiteSpaceStart: number, exprFoundLine = -1, colonDeep = 0, usingStartOfLineLoop = false, variadicAsterisk = false, lineWhereCanConcat = -1, v1ExpressionC1: number, cNotWhiteSpace: number, percentVarStart: number, propertyC1 = -1, lookingForAnd = false, doubleComma = false, singleComma = false, insideV1Continuation = false
   let everythingPushCounter: number; everythingPushCounter = 0
-  let spliceStartIndex: number, validNameLine: number, validNameEnd: number, findingVarName = false, varNameCanLtrimSpaces: false, idkVarC1 = 0, legalObjLine = -1, lastTrailingWasFunc = false, spliceIndexEverythingAtHotkeyLine: number|boolean = false, operatorAtHotkeyLine = -1, v1StartLine = -1
+  let spliceStartIndex: number, validNameStart: number, validNameLine: number, validNameEnd: number, findingVarName = false, varNameCanLtrimSpaces: false, idkVarC1 = 0, legalObjLine = -1, lastTrailingWasFunc = false, spliceIndexEverythingAtHotkeyLine: number|boolean = false, operatorAtHotkeyLine = -1, v1StartLine = -1
   lineLoop:
   while (i < howManyLines) {
     c = 0
@@ -312,21 +312,14 @@ export default (content: string) => {
                 findV1Expression()
                 usingStartOfLineLoop = true
                 continue startOfLineLoop
-              } else if (findAssignmentOperators() === 1) {
-                everything.splice(spliceStartIndex, 0, { type: 'assignment', text: validName, i1: validNameLine, c1: validNameStart, c2: validNameEnd })
-                const legalExprLine = i
-                if (!recurseBetweenExpression()) {
-                  if (i === legalExprLine) {
-                    findExpression()
-                  }
-                }
-                const eLen = everything.length - 1
-                everything.splice(everything.length - (everything[eLen].type === 'emptyLines' ? 1 : 0), 0, { type: 'end assignment'})
-
-                if (skipCommaV2Expr()) {break lineLoop}
-                usingStartOfLineLoop = true
+              }
+              const doAssignmentReturned = doAssignment()
+              if (doAssignmentReturned === 1) {
                 continue startOfLineLoop
-              } else if (idkType === 3) {
+              } else if (doAssignmentReturned === 2) {
+                break lineLoop
+              }
+              if (idkType === 3) {
                 // d(validName, 'global local or static', char())
                 everything.splice(spliceStartIndex, 0, { type: 'global local or static{ws}', text: validName, i1: validNameLine, c1: validNameStart, c2: validNameEnd })
 
@@ -612,20 +605,11 @@ export default (content: string) => {
         }
 
 
-        let assignmentOperatorReturnValue = findAssignmentOperators()
-        if (assignmentOperatorReturnValue === 1) {
-          everything.splice(spliceStartIndex, 0, { type: 'assignment', text: validName, i1: validNameLine, c1: validNameStart, c2: validNameEnd })
-          const legalExprLine = i
-          if (!recurseBetweenExpression()) {
-            if (i === legalExprLine) {
-              findExpression()
-            }
-          }
-          const eLen = everything.length - 1
-          everything.splice(everything.length - (everything[eLen].type === 'emptyLines' ? 1 : 0), 0, { type: 'end assignment'})
-          if (skipCommaV2Expr()) {break lineLoop}
-          usingStartOfLineLoop = true
+        let doAssignmentReturned = doAssignment()
+        if (doAssignmentReturned === 1) {
           continue startOfLineLoop
+        } else if (doAssignmentReturned === 2) {
+          break lineLoop
         }
 
         recurseFindTrailingExpr()
@@ -652,46 +636,29 @@ export default (content: string) => {
         }
 
         //#ASSIGNMENT
-        assignmentOperatorReturnValue = findAssignmentOperators()
-        if (assignmentOperatorReturnValue === 1) {
-          everything.splice(spliceStartIndex, 0, { type: 'assignment', text: validName, i1: validNameLine, c1: validNameStart, c2: validNameEnd })
-          const legalExprLine = i
-          if (!recurseBetweenExpression()) {
-            if (i === legalExprLine) {
-              findExpression()
-            }
-          }
-          const eLen = everything.length - 1
-          everything.splice(everything.length - (everything[eLen].type === 'emptyLines' ? 1 : 0), 0, { type: 'end assignment'})
+        doAssignmentReturned = doAssignment()
+        if (doAssignmentReturned === 1) {
+          continue startOfLineLoop
+        } else if (doAssignmentReturned === 2) {
+          break lineLoop
+        }
+
+        if (lastTrailingWasFunc) {
+          everything.splice(spliceStartIndex, 0, { type: 'functionName', text: validName, i1: validNameLine, c1: validNameStart, c2: validNameEnd })
+          if (!skipThroughEmptyLines()) {break lineLoop}
           if (skipCommaV2Expr()) {break lineLoop}
           usingStartOfLineLoop = true
           continue startOfLineLoop
-        } else {
-          if (lastTrailingWasFunc) {
-            everything.splice(spliceStartIndex, 0, { type: 'functionName', text: validName, i1: validNameLine, c1: validNameStart, c2: validNameEnd })
-            if (!skipThroughEmptyLines()) {break lineLoop}
-            if (skipCommaV2Expr()) {break lineLoop}
-            usingStartOfLineLoop = true
-            continue startOfLineLoop
-          }
         }
 
 
       }
       //only for ++var or --var
-      const assignmentOperatorReturnValue = findAssignmentOperators()
-      if (assignmentOperatorReturnValue === 1) {
-        const legalExprLine = i
-        if (!recurseBetweenExpression()) {
-          if (i === legalExprLine) {
-            findExpression()
-          }
-        }
-        const eLen = everything.length - 1
-        everything.splice(everything.length - (everything[eLen].type === 'emptyLines' ? 1 : 0), 0, { type: 'end assignment'})
-        if (skipCommaV2Expr()) {break lineLoop}
-        usingStartOfLineLoop = true
+      const doAssignmentReturned = doAssignment()
+      if (doAssignmentReturned === 1) {
         continue startOfLineLoop
+      } else if (doAssignmentReturned === 2) {
+        break lineLoop
       }
 
       //#HOTKEYS
@@ -755,6 +722,24 @@ export default (content: string) => {
   return everything
 
   // start of functions
+  function doAssignment() {
+    const assignmentOperatorReturnValue = findAssignmentOperators()
+    if (assignmentOperatorReturnValue === 1) {
+      everything.splice(spliceStartIndex, 0, { type: 'assignment', text: validName, i1: validNameLine, c1: validNameStart, c2: validNameEnd })
+      const legalExprLine = i
+      maybePercentV1ToV2()
+      if (!recurseBetweenExpression()) {
+        if (i === legalExprLine) {
+          findExpression()
+        }
+      }
+      const eLen = everything.length - 1
+      everything.splice(everything.length - (everything[eLen].type === 'emptyLines' ? 1 : 0), 0, { type: 'end assignment'})
+      if (skipCommaV2Expr()) {return 2}
+      usingStartOfLineLoop = true
+      return 1
+    }
+  }
   function functionMid(which: string) {
     const back = everything[everything.length - 1]
     if (back) {
@@ -847,13 +832,7 @@ export default (content: string) => {
   }
   function doReturn() {
     // for `return % this.dropRight(l_array)`
-    skipThroughWhiteSpaces()
-    let whiteSpaceText
-    if (c < numberOfChars - 1 && lines[i][c] === '%' && whiteSpaceObj[whiteSpaceText = lines[i][c + 1]]) {
-      everything.push({ type: '% v1->v2 expr', text: `%${whiteSpaceText}`, i1: i, c1: c, c2: c + 2 })
-      c += 2
-      lineWhereCanConcat = -1
-    }
+    maybePercentV1ToV2()
     if (!recurseBetweenExpression()) { findExpression() }
     //this is, NOT while
     if (i < howManyLines) {
@@ -1016,13 +995,7 @@ export default (content: string) => {
     if (validName.toLowerCase() === 'sendmessage') {
       everything.splice(spliceStartIndex, 0, { type: 'sendmessage', text: validName, i1: validNameLine, c1: nonWhiteSpaceStart, c2: validNameEnd })
 
-      skipThroughWhiteSpaces()
-      let whiteSpaceText
-      if (c < numberOfChars - 1 && lines[i][c] === '%' && whiteSpaceObj[whiteSpaceText = lines[i][c + 1]]) {
-        everything.push({ type: '% v1->v2 expr', text: `%${whiteSpaceText}`, i1: i, c1: c, c2: c + 2 })
-        c += 2
-        lineWhereCanConcat = -1
-      }
+      maybePercentV1ToV2()
       if (!recurseBetweenExpression()) { findExpression() }
       if (findCommaV2ExprMaybePercent(', 2 sendmessage')) {
         if (findCommaV2ExprMaybePercent(', 3 sendmessage')) {
@@ -1036,15 +1009,18 @@ export default (content: string) => {
     if (lines[i][c] === ',') {
       everything.push({ type: which, text: ',', i1: i, c1: c })
       c++
-      skipThroughWhiteSpaces()
-      let whiteSpaceText
-      if (c < numberOfChars - 1 && lines[i][c] === '%' && whiteSpaceObj[whiteSpaceText = lines[i][c + 1]]) {
-        everything.push({ type: '% v1->v2 expr', text: `%${whiteSpaceText}`, i1: i, c1: c, c2: c + 2 })
-        c += 2
-        lineWhereCanConcat = -1
-      }
+      maybePercentV1ToV2()
       if (!recurseBetweenExpression()) { findExpression() }
       return true
+    }
+  }
+  function maybePercentV1ToV2() {
+    skipThroughWhiteSpaces()
+    let whiteSpaceText
+    if (c < numberOfChars - 1 && lines[i][c] === '%' && whiteSpaceObj[whiteSpaceText = lines[i][c + 1]]) {
+      everything.push({ type: '% v1->v2 expr', text: `%${whiteSpaceText}`, i1: i, c1: c, c2: c + 2 })
+      c += 2
+      lineWhereCanConcat = -1
     }
   }
   function findCommaV2Expr(which: string) {
