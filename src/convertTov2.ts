@@ -88,6 +88,7 @@ for (let n = 0, len = everything.length; n < len; n++) {
 replaceReservedVar('case','dCase','_case')
 replaceReservedVar('object','dObject','_object')
 replaceReservedVar('array','dArray','_array')
+replaceReservedVar('clipboard','A_Clipboard')
 const namesArr = Object.keys(varNames)
 for (let n = 0, len = namesArr.length; n < len; n++) {
   const thisName = namesArr[n]
@@ -104,7 +105,7 @@ for (let n = 0, len = namesArr.length; n < len; n++) {
     }
   }
 }
-function replaceReservedVar(theReservedVar: string, firstChoice: string, subfixForAutoGen: string) {
+function replaceReservedVar(theReservedVar: string, firstChoice: string, subfixForAutoGen = '') {
   const eIndexArr = lowerVarNames[theReservedVar]
   if (eIndexArr) {
     const subfixForAutoGenLowered = subfixForAutoGen.toLowerCase()
@@ -287,7 +288,6 @@ function all() {
       }
     }
 
-
   } else if (eType === '(.) property findTrailingExpr') {
     if (everything[i - 2].type === 'Integer') {
       reconstructed.push(`.${everything[i].text}`)
@@ -335,27 +335,23 @@ function all() {
 
   } else if (idkVariableOrAssignment[eType]) {
     const theText = everything[i].text
-    if (theText === '%') {
-      d(everything[i])
-      d(1)
-    }
     const parsedIdkVar = parseIdkVariable(theText)
     if (parsedIdkVar) {
+      /* const arrToJoin = []
       for (let n = 0, len = parsedIdkVar.length; n < len; n++) {
         if (parsedIdkVar[n].type) {
           if (parsedIdkVar[n].text.toLowerCase() === 'clipboard') {
-            reconstructed.push('%A_Clipboard%')
+            arrToJoin.push('%A_Clipboard%')
           } else {
-            reconstructed.push(`%${parsedIdkVar[n].text}%`)
+            arrToJoin.push(parsedIdkVar[n].text)
           }
-        } else {
-          reconstructed.push(parsedIdkVar[n].text)
         }
-      }
+      } */
     } else {
-      if (theText.toLowerCase() === 'clipboard') {
+      /* if (theText.toLowerCase() === 'clipboard') {
         reconstructed.push('A_Clipboard')
-      } else if (theText.toLowerCase() === 'a_isunicode') {
+      } else  */
+      if (theText.toLowerCase() === 'a_isunicode') {
 
         while (true) {
           b = i
