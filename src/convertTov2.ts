@@ -207,7 +207,7 @@ function all() {
       p('StrReplace('); a(1); p(','); a(2); o(',',3); a(3); o(',0,',4); a(4); o(',',5); a(5); p(')'); s()
     } else if (thisLowered === 'object') {
       // Object() -> Map()  OR  Object("key",value) -> Map("key",value)
-      reconstructed.push('Map')
+      thisE.text = 'Map'
     } else if (thisLowered === 'numput') {
       // NumPut(Number, VarOrAddress [, Offset := 0][, Type := "UPtr"])
       // NumPut Type, Number, [Type2, Number2, ...] VarOrAddress [, Offset]
@@ -264,7 +264,6 @@ function all() {
       if (!(argsArr = getArgs())) { return 2 }
       a(1); p('['); a(2); p(']'); s()
     } else {
-      reconstructed.push(thisText)
       while (true) {
         next = everything[++i]
         if (!next) {
@@ -280,10 +279,7 @@ function all() {
         }
 
         if (bType === ') function CALL') {
-          reconstructed.push(')')
           return 3
-        } else {
-          reconstructed.push(next.text)
         }
       }
     }
@@ -295,7 +291,6 @@ function all() {
       thisE.type = 'v2: arrAccess'
     }
   } else if (eType === 'if') {
-    reconstructed.push(everything[i].text)
     //skip 'emptyLines' after if
     //'if' (single unit ending with access), transform into .Has()
     b = i + 2
@@ -427,9 +422,12 @@ function all() {
       }
     }
   } else if (eType === '(statement) ,') {
+    thisE.text = ' '
     const next = everything[i + 1]
-    if (!wsOrEmptyLine[next.type]) {
-      reconstructed.push(' ')
+    if (next) {
+      if (wsOrEmptyLine[next.type]) {
+        thisE.text = ''
+      }
     }
   } else if (v1Percent[eType]) {
     //ignore
