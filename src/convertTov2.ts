@@ -54,6 +54,7 @@ const startGroupOrUnit = {'( group':') group','start unit':'end unit'}
 const on1off0 = {'on':'1','off':'0'}
 const v1ExprToEdit = {'goto':true,'#singleinstance':true}
 const ternaryColonEndDelim = {'end assignment':true,', function CALL':true,') function CALL':true,', assignment':true,'end comma assignment':true}
+const doNotQuoteCommand = {'splitpath':true,'random':true}
 let next, argsArr
 outOfLen:
 while (i < everything.length) {
@@ -426,7 +427,7 @@ function all() {
           next.type = 'edit'
         }
       }
-    } else if (everything[i].text.toLowerCase() === 'splitpath') {
+    } else if (doNotQuoteCommand[everything[i].text.toLowerCase()]) {
       //until 'end command', do not quote every v1 expr
       reconstructed.push(everything[i].text)
       b = i
