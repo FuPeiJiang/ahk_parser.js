@@ -152,19 +152,20 @@ while (i < everything.length) {
   i++
 }
 function all() {
-  const eType = everything[i].type
+  const thisE = everything[i]
+  const eType = thisE.type
   if (eType === '{ object') {
-    reconstructed.push('Map(')
+    thisE.text = 'Map('
   } else if (eType === '} object') {
-    reconstructed.push(')')
+    thisE.text = ')'
   } else if (eType === ': object') {
-    reconstructed.push(',')
+    thisE.text = ','
   } else if (eType === 'singleVar') {
-    reconstructed.push(`"${everything[i].text}"`)
+    thisE.text = `"${everything[i].text}"`
   } else if (eType === '. property') {
-    //
+    thisE.text = '.'
   } else if (eType === '% v1->v2 expr') {
-    // reconstructed.push(everything[i].text)
+    thisE.text = ''
   } else if (eType === 'functionName') {
     const thisText = everything[i].text
     const back = everything[i - 1]
@@ -173,7 +174,11 @@ function all() {
       if (everything[i - 1].type === '. property') {
         if (thisLowered === 'length') {
           // .Length() -> .Length
-          reconstructed.push(`.${thisText}`)
+          thisE.type = 'v2: prop'
+          //splice off ( to )
+          const spliceStart = b = i + 1
+          if (!nextSkipThrough(') function CALL','functionName')) { return 2 }
+          everything.splice(spliceStart, b - spliceStart + 1)
 
           const next = everything[i + 1]
           if (next) {
@@ -195,9 +200,6 @@ function all() {
           // .HasKey() -> .Has()
           reconstructed.push('.Has')
           return 3
-        } else if (thisLowered === 'count') {
-          d(everything[i])
-          d(i)
         }
         reconstructed.push(`.${thisText}`)
         return 3
