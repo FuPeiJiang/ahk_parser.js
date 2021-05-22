@@ -149,23 +149,23 @@ while (i < everything.length) {
     continue outOfLen
   }
 
-  reconstructed.push(everything[i].text)
   i++
 }
 function all() {
-  if (everything[i].type === '{ object') {
+  const eType = everything[i].type
+  if (eType === '{ object') {
     reconstructed.push('Map(')
-  } else if (everything[i].type === '} object') {
+  } else if (eType === '} object') {
     reconstructed.push(')')
-  } else if (everything[i].type === ': object') {
+  } else if (eType === ': object') {
     reconstructed.push(',')
-  } else if (everything[i].type === 'singleVar') {
+  } else if (eType === 'singleVar') {
     reconstructed.push(`"${everything[i].text}"`)
-  } else if (everything[i].type === '. property') {
+  } else if (eType === '. property') {
     //
-  } else if (everything[i].type === '% v1->v2 expr') {
+  } else if (eType === '% v1->v2 expr') {
     // reconstructed.push(everything[i].text)
-  } else if (everything[i].type === 'functionName') {
+  } else if (eType === 'functionName') {
     const thisText = everything[i].text
     const back = everything[i - 1]
     const thisLowered = thisText.toLowerCase()
@@ -304,13 +304,13 @@ function all() {
     }
 
 
-  } else if (everything[i].type === '(.) property findTrailingExpr') {
+  } else if (eType === '(.) property findTrailingExpr') {
     if (everything[i - 2].type === 'Integer') {
       reconstructed.push(`.${everything[i].text}`)
     } else {
       reconstructed.push(`["${everything[i].text}"]`)
     }
-  } else if (everything[i].type === 'if') {
+  } else if (eType === 'if') {
     reconstructed.push(everything[i].text)
     //skip 'emptyLines' after if
     //'if' (single unit ending with access), transform into .Has()
@@ -349,7 +349,7 @@ function all() {
 
     }
 
-  } else if (idkVariableOrAssignment[everything[i].type]) {
+  } else if (idkVariableOrAssignment[eType]) {
     const theText = everything[i].text
     if (theText === '%') {
       d(everything[i])
@@ -446,14 +446,14 @@ function all() {
         reconstructed.push(theText)
       }
     }
-  } else if (everything[i].type === '(statement) ,') {
+  } else if (eType === '(statement) ,') {
     const next = everything[i + 1]
     if (!wsOrEmptyLine[next.type]) {
       reconstructed.push(' ')
     }
-  } else if (v1Percent[everything[i].type]) {
+  } else if (v1Percent[eType]) {
     //ignore
-  } else if (v1Str[everything[i].type]) {
+  } else if (v1Str[eType]) {
     const theText = everything[i].text
     if (theText !== '') {
       let next, putAtEnd = ''
@@ -475,9 +475,9 @@ function all() {
       }
       reconstructed.push(`${whiteSpaceObj[everything[i - 1].text.slice(-1)] ? '' : ' '}"${theText.replace(/"/g, '`"')}"${putAtEnd}`)
     }
-  } else if (everything[i].type === 'percentVar v1Expression') {
+  } else if (eType === 'percentVar v1Expression') {
     reconstructed.push(everything[i].text)
-  } else if (everything[i].type === '= v1Assignment') {
+  } else if (eType === '= v1Assignment') {
     reconstructed.push(':=')
     const next = everything[i + 1]
     // var = -> var:=""
@@ -487,9 +487,9 @@ function all() {
         next.text = '""'
       }
     }
-  } else if (everything[i].type === 'String') {
+  } else if (eType === 'String') {
     reconstructed.push(`"${everything[i].text.slice(1,-1).replace(/""/g, '`"')}"`)
-  } else if (anyCommand[everything[i].type]) {
+  } else if (anyCommand[eType]) {
     //if breakOrContinue, if is number, don't surround with quotes
     let objValue
     const dTextLowered = everything[i].text.toLowerCase()
@@ -565,7 +565,7 @@ function all() {
     } else {
       reconstructed.push(everything[i].text)
     }
-  } else if (everything[i].type === 'legacyIf var') {
+  } else if (eType === 'legacyIf var') {
     b = i + 2
     let next = everything[b]
     dummyLoopNotIs:
@@ -607,7 +607,7 @@ function all() {
       break dummyLoopNotIs
     }
     reconstructed.push(everything[i].text)
-  } else if (everything[i].type === '1operator') {
+  } else if (eType === '1operator') {
     if (everything[i].text === '&') {
       let bType
       b = i
@@ -638,7 +638,7 @@ function all() {
     } else {
       reconstructed.push(everything[i].text)
     }
-  } else if (everything[i].type === 'hotkey') {
+  } else if (eType === 'hotkey') {
     reconstructed.push(everything[i].text)
     b = i
     const hotkeyI = i
@@ -671,7 +671,7 @@ function all() {
       }
     }
   //#HERE
-  } else if (everything[i].type === 'className') {
+  } else if (eType === 'className') {
     reconstructed.push(everything[i].text)
     if (classToStatic[everything[i].text]) {
       b = i + 1
@@ -763,7 +763,7 @@ function parseIdkVariable(text: string) {
     return false
   }
 }
-/* } else if (everything[i].type === '] ArrAccess') {
+/* } else if (eType === '] ArrAccess') {
     const next = everything[i + 1]
     if (next) {
       if (next.type === ') if') {
@@ -1115,7 +1115,11 @@ function skipThroughSomethingMid(lookForThisToEnd: string, ohNoAddAnotherOne: st
   return false
 }
 // d(reconstructed)
-writeSync(reconstructed.join(''),'reconstructed.ah2')
+const arrToJoin = []
+for (let i = 0, len = everything.length; i < len; i++) {
+  arrToJoin.push(everything[i].text)
+}
+writeSync(arrToJoin.join(''),'reconstructed.ah2')
 writeSync(arrOrObjToString(everything),'everything.txt')
 
 function arrOrObjToString(obj) {
