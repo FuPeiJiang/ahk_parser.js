@@ -468,20 +468,47 @@ function all() {
       reconstructed.push(everything[i].text)
     }
   } else if (everything[i].type === 'legacyIf var') {
-    let next = everything[i + 2]
-    if (next) {
-      if (next.type === 'legacyIf is') {
-        next = everything[i + 4]
-        if (next.type === 'v1String findV1Expression') {
-          if (next.text.toLowerCase() === 'number') {
-            // if var is number
-            // if IsNumber(var)
-            reconstructed.push(`IsNumber(${everything[i].text})`)
-            i += 4
+    b = i + 2
+    let next = everything[b]
+    dummyLoopNotIs:
+    while (true) {
+      if (next) {
+        if (next.type === 'legacyIf is') {
+          b += 2
+          next = everything[b]
+          if (!next) {break dummyLoopNotIs}
+          let hasNot = false
+          if (next.type === 'legacyIf (is) not') {
+            hasNot = true
+            b += 2
+            next = everything[b]
+            if (!next) {break dummyLoopNotIs}
+          }
+          if (next.type === 'v1String findV1Expression') {
+            let typeCheckFunc
+            if (next.text.toLowerCase() === 'number') {
+              // if var is number
+              // if IsNumber(var)
+              typeCheckFunc = 'IsNumber'
+            } else if (next.text.toLowerCase() === 'alnum') {
+              typeCheckFunc = 'IsAlnum'
+            } else if (next.text.toLowerCase() === 'float') {
+              typeCheckFunc = 'IsFloat'
+            } else {
+              d('unknown type, tell me')
+            }
+            i = b
+            if (hasNot) {
+              reconstructed.push('!')
+            }
+            reconstructed.push(`${typeCheckFunc}(${everything[i].text})`)
+            return 3
           }
         }
       }
+      break dummyLoopNotIs
     }
+    reconstructed.push(everything[i].text)
   } else if (everything[i].type === '1operator') {
     if (everything[i].text === '&') {
       let bType

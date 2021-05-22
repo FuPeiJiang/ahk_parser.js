@@ -2194,6 +2194,9 @@ if key is not Number
 
 if param is alnum
 if param is float
+if !IsNumber
+IsAlnum
+IsFloat
 
 0.5 -> 0["5"] uh oh
 0.0
