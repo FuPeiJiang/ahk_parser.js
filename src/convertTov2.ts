@@ -204,7 +204,11 @@ function all() {
 
 
   } else if (everything[i].type === '(.) property findTrailingExpr') {
-    reconstructed.push(`["${everything[i].text}"]`)
+    if (everything[i - 2].type === 'Integer') {
+      reconstructed.push(`.${everything[i].text}`)
+    } else {
+      reconstructed.push(`["${everything[i].text}"]`)
+    }
   } else if (everything[i].type === 'if') {
     reconstructed.push(everything[i].text)
     //skip 'emptyLines' after if
