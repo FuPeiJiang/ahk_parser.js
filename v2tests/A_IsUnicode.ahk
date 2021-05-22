@@ -1,6 +1,6 @@
 size := VarSetCapacity( bufName, 255*( A_IsUnicode ? 2 : 1 ), 0 )
 
-v:=25+255*(A_IsUnicode ? 2:1)
+/* v:=25+255*(A_IsUnicode ? 2:1)
 v:=a+25+255*(A_IsUnicode ? 2:1)
 ; _Struct.ahk
 static PTR:=A_PtrSize
@@ -27,7 +27,6 @@ SendMessage, % (A_IsUnicode ? 0x1057 : 0x1011), 0, % &EditText, , % "ahk_id " . 
 					, Ptr, pGraphics
 					, Ptr, A_IsUnicode ? &sString : &wString
 					, Ptr, A_IsUnicode ? &sString : &wString)
- */
 v:=255*(A_IsUnicode ? 2:1)
 v:=A_IsUnicode ? 2:1 + var + "fe" + {} + []
 foo( bufName, 255*( A_IsUnicode ? 2 : 1 ), 0 )
@@ -38,4 +37,4 @@ if (A_IsUnicode) {
   v:=510
 } else {
   v:=255
-}
+} */

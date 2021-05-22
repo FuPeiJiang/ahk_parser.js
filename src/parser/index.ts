@@ -2543,6 +2543,7 @@ export default (content: string) => {
             break
           }
         }
+        break outOfLines
       } else {
         //anything else, return found
         const text = textFromPosToCurrent([c1, i1])
