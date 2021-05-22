@@ -86,12 +86,10 @@ for (let n = 0, len = everything.length; n < len; n++) {
 }
 replaceReservedVar('case','dCase','_case')
 replaceReservedVar('object','dObject','_object')
+replaceReservedVar('array','dArray','_array')
 const namesArr = Object.keys(varNames)
 for (let n = 0, len = namesArr.length; n < len; n++) {
   const thisName = namesArr[n]
-  if (thisName === 'trueArray') {
-    d(23)
-  }
   const loweredName = thisName.toLowerCase()
   if ((loweredName.startsWith('true') && loweredName !== 'true')
    || (loweredName.startsWith('false') && loweredName !== 'false')) {

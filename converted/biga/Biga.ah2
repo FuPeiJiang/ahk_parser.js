@@ -611,11 +611,11 @@ class biga {
 		l_array := []
 
 		; create
-		for key, Array in param_arrays {
-			if (isObject(Array)) {
-				l_array := this.concat(l_array, Array)
+		for key, dArray in param_arrays {
+			if (isObject(dArray)) {
+				l_array := this.concat(l_array, dArray)
 			} else {
-				l_array.push(Array)
+				l_array.push(dArray)
 			}
 		}
 		return this.uniq(l_array)
