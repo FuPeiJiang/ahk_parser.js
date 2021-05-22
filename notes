@@ -2233,3 +2233,35 @@ OK
 I could convert "case" to "dCase" or something else if "dCase" exists...
 
 I should test ObjRawSet or ask about it
+
+---------------------------
+use biga.ah2
+---------------------------
+Error in #include file "ahk_parser.js\converted\biga\Biga.ah2":
+     Syntax error.
+
+Specifically: trueArray
+
+	Line#
+	963: Return l_array
+	964: }
+	965: {
+	966: if (!isObject(param_collection))
+	966: {
+	967: this._internal_ThrowException()
+	968: }
+--->	971: trueArray := []
+	972: falseArray := []
+	973: shorthand := this._internal_differenciateShorthand(param_predicate, param_collection)
+	974: if (shorthand != false)
+	974: {
+	975: param_predicate := this._internal_createShorthandfn(param_predicate, param_collection)
+	976: }
+	979: For key, value in param_collection
+
+The program will exit.
+---------------------------
+OK   
+---------------------------
+
+varName at assignment cannot start with true nor false ???

@@ -67,7 +67,7 @@ for (let n = 0, len = everything.length; n < len; n++) {
     const theText = everything[n].text
     const parsedIdkVar = parseIdkVariable(theText)
     if (parsedIdkVar) {
-      for (let i = 0, len = parsedIdkVar.length; i < len; i++) {
+      for (let i = 0, len2 = parsedIdkVar.length; i < len2; i++) {
         if (parsedIdkVar[i].type) {
           const dText = parsedIdkVar[i].text
           varNames[dText] = true
@@ -86,19 +86,40 @@ for (let n = 0, len = everything.length; n < len; n++) {
 }
 replaceReservedVar('case','dCase','_case')
 replaceReservedVar('object','dObject','_object')
+const namesArr = Object.keys(varNames)
+for (let n = 0, len = namesArr.length; n < len; n++) {
+  const thisName = namesArr[n]
+  if (thisName === 'trueArray') {
+    d(23)
+  }
+  const loweredName = thisName.toLowerCase()
+  if ((loweredName.startsWith('true') && loweredName !== 'true')
+   || (loweredName.startsWith('false') && loweredName !== 'false')) {
+
+    const eIndexArr = lowerVarNames[loweredName]
+    for (let i = 0, len2 = eIndexArr.length; i < len2; i++) {
+      if (everything[eIndexArr[i]].type === 'assignment') {
+        replaceReservedVar(loweredName,`d_${thisName}`,`_${thisName}`)
+        break
+      }
+    }
+  }
+}
 function replaceReservedVar(theReservedVar: string, firstChoice: string, subfixForAutoGen: string) {
-  const caseArr = lowerVarNames[theReservedVar]
-  if (caseArr) {
-    let caseNameReplacement
+  const eIndexArr = lowerVarNames[theReservedVar]
+  if (eIndexArr) {
+    const subfixForAutoGenLowered = subfixForAutoGen.toLowerCase()
+    let caseNameReplacement, idBak
     if (lowerVarNames[firstChoice.toLowerCase()]) {
-      while (lowerVarNames[caseNameReplacement = `${makeid(3)}${subfixForAutoGen}`]) {
+      while (lowerVarNames[`${idBak = makeid(3)}${subfixForAutoGenLowered}`]) {
         //this will break when found unique name
       }
+      caseNameReplacement = `${idBak}${subfixForAutoGen}`
     } else {
       caseNameReplacement = firstChoice
     }
-    for (let n = 0, len = caseArr.length; n < len; n++) {
-      everything[caseArr[n]].text = caseNameReplacement
+    for (let n = 0, len = eIndexArr.length; n < len; n++) {
+      everything[eIndexArr[n]].text = caseNameReplacement
     }
   }
 }
@@ -334,15 +355,15 @@ function all() {
     }
     const parsedIdkVar = parseIdkVariable(theText)
     if (parsedIdkVar) {
-      for (let i = 0, len = parsedIdkVar.length; i < len; i++) {
-        if (parsedIdkVar[i].type) {
-          if (parsedIdkVar[i].text.toLowerCase() === 'clipboard') {
+      for (let n = 0, len = parsedIdkVar.length; n < len; n++) {
+        if (parsedIdkVar[n].type) {
+          if (parsedIdkVar[n].text.toLowerCase() === 'clipboard') {
             reconstructed.push('%A_Clipboard%')
           } else {
-            reconstructed.push(`%${parsedIdkVar[i].text}%`)
+            reconstructed.push(`%${parsedIdkVar[n].text}%`)
           }
         } else {
-          reconstructed.push(parsedIdkVar[i].text)
+          reconstructed.push(parsedIdkVar[n].text)
         }
       }
     } else {

@@ -968,8 +968,8 @@ class biga {
 		}
 
 		; prepare
-		trueArray := []
-		falseArray := []
+		d_trueArray := []
+		d_falseArray := []
 		shorthand := this._internal_differenciateShorthand(param_predicate, param_collection)
 		if (shorthand != false) {
 			param_predicate := this._internal_createShorthandfn(param_predicate, param_collection)
@@ -983,7 +983,7 @@ class biga {
 				falseArray.push(value)
 			}
 		}
-		return [trueArray, falseArray]
+		return [d_trueArray, d_falseArray]
 	}
 	static reject(param_collection,param_predicate) {
 		if (!isObject(param_collection)) {
