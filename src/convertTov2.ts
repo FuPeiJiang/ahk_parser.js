@@ -54,7 +54,7 @@ const startGroupOrUnit = {'( group':') group','start unit':'end unit'}
 const on1off0 = {'on':'1','off':'0'}
 const v1ExprToEdit = {'goto':true,'#singleinstance':true}
 const ternaryColonEndDelim = {'end assignment':true,', function CALL':true,') function CALL':true,', assignment':true,'end comma assignment':true}
-const doNotQuoteCommand = {'splitpath':true,'random':true}
+const doNotQuoteCommand = {'splitpath':true}
 const stringUpperLower = {'stringupper':'StrUpper','stringlower':'StrLower'}
 
 // I'd never think I'd come to this day, but..
@@ -490,7 +490,8 @@ function all() {
   } else if (anyCommand[everything[i].type]) {
     //if breakOrContinue, if is number, don't surround with quotes
     let objValue
-    if (numIfNum[everything[i].text.toLowerCase()]) {
+    const dTextLowered = everything[i].text.toLowerCase()
+    if (numIfNum[dTextLowered]) {
       reconstructed.push(everything[i].text)
       if (skipFirstSeparatorOfCommand()) { i++; return 1}
       if (next.type === 'v1String findV1Expression') {
@@ -498,23 +499,23 @@ function all() {
           next.type = 'edit'
         }
       }
-    } else if (everything[i].text.toLowerCase() === '#noenv') {
+    } else if (dTextLowered === '#noenv') {
       const next = everything[i + 1]
       if (next) {
         if (next.type === 'emptyLines') {
           i++
         }
       }
-    } else if (everything[i].text.toLowerCase() === 'setbatchlines') {
+    } else if (dTextLowered === 'setbatchlines') {
       if (skipFirstSeparatorOfCommand()) { i++; return 1}
       i = b + 2
-    } else if (v1ExprToEdit[everything[i].text.toLowerCase()]) {
+    } else if (v1ExprToEdit[dTextLowered]) {
       reconstructed.push(everything[i].text)
       if (skipFirstSeparatorOfCommand()) { i++; return 1}
       if (next.type === 'v1String findV1Expression') {
         next.type = 'edit'
       }
-    } else if (everything[i].text.toLowerCase() === 'listlines') {
+    } else if (dTextLowered === 'listlines') {
       reconstructed.push(everything[i].text)
       if (skipFirstSeparatorOfCommand()) { i++; return 1}
       if (next.type === 'v1String findV1Expression') {
@@ -526,7 +527,7 @@ function all() {
           next.type = 'edit'
         }
       }
-    } else if (doNotQuoteCommand[everything[i].text.toLowerCase()]) {
+    } else if (doNotQuoteCommand[dTextLowered]) {
       //until 'end command', do not quote every v1 expr
       reconstructed.push(everything[i].text)
       b = i
@@ -534,16 +535,16 @@ function all() {
         i++
         return 1
       }
-    } else if (everything[i].text.toLowerCase() === 'stringtrimright') {
+    } else if (dTextLowered === 'stringtrimright') {
       if (skipFirstSeparatorOfCommand()) { i++; return 1}
-      commandAllEdit()
       // StringTrimRight, OutputVar, InputVar, Count
       // OutputVar:=SubStr(InputVar,1,-Count)
       //#command
+      commandAllEdit()
       if (!(commandParamsArr = getCommandParams())) { return 2 }
       c_a(1); p(':=SubStr('); c_a(2); p(',1,-'); c_a(3); p(')')
       spaceIfComment()
-    } else if (objValue = stringUpperLower[everything[i].text.toLowerCase()]) {
+    } else if (objValue = stringUpperLower[dTextLowered]) {
       if (skipFirstSeparatorOfCommand()) { i++; return 1}
       commandAllEditChoose({1:true,2:true})
       // StringUpper, OutputVar, InputVar, T
@@ -551,6 +552,13 @@ function all() {
       //#command
       if (!(commandParamsArr = getCommandParams())) { return 2 }
       c_a(1); p(`:=${objValue}(`); c_a(2); c_o(',',3); c_a(3); p(')')
+      spaceIfComment()
+    } else if (dTextLowered === 'random') {
+      // Random, OutputVar [, Min, Max]
+      // OutputVar:=Random([Min, Max])
+      commandAllEdit()
+      if (!(commandParamsArr = getCommandParams())) { return 2 }
+      c_a(1); p(':=Random('); c_a(2); c_o(',',3); c_a(3); p(')')
       spaceIfComment()
     } else {
       reconstructed.push(everything[i].text)

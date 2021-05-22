@@ -1060,7 +1060,7 @@ class biga {
 		; create
 		l_index := l_array.count()
 		loop l_index - 1 {
-			random randomIndex, 1, l_index
+			randomIndex:=Random(1,l_index)
 			l_tempVar := l_array[l_index]
 			l_array[l_index] := l_array[randomIndex]
 			l_array[randomIndex] := l_tempVar
@@ -1646,7 +1646,7 @@ class biga {
 		}
 
 		; create
-		Random vRandom, param_lower, param_upper
+		vRandom:=Random(param_lower,param_upper)
 		return vRandom
 	}
 	static defaults(param_object,param_sources*) {
