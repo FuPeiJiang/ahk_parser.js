@@ -18,12 +18,12 @@ class biga {
 
 		; create
 		; keep working till the parameter array is empty
-		while (param_array.count() > 0) {
+		while (param_array.length > 0) {
 			l_innerArr := []
 			; fill the inner array to the max size of the size parameter
 			loop param_size {
 				; exit loop if there is nothing left in parameter array to work with
-				if (param_array.count() == 0) {
+				if (param_array.length == 0) {
 					break
 				}
 				l_innerArr.push(param_array.removeAt(1))
@@ -115,14 +115,8 @@ class biga {
 			l_array := strSplit(param_array)
 		}
 
-		; create
-		loop param_n	{
-			l_array.RemoveAt(1)
-		}
-		; return empty array if empty
-		if (l_array.count() == 0) {
-			return []
-		}
+		l_array.RemoveAt(1,Min(param_n,l_array.length))
+
 		return l_array
 	}
 	static dropRight(param_array,param_n:=1) {
