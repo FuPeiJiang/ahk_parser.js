@@ -747,32 +747,7 @@ function parseIdkVariable(text: string) {
     return false
   }
 }
-/* } else if (eType === '] ArrAccess') {
-    const next = everything[i + 1]
-    if (next) {
-      if (next.type === ') if') {
-        b = i
-        if (!skipThroughSomethingMid('[ ArrAccess', '] ArrAccess')) { break outOfLen }
-        const skipTheseObj = {'] ArrAccess':'[ ArrAccess', ') function CALL':'functionName'}
-        while (b--) {
-          const back = everything[b]
-          const theType = skipTheseObj[back.type]
-          if (!theType) {
-            break
-          }
-          if (!skipThroughSomethingMid(theType, back.type)) { break outOfLen }
-        }
-        const back = everything[b]
-        if (back) {
-          const bType = back.type
-          if (bType === 'idkVariable') {
-            //
-          } else if (bType === '(.) property findTrailingExpr') {
-            //
-          }
-        }
-      }
-    } */
+
 function commandAllEditChoose(whichParamsObj) {
   let paramNum = 1
   while (true) {
@@ -808,18 +783,7 @@ function commandAllEdit() {
     }
   }
 }
-/* function c_a(index) {
-  const idxMinus = index - 1
-  // return (commandParamsArr[idxMinus] && commandParamsArr[idxMinus].length) ? commandParamsArr[idxMinus] : ''
-  if (commandParamsArr[idxMinus] && commandParamsArr[idxMinus].length) {
-    reconstructed = reconstructed.concat(commandParamsArr[idxMinus])
-  }
-}
-function c_o(str,index) {
-  if (commandParamsArr[index - 1]) {
-    reconstructed.push(str)
-  }
-} */
+
 function c_a(index) {
   const paramArr = commandParamsArr[index - 1]
   if (paramArr && paramArr.length) {
@@ -855,42 +819,6 @@ function o(str,index) {
 function s() {
   everything.splice(gArgsEInsertIndex, 0, ...arrFromArgsToInsert)
 }
-/* function a(index) {
-  const idxMinus = index - 1
-  const paramArr = argsArr[idxMinus]
-  let paramsLength
-  if (paramArr && (paramsLength = paramArr.length)) {
-    everything.splice(gArgsEInsertIndex, 0, ...paramArr)
-    gArgsEInsertIndex += paramsLength
-  }
-}
-function p(str) {
-  everything.splice(gArgsEInsertIndex, 0, {text:str})
-  gArgsEInsertIndex ++
-}
-function o(str,index) {
-  if (argsArr[index - 1]) {
-    everything.splice(gArgsEInsertIndex, 0, {text:str})
-    gArgsEInsertIndex ++
-  }
-} */
-
-/* function a(index) {
-  const idxMinus = index - 1
-  // return (argsArr[idxMinus] && argsArr[idxMinus].length) ? argsArr[idxMinus] : ''
-  if (argsArr[idxMinus] && argsArr[idxMinus].length) {
-    reconstructed = reconstructed.concat(argsArr[idxMinus])
-  }
-}
-function p(str) {
-  reconstructed.push(str)
-}
-function o(str,index) {
-  if (argsArr[index - 1]) {
-    reconstructed.push(str)
-  }
-  // return argsArr[index - 1] ? str : ''
-} */
 
 function getCommandParams() {
   const functionStartIndex = cParamsEInsertIndex = i
@@ -976,35 +904,7 @@ function getArgs() {
     }
   }
 }
-/* if (bType === 'functionName') {
-        arrOfText.push(`${next.text}(`)
-        let arrAccessDepth = 1
-        next = everything[++b]
-        while (next) {
-          const bType = next.type
-          if (arrAccessDepth) {
-            if (bType === ') function CALL') {
-              arrAccessDepth--
-            } else if (bType === 'functionName') {
-              arrAccessDepth++
-            }
-            arrOfText.push(next.text)
-            if (arrAccessDepth === 0) {
-              b++
-              continue innerLoop
-            }
-          }
-          next = everything[++b]
-        }
-        return false
-      } else  */
-/* function stringFromArrOfObj(arr, key: string) {
-  const toJoin = []
-  for (let n = 0, len = arr.length; n < len; n++) {
-    toJoin.push(arr[n][key])
-  }
-  return toJoin.join('')
-} */
+
 function getNextFuncArgOmitWhitespaces() {
   let next
   const arrOfObj = []
@@ -1074,28 +974,7 @@ function backFindWithText() {
   }
   return false
 }
-/* function backEmptyLines() {
-  let next
-  next = everything[--b]
-  while (next) {
-    if (next.type !== 'emptyLines' || next.text.includes('\n')) {
-      return true
-    }
-    next = everything[--b]
-  }
-  return false
-}
-function skipEmptyLines() {
-  let next
-  next = everything[++b]
-  while (next) {
-    if (next.type !== 'emptyLines' || next.text.includes('\n')) {
-      return true
-    }
-    next = everything[++b]
-  }
-  return false
-} */
+
 function backEmptyLinesEmptyText() {
   let next
   next = everything[--b]
