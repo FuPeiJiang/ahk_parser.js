@@ -3,9 +3,28 @@ ListLines 0
 SendMode "Input"  ; Recommended for new scripts due to its superior speed and reliability.
 SetWorkingDir A_ScriptDir  ; Ensures a consistent starting directory.
 #KeyHistory 0
+#Warn VarUnset, Off
 
+; A.chunk(["a", "b", "c", "d"], 2)
+d A.defaults(Map("a",1), Map("b",2), Map("a",3))
+; d A.invert(Map("a",1, "b",2, "c",1))
+; A.cloneDeep(Map("a",1, "b",2, "c",1))
+; d(&Map("a",1, "b",2, "c",1))
+; var := ObjDump(Map("a",1, "b",2, "c",1))
+; d var
 
-A.chunk(["a", "b", "c", "d"], 2)
+; firstMap := Map("a",1, "b",2, "c",Map("a",1, "b",2, "c",Map("a",1, "b",2, "c",1)))
+; dClone := deepClone(firstMap)
+; firstMap["c"]["c"]["b"]:=3
+; d(firstMap)
+; d(dClone)
+; 
+; deepClone(obj) {
+  ; return ObjLoad(ObjDump(obj))
+; }
+
+; f:=FileOpen(A_ScriptDir "\MyDump.bin","w -rwd")
+; f.RawWrite(ObjDump(Map("a",1, "b",2, "c",1))),f.Close()
 
 
 return

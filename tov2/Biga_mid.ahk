@@ -1319,17 +1319,7 @@ class biga {
 		}
 	}
 	cloneDeep(param_array) {
-
-		Objs := {}
-		Obj := param_array.Clone()
-		Objs[&param_array] := Obj ; Save this new array
-		for key, value in Obj {
-			if (isObject(value)) ; if it is a subarray
-				Obj[key] := Objs[&value] ; if we already know of a refrence to this array
-				? Objs[&value] ; Then point it to the new array
-				: this.clone(value, Objs) ; Otherwise, clone this sub-array
-		}
-		return Obj
+		return ObjLoad(ObjDump(param_array))
 	}
 	isAlnum(param) {
 		if (isObject(param)) {
