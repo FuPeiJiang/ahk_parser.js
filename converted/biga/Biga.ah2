@@ -709,7 +709,7 @@ class biga {
 				param_collection := subStr(param_collection, param_fromIndex, strLen(param_collection))
 			}
 			; count by replacing all occurances
-			strReplace(param_collection, param_predicate, "", l_count)
+			StrReplace(param_collection,param_predicate,"",0,l_count)
 			return l_count
 		}
 		for key, value in param_collection {
@@ -1937,7 +1937,7 @@ class biga {
 
 		for key, value in HTMLmap {
 			element := value
-			param_string := StrReplace(param_string, element["1"], element["2"], , -1)
+			param_string := StrReplace(param_string,element["1"],element["2"],0,,-1)
 		}
 		return param_string
 	}
@@ -1948,7 +1948,7 @@ class biga {
 
 		; create
 		l_string := this.startCase(param_string)
-		l_string := StrReplace(l_string, " ", "-")
+		l_string := StrReplace(l_string," ","-")
 		return l_string
 	}
 	static lowerCase(param_string:="") {
@@ -2041,7 +2041,7 @@ class biga {
 		if (param_number == 0) {
 			return ""
 		}
-		return StrReplace(Format("{:0" param_number "}", 0), "0", param_string)
+		return StrReplace(Format("{:0" param_number "}", 0),"0",param_string)
 	}
 	static replace(param_string:="",param_needle:="",param_replacement:="") {
 		if (!this.isStringLike(param_string) || !this.isStringLike(param_needle) || !this.isStringLike(param_replacement)) {
@@ -2055,7 +2055,7 @@ class biga {
 		if (l_needle := this._internal_JSRegEx(param_needle)) {
 			return  RegExReplace(param_string, l_needle, param_replacement, , this["limit"])
 		}
-		output := StrReplace(l_string, param_needle, param_replacement, , this["limit"])
+		output := StrReplace(l_string,param_needle,param_replacement,0,,this["limit"])
 		return output
 	}
 	static snakeCase(param_string:="") {
@@ -2065,7 +2065,7 @@ class biga {
 
 		; create
 		l_string := this.startCase(param_string)
-		l_string := StrReplace(l_string, " ", "_")
+		l_string := StrReplace(l_string," ","_")
 		return l_string
 	}
 	static split(param_string:="",param_separator:=",",param_limit:=0) {
@@ -2261,7 +2261,7 @@ class biga {
 
 		for key, value in HTMLmap {
 			element := value
-			param_string := StrReplace(param_string, element["2"], element["1"], , -1)
+			param_string := StrReplace(param_string,element["2"],element["1"],0,,-1)
 		}
 		return param_string
 	}
@@ -2367,7 +2367,7 @@ class biga {
 			for key, value in param_property {
 				if (param_property.count() == 1) {
 					; msgbox, % "dove deep and found: " ObjRawGet(param_itaree, value)
-					return  [param][1](param_itaree, value)
+					return  param_itaree[value]
 				} else if (param_itaree.Has(value)){
 					rvalue := this.internal_property(this.tail(param_property), param_itaree[value])
 				}

@@ -148,9 +148,10 @@ function all() {
   } else if (everything[i].type === 'functionName') {
     const thisText = everything[i].text
     const back = everything[i - 1]
+    const thisLowered = thisText.toLowerCase()
     if (back) {
       if (everything[i - 1].type === '. property') {
-        if (thisText.toLowerCase() === 'length') {
+        if (thisLowered === 'length') {
           // .Length() -> .Length
           reconstructed.push(`.${thisText}`)
 
@@ -170,7 +171,7 @@ function all() {
               }
             }
           }
-        } else if (thisText.toLowerCase() === 'haskey') {
+        } else if (thisLowered === 'haskey') {
           // .HasKey() -> .Has()
           reconstructed.push('.Has')
           return 3
@@ -179,7 +180,7 @@ function all() {
         return 3
       }
     }
-    if (thisText.toLowerCase() === 'varsetcapacity') {
+    if (thisLowered === 'varsetcapacity') {
       //#function
       if (!(argsArr = getArgs())) { return 2 }
       if (argsArr.length === 1) {
@@ -191,10 +192,15 @@ function all() {
         // TargetVar:=BufferAlloc(RequestedCapacity,FillByte)
         a(1); p(':=BufferAlloc('); a(2); o(',',3); a(3); p(')')
       }
-    } else if (thisText.toLowerCase() === 'object') {
+    } else if (thisLowered === 'strreplace') {
+      // StrReplace(Haystack, Needle [, ReplaceText, OutputVarCount, Limit])
+      // StrReplace(Haystack, Needle [, ReplaceText, CaseSense, OutputVarCount, Limit := -1])
+      if (!(argsArr = getArgs())) { return 2 }
+      p('StrReplace('); a(1); p(','); a(2); o(',',3); a(3); o(',0,',4); a(4); o(',',5); a(5); p(')')
+    } else if (thisLowered === 'object') {
       // Object() -> Map()  OR  Object("key",value) -> Map("key",value)
       reconstructed.push('Map')
-    } else if (thisText.toLowerCase() === 'numput') {
+    } else if (thisLowered === 'numput') {
       // NumPut(Number, VarOrAddress [, Offset := 0][, Type := "UPtr"])
       // NumPut Type, Number, [Type2, Number2, ...] VarOrAddress [, Offset]
       if (!(argsArr = getArgs())) { return 2 }
@@ -211,12 +217,12 @@ function all() {
         a(3)
       }
       p(')')
-    } else if (thisText.toLowerCase() === 'objgetaddress') {
+    } else if (thisLowered === 'objgetaddress') {
       // ObjGetAddress( this, "allData" )
       // this["allData"].Ptr
       if (!(argsArr = getArgs())) { return 2 }
       a(1); p('['); a(2); p('].Ptr')
-    } else if (thisText.toLowerCase() === 'objsetcapacity') {
+    } else if (thisLowered === 'objsetcapacity') {
       if (!(argsArr = getArgs())) { return 2 }
       if (argsArr.length === 3) {
         // ObjSetCapacity( this, "allData", newSize )
@@ -226,7 +232,7 @@ function all() {
       } else {
         p('ObjSetCapacity('); a(1); p(','); a(2); p(')')
       }
-    } else if (thisText.toLowerCase() === 'objgetcapacity') {
+    } else if (thisLowered === 'objgetcapacity') {
       if (!(argsArr = getArgs())) { return 2 }
       if (argsArr.length === 2) {
         // ObjGetCapacity( this, "allData")
@@ -235,18 +241,19 @@ function all() {
       } else {
         p('ObjGetCapacity('); a(1); p(')')
       }
-    } else if (thisText.toLowerCase() === 'objhaskey') {
+    } else if (thisLowered === 'objhaskey') {
       // objhaskey(obj,key) -> obj.Has(key)
       if (!(argsArr = getArgs())) { return 2 }
       a(1); p('.Has('); a(2); p(')')
-    } else if (thisText.toLowerCase() === 'objrawset') {
-      if (!(argsArr = getArgs())) { return 2 }
+    } else if (thisLowered === 'objrawset') {
       // ObjRawSet(Object, Key, Value)
       // Object[Key]:=Value
+      if (!(argsArr = getArgs())) { return 2 }
       a(1); p('['); a(2); p(']:='); a(3)
-    } else if (thisText.toLowerCase() === 'objrawget') {
+    } else if (thisLowered === 'objrawget') {
       // ObjRawGet(Object, Key)
       // Object[Key]
+      if (!(argsArr = getArgs())) { return 2 }
       a(1); p('['); a(2); p(']')
     } else {
       reconstructed.push(thisText)
