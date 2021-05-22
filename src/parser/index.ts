@@ -846,6 +846,14 @@ export default (content: string) => {
     }
   }
   function doReturn() {
+    // for `return % this.dropRight(l_array)`
+    skipThroughWhiteSpaces()
+    let whiteSpaceText
+    if (c < numberOfChars - 1 && lines[i][c] === '%' && whiteSpaceObj[whiteSpaceText = lines[i][c + 1]]) {
+      everything.push({ type: '% v1->v2 expr', text: `%${whiteSpaceText}`, i1: i, c1: c, c2: c + 2 })
+      c += 2
+      lineWhereCanConcat = -1
+    }
     if (!recurseBetweenExpression()) { findExpression() }
     //this is, NOT while
     if (i < howManyLines) {

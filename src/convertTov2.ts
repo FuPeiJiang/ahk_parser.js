@@ -5,7 +5,7 @@ import { variableCharsObj, whiteSpaceObj } from './parser/tokens'
 
 
 const content: Buffer =
-fs.readFileSync('v2tests/if paren no ws.ahk')
+// fs.readFileSync('v2tests/if paren no ws.ahk')
 fs.readFileSync('tov2/Biga.ahk')
 // fs.readFileSync('v2tests/A_IsUnicode from WinClipAPI.ahk')
 // fs.readFileSync('v2tests/A_IsUnicode start group space.ahk')
@@ -244,6 +244,10 @@ function all() {
 
   } else if (idkVariableOrAssignment[everything[i].type]) {
     const theText = everything[i].text
+    if (theText === '%') {
+      d(everything[i])
+      d(1)
+    }
     const parsedIdkVar = parseIdkVariable(theText)
     if (parsedIdkVar) {
       for (let i = 0, len = parsedIdkVar.length; i < len; i++) {
