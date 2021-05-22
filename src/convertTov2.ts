@@ -61,7 +61,7 @@ const stringUpperLower = {'stringupper':'StrUpper','stringlower':'StrLower'}
 // preprocessing..
 const varNames = {}
 const lowerVarNames = {}
-const typesThatAreVars = {'Param':true,'idkVariable':true,'assignment':true}
+const typesThatAreVars = {'Param':true,'idkVariable':true,'assignment':true,'v1String findIdkVar':true}
 for (let n = 0, len = everything.length; n < len; n++) {
   if (typesThatAreVars[everything[n].type]) {
     const theText = everything[n].text
@@ -84,20 +84,25 @@ for (let n = 0, len = everything.length; n < len; n++) {
     }
   }
 }
-const caseArr = lowerVarNames['case']
-if (caseArr) {
-  let caseNameReplacement
-  if (lowerVarNames['dcase']) {
-    while (lowerVarNames[caseNameReplacement = `${makeid(3)}_case`]) {
-      //this will break when found unique name
+replaceReservedVar('case','dCase','_case')
+replaceReservedVar('object','dObject','_object')
+function replaceReservedVar(theReservedVar: string, firstChoice: string, subfixForAutoGen: string) {
+  const caseArr = lowerVarNames[theReservedVar]
+  if (caseArr) {
+    let caseNameReplacement
+    if (lowerVarNames[firstChoice.toLowerCase()]) {
+      while (lowerVarNames[caseNameReplacement = `${makeid(3)}${subfixForAutoGen}`]) {
+        //this will break when found unique name
+      }
+    } else {
+      caseNameReplacement = firstChoice
     }
-  } else {
-    caseNameReplacement = 'dCase'
-  }
-  for (let n = 0, len = caseArr.length; n < len; n++) {
-    everything[caseArr[n]].text = caseNameReplacement
+    for (let n = 0, len = caseArr.length; n < len; n++) {
+      everything[caseArr[n]].text = caseNameReplacement
+    }
   }
 }
+
 
 // https://stackoverflow.com/questions/1349404/generate-random-string-characters-in-javascript#1349426
 function makeid(length) {

@@ -55,12 +55,12 @@ class biga {
 		l_array := this.clone(param_array)
 
 		; create
-		for index, object in param_values {
+		for index, dObject in param_values {
 			; push on any plain values
-			if (!isObject(object)) {
-				l_array.push(object)
+			if (!isObject(dObject)) {
+				l_array.push(dObject)
 			} else { ;push object values 1 level deep
-				for index2, object2 in object {
+				for index2, object2 in dObject {
 					l_array.push(object2)
 				}
 			}
@@ -265,13 +265,13 @@ class biga {
 		l_obj := []
 
 		; create
-		for Index, Object in param_array {
-			if (isObject(Object)) {
-				for Index2, Object2 in Object {
+		for Index, dObject in param_array {
+			if (isObject(dObject)) {
+				for Index2, Object2 in dObject {
 					l_obj.push(Object2)
 				}
 			} else {
-				l_obj.push(Object)
+				l_obj.push(dObject)
 			}
 		}
 		return l_obj
@@ -1659,8 +1659,8 @@ class biga {
 		param_sources := this.reverse(param_sources)
 
 		; create
-		for Index, Object in param_sources {
-			for key, value in Object {
+		for Index, dObject in param_sources {
+			for key, value in dObject {
 				if (!l_obj.Has(key)) { ; if the key is not already in use
 					l_obj[key] := value
 				}
