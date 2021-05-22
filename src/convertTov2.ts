@@ -468,18 +468,18 @@ function all() {
     let objValue
     const dTextLowered = everything[i].text.toLowerCase()
     if (numIfNum[dTextLowered]) {
-      if (skipFirstSeparatorOfCommand()) { i++; return 1}
+      if (skipFirstSeparatorOfCommand()) { return 3 }
       if (next.type === 'v1String findV1Expression') {
         if (!isNaN(next.text)) {
           next.type = 'edit'
         }
       }
     } else if (dTextLowered === '#noenv') {
+      thisE.text = ''
       const next = everything[i + 1]
       if (next) {
         if (next.type === 'emptyLines') {
           next.text = ''
-          i++
         }
       }
     } else if (dTextLowered === 'setbatchlines') {
@@ -490,16 +490,14 @@ function all() {
         }
       }
       thisE.text = ''
-      i++; return 1
+      return 3
     } else if (v1ExprToEdit[dTextLowered]) {
-      reconstructed.push(everything[i].text)
-      if (skipFirstSeparatorOfCommand()) { i++; return 1}
+      if (skipFirstSeparatorOfCommand()) { return 3 }
       if (next.type === 'v1String findV1Expression') {
         next.type = 'edit'
       }
     } else if (dTextLowered === 'listlines') {
-      reconstructed.push(everything[i].text)
-      if (skipFirstSeparatorOfCommand()) { i++; return 1}
+      if (skipFirstSeparatorOfCommand()) { return 3 }
       if (next.type === 'v1String findV1Expression') {
         const dText = next.text
         if (on1off0[dText.toLowerCase()]) {
@@ -511,14 +509,12 @@ function all() {
       }
     } else if (doNotQuoteCommand[dTextLowered]) {
       //until 'end command', do not quote every v1 expr
-      reconstructed.push(everything[i].text)
       b = i
       if (commandAllEdit()) {
-        i++
-        return 1
+        return 3
       }
     } else if (dTextLowered === 'stringtrimright') {
-      if (skipFirstSeparatorOfCommand()) { i++; return 1}
+      if (skipFirstSeparatorOfCommand()) { return 3 }
       // StringTrimRight, OutputVar, InputVar, Count
       // OutputVar:=SubStr(InputVar,1,-Count)
       //#command
@@ -527,7 +523,7 @@ function all() {
       c_a(1); c_p(':=SubStr('); c_a(2); c_p(',1,-'); c_a(3); c_p(')')
       spaceIfComment(); c_s()
     } else if (objValue = stringUpperLower[dTextLowered]) {
-      if (skipFirstSeparatorOfCommand()) { i++; return 1}
+      if (skipFirstSeparatorOfCommand()) { return 3 }
       commandAllEditChoose({1:true,2:true})
       // StringUpper, OutputVar, InputVar, T
       // OutputVar:=StrUpper(InputVar,"T")
