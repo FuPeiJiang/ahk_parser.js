@@ -37,7 +37,7 @@ const everything = ahkParser(content.toString().replace(/\r/g, ''))
 // d(everything)
 let reconstructed = []
 let i = 0, b
-const classToStatic = {'WinClip':true,'WinClipAPI':true}
+const classToStatic = {'biga':true,'WinClip':true,'WinClipAPI':true}
 
 const numIfNum = {'break':true,'continue':true,'settitlematchmode':true}
 const anyCommand = {'DIRECTIVE OR COMMAND comma':true,'command EOL or comment':true,'command':true}
@@ -444,7 +444,8 @@ function all() {
       // OutputVar:=SubStr(InputVar,1,-Count)
       //#command
       if (!(commandParamsArr = getCommandParams())) { return 2 }
-      c_a(1); c_p(':=SubStr('); c_a(2); c_p(',1,-'); c_a(3); c_p(')')
+      c_a(1); p(':=SubStr('); c_a(2); p(',1,-'); c_a(3); p(')')
+      spaceIfComment()
     } else if (objValue = stringUpperLower[everything[i].text.toLowerCase()]) {
       if (skipFirstSeparatorOfCommand()) { i++; return 1}
       commandAllEditChoose({1:true,2:true})
@@ -452,7 +453,8 @@ function all() {
       // OutputVar:=StrUpper(InputVar,"T")
       //#command
       if (!(commandParamsArr = getCommandParams())) { return 2 }
-      c_a(1); c_p(`:=${objValue}(`); c_a(2); c_o(',',3); c_a(3); c_p(')')
+      c_a(1); p(`:=${objValue}(`); c_a(2); c_o(',',3); c_a(3); p(')')
+      spaceIfComment()
     } else {
       reconstructed.push(everything[i].text)
     }
@@ -590,6 +592,16 @@ function all() {
   return 3
 }
 // functions
+function spaceIfComment() {
+  const next = everything[i + 1]
+  if (next) {
+    if (next.type === 'emptyLines') {
+      if (next.text[0] === ';') {
+        p(' ')
+      }
+    }
+  }
+}
 function skipFirstSeparatorOfCommand() {
   b = i + 1
   next = everything[b]
@@ -711,9 +723,6 @@ function c_a(index) {
   if (commandParamsArr[idxMinus] && commandParamsArr[idxMinus].length) {
     reconstructed = reconstructed.concat(commandParamsArr[idxMinus])
   }
-}
-function c_p(str) {
-  reconstructed.push(str)
 }
 function c_o(str,index) {
   if (commandParamsArr[index - 1]) {
