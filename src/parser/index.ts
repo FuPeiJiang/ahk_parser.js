@@ -429,6 +429,28 @@ export default (content: string) => {
               } else {
                 d('this cannot happen because idkType must be in 1,2,3,4,5',linesPlusChar())
               }
+            } else if (lines[i][c] === '(') {
+              if (idkType === 2) {
+                everything.splice(spliceStartIndex, 0, { type: 'if', text: validName, i1: validNameLine, c1: validNameStart, c2: validNameEnd })
+                if (!recurseBetweenExpression()) { findExpression() }
+                everything.splice(everything.length - 1, 0, { type: 'end if' })
+                if (i === howManyLines) { break lineLoop }
+                if (lines[i][c] === '{') {
+                  everything.push({ type: '{ if', text: '{', i1: i, c1: c })
+                  c++
+                  if (!skipThroughEmptyLines()) { break lineLoop }
+                }
+                usingStartOfLineLoop = true
+                continue startOfLineLoop
+              }
+
+              const foundWhile = findWhile()
+              if (foundWhile === 1) {
+                continue startOfLineLoop
+              } else if (foundWhile === 2) {
+                continue lineLoop
+              }
+
             }
           }
           //can only be from skipThroughEmptyLines()
@@ -2159,9 +2181,25 @@ export default (content: string) => {
     if (lines[i][c] === '(') {
       // d('( group', char())
       let which = 'group'
-      if (everything[everything.length - 2].type === 'if') {
-        which = 'if'
+      const dIndex = everything.length - 1
+      let back = everything[dIndex]
+      while (true) {
+        if (back) {
+          if (back.type === 'emptyLines') {
+            back = everything[dIndex - 1]
+            if (!back) {
+              break
+            }
+          }
+          if (back.type === 'if') {
+            which = 'if'
+          } else if (back.type === 'while') {
+            which = 'while'
+          }
+        }
+        break
       }
+
       everything.push({ type: `( ${which}`, text: '(', i1: i, c1: c })
       c++
       lineWhereCanConcat = -1

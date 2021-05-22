@@ -2168,3 +2168,7 @@ Instantiate the object first to use this method!", -1 )
 	119: if !IsObject( f )
 	120: Return 0
 
+if(oof) {
+
+}
+there's no whiteSpace..
