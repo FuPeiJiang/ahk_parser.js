@@ -195,6 +195,9 @@ function all() {
           // .HasKey() -> .Has()
           reconstructed.push('.Has')
           return 3
+        } else if (thisLowered === 'count') {
+          d(everything[i])
+          d(i)
         }
         reconstructed.push(`.${thisText}`)
         return 3

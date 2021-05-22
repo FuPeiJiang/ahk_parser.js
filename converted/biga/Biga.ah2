@@ -132,14 +132,8 @@ class biga {
 			l_array := strSplit(param_array)
 		}
 
-		; create
-		loop param_n	{
-			l_array.removeAt(l_array.count())
-		}
-		; return empty array if empty
-		if (l_array.count() == 0) {
-			return []
-		}
+		l_array.removeAt((arrLen:=l_array.length) - (dropLen:=Min(param_n,arrLen)) + 1, dropLen)
+
 		return l_array
 	}
 	static dropRightWhile(param_array,param_predicate:="__identity") {
