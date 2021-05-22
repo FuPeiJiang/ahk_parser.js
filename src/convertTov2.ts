@@ -5,7 +5,7 @@ import { variableCharsObj, whiteSpaceObj } from './parser/tokens'
 
 
 const content: Buffer =
-fs.readFileSync('v2tests/prop in func.ahk')
+// fs.readFileSync('v2tests/prop in func.ahk')
 // fs.readFileSync('tests3/loop bracket.ahk')
 // fs.readFileSync('tests3/assignment percent.ahk')
 // fs.readFileSync('tests3/if paren no ws.ahk')
@@ -665,6 +665,7 @@ function all() {
 // functions
 function spaceIfComment() {
   const next = everything[i + 1]
+
   if (next) {
     if (next.type === 'emptyLines') {
       if (next.text[0] === ';') {
@@ -791,7 +792,7 @@ function c_o(str,index) {
 }
 function c_s() {
   everything.splice(cParamsEInsertIndex, 0, ...arrFromCParamsToInsert)
-  i += arrFromCParamsToInsert.length + 1
+  i += arrFromCParamsToInsert.length
 }
 
 function a(index) {
@@ -816,7 +817,7 @@ function o(str,index) {
 }
 function s() {
   everything.splice(gArgsEInsertIndex, 0, ...arrFromArgsToInsert)
-  i += arrFromArgsToInsert.length + 1
+  i += arrFromArgsToInsert.length
 }
 
 function getCommandParams() {
@@ -849,7 +850,7 @@ function getCommandParams() {
         const spliceLen = i + 1 - functionStartIndex
         arrOfArrOfE.push(everything.slice(paramStartIndex, i))
         everything.splice(functionStartIndex, spliceLen)
-        i -= spliceLen + 1
+        i -= spliceLen
         return arrOfArrOfE
       } else if (bType === ', command comma') {
         arrOfArrOfE.push(everything.slice(paramStartIndex, i))
@@ -889,7 +890,7 @@ function getArgs() {
         const spliceLen = i + 1 - functionStartIndex
         arrOfArrOfE.push(everything.slice(paramStartIndex, i))
         everything.splice(functionStartIndex, spliceLen)
-        i -= spliceLen + 1
+        i -= spliceLen
         return arrOfArrOfE
       } else if (bType === ', function CALL') {
         arrOfArrOfE.push(everything.slice(paramStartIndex, i))
