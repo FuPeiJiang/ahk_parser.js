@@ -1,0 +1,1 @@
+param_string := StrReplace(param_string, element.1, element.2, , -1)

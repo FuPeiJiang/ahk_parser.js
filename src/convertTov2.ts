@@ -5,6 +5,7 @@ import { variableCharsObj, whiteSpaceObj } from './parser/tokens'
 
 
 const content: Buffer =
+fs.readFileSync('v2tests/prop in func.ahk')
 // fs.readFileSync('tests3/loop bracket.ahk')
 // fs.readFileSync('tests3/assignment percent.ahk')
 // fs.readFileSync('tests3/if paren no ws.ahk')
@@ -164,8 +165,6 @@ function all() {
     thisE.text = ','
   } else if (eType === 'singleVar') {
     thisE.text = `"${everything[i].text}"`
-  } else if (eType === '. property') {
-    thisE.text = '.'
   } else if (eType === '% v1->v2 expr') {
     thisE.text = ''
   } else if (eType === 'functionName') {
@@ -302,7 +301,7 @@ function all() {
         b++
         next = everything[b]
         if (!next) {
-          return 1
+          return 3
         }
         hasParen = true
       }
@@ -577,7 +576,7 @@ function all() {
       break dummyLoopNotIs
     }
   } else if (eType === '1operator') {
-    if (everything[i].text === '&') {
+    if (thisE.text === '&') {
       let bType
       b = i
       const bSave = b
@@ -593,6 +592,7 @@ function all() {
         if (dText) {
           for (let c = 0, len = dText.length; c < len; c++) {
             if (variableCharsObj[dText[c]]) {
+              thisE.text = ''
               allVariableCharsArr.push(dText[c])
             }
           }
@@ -601,6 +601,7 @@ function all() {
       }
       const validVarStr = allVariableCharsArr.join('')
       if (isNaN(Number(validVarStr))) {
+
         everything.splice(b + 1,0,{type:'edit',text:'.Ptr'})
         // reconstructed.push('StrPtr(')
         // everything.splice(b + 1,0,{type:'edit',text:')'})
@@ -614,8 +615,7 @@ function all() {
     while (true) {
       next = everything[++b]
       if (!next) {
-        i++
-        return 1
+        return 3
       }
       const dType = next.type
       if (startingBlock[dType]) {
@@ -623,16 +623,14 @@ function all() {
       } else if (dType === '} unknown') {
         blockDepth--
       } else if (dType === 'hotkey') {
-        i++
-        return 1
+        return 3
       } else if (anyCommand[dType]) {
         if (blockDepth === 0) {
           if (next.text.toLowerCase() === 'return') {
             next.type = 'edit'
             next.text = '}'
             everything.splice(hotkeyI + 1,0,{text:'\n{',type:'edit'})
-            i++
-            return 1
+            return 3
           }
         }
       }
@@ -773,10 +771,16 @@ function commandAllEdit() {
 
 function c_a(index) {
   const paramArr = commandParamsArr[index - 1]
-  if (paramArr && paramArr.length) {
-    arrFromCParamsToInsert.push(...paramArr)
+  let paramsLen
+  if (paramArr && (paramsLen = paramArr.length)) {
+    for (let n = 0; n < paramsLen; n++) {
+      if (!wsOrEmptyLine[paramArr[n].type]) {
+        arrFromCParamsToInsert.push(paramArr[n])
+      }
+    }
   }
 }
+// arrFromCParamsToInsert.push(...paramArr)
 function c_p(str) {
   arrFromCParamsToInsert.push({text:str})
 }
@@ -787,14 +791,21 @@ function c_o(str,index) {
 }
 function c_s() {
   everything.splice(cParamsEInsertIndex, 0, ...arrFromCParamsToInsert)
+  i += arrFromCParamsToInsert.length + 1
 }
 
 function a(index) {
   const paramArr = argsArr[index - 1]
-  if (paramArr && paramArr.length) {
-    arrFromArgsToInsert.push(...paramArr)
+  let paramsLen
+  if (paramArr && (paramsLen = paramArr.length)) {
+    for (let n = 0; n < paramsLen; n++) {
+      if (!wsOrEmptyLine[paramArr[n].type]) {
+        arrFromArgsToInsert.push(paramArr[n])
+      }
+    }
   }
 }
+// arrFromArgsToInsert.push(...paramArr)
 function p(str) {
   arrFromArgsToInsert.push({text:str})
 }
@@ -805,20 +816,20 @@ function o(str,index) {
 }
 function s() {
   everything.splice(gArgsEInsertIndex, 0, ...arrFromArgsToInsert)
+  i += arrFromArgsToInsert.length + 1
 }
 
 function getCommandParams() {
   const functionStartIndex = cParamsEInsertIndex = i
-  i++
+  i += 2
   arrFromCParamsToInsert = []
-  let paramStartIndex = i + 1
+  let paramStartIndex = i
   let next
   const arrOfArrOfE = []
-  outerLoop:
   while (true) {
     innerLoop:
     while (true) {
-      next = everything[++i]
+      next = everything[i]
       if (!next) {
         return false
       }
@@ -830,6 +841,7 @@ function getCommandParams() {
       } else if (allReturn === 2) {
         return false
       } else if (allReturn === 3) {
+        i++
         continue innerLoop
       }
 
@@ -842,23 +854,22 @@ function getCommandParams() {
       } else if (bType === ', command comma') {
         arrOfArrOfE.push(everything.slice(paramStartIndex, i))
         paramStartIndex = i + 1
-        continue outerLoop
       }
+      i++
     }
   }
 }
 function getArgs() {
   const functionStartIndex = gArgsEInsertIndex = i
-  i++
+  i += 2
   arrFromArgsToInsert = []
-  let paramStartIndex = i + 1
+  let paramStartIndex = i
   let next
   const arrOfArrOfE = []
-  outerLoop:
   while (true) {
     innerLoop:
     while (true) {
-      next = everything[++i]
+      next = everything[i]
       if (!next) {
         return false
       }
@@ -870,6 +881,7 @@ function getArgs() {
       } else if (allReturn === 2) {
         return false
       } else if (allReturn === 3) {
+        i++
         continue innerLoop
       }
 
@@ -882,8 +894,8 @@ function getArgs() {
       } else if (bType === ', function CALL') {
         arrOfArrOfE.push(everything.slice(paramStartIndex, i))
         paramStartIndex = i + 1
-        continue outerLoop
       }
+      i++
     }
   }
 }
