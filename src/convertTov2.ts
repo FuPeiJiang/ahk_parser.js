@@ -5,7 +5,7 @@ import { variableCharsObj, whiteSpaceObj } from './parser/tokens'
 
 
 const content: Buffer =
-/* // fs.readFileSync('tests3/loop bracket.ahk')
+// fs.readFileSync('tests3/loop bracket.ahk')
 // fs.readFileSync('tests3/assignment percent.ahk')
 // fs.readFileSync('tests3/if paren no ws.ahk')
 fs.readFileSync('tov2/Biga_mid.ahk')
@@ -26,7 +26,7 @@ fs.readFileSync('tov2/OpenInAhkExplorer.ahk')
 // fs.readFileSync('tov2/sortAr.ahk')
 // fs.readFileSync('tests3/splitpath.ahk')
 // fs.readFileSync('tests3/not assignment operatEor.ahk')
-// fs.readFileSync('tests3/idkAnymore23.ahk') */
+// fs.readFileSync('tests3/idkAnymore23.ahk')
 fs.readFileSync('tov2/jpgs to pdf.ahk')
 // fs.readFileSync('tests3/command EOF.ahk')
 // fs.readFileSync('tests3/test validName VARIABLE EOL.ahk')
@@ -538,8 +538,6 @@ function all() {
       if (!(commandParamsArr = getCommandParams())) { return 2 }
       c_a(1); c_p(':=Random('); c_a(2); c_o(',',3); c_a(3); c_p(')')
       spaceIfComment(); c_s()
-    } else {
-      reconstructed.push(everything[i].text)
     }
   } else if (eType === 'legacyIf var') {
     b = i + 2
@@ -571,18 +569,13 @@ function all() {
             } else {
               d('unknown type, tell me')
             }
-            if (hasNot) {
-              reconstructed.push('!')
-            }
-            reconstructed.push(`${typeCheckFunc}(${everything[i].text})`)
-            i = b
+            everything.splice(i,b - i + 1,{text:`${hasNot ? '!' : ''}${typeCheckFunc}(${everything[i].text})`,type:'v2: if is type'})
             return 3
           }
         }
       }
       break dummyLoopNotIs
     }
-    reconstructed.push(everything[i].text)
   } else if (eType === '1operator') {
     if (everything[i].text === '&') {
       let bType
@@ -590,8 +583,11 @@ function all() {
       const bSave = b
       if (!(bType = findNextAnyInObj(startGroupOrUnit))) { return 2 }
       if (!nextSkipThrough(startGroupOrUnit[bType],bType)) { return 2 }
+      //find ') group' or 'end unit'
       const sliced = everything.slice(bSave + 1, b)
       const allVariableCharsArr = []
+      //to not & 2 -> 2.Ptr because Bitwise-and (&)
+      //extract all validChars (variableCharsObj), see if the joined is a number?
       for (let n = 0, len = sliced.length; n < len; n++) {
         const dText = sliced[n].text
         if (dText) {
@@ -608,14 +604,9 @@ function all() {
         everything.splice(b + 1,0,{type:'edit',text:'.Ptr'})
         // reconstructed.push('StrPtr(')
         // everything.splice(b + 1,0,{type:'edit',text:')'})
-      } else {
-        reconstructed.push('&')
       }
-    } else {
-      reconstructed.push(everything[i].text)
     }
   } else if (eType === 'hotkey') {
-    reconstructed.push(everything[i].text)
     b = i
     const hotkeyI = i
     let next
@@ -648,7 +639,6 @@ function all() {
     }
   //#HERE
   } else if (eType === 'className') {
-    reconstructed.push(everything[i].text)
     if (classToStatic[everything[i].text]) {
       b = i + 1
       let next, arrAccessDepth = 0
@@ -710,6 +700,11 @@ function skipFirstSeparatorOfCommand() {
     }
   }
 
+}
+function see(howFar = 3) {
+  for (let n = 0; n < howFar; n++) {
+    d(everything[i + n])
+  }
 }
 function parseIdkVariable(text: string) {
   let startIndex = text.indexOf('%')
@@ -848,8 +843,6 @@ function getCommandParams() {
         arrOfArrOfE.push(everything.slice(paramStartIndex, i))
         paramStartIndex = i + 1
         continue outerLoop
-      } else if (!wsOrEmptyLine[bType]) {
-        reconstructed.push(next.text)
       }
     }
   }
@@ -890,8 +883,6 @@ function getArgs() {
         arrOfArrOfE.push(everything.slice(paramStartIndex, i))
         paramStartIndex = i + 1
         continue outerLoop
-      } else if (!wsOrEmptyLine[bType]) {
-        reconstructed.push(next.text)
       }
     }
   }
@@ -1027,7 +1018,6 @@ function skipThroughSomethingMid(lookForThisToEnd: string, ohNoAddAnotherOne: st
   }
   return false
 }
-// d(reconstructed)
 const arrToJoin = []
 for (let i = 0, len = everything.length; i < len; i++) {
   arrToJoin.push(everything[i].text)
