@@ -56,6 +56,61 @@ const v1ExprToEdit = {'goto':true,'#singleinstance':true}
 const ternaryColonEndDelim = {'end assignment':true,', function CALL':true,') function CALL':true,', assignment':true,'end comma assignment':true}
 const doNotQuoteCommand = {'splitpath':true,'random':true}
 const stringUpperLower = {'stringupper':'StrUpper','stringlower':'StrLower'}
+
+// I'd never think I'd come to this day, but..
+// preprocessing..
+const varNames = {}
+const lowerVarNames = {}
+const typesThatAreVars = {'Param':true,'idkVariable':true,'assignment':true}
+for (let n = 0, len = everything.length; n < len; n++) {
+  if (typesThatAreVars[everything[n].type]) {
+    const theText = everything[n].text
+    const parsedIdkVar = parseIdkVariable(theText)
+    if (parsedIdkVar) {
+      for (let i = 0, len = parsedIdkVar.length; i < len; i++) {
+        if (parsedIdkVar[i].type) {
+          const dText = parsedIdkVar[i].text
+          varNames[dText] = true
+          const dLowered = dText.toLowerCase()
+          lowerVarNames[dLowered] = lowerVarNames[dLowered] || []
+          lowerVarNames[dLowered].push(n)
+        }
+      }
+    } else {
+      varNames[theText] = true
+      const dLowered = theText.toLowerCase()
+      lowerVarNames[dLowered] = lowerVarNames[dLowered] || []
+      lowerVarNames[dLowered].push(n)
+    }
+  }
+}
+const caseArr = lowerVarNames['case']
+if (caseArr) {
+  let caseNameReplacement
+  if (lowerVarNames['dcase']) {
+    while (lowerVarNames[caseNameReplacement = `${makeid(3)}_case`]) {
+      //this will break when found unique name
+    }
+  } else {
+    caseNameReplacement = 'dCase'
+  }
+  for (let n = 0, len = caseArr.length; n < len; n++) {
+    everything[caseArr[n]].text = caseNameReplacement
+  }
+}
+
+// https://stackoverflow.com/questions/1349404/generate-random-string-characters-in-javascript#1349426
+function makeid(length) {
+  var result = []
+  var characters = 'abcdefghijklmnopqrstuvwxyz'
+  var charactersLength = characters.length
+  for ( var i = 0; i < length; i++ ) {
+    result.push(characters.charAt(Math.floor(Math.random() *
+charactersLength)))
+  }
+  return result.join('')
+}
+
 let next, argsArr, commandParamsArr
 outOfLen:
 while (i < everything.length) {

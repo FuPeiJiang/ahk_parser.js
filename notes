@@ -2215,3 +2215,20 @@ maybe to do:
  if (x > y, p(2))
  is legal
  but I won't, excuse: "it decreases performance"
+
+
+---------------------------
+use biga.ah2
+---------------------------
+Error at line 1219 in #include file "ahk_parser.js\converted\biga\Biga.ah2".
+
+The following reserved word must not be used as a variable name:
+"case"
+
+The program will exit.
+---------------------------
+OK   
+---------------------------
+
+I could convert "case" to "dCase" or something else if "dCase" exists...
+

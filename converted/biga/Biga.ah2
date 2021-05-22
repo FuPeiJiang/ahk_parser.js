@@ -1216,7 +1216,7 @@ class biga {
 		return this._printObj(param_obj)
 	}
 
-	static _internal_MD5(param_string, case := 0) {
+	static _internal_MD5(param_string, dCase := 0) {
 		if (isObject(param_string)) {
 			param_string := this.print(param_string)
 		}
@@ -1226,7 +1226,7 @@ class biga {
 		, DllCall("advapi32\MD5Update", "Ptr", MD5_CTX.Ptr, "AStr", param_string, "UInt", StrLen(param_string))
 		, DllCall("advapi32\MD5Final", "Ptr", MD5_CTX.Ptr)
 		loop MD5_DIGEST_LENGTH {
-			o .= Format("{:02" (case ? "X" : "x") "}", NumGet(MD5_CTX, 87 + A_Index, "UChar"))
+			o .= Format("{:02" (dCase ? "X" : "x") "}", NumGet(MD5_CTX, 87 + A_Index, "UChar"))
 		}
 		DllCall("FreeLibrary", "Ptr", hModule)
 		return o
