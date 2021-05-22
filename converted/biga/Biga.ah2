@@ -2367,7 +2367,7 @@ class biga {
 			for key, value in param_property {
 				if (param_property.count() == 1) {
 					; msgbox, % "dove deep and found: " ObjRawGet(param_itaree, value)
-					return  ObjRawGet(param_itaree, value)
+					return  [param][1](param_itaree, value)
 				} else if (param_itaree.Has(value)){
 					rvalue := this.internal_property(this.tail(param_property), param_itaree[value])
 				}

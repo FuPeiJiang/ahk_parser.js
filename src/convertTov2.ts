@@ -239,6 +239,10 @@ function all() {
       // ObjRawSet(Object, Key, Value)
       // Object[Key]:=Value
       a(1); p('['); a(2); p(']:='); a(3)
+    } else if (thisText.toLowerCase() === 'objrawget') {
+      // ObjRawGet(Object, Key)
+      // Object[Key]
+      a(1); p('['); a(2); p(']')
     } else {
       reconstructed.push(thisText)
       while (true) {
