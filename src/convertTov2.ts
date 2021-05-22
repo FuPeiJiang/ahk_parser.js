@@ -591,11 +591,11 @@ function all() {
             } else {
               d('unknown type, tell me')
             }
-            i = b
             if (hasNot) {
               reconstructed.push('!')
             }
             reconstructed.push(`${typeCheckFunc}(${everything[i].text})`)
+            i = b
             return 3
           }
         }

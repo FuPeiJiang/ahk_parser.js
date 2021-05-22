@@ -1186,7 +1186,7 @@ class biga {
 		}
 
 		for key, value in param_obj {
-			if !IsNumber(Number)
+			if !IsNumber(key)
 			{
 				Output .= "`"" . key . "`":"
 			} else {
@@ -1194,7 +1194,7 @@ class biga {
 			}
 			if (isObject(value)) {
 				Output .= "[" . this._printObj(value) . "]"
-			} else if !IsNumber(number)
+			} else if !IsNumber(value)
 			{
 				Output .= "`"" . value . "`""
 			} else {
@@ -1335,7 +1335,7 @@ class biga {
 		if (isObject(param)) {
 			return false
 		}
-		if IsAlnum(alnum)
+		if IsAlnum(param)
 		{
 			return true
 		}
@@ -1376,7 +1376,7 @@ class biga {
 		if (isObject(param)) {
 			return false
 		}
-		if IsFloat(float)
+		if IsFloat(param)
 		{
 			return true
 		}
@@ -1396,7 +1396,7 @@ class biga {
 		if (isObject(param)) {
 			return false
 		}
-		if IsNumber(number)
+		if IsNumber(param)
 		{
 			return true
 		}
