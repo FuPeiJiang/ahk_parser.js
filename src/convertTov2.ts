@@ -179,29 +179,10 @@ function all() {
           const spliceStart = b = i + 1
           if (!nextSkipThrough(') function CALL','functionName')) { return 2 }
           everything.splice(spliceStart, b - spliceStart + 1)
-
-          const next = everything[i + 1]
-          if (next) {
-            if (next.type === '( function CALL') {
-              i++
-              let isThisEnd
-              while (true) {
-                isThisEnd = everything[++i]
-                if (!isThisEnd) {
-                  return 2
-                }
-                if (isThisEnd.type === ') function CALL') {
-                  return 3
-                }
-              }
-            }
-          }
         } else if (thisLowered === 'haskey') {
           // .HasKey() -> .Has()
-          reconstructed.push('.Has')
-          return 3
+          thisE.text = 'Has'
         }
-        reconstructed.push(`.${thisText}`)
         return 3
       }
     }
