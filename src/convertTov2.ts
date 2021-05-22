@@ -5,7 +5,7 @@ import { variableCharsObj, whiteSpaceObj } from './parser/tokens'
 
 
 const content: Buffer =
-// fs.readFileSync('tests3/loop bracket.ahk')
+/* // fs.readFileSync('tests3/loop bracket.ahk')
 // fs.readFileSync('tests3/assignment percent.ahk')
 // fs.readFileSync('tests3/if paren no ws.ahk')
 fs.readFileSync('tov2/Biga_mid.ahk')
@@ -26,11 +26,11 @@ fs.readFileSync('tov2/OpenInAhkExplorer.ahk')
 // fs.readFileSync('tov2/sortAr.ahk')
 // fs.readFileSync('tests3/splitpath.ahk')
 // fs.readFileSync('tests3/not assignment operatEor.ahk')
-// fs.readFileSync('tests3/idkAnymore23.ahk')
+// fs.readFileSync('tests3/idkAnymore23.ahk') */
 fs.readFileSync('tov2/jpgs to pdf.ahk')
 // fs.readFileSync('tests3/command EOF.ahk')
 // fs.readFileSync('tests3/test validName VARIABLE EOL.ahk')
-// fs.readFileSync('tov2/use_string.ahk')
+fs.readFileSync('tov2/use_string.ahk')
 // fs.readFileSync('tests3/fix if no paren.ahk')
 fs.readFileSync('tov2/string.ahk')
 fs.readFileSync('tests/ahk_explorer.ahk')
@@ -424,13 +424,11 @@ function all() {
   } else if (eType === '(statement) ,') {
     thisE.text = ' '
     const next = everything[i + 1]
-    if (next) {
-      if (wsOrEmptyLine[next.type]) {
-        thisE.text = ''
-      }
+    if (wsOrEmptyLine[next.type]) {
+      thisE.text = ''
     }
   } else if (v1Percent[eType]) {
-    //ignore
+    thisE.text = ''
   } else if (v1Str[eType]) {
     const theText = everything[i].text
     if (theText !== '') {
@@ -451,12 +449,10 @@ function all() {
         }
         break outerLoop
       }
-      reconstructed.push(`${whiteSpaceObj[everything[i - 1].text.slice(-1)] ? '' : ' '}"${theText.replace(/"/g, '`"')}"${putAtEnd}`)
+      thisE.text = `${whiteSpaceObj[everything[i - 1].text.slice(-1)] ? '' : ' '}"${theText.replace(/"/g, '`"')}"${putAtEnd}`
     }
-  } else if (eType === 'percentVar v1Expression') {
-    reconstructed.push(everything[i].text)
   } else if (eType === '= v1Assignment') {
-    reconstructed.push(':=')
+    thisE.text = ':='
     const next = everything[i + 1]
     // var = -> var:=""
     if (next.type === 'v1String findV1Expression') {
@@ -466,13 +462,12 @@ function all() {
       }
     }
   } else if (eType === 'String') {
-    reconstructed.push(`"${everything[i].text.slice(1,-1).replace(/""/g, '`"')}"`)
+    thisE.text = `"${everything[i].text.slice(1,-1).replace(/""/g, '`"')}"`
   } else if (anyCommand[eType]) {
     //if breakOrContinue, if is number, don't surround with quotes
     let objValue
     const dTextLowered = everything[i].text.toLowerCase()
     if (numIfNum[dTextLowered]) {
-      reconstructed.push(everything[i].text)
       if (skipFirstSeparatorOfCommand()) { i++; return 1}
       if (next.type === 'v1String findV1Expression') {
         if (!isNaN(next.text)) {
@@ -483,12 +478,19 @@ function all() {
       const next = everything[i + 1]
       if (next) {
         if (next.type === 'emptyLines') {
+          next.text = ''
           i++
         }
       }
     } else if (dTextLowered === 'setbatchlines') {
-      if (skipFirstSeparatorOfCommand()) { i++; return 1}
-      i = b + 2
+      if (!skipFirstSeparatorOfCommand()) {
+        if (findNext('end command')) {
+          everything.splice(i - 1,b + 1 - i)
+          return 1
+        }
+      }
+      thisE.text = ''
+      i++; return 1
     } else if (v1ExprToEdit[dTextLowered]) {
       reconstructed.push(everything[i].text)
       if (skipFirstSeparatorOfCommand()) { i++; return 1}
