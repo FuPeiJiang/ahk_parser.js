@@ -55,7 +55,8 @@ const on1off0 = {'on':'1','off':'0'}
 const v1ExprToEdit = {'goto':true,'#singleinstance':true}
 const ternaryColonEndDelim = {'end assignment':true,', function CALL':true,') function CALL':true,', assignment':true,'end comma assignment':true}
 const doNotQuoteCommand = {'splitpath':true,'random':true}
-let next, argsArr
+const stringUpperLower = {'stringupper':'StrUpper','stringlower':'StrLower'}
+let next, argsArr, commandParamsArr
 outOfLen:
 while (i < everything.length) {
   const allReturn = all()
@@ -391,6 +392,7 @@ function all() {
     reconstructed.push(`"${everything[i].text.slice(1,-1).replace(/""/g, '`"')}"`)
   } else if (anyCommand[everything[i].type]) {
     //if breakOrContinue, if is number, don't surround with quotes
+    let objValue
     if (numIfNum[everything[i].text.toLowerCase()]) {
       reconstructed.push(everything[i].text)
       if (skipFirstSeparatorOfCommand()) { i++; return 1}
@@ -431,44 +433,26 @@ function all() {
       //until 'end command', do not quote every v1 expr
       reconstructed.push(everything[i].text)
       b = i
-      while (true) {
-        next = everything[++b]
-        if (!next) {
-          i++
-          return 1
-        }
-        const dType = next.type
-        if (v1Percent[dType]) {
-          next.type = 'edit'
-        } else if (v1Str[dType]) {
-          next.type = 'edit'
-        } else if (dType === 'end command') {
-          i++
-          return 1
-        }
+      if (commandAllEdit()) {
+        i++
+        return 1
       }
     } else if (everything[i].text.toLowerCase() === 'stringtrimright') {
       if (skipFirstSeparatorOfCommand()) { i++; return 1}
+      commandAllEdit()
       // StringTrimRight, OutputVar, InputVar, Count
       // OutputVar:=SubStr(InputVar,1,-Count)
-      let outputVar, inputVar, count
       //#command
-      if (!(outputVar = getNextParamOmitWhitespaces())) { return 2 }
-      if (!(inputVar = getNextParamOmitWhitespaces())) { return 2 }
-      if (!(count = getNextParamOmitWhitespaces())) { return 2 }
-      i = b - 2
-      for (let n = 0, len = outputVar.length; n < len; n++) {
-        reconstructed.push(outputVar[n].text)
-      }
-      reconstructed.push(':=SubStr(')
-      for (let n = 0, len = inputVar.length; n < len; n++) {
-        reconstructed.push(inputVar[n].text)
-      }
-      reconstructed.push(',1,-')
-      for (let n = 0, len = count.length; n < len; n++) {
-        reconstructed.push(count[n].text)
-      }
-      reconstructed.push(')')
+      if (!(commandParamsArr = getCommandParams())) { return 2 }
+      c_a(1); c_p(':=SubStr('); c_a(2); c_p(',1,-'); c_a(3); c_p(')')
+    } else if (objValue = stringUpperLower[everything[i].text.toLowerCase()]) {
+      if (skipFirstSeparatorOfCommand()) { i++; return 1}
+      commandAllEditChoose({1:true,2:true})
+      // StringUpper, OutputVar, InputVar, T
+      // OutputVar:=StrUpper(InputVar,"T")
+      //#command
+      if (!(commandParamsArr = getCommandParams())) { return 2 }
+      c_a(1); c_p(`:=${objValue}(`); c_a(2); c_o(',',3); c_a(3); c_p(')')
     } else {
       reconstructed.push(everything[i].text)
     }
@@ -686,6 +670,56 @@ function parseIdkVariable(text: string) {
         }
       }
     } */
+function commandAllEditChoose(whichParamsObj) {
+  let paramNum = 1
+  while (true) {
+    next = everything[++b]
+    if (!next) {
+      return true
+    }
+    const dType = next.type
+    if (v1Percent[dType] || v1Str[dType]) {
+      if (whichParamsObj[paramNum]) {
+        next.type = 'edit'
+      }
+    } else if (dType === ', command comma') {
+      paramNum++
+    } else if (dType === 'end command') {
+      return true
+    }
+  }
+}
+function commandAllEdit() {
+  while (true) {
+    next = everything[++b]
+    if (!next) {
+      return true
+    }
+    const dType = next.type
+    if (v1Percent[dType]) {
+      next.type = 'edit'
+    } else if (v1Str[dType]) {
+      next.type = 'edit'
+    } else if (dType === 'end command') {
+      return true
+    }
+  }
+}
+function c_a(index) {
+  const idxMinus = index - 1
+  // return (commandParamsArr[idxMinus] && commandParamsArr[idxMinus].length) ? commandParamsArr[idxMinus] : ''
+  if (commandParamsArr[idxMinus] && commandParamsArr[idxMinus].length) {
+    reconstructed = reconstructed.concat(commandParamsArr[idxMinus])
+  }
+}
+function c_p(str) {
+  reconstructed.push(str)
+}
+function c_o(str,index) {
+  if (commandParamsArr[index - 1]) {
+    reconstructed.push(str)
+  }
+}
 function a(index) {
   const idxMinus = index - 1
   // return (argsArr[idxMinus] && argsArr[idxMinus].length) ? argsArr[idxMinus] : ''
@@ -701,6 +735,44 @@ function o(str,index) {
     reconstructed.push(str)
   }
   // return argsArr[index - 1] ? str : ''
+}
+function getCommandParams() {
+  i ++
+  let next
+  const arrOfArrOfText = []
+  outerLoop:
+  while (true) {
+    const lenReconstructed = reconstructed.length
+    innerLoop:
+    while (true) {
+      next = everything[++i]
+      if (!next) {
+        return false
+      }
+      const bType = next.type
+
+      const allReturn = all()
+      if (allReturn === 1) {
+        continue innerLoop
+      } else if (allReturn === 2) {
+        return false
+      } else if (allReturn === 3) {
+        continue innerLoop
+      }
+
+      if (bType === 'end command') {
+        arrOfArrOfText.push(reconstructed.slice(lenReconstructed))
+        reconstructed.splice(lenReconstructed)
+        return arrOfArrOfText
+      } else if (bType === ', command comma') {
+        arrOfArrOfText.push(reconstructed.slice(lenReconstructed))
+        reconstructed.splice(lenReconstructed)
+        continue outerLoop
+      } else if (!wsOrEmptyLine[bType]) {
+        reconstructed.push(next.text)
+      }
+    }
+  }
 }
 function getArgs() {
   // function getArgs(maxArgs) {

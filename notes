@@ -2203,8 +2203,11 @@ IsFloat
 
 Random, vRandom, param_lower, param_upper
 Random vRandom, param_lower, "param_upper" 
+
 StringUpper, l_string, l_string, T
 StringUpper l_string, l_string, "T" 
+		stringTrimRight, out, out, 1
+    out:=SubStr(out,1,-1 )
 
 element.1 successfully becomes -> element["1"]
 
