@@ -861,13 +861,12 @@ function s() {
         ]) */
 function trimEmptyLinesWsFromArr(paramArr) {
   let n = 0
-  let sliceStart
   for (let len = paramArr.length; n < len; n++) {
     if (!wsOrEmptyLine[paramArr[n].type]) {
       break
     }
   }
-  sliceStart = n
+  const sliceStart = n
   for (n = paramArr.length - 1; n > sliceStart; n--) {
     if (!wsOrEmptyLine[paramArr[n].type]) {
       break
