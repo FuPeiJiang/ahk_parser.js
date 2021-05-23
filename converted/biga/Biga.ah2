@@ -170,7 +170,7 @@ class biga {
 		l_droppableElements := 0
 		for key, value in l_array {
 			if (this.isCallable(param_predicate)) {
-				if (param_predicate.call(value, key, l_array)) {
+				if (Func(param_predicate).call(value, key, l_array)) {
 					l_droppableElements++
 				} else {
 					break
@@ -1389,7 +1389,7 @@ class biga {
 		if (isObject(param)) {
 			return false
 		}
-		if ([param][1].Size == "") {
+		if (VarSetStrCapacity(param) == "") {
 			return false
 		}
 		return true

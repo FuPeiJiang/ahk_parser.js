@@ -257,6 +257,28 @@ function all() {
     } else if (thisLowered === 'objgetcapacity') {
       if (!(argsArr = getArgs())) { return 2 }
       if (argsArr.length === 2) {
+        // IF param1 is a [] and param2 === 1
+        // ObjGetCapacity( [ param ] , 1)
+        // VarSetStrCapacity(param)
+        const param1 = trimEmptyLinesWsFromArr(argsArr[0])
+        if (param1.length) {
+          if (param1[0].type === '[ Array') {
+            if (param1[param1.length - 1].type === '] Array') {
+              const param2 = argsArr[1] = trimEmptyLinesWsFromArr(argsArr[1])
+              if (param2.length > 1) {
+                // param2[0] is 'start unit', so param2[1]
+                if (param2[1].type === 'Integer') {
+                  if (param2[1].text === '1') {
+                    //slice: don't take the [ ]
+                    argsArr[0] = param1.slice(1,-1)
+                    p('VarSetStrCapacity('); a(1); p(')'); s()
+                    return 3
+                  }
+                }
+              }
+            }
+          }
+        }
         // ObjGetCapacity( this, "allData")
         // this["allData"].Size
         a(1); p('['); a(2); p('].Size'); s()
@@ -819,6 +841,39 @@ function o(str,index) {
 function s() {
   everything.splice(gArgsEInsertIndex, 0, ...arrFromArgsToInsert)
   i += arrFromArgsToInsert.length
+}
+/* trimEmptyLinesWsFromArr([
+          { type: 'emptyLines'},
+          { type: 'emptyLines'},
+          { type: 'emptyLines'},
+        ])
+        trimEmptyLinesWsFromArr([
+        ])
+        trimEmptyLinesWsFromArr([
+          { type: 'ok'},
+          { type: 'emptyLines'},
+          { type: 'emptyLines'},
+        ])
+        trimEmptyLinesWsFromArr([
+          { type: 'emptyLines'},
+          { type: 'emptyLines'},
+          { type: 'ok'},
+        ]) */
+function trimEmptyLinesWsFromArr(paramArr) {
+  let n = 0
+  let sliceStart
+  for (let len = paramArr.length; n < len; n++) {
+    if (!wsOrEmptyLine[paramArr[n].type]) {
+      break
+    }
+  }
+  sliceStart = n
+  for (n = paramArr.length - 1; n > sliceStart; n--) {
+    if (!wsOrEmptyLine[paramArr[n].type]) {
+      break
+    }
+  }
+  return paramArr.slice(sliceStart,n + 1)
 }
 
 function getCommandParams() {
