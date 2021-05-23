@@ -2,7 +2,14 @@ import { trace } from 'console'
 import { whiteSpaceObj, variableCharsObj, operatorsObj, legacyIfOperators, v1Continuator, typeOfValidVarName, whiteSpaceOverrideAssign, propCharsObj, namedIf, assignmentOperators, elseLoopReturn, v2Continuator, thisCouldBeFuncName } from './tokens'
 const d = console.debug.bind(console)
 
-export default (content: string) => {
+export default (content: string): {
+  type: string, //'String', 'Integer', everything...
+  text?: string,
+  i1?: number, //line start (0-based so first line is 0)
+  c1?: number, //column start
+  c2?: number, //column end (I omit this if text is 1 char)
+  i2?: number, //line end (I omit this if text is on 1 line)
+}[] => {
   // https://stackoverflow.com/questions/6784799/what-is-this-char-65279#answer-6784805
   // https://stackoverflow.com/questions/13024978/removing-bom-characters-from-ajax-posted-string#answer-13027802
   if (content[0] === '\ufeff') {
