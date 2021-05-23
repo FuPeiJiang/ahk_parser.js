@@ -9,7 +9,7 @@ const content: Buffer =
 // fs.readFileSync('tests3/loop bracket.ahk')
 // fs.readFileSync('tests3/assignment percent.ahk')
 // fs.readFileSync('tests3/if paren no ws.ahk')
-// fs.readFileSync('tov2/Biga_mid.ahk')
+fs.readFileSync('tov2/Biga_mid.ahk')
 // fs.readFileSync('tov2/Biga.ahk')
 // fs.readFileSync('v2tests/A_IsUnicode from WinClipAPI.ahk')
 // fs.readFileSync('v2tests/A_IsUnicode start group space.ahk')
@@ -183,6 +183,21 @@ function all() {
         } else if (thisLowered === 'haskey') {
           // .HasKey() -> .Has()
           thisE.text = 'Has'
+        } else if (thisLowered === 'count') {
+          // a[k].count()
+          // (type(a[k])=="Array"?a[k].Length:a[k].Count)
+          b = i
+          if (!skipThroughSomethingMid('start unit', 'end unit')) { return 3 }
+          const spliceStart = b
+          b = i + 1
+          if (!nextSkipThrough(') function CALL','functionName')) { return 2 }
+          arrFromArgsToInsert = []
+          // a[k] be the slice, make a(1) be a[k]
+          argsArr = everything.slice(spliceStart + 1,i - 1 )
+          argsArr = [argsArr]
+          // splice off and insert at same time
+          p('(Type('); a(1); p(')=="Array"?'); a(1); p('.Length:'); a(1); p('.Count)')
+          everything.splice(spliceStart, b - spliceStart + 1, ...arrFromArgsToInsert)
         }
         return 3
       }

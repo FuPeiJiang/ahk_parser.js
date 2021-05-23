@@ -142,7 +142,7 @@ class biga {
 		}
 		; validate
 		; return empty array if empty
-		if (param_array.count() == 0) {
+		if ((Type(param_array)=="Array"?param_array.Length:param_array.Count) == 0) {
 			return []
 		}
 
@@ -155,7 +155,7 @@ class biga {
 		}
 		; validate
 		; return empty array if empty
-		if (param_array.count() == 0) {
+		if ((Type(param_array)=="Array"?param_array.Length:param_array.Count) == 0) {
 			return []
 		}
 
@@ -344,7 +344,7 @@ class biga {
 
 		; create
 		; return empty array if empty
-		if (l_array.count() == 0) {
+		if ((Type(l_array)=="Array"?l_array.Length:l_array.Count) == 0) {
 			return []
 		}
 		return this.dropRight(l_array)
@@ -412,13 +412,13 @@ class biga {
 	}
 	static lastIndexOf(param_array,param_value,param_fromIndex:=0) {
 		if (param_fromIndex == 0) {
-			param_fromIndex := param_array.count()
+			param_fromIndex := (Type(param_array)=="Array"?param_array.Length:param_array.Count)
 		}
 
 		; create
 		for Index, value in param_array {
 			Index -= 1
-			vNegativeIndex := param_array.count() - Index
+			vNegativeIndex := (Type(param_array)=="Array"?param_array.Length:param_array.Count) - Index
 			if (vNegativeIndex > param_fromIndex) { ;skip search
 				continue
 			}
@@ -445,14 +445,14 @@ class biga {
 		}
 
 		; create
-		if (l_array.count() < param_n) { ;return "" if n is greater than the array's size
+		if ((Type(l_array)=="Array"?l_array.Length:l_array.Count) < param_n) { ;return "" if n is greater than the array's size
 			return ""
 		}
 		if (param_n > 0) {
 			return l_array[param_n]
 		}
 		; return empty array if empty
-		if (l_array.count() == 0) {
+		if ((Type(l_array)=="Array"?l_array.Length:l_array.Count) == 0) {
 			return ""
 		}
 		; if called with negative n, call self with reversed array and positive number
@@ -470,7 +470,7 @@ class biga {
 		l_array := []
 
 		; create
-		while (l_collection.count() != 0) {
+		while ((Type(l_collection)=="Array"?l_collection.Length:l_collection.Count) != 0) {
 			l_array.push(l_collection.pop())
 		}
 		return l_array
@@ -488,7 +488,7 @@ class biga {
 			param_array := strSplit(param_array)
 		}
 		if (param_end == 0) {
-			param_end := param_array.count()
+			param_end := (Type(param_array)=="Array"?param_array.Length:param_array.Count)
 		}
 		l_array := []
 
@@ -508,12 +508,12 @@ class biga {
 		}
 
 		; create
-		loop param_array.count() {
+		loop (Type(param_array)=="Array"?param_array.Length:param_array.Count) {
 			if (param_array[A_Index] < param_value && param_value < param_array[A_Index+1]) {
 				return A_Index + 1
 			}
 		}
-		return param_array.count() + 1
+		return (Type(param_array)=="Array"?param_array.Length:param_array.Count) + 1
 	}
 	static sortedUniq(param_collection) {
 		if (!isObject(param_collection)) {
@@ -560,7 +560,7 @@ class biga {
 			l_array.push(value)
 		}
 		; return empty array if empty
-		if (l_array.count() == 0 || param_n == 0) {
+		if ((Type(l_array)=="Array"?l_array.Length:l_array.Count) == 0 || param_n == 0) {
 			return []
 		}
 		return l_array
@@ -581,14 +581,14 @@ class biga {
 
 		; create
 		loop param_n	{
-			if (param_array.count() == 0) {
+			if ((Type(param_array)=="Array"?param_array.Length:param_array.Count) == 0) {
 				continue
 			}
 			vvalue := param_array.pop()
 			l_array.push(vvalue)
 		}
 		; return empty array if empty
-		if (l_array.count() == 0 || param_n == 0) {
+		if ((Type(l_array)=="Array"?l_array.Length:l_array.Count) == 0 || param_n == 0) {
 			return []
 		}
 		return this.reverse(l_array)
@@ -653,7 +653,7 @@ class biga {
 		for key, value in param_arrays {
 			; for each value in the supplied set of array(s)
 			for key2, value2 in value {
-				loop value.count() {
+				loop (Type(value)=="Array"?value.Length:value.Count) {
 					if (key2 == A_Index) {
 						; create array if not encountered yet
 						if (isObject(l_array[A_Index]) == false) {
@@ -1004,14 +1004,14 @@ class biga {
 		}
 
 		; prepare
-		if (param_collection.count() != param_collection.length) {
+		if ((Type(param_collection)=="Array"?param_collection.Length:param_collection.Count) != param_collection.length) {
 			l_array := this.map(param_collection)
 		} else {
 			l_array := param_collection.clone()
 		}
 
 		; create
-		randomIndex := this.random(1, l_array.count())
+		randomIndex := this.random(1, (Type(l_array)=="Array"?l_array.Length:l_array.Count))
 		return l_array[randomIndex]
 	}
 	static sampleSize(param_collection,param_sampleSize:=1) {
@@ -1020,7 +1020,7 @@ class biga {
 		}
 
 		; return immediately if array is smaller than requested sampleSize
-		if (param_sampleSize > param_collection.count()) {
+		if (param_sampleSize > (Type(param_collection)=="Array"?param_collection.Length:param_collection.Count)) {
 			return param_collection
 		}
 
@@ -1046,7 +1046,7 @@ class biga {
 		l_array := this.clone(param_collection)
 
 		; create
-		l_index := l_array.count()
+		l_index := (Type(l_array)=="Array"?l_array.Length:l_array.Count)
 		loop l_index - 1 {
 			randomIndex:=Random(1,l_index)
 			l_tempVar := l_array[l_index]
@@ -1059,12 +1059,12 @@ class biga {
 	static size(param_collection) {
 
 		; prepare
-		if (param_collection.count() == 0) {
+		if ((Type(param_collection)=="Array"?param_collection.Length:param_collection.Count) == 0) {
 			return ""
 		}
 
 		; create
-		if (max := this.max([param_collection.count(), param_collection.maxIndex()])) {
+		if (max := this.max([(Type(param_collection)=="Array"?param_collection.Length:param_collection.Count), param_collection.maxIndex()])) {
 			return max
 		}
 		return strLen(param_collection)
@@ -1146,7 +1146,7 @@ class biga {
 			for Index, obj in l_array {
 				out .= obj "+" Index "|"
 			}
-			lastvalue := l_array[l_array.count()]
+			lastvalue := l_array[(Type(l_array)=="Array"?l_array.Length:l_array.Count)]
 		}
 
 		if (this.isNumber(lastvalue)) {
@@ -1232,7 +1232,7 @@ class biga {
 
 	static _internal_differenciateShorthand(param_shorthand,param_objects:="") {
 		if (isObject(param_shorthand) && !this.isCallable(param_shorthand)) {
-			if (param_shorthand.maxIndex() != param_shorthand.count()) {
+			if (param_shorthand.maxIndex() != (Type(param_shorthand)=="Array"?param_shorthand.Length:param_shorthand.Count)) {
 				return ".matches"
 			}
 			return ".matchesProperty"
@@ -1335,7 +1335,7 @@ class biga {
 		if (isObject(param_value)) {
 			l_array := []
 			param_value := this._printObj(param_value)
-			loop param_other.count() {
+			loop (Type(param_other)=="Array"?param_other.Length:param_other.Count) {
 				l_array.push(this._printObj(param_other[A_Index]))
 			}
 		} else {
@@ -1343,7 +1343,7 @@ class biga {
 		}
 
 		; create
-		loop l_array.count() {
+		loop (Type(l_array)=="Array"?l_array.Length:l_array.Count) {
 			if (param_value != l_array[A_Index]) { ; != follows StringCaseSense
 				return false
 			}
@@ -1523,7 +1523,7 @@ class biga {
 			}
 			l_total += l_iteratee
 		}
-		return l_total / param_array.count()
+		return l_total / (Type(param_array)=="Array"?param_array.Length:param_array.Count)
 	}
 	static min(param_array) {
 		if (!isObject(param_array)) {
@@ -1972,7 +1972,7 @@ class biga {
 		l_string := param_string
 		while (strLen(l_string) < param_length) {
 			l_pos++
-			if (l_pos > l_pad.count()) {
+			if (l_pos > (Type(l_pad)=="Array"?l_pad.Length:l_pad.Count)) {
 				l_pos := 1
 			}
 			l_string .= l_pad[l_pos]
@@ -1993,7 +1993,7 @@ class biga {
 		l_pad := this.slice(param_chars)
 		while (strLen(param_string) + strLen(l_padding) < param_length) {
 			l_pos++
-			if (l_pos > l_pad.count()) {
+			if (l_pos > (Type(l_pad)=="Array"?l_pad.Length:l_pad.Count)) {
 				l_pos := 1
 			}
 			l_padding .= l_pad[l_pos]
@@ -2019,7 +2019,7 @@ class biga {
 		if (param_number == 0) {
 			return ""
 		}
-		return StrReplace(Format("{:0" param_number "}", 0),"0",param_string)
+		return StrReplace(Format("{:0" param_number "}",0),"0",param_string)
 	}
 	static replace(param_string:="",param_needle:="",param_replacement:="") {
 		if (!this.isStringLike(param_string) || !this.isStringLike(param_needle) || !this.isStringLike(param_replacement)) {
@@ -2064,7 +2064,7 @@ class biga {
 		} else {
 			oReducedArray := []
 			loop param_limit {
-				if (A_Index <= oSplitArray.count()) {
+				if (A_Index <= (Type(oSplitArray)=="Array"?oSplitArray.Length:oSplitArray.Count)) {
 					oReducedArray.push(oSplitArray[A_Index])
 				}
 			}
@@ -2081,14 +2081,14 @@ class biga {
 
 		; add space before each capitalized character
 		RegExMatch(l_string, "O)([A-Z])", RE_Match)
-		if (RE_Match.count()) {
-			loop RE_Match.count() {
+		if ((Type(RE_Match)=="Array"?RE_Match.Length:RE_Match.Count)) {
+			loop (Type(RE_Match)=="Array"?RE_Match.Length:RE_Match.Count) {
 				l_string := SubStr(l_string, 1, RE_Match.Pos(A_Index) - 1) " " SubStr(l_string, RE_Match.Pos(A_Index))
 			}
 		}
 		; Split the string into array and Titlecase each element in the array
 		l_array := StrSplit(l_string, " ")
-		loop l_array.count() {
+		loop (Type(l_array)=="Array"?l_array.Length:l_array.Count) {
 			l_string := l_array[A_Index]
 			l_string:=StrUpper(l_string,"T")
 			l_array[A_Index] := l_string
@@ -2343,7 +2343,7 @@ class biga {
 	static internal_property(param_property,param_itaree) {
 		if (isObject(param_property)) {
 			for key, value in param_property {
-				if (param_property.count() == 1) {
+				if ((Type(param_property)=="Array"?param_property.Length:param_property.Count) == 1) {
 					; msgbox, % "dove deep and found: " ObjRawGet(param_itaree, value)
 					return  param_itaree[value]
 				} else if (param_itaree.Has(value)){
