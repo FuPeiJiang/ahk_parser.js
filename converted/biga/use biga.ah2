@@ -20,7 +20,7 @@ SetWorkingDir A_ScriptDir  ; Ensures a consistent starting directory.
 users := [ Map("user", "barney",     "active", false)
         , Map( "user", "fred",     "active", false )
         , Map( "user", "pebbles",     "active", true ) ]
-A.dropWhile(users, "fn_dropWhile")
+d b:=array_p(A.dropWhile(users, "fn_dropWhile")), "`n==================`n", b=='[{"active":1, "user":"pebbles"}]'
 ; => [{ "user": "pebbles", "active": true }]
 
 fn_dropWhile(o)
