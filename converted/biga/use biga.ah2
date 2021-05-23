@@ -26,8 +26,12 @@ users := [ Map("user", "barney",     "active", false)
 users := [ Map("user", "barney",     "active", true)
         , Map( "user", "fred",     "active", false )
         , Map( "user", "pebbles",     "active", false ) ]
-d b:=array_p(A.dropRightWhile(users, "fn_dropRightWhile")), "`n==================`n", b=='[{"active":1, "user":"barney"}]'
+; d b:=array_p(A.dropRightWhile(users, "fn_dropRightWhile")), "`n==================`n", b=='[{"active":1, "user":"barney"}]'
 ; => [{"user": "barney", "active": true }]
+
+p A_Clipboard:=b:=array_p(A.initial([1, 2, 3])), "`n==================`n", b=='[1, 2]'
+p A_Clipboard:=b:=array_p(A.initial("fred")), "`n==================`n", b=='["f", "r", "e"]'
+
 
 fn_dropWhile(o)
 {
