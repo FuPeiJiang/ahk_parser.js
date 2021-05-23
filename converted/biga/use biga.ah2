@@ -15,7 +15,19 @@ SetWorkingDir A_ScriptDir  ; Ensures a consistent starting directory.
 ; d b:=array_p(A.dropRight([1, 2, 3], 5)), "`n==================`n", b=='[]'
 ; d b:=array_p(A.dropRight([1, 2, 3], 3)), "`n==================`n", b=='[]'
 
-d b:=array_p(A.defaults(Map("a",1), Map("b",2), Map("a",3))), "`n==================`n", b=='{"a":1, "b":2}'
+; d b:=array_p(A.defaults(Map("a",1), Map("b",2), Map("a",3))), "`n==================`n", b=='{"a":1, "b":2}'
+
+users := [ Map("user", "barney",     "active", false)
+        , Map( "user", "fred",     "active", false )
+        , Map( "user", "pebbles",     "active", true ) ]
+A.dropWhile(users, "fn_dropWhile")
+; => [{ "user": "pebbles", "active": true }]
+
+fn_dropWhile(o)
+{
+    return !o["active"]
+}
+
 ; d A.invert(Map("a",1, "b",2, "c",1))
 ; A.cloneDeep(Map("a",1, "b",2, "c",1))
 ; d(&Map("a",1, "b",2, "c",1))

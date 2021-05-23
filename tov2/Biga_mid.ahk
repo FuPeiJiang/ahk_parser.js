@@ -1326,8 +1326,7 @@ class biga {
 		return false
 	}
 	isCallable(param) {
-		fn := numGet(&(_ := Func("InStr").bind()), "Ptr")
-		return (isFunc(param) || (isObject(param) && (numGet(&param, "Ptr") = fn)))
+		return isFunc(param)
 	}
 	isEqual(param_value,param_other*) {
 
