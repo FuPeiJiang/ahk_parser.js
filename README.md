@@ -1,6 +1,6 @@
 ## what could this be used for ?
-* ask on AHK Community!!<br>
-* I used this to convert {} to Map() AUTOMATICALLY (no cost too great?)<br> 
+* [ask on AHK Community!!](https://www.autohotkey.com/boards/viewtopic.php?f=6&t=90868)<br>
+* I made this to convert {} to Map() AUTOMATICALLY (no cost too great?)<br> 
   then, convert v1 -> AHK_H v2 (`WinClip`, `Biga.ahk`)
 * [issues on vscode-autohotkey-plus-plus](https://github.com/mark-wiemer/vscode-autohotkey-plus-plus/issues)<br>
   - auto format (indentation)
