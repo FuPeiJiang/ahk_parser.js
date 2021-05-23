@@ -265,7 +265,7 @@ function all() {
           if (param1[0].type === '[ Array') {
             if (param1[param1.length - 1].type === '] Array') {
               const param2 = argsArr[1] = trimEmptyLinesWsFromArr(argsArr[1])
-              if (param2.length > 1) {
+              if (param2.length === 3) {
                 // param2[0] is 'start unit', so param2[1]
                 if (param2[1].type === 'Integer') {
                   if (param2[1].text === '1') {
