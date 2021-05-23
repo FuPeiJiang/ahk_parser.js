@@ -11,11 +11,11 @@ SetWorkingDir A_ScriptDir  ; Ensures a consistent starting directory.
 ; d b:=array_p(A.drop([1, 2, 3], 5)), "`n==================`n", b=='[]'
 ; d b:=array_p(A.drop([1, 2, 3], 3)), "`n==================`n", b=='[]'
 
-d b:=array_p(A.dropRight([1, 2, 3])), "`n==================`n", b=='[1, 2]'
-d b:=array_p(A.dropRight([1, 2, 3], 5)), "`n==================`n", b=='[]'
-d b:=array_p(A.dropRight([1, 2, 3], 3)), "`n==================`n", b=='[]'
+; d b:=array_p(A.dropRight([1, 2, 3])), "`n==================`n", b=='[1, 2]'
+; d b:=array_p(A.dropRight([1, 2, 3], 5)), "`n==================`n", b=='[]'
+; d b:=array_p(A.dropRight([1, 2, 3], 3)), "`n==================`n", b=='[]'
 
-; d A.defaults(Map("a",1), Map("b",2), Map("a",3))
+d b:=array_p(A.defaults(Map("a",1), Map("b",2), Map("a",3))), "`n==================`n", b=='{"a":1, "b":2}'
 ; d A.invert(Map("a",1, "b",2, "c",1))
 ; A.cloneDeep(Map("a",1, "b",2, "c",1))
 ; d(&Map("a",1, "b",2, "c",1))
