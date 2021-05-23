@@ -4,7 +4,7 @@ v:=25+255*(A_IsUnicode ? 2:1)
 v:=a+25+255*(A_IsUnicode ? 2:1)
 ; _Struct.ahk
 static PTR:=A_PtrSize
-    ,TBYTE:=A_IsUnicode?2:1,TCHAR:=A_IsUnicode?2:1
+    ,TBYTE:= A_IsUnicode?2:1,TCHAR:=A_IsUnicode?2:1
 ; Acc.ahk
 VarSetCapacity(sRole, (A_IsUnicode?2:1)*nSize)
 v:=(A_IsUnicode?2:1)*234

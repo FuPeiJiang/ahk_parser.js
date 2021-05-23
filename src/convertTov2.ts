@@ -350,7 +350,7 @@ function all() {
         while (true) {
           b = i
           if (!skipEmptyLinesEmptyText()) {break}
-          let spliceStart = i
+          let spliceStart = i - 1
           if (everything[b].type === '? ternary') {
             next = everything[b + 1]
             if (next) {
@@ -371,7 +371,7 @@ function all() {
               }
               break
             }
-            b = spliceStart
+            b = ifTrueStart
             if (!findNext(': ternary')) {break}
             const colonIndex = b
             const back = everything[b - 1]
@@ -385,7 +385,6 @@ function all() {
             if (findGroupEnd) {
               if (!nextSkipThrough(') group','( group')) {break}
               spliceEnd = b + 1
-              reconstructed.splice(spliceEnd)
             } else {
               if (!findNextAnyInObj(ternaryColonEndDelim)) {break}
               spliceEnd = b
