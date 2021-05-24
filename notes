@@ -2280,8 +2280,8 @@ Make a website so it could be used online (github.io ?) (your code is not sent n
 what should I convert next ? after Biga.ahk? (silent voice: ahk_explorer.. I'm scared of Gui,)
 any suggestions
 
-; p(123) /*  comment
-  ; */ p(123)
+  p(123) /*  comment
+  */ p(123)
 
 L:L:
 d(IsLabel("L:L"))

@@ -2548,17 +2548,20 @@ export default (content: string): {
       } else if (lines[i][c] === ';' && (c === 0 || whiteSpaceObj[lines[i][c - 1]])) {
         //
       } else if (c < numberOfChars - 1 && lines[i].slice(c, c + 2) === '/*') {
-        while (++i < howManyLines) {
+        while (true) {
+          if (++i === howManyLines) {
+            break outOfLines
+          }
           c = 0
           numberOfChars = lines[i].length
           while (c < numberOfChars && whiteSpaceObj[lines[i][c]]) {
             c++
           }
           if (c < numberOfChars - 1 && lines[i].slice(c, c + 2) === '*/') {
-            break
+            c += 2
+            continue outOfLines
           }
         }
-        break outOfLines
       } else {
         //anything else, return found
         const text = textFromPosToCurrent([c1, i1])

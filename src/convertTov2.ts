@@ -5,7 +5,8 @@ import { variableCharsObj, whiteSpaceObj } from './parser/tokens'
 
 
 const content: Buffer =
-fs.readFileSync('tests3/L colon L colon.ahk')
+fs.readFileSync('tests3/fix multiline comments.ahk')
+// fs.readFileSync('tests3/L colon L colon.ahk')
 // fs.readFileSync('tests3/msgbox up colon.ahk')
 // fs.readFileSync('v2tests/prop in func.ahk')
 // fs.readFileSync('tests3/loop bracket.ahk')
