@@ -705,6 +705,14 @@ export default (content: string): {
             //hmmm
             usingStartOfLineLoop = true
             continue startOfLineLoop
+            //label
+            // L:L: is a legal label because IsLabel("L:L")==1
+          } else if (c === numberOfChars || whiteSpaceObj[lines[i][c]]) {
+            const text = lines[i].slice(nonWhiteSpaceStart, c)
+            everything.push({ type: 'label:', text: text, i1: i, c1: nonWhiteSpaceStart, c2: c })
+            if (!skipThroughEmptyLines()) { break lineLoop }
+            usingStartOfLineLoop = true
+            continue startOfLineLoop
           }
         }
         c++
