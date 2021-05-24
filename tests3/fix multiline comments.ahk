@@ -1,2 +1,3 @@
-  VarSetCapacity(a,b,c) /*  comment
+/* comment
+*/VarSetCapacity(a,b,c) /*  comment
   */ VarSetCapacity(a,b,c)

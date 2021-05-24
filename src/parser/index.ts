@@ -32,40 +32,7 @@ export default (content: string): {
     c = 0
     numberOfChars = lines[i].length
 
-    skipThroughWhiteSpaces()
-
-    //#multiline comments
-    //if line starts with /*
-    // leave 2 chars at end
-    if (c < numberOfChars - 1) {
-      if (lines[i].slice(c, c + 2) === '/*') {
-        const multiLineCommentLineStart = i, multiLineCommentColStart = c
-        while (++i < howManyLines) {
-          c = 0
-          numberOfChars = lines[i].length
-
-          skipThroughWhiteSpaces()
-
-          //if line starts with */
-          if (c < numberOfChars - 1 && lines[i].slice(c, c + 2) === '*/') {
-            i++
-
-            if (i === howManyLines) {
-              break lineLoop
-            }
-            c = 0, numberOfChars = 0
-
-            const text = textFromPosToCurrent([multiLineCommentColStart, multiLineCommentLineStart])
-            if (text) {
-              everything.push({ type: 'emptyLines', text: text, i1: multiLineCommentLineStart, c1: multiLineCommentColStart, i2: i, c2: c })
-            }
-            continue lineLoop
-          }
-        }
-      } else if (lines[i].slice(c, c + 2) === '*/') {
-        everything.push({ type: 'emptyLines', text: text, i1: multiLineCommentLineStart, c1: multiLineCommentColStart, i2: i, c2: c })
-      }
-    }
+    if (!skipThroughEmptyLines()) { break lineLoop }
 
     startOfLineLoop:
     while (true) {
