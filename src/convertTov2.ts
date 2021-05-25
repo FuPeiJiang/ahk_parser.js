@@ -5,7 +5,7 @@ import { variableCharsObj, whiteSpaceObj } from './parser/tokens'
 
 
 const content: Buffer =
-fs.readFileSync('tests3/redo func definition.ahk')
+// fs.readFileSync('tests3/redo func definition.ahk')
 // fs.readFileSync('tests3/fix multiline comments.ahk')
 // fs.readFileSync('tests3/L colon L colon.ahk')
 // fs.readFileSync('tests3/msgbox up colon.ahk')
@@ -677,7 +677,7 @@ function all() {
           }
         } else if (startingBlockForClass[bType]) {
           arrAccessDepth++
-        } else if (bType === 'function( definition') {
+        } else if (bType === 'function DEFINITION name') {
           everything.splice(b,0,{type:'edit',text:'static '})
           b++
         }
