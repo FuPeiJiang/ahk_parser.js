@@ -21,12 +21,14 @@ export default (content: string): {
   const toFile = ''
   const rangeAndReplaceTextArr: [[[number, number], [number, number]], string][] = []
 
+  const wsOrEmptyLine = {'whiteSpaces':true,'emptyLines':true}
+
   let okk: number
   okk = 0
 
-  let i = 0, c = 0, numberOfChars = 0, validName = '', strStartLine: number, strStartPos: number, insideContinuation = false, beforeConcat: number, nonWhiteSpaceStart: number, exprFoundLine = -1, colonDeep = 0, usingStartOfLineLoop = false, variadicAsterisk = false, lineWhereCanConcat = -1, v1ExpressionC1: number, cNotWhiteSpace: number, percentVarStart: number, propertyC1 = -1, lookingForAnd = false, doubleComma = false, singleComma = false, insideV1Continuation = false
+  let i = 0, c = 0, numberOfChars = 0, b = 0, validName = '', strStartLine: number, strStartPos: number, insideContinuation = false, beforeConcat: number, nonWhiteSpaceStart: number, exprFoundLine = -1, colonDeep = 0, usingStartOfLineLoop = false, variadicAsterisk = false, lineWhereCanConcat = -1, v1ExpressionC1: number, cNotWhiteSpace: number, percentVarStart: number, propertyC1 = -1, lookingForAnd = false, doubleComma = false, singleComma = false, insideV1Continuation = false
   let everythingPushCounter: number; everythingPushCounter = 0
-  let spliceStartIndex: number, validNameStart: number, validNameLine: number, validNameEnd: number, findingVarName = false, varNameCanLtrimSpaces: false, idkVarC1 = 0, legalObjLine = -1, lastTrailingWasFunc = false, spliceIndexEverythingAtHotkeyLine: number|boolean = false, operatorAtHotkeyLine = -1, v1StartLine = -1
+  let spliceStartIndex: number, validNameStart: number, validNameLine: number, validNameEnd: number, findingVarName = false, varNameCanLtrimSpaces: false, idkVarC1 = 0, legalObjLine = -1, lastTrailingWasFunc: boolean|number = false, spliceIndexEverythingAtHotkeyLine: number|boolean = false, operatorAtHotkeyLine = -1, v1StartLine = -1, funcParenStartIndex = -1
   lineLoop:
   while (i < howManyLines) {
     c = 0
@@ -493,7 +495,7 @@ export default (content: string): {
       lastTrailingWasFunc = false
       if (validName) {
         //#FUNCTION
-        if (lines[i][c] === '(') {
+        /* if (lines[i][c] === '(') {
           let validName = lines[i].slice(nonWhiteSpaceStart, c)
           // d('is not a number, valid func name')
           if (!isNaN(Number(validName))) {
@@ -528,10 +530,6 @@ export default (content: string): {
                 skipValidChar()
                 validName = lines[i].slice(nonWhiteSpaceStart, c)
 
-                /* if (lines[i][c] === ')') {
-                // d('function definition with no param')
-                  break breakThisWhenParenEnd
-                } else { */
                 if (validName.toLowerCase() === 'byref') {
                   everything.push({ type: 'byref', text: `${validName}`, i1: i, c1: nonWhiteSpaceStart, c2: c })
                   skipThroughWhiteSpaces(), nonWhiteSpaceStart = c
@@ -586,7 +584,7 @@ export default (content: string): {
             continue startOfLineLoop
           }
 
-        }
+        } */
 
 
         let doAssignmentReturned = doAssignment()
@@ -607,7 +605,6 @@ export default (content: string): {
           break lineLoop
         }
 
-        // ch()
         //#v1 expression
         if (c < numberOfChars && lines[i][c] === '=' && lines[i][c + 1] !== ':' ) {
           everything.splice(spliceStartIndex, 0, { type: 'var at v1Assignment', text: validName, i1: validNameLine, c1: validNameStart, c2: validNameEnd })
@@ -628,8 +625,81 @@ export default (content: string): {
         }
 
         if (lastTrailingWasFunc) {
+          if (!skipThroughEmptyLines()) {
+            everything.splice(spliceStartIndex, 0, { type: 'functionName', text: validName, i1: validNameLine, c1: validNameStart, c2: validNameEnd })
+            break lineLoop
+          }
+          if (lines[i][c] === '{') {
+            everything.splice(spliceStartIndex, 0, { type: 'function DEFINITION name', text: validName, i1: validNameLine, c1: validNameStart, c2: validNameEnd })
+
+            if (funcParenStartIndex === spliceStartIndex) {
+              b = funcParenStartIndex + 1
+              everything[b++].type = '( function DEFINITION'
+              let canBeParam = true
+              let next
+              outerLoop:
+              while (true) {
+                next = bSkipEmptyTextOrWs()
+                if (next.type === ', function CALL') {
+                  next.type = ', function DEFINITION'
+                  b++
+                  canBeParam = true
+                  continue outerLoop
+                } else if (next.type === ') function CALL') {
+                  break outerLoop
+                } else if (canBeParam && next.type === 'idkVariable') {
+                  if (next.text.toLowerCase() === 'byref') {
+                    next.type = 'byref'
+                    b++
+                    next = bConcatToWsSkipEmptyTextOrWs()
+                  }
+                  next.type = 'Param'
+                  b++
+                  next = bSkipEmptyTextOrWs()
+                  if (next.text === '*' && next.type === '1operator') {
+                    next.type = '* variadic Argument'
+                  }
+                }
+
+                let arrAccessDepth = 1
+                while (true) {
+                  const bType = next.type
+                  if (arrAccessDepth) {
+                    if (bType === ') function CALL') {
+                      arrAccessDepth--
+                    } else if (bType === '( function CALL') {
+                      arrAccessDepth++
+                    }
+                    if (arrAccessDepth === 0) {
+                      break outerLoop
+                    } else if (arrAccessDepth === 1 && bType === ', function CALL') {
+                      b++
+                      canBeParam = true
+                      continue outerLoop
+                    }
+                  }
+                  next = everything[++b]
+                }
+              }
+              next.type = ') function DEFINITION'
+            } else {
+              d('illegal: { but not function DEFINITION',linesPlusChar())
+            }
+            /* if (lastTrailingWasFunc === 2) {
+              d('illegal function definition for a METHOD',linesPlusChar())
+            } */
+
+            // d(everything[everything.length - 2])
+
+            everything.push({ type: '{ function DEFINITION', text: '{', i1: i, c1: c })
+            c++
+            usingStartOfLineLoop = true
+            continue startOfLineLoop
+            // if (everything[spliceStartIndex])
+          }
+
+
           everything.splice(spliceStartIndex, 0, { type: 'functionName', text: validName, i1: validNameLine, c1: validNameStart, c2: validNameEnd })
-          if (!skipThroughEmptyLines()) {break lineLoop}
           if (skipCommaV2Expr()) {break lineLoop}
           usingStartOfLineLoop = true
           continue startOfLineLoop
@@ -714,6 +784,38 @@ export default (content: string): {
   return everything
 
   // start of functions
+  function bConcatToWsSkipEmptyTextOrWs() {
+    while (true) {
+      const next = everything[b]
+      if (!next.text) {
+        b++
+        continue
+      } else if (next.type === 'concat') {
+        next.type = 'whiteSpaces'
+        b++
+        continue
+      } else if (wsOrEmptyLine[next.type]) {
+        b++
+        continue
+      } else {
+        return next
+      }
+    }
+  }
+  function bSkipEmptyTextOrWs() {
+    while (true) {
+      const next = everything[b]
+      if (!next.text) {
+        b++
+        continue
+      } else if (wsOrEmptyLine[next.type]) {
+        b++
+        continue
+      } else {
+        return next
+      }
+    }
+  }
   function doAssignment() {
     const assignmentOperatorReturnValue = findAssignmentOperators()
     if (assignmentOperatorReturnValue === 1) {
@@ -733,12 +835,9 @@ export default (content: string): {
     }
   }
   function functionMid(which: string) {
+    const parenStartIndex = everything.length
     const back = everything[everything.length - 1]
-    if (back) {
-      if (thisCouldBeFuncName[back.type]) {
-        back.type = 'functionName'
-      }
-    }
+
     everything.push({ type: `( ${which} CALL`, text: '(', i1: i, c1: c })
     legalObjLine = i
     lineWhereCanConcat = -1
@@ -786,6 +885,18 @@ export default (content: string): {
         }
         everything.push({ type: `) ${which} CALL`, text: ')', i1: i, c1: c })
         c++
+
+        //this happens after everything INSIDE the function, so this has the last word on lastTrailingWasFunc
+        lastTrailingWasFunc = true
+        funcParenStartIndex = parenStartIndex
+        if (back) {
+          if (back.type === 'idkVariable') {
+            back.type = 'functionName'
+          } else if (back.type === '(.) property findTrailingExpr') {
+            back.type = 'functionName'
+            // lastTrailingWasFunc = 2
+          }
+        }
         lineWhereCanConcat = i
         return 1
       }
@@ -1917,81 +2028,6 @@ export default (content: string): {
     }
   }
 
-  //true if not number and not property EOL
-  function skipProperties(): boolean {
-    propertyC1 = c
-
-    while (c < numberOfChars && propCharsObj[lines[i][c]]) {
-      c++
-    }
-
-    validName = lines[i].slice(propertyC1, c)
-    if (c === numberOfChars) {
-      // d(`${validName} PROPERTY EOL ${char()}`)
-      everything.push({ type: 'property EOL', text: validName, i1: i, c1: propertyC1, c2: c })
-      return false
-    }
-
-    if (lines[i][c] === '.') {
-      everything.push({ type: 'property', text: validName, i1: i, c1: propertyC1, c2: c })
-      c++
-      everything.push({ type: '. property', text: '.', i1: i, c1: c })
-      return skipProperties()
-    }
-
-    return true
-  }
-  function findMethodOrProperty() {
-    // true if method, false if prop
-    //stumble upon a valid variable Char
-    if (skipProperties()) {
-      //#METHOD CALL
-      if (lines[i][c] === '(') {
-        const functionMidReturn = functionMid('method')
-        if (functionMidReturn === 1) {
-          recurseBetweenExpression()
-          return true
-        } else if (functionMidReturn === 2) {
-          return false
-        }
-      }
-
-      if (findArrayAccess()) { return true }
-
-      // d(`${validName} PROPERTY ${char()}`)
-      everything.push({ type: 'property', text: validName, i1: i, c1: nonWhiteSpaceStart, c2: c })
-      //look for comments
-      return false
-    }
-
-  }
-  function endMethodCall() {
-    let endsWithComma = false
-    while (true) {
-      if (!skipThroughEmptyLines()) { return false }
-      if (lines[i][c] === ',') {
-        endsWithComma = true
-        // d(', method CALL', char())
-        everything.push({ type: ', method', text: ',', i1: i, c1: c })
-        c++
-        continue
-      }
-      if (findExpression()) {
-        endsWithComma = false
-      } else {
-        if (endsWithComma) {
-          d('ILLEGAL trailling , METHOD', char())
-        }
-        break
-      }
-    }
-    if (i !== lineWhereCanConcat) {
-      d('ILLEGAL ) METHOD', char())
-    }
-    // d(') METHOD', char())
-    everything.push({ type: ') method', text: ')', i1: i, c1: c })
-    c++
-  }
   function findArrayAccess() {
     if (lines[i][c] === '[') {
       arrayMid('ArrAccess')
@@ -2090,7 +2126,6 @@ export default (content: string): {
     if (lines[i][c] === '(') {
       const functionMidReturn = functionMid('function')
       if (functionMidReturn === 1) {
-        lastTrailingWasFunc = true
         return true
       } else if (functionMidReturn === 2) {
         return false

@@ -2285,3 +2285,29 @@ any suggestions
 
 L:L:
 d(IsLabel("L:L"))
+
+/*
+to EOF
+
+this is legal func definition:
+foo(123) {
+}
+
+this is legal block
+{
+  foo(123)
+}
+
+but this becomes a function definition
+
+foo(123)
+{
+  p(321)
+}
+
+
+a.foo() {
+  p("omg")
+}
+Error:  Unexpected "{"
+fiouf ?

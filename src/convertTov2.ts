@@ -5,7 +5,8 @@ import { variableCharsObj, whiteSpaceObj } from './parser/tokens'
 
 
 const content: Buffer =
-fs.readFileSync('tests3/fix multiline comments.ahk')
+fs.readFileSync('tests3/redo func definition.ahk')
+// fs.readFileSync('tests3/fix multiline comments.ahk')
 // fs.readFileSync('tests3/L colon L colon.ahk')
 // fs.readFileSync('tests3/msgbox up colon.ahk')
 // fs.readFileSync('v2tests/prop in func.ahk')
@@ -181,7 +182,7 @@ function all() {
           thisE.type = 'v2: prop'
           //splice off ( to )
           const spliceStart = b = i + 1
-          if (!nextSkipThrough(') function CALL','functionName')) { return 2 }
+          if (!nextSkipThrough(') function CALL','( function CALL')) { return 2 }
           everything.splice(spliceStart, b - spliceStart + 1)
         } else if (thisLowered === 'haskey') {
           // .HasKey() -> .Has()
@@ -193,7 +194,7 @@ function all() {
           if (!skipThroughSomethingMid('start unit', 'end unit')) { return 3 }
           const spliceStart = b
           b = i + 1
-          if (!nextSkipThrough(') function CALL','functionName')) { return 2 }
+          if (!nextSkipThrough(') function CALL','( function CALL')) { return 2 }
           arrFromArgsToInsert = []
           // a[k] be the slice, make a(1) be a[k]
           argsArr = everything.slice(spliceStart + 1,i - 1 )

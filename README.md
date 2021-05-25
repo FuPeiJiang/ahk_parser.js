@@ -7,6 +7,7 @@
   - how does a debugger work ?
 * Make a website so it could be used online (github.io ?) (your code is not sent nor stolen: just disconnect internet and you'll see that it still works)
   - {} -> Map()
+  - offer to download `.js` CLI (`.js "inputPath" "outputPath"`)
 * what should I convert next ? (silent voice: ahk_explorer.. I'm scared of Gui, ) any suggestions ?
 ## how this works
 I break the parser then I fix it.<br>
