@@ -2316,3 +2316,9 @@ fiouf ?
 to do:
 everything.splice( -> everything.push + everything[spliceStartIndex].type = 'stuff'
 
+
+why do I even use typescript when I'm not using using it...
+so when I hover over I know that it's a string ? or a number ?
+
+it's just producing errors... typescript is useless for me
+trying to be cool be like

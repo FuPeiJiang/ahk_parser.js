@@ -1,5 +1,6 @@
 import { trace } from 'console'
 import { whiteSpaceObj, variableCharsObj, operatorsObj, legacyIfOperators, v1Continuator, typeOfValidVarName, whiteSpaceOverrideAssign, propCharsObj, namedIf, assignmentOperators, elseLoopReturn, v2Continuator, thisCouldBeFuncName } from './tokens'
+import type { stringIndexBool } from './tokens'
 const d = console.debug.bind(console)
 
 /* type EverythingType = {
@@ -11,18 +12,33 @@ const d = console.debug.bind(console)
   i2?: number, //line end (I omit this if text is on 1 line)
 }[] */
 
-type EverythingType = ({
+/* type EverythingType = ({
+  type?: string;
+  text?: string;
+  i1?: number;
+  c1?: number;
+  i2?: number;
+  c2?: number;
+} | {
+  text: string;
+  type?: undefined;
+  i1?: undefined;
+  c1?: undefined;
+  c2?: undefined;
+} | {
   type: string;
+} | {
+  text: string;
+  type: string;
+} | {
   text: string;
   i1: number;
   c1: number;
-  c2?: undefined;
 } | {
   type: string;
   text: string;
   i1: number;
   c1: number;
-  c2: number;
 } | {
   type: string;
   text: string;
@@ -30,13 +46,52 @@ type EverythingType = ({
   c1: number;
   i2: number;
   c2: number;
+})[] */
+
+/* type EverythingType =
+{
+type?: string | undefined;
+text?: string | undefined;
+i1?: number | undefined;
+c1?: number | undefined;
+c2?: number | undefined;
+}[] */
+type EverythingType =
+({
+  type: string;
+  text: string;
+  i1: number;
+  c1: number;
+  c2?: undefined;
+} | {
+  type: string;
+  text: string;
+  i1: number;
+  c1: number;
+  c2: number;
+} | {
+  type: string;
+  text: string;
+  i1: number;
+  c1: number;
+  c2: number;
+  i2: number;
 } | {
   type: string;
   text?: undefined;
   i1?: undefined;
   c1?: undefined;
   c2?: undefined;
-})[]
+}
+)[]
+export type {EverythingType}
+
+// | {
+// type: string;
+// text?: undefined;
+// i1?: undefined;
+// c1?: undefined;
+// c2?: undefined;
 
 export default (content: string): EverythingType => {
   // https://stackoverflow.com/questions/6784799/what-is-this-char-65279#answer-6784805
@@ -50,8 +105,7 @@ export default (content: string): EverythingType => {
   const toFile = ''
   const rangeAndReplaceTextArr: [[[number, number], [number, number]], string][] = []
 
-  const wsOrEmptyLine: {[key: string]: boolean}
-   = {'whiteSpaces':true,'emptyLines':true}
+  const wsOrEmptyLine: stringIndexBool = {'whiteSpaces':true,'emptyLines':true}
 
   let okk: number
   okk = 0
@@ -101,14 +155,6 @@ export default (content: string): EverythingType => {
         if (!skipThroughEmptyLines()) { break lineLoop }
         usingStartOfLineLoop = true
         continue startOfLineLoop
-        /* everything.push({ type: '} function definition', text: '}', i1: i, c1: c })
-        c++
-        const text = lines[i].slice(c, numberOfChars)
-        everything.push({ type: '} function definition to EOL', text: text, i1: i, c1: c, c2: numberOfChars })
-        everything.push({ type: 'newLine } function definition', text: '\n', i1: i, c1: c })
-        i++
-        // findCommentsAndEndLine()
-        continue lineLoop */
       }
 
       nonWhiteSpaceStart = c

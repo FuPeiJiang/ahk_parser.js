@@ -22,7 +22,7 @@
     "dev": "ts-node-dev --respawn --transpile-only src/usage.ts",
     "dev2": "ts-node-dev src/usage.ts",
 
-    "webpackGithubPages": "webpack --mode production --config build/webpack.config.js",
+    "webpackGithubPages": "webpack --mode production --config build/webpackGithubPages.js",
 
     "package": "yarn webpackProd && yarn dtsBundle && yarn unlink_d.ts",
     "webpackProd": "webpack --mode production --config build/webpack.config.js",

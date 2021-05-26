@@ -3,6 +3,7 @@ type stringIndexBool = {
   [key: string]: boolean,
 }
 type stringIndexNum = { [key: string]: number }
+export type {stringIndexBool, stringIndexNum}
 
 export const whiteSpace = /\u000B\u000C\u0020\u00A0/
 export const whiteSpaceObj: stringIndexBool = {' ':true,'\t':true}

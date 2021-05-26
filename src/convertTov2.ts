@@ -1,6 +1,6 @@
 import fs from 'fs'
 import ahkParser from './parser/index'
-import v1ToV2Converter from './v1ToV2Converter'
+import modifyEverythingToV2 from './modifyEverythingToV2'
 
 const content: Buffer =
 // fs.readFileSync('tests3/redo func definition.ahk')
@@ -39,14 +39,9 @@ fs.readFileSync('tov2/string.ahk')
 fs.readFileSync('tests/ahk_explorer.ahk')
 
 const everything = ahkParser(content.toString().replace(/\r/g, ''))
+const converted = modifyEverythingToV2(everything)
 
-v1ToV2Converter(everything) //will modify everything directly
-
-const arrToJoin = []
-for (let i = 0, len = everything.length; i < len; i++) {
-  arrToJoin.push(everything[i].text)
-}
-writeSync(arrToJoin.join(''),'reconstructed.ah2')
+writeSync(converted,'reconstructed.ah2')
 writeSync(arrOrObjToString(everything),'everything.txt')
 
 function arrOrObjToString(obj) {

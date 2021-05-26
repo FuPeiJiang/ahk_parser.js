@@ -1,41 +1,60 @@
+import type { EverythingType } from './parser/index'
+//challenge accepted
+// https://stackoverflow.com/questions/41253310/typescript-retrieve-element-type-information-from-array-type#51399781
+type ArrayElement<ArrayType extends readonly unknown[]> =
+  ArrayType extends readonly (infer ElementType)[] ? ElementType : never
+type EverythingElement = ArrayElement<EverythingType> |
+{
+  type: string;
+  text: string;
+  i1?: undefined;
+  c1?: undefined;
+  c2?: undefined;
+} | {
+  text: string;
+  type?: undefined;
+  i1?: undefined;
+  c1?: undefined;
+  c2?: undefined;
+}
+type ExtendedEverythingType = EverythingElement[]
+
+import type { stringIndexBool } from './parser/tokens'
+type stringIndexString = {
+  [key: string]: string,
+}
 import { variableCharsObj, whiteSpaceObj } from './parser/tokens'
 const d = console.debug.bind(console)
 
-const classToStatic = {'biga':true,'WinClip':true,'WinClipAPI':true}
+const classToStatic: stringIndexBool = {'biga':true,'WinClip':true,'WinClipAPI':true}
 
-const numIfNum = {'break':true,'continue':true,'settitlematchmode':true}
-const anyCommand = {'DIRECTIVE OR COMMAND comma':true,'command EOL or comment':true,'command':true}
-const idkVariableOrAssignment = {'idkVariable':true,'assignment':true}
-const startingBlock = {'{ legacyIf':true,'{ if':true,'{ for':true,'{ else':true,'{ loop':true,'{ namedIf':true}
-const startingBlockForClass = {'{ class':true,'{ function DEFINITION':true,'{ legacyIf':true,'{ if':true,'{ for':true,'{ else':true,'{ loop':true,'{ namedIf':true}
-const v1Str = {'v1String findV1Expression':true,'v1String findPercentVarV1Expression':true}
-const v1Percent = {'%START %Var%':true,'END% %Var%':true}
-// const removedDirectives = {'#noenv':true,'setbatchlines':true}
-const commandDelim = {', command comma':true,'end command':true }
-const funcCallDelim = {', function CALL':true,') function CALL':true }
-const wsOrEmptyLine = {'whiteSpaces':true,'emptyLines':true}
-const startGroupOrUnit = {'( group':') group','start unit':'end unit'}
-const on1off0 = {'on':'1','off':'0'}
-const v1ExprToEdit = {'goto':true,'#singleinstance':true}
-const ternaryColonEndDelim = {'end assignment':true,', function CALL':true,') function CALL':true,', assignment':true,'end comma assignment':true}
-const doNotQuoteCommand = {'splitpath':true}
-const stringUpperLower = {'stringupper':'StrUpper','stringlower':'StrLower'}
+const numIfNum: stringIndexBool = {'break':true,'continue':true,'settitlematchmode':true}
+const anyCommand: stringIndexBool = {'DIRECTIVE OR COMMAND comma':true,'command EOL or comment':true,'command':true}
+const idkVariableOrAssignment: stringIndexBool = {'idkVariable':true,'assignment':true}
+const startingBlock: stringIndexBool = {'{ legacyIf':true,'{ if':true,'{ for':true,'{ else':true,'{ loop':true,'{ namedIf':true}
+const startingBlockForClass: stringIndexBool = {'{ class':true,'{ function DEFINITION':true,'{ legacyIf':true,'{ if':true,'{ for':true,'{ else':true,'{ loop':true,'{ namedIf':true}
+const v1Str: stringIndexBool = {'v1String findV1Expression':true,'v1String findPercentVarV1Expression':true}
+const v1Percent: stringIndexBool = {'%START %Var%':true,'END% %Var%':true}
+// const removedDirectives :stringIndexBool= {'#noenv':true,'setbatchlines':true}
+const commandDelim: stringIndexBool = {', command comma':true,'end command':true }
+const funcCallDelim: stringIndexBool = {', function CALL':true,') function CALL':true }
+const wsOrEmptyLine: stringIndexBool = {'whiteSpaces':true,'emptyLines':true}
+const startGroupOrUnit: stringIndexString = {'( group':') group','start unit':'end unit'}
+const on1off0: stringIndexString = {'on':'1','off':'0'}
+const v1ExprToEdit: stringIndexBool = {'goto':true,'#singleinstance':true}
+const ternaryColonEndDelim: stringIndexBool = {'end assignment':true,', function CALL':true,') function CALL':true,', assignment':true,'end comma assignment':true}
+const doNotQuoteCommand: stringIndexBool = {'splitpath':true}
+const stringUpperLower: stringIndexString = {'stringupper':'StrUpper','stringlower':'StrLower'}
 
 
-const varNames = {}
-const lowerVarNames = {}
-const typesThatAreVars = {'Param':true,'idkVariable':true,'assignment':true,'v1String findIdkVar':true}
+const varNames: {[key: string]: true} = {}
+const lowerVarNames: {[key: string]: number[]} = {}
+const typesThatAreVars: stringIndexBool = {'Param':true,'idkVariable':true,'assignment':true,'v1String findIdkVar':true}
 
-export default (everything: {
-  type: string, //'String', 'Integer', everything...
-  text?: string,
-  i1?: number, //line start (0-based so first line is 0)
-  c1?: number, //column start
-  c2?: number, //column end (I omit this if text is 1 char)
-  i2?: number, //line end (I omit this if text is on 1 line)
-}[]): void => {
+export default (everything: ExtendedEverythingType): string => {
   // I'd never think I'd come to this day, but..
   // preprocessing..
+
   for (let n = 0, len = everything.length; n < len; n++) {
     if (typesThatAreVars[everything[n].type]) {
       const theText = everything[n].text
@@ -99,7 +118,7 @@ export default (everything: {
 
 
   // https://stackoverflow.com/questions/1349404/generate-random-string-characters-in-javascript#1349426
-  function makeid(length) {
+  function makeid(length: number) {
     var result = []
     var characters = 'abcdefghijklmnopqrstuvwxyz'
     var charactersLength = characters.length
@@ -110,9 +129,9 @@ export default (everything: {
     return result.join('')
   }
 
-  let i = 0, b
-  let next, argsArr, gArgsEInsertIndex, arrFromArgsToInsert
-    ,commandParamsArr, cParamsEInsertIndex, arrFromCParamsToInsert
+  let i = 0, b: number
+  let next: EverythingElement, argsArr: ExtendedEverythingType[], gArgsEInsertIndex: number, arrFromArgsToInsert: ExtendedEverythingType
+    ,commandParamsArr: ExtendedEverythingType[], cParamsEInsertIndex: number, arrFromCParamsToInsert: ExtendedEverythingType
   outOfLen:
   while (i < everything.length) {
     const allReturn = all()
@@ -127,8 +146,13 @@ export default (everything: {
 
     i++
   }
-  return //end of v1ToV2Converter()
-  function all() {
+
+  const arrToJoin = []
+  for (let i = 0, len = everything.length; i < len; i++) {
+    arrToJoin.push(everything[i].text)
+  }
+  return arrToJoin.join('') //end of modifyEverythingToV2()
+  function all(): number {
     const thisE = everything[i]
     const eType = thisE.type
     if (eType === '{ object') {
@@ -167,8 +191,7 @@ export default (everything: {
             if (!nextSkipThrough(') function CALL','( function CALL')) { return 2 }
             arrFromArgsToInsert = []
             // a[k] be the slice, make a(1) be a[k]
-            argsArr = everything.slice(spliceStart + 1,i - 1 )
-            argsArr = [argsArr]
+            argsArr = [everything.slice(spliceStart + 1,i - 1 )]
             // splice off and insert at same time
             p('(Type('); a(1); p(')=="Array"?'); a(1); p('.Length:'); a(1); p('.Count)')
             everything.splice(spliceStart, b - spliceStart + 1, ...arrFromArgsToInsert)
@@ -178,7 +201,7 @@ export default (everything: {
       }
       if (thisLowered === 'varsetcapacity') {
         //#function
-        if (!(argsArr = getArgs())) { return 2 }
+        if (getArgs()) { return 2 }
         if (argsArr.length === 1) {
           // VarSetCapacity(TargetVar)
           // TargetVar.Size
@@ -191,7 +214,7 @@ export default (everything: {
       } else if (thisLowered === 'strreplace') {
         // StrReplace(Haystack, Needle [, ReplaceText, OutputVarCount, Limit])
         // StrReplace(Haystack, Needle [, ReplaceText, CaseSense, OutputVarCount, Limit := -1])
-        if (!(argsArr = getArgs())) { return 2 }
+        if (getArgs()) { return 2 }
         p('StrReplace('); a(1); p(','); a(2); o(',',3); a(3); o(',0,',4); a(4); o(',',5); a(5); p(')'); s()
       } else if (thisLowered === 'object') {
         // Object() -> Map()  OR  Object("key",value) -> Map("key",value)
@@ -199,7 +222,7 @@ export default (everything: {
       } else if (thisLowered === 'numput') {
         // NumPut(Number, VarOrAddress [, Offset := 0][, Type := "UPtr"])
         // NumPut Type, Number, [Type2, Number2, ...] VarOrAddress [, Offset]
-        if (!(argsArr = getArgs())) { return 2 }
+        if (getArgs()) { return 2 }
         const len = argsArr.length
         p('NumPut(')
         if (len === 4) {
@@ -216,10 +239,10 @@ export default (everything: {
       } else if (thisLowered === 'objgetaddress') {
         // ObjGetAddress( this, "allData" )
         // this["allData"].Ptr
-        if (!(argsArr = getArgs())) { return 2 }
+        if (getArgs()) { return 2 }
         a(1); p('['); a(2); p('].Ptr'); s()
       } else if (thisLowered === 'objsetcapacity') {
-        if (!(argsArr = getArgs())) { return 2 }
+        if (getArgs()) { return 2 }
         if (argsArr.length === 3) {
           // ObjSetCapacity( this, "allData", newSize )
           // NOPE: this["allData"].Size := newSize
@@ -229,7 +252,7 @@ export default (everything: {
           p('ObjSetCapacity('); a(1); p(','); a(2); p(')'); s()
         }
       } else if (thisLowered === 'objgetcapacity') {
-        if (!(argsArr = getArgs())) { return 2 }
+        if (getArgs()) { return 2 }
         if (argsArr.length === 2) {
           // IF param1 is a [] and param2 === 1
           // ObjGetCapacity( [ param ] , 1)
@@ -261,17 +284,17 @@ export default (everything: {
         }
       } else if (thisLowered === 'objhaskey') {
         // objhaskey(obj,key) -> obj.Has(key)
-        if (!(argsArr = getArgs())) { return 2 }
+        if (getArgs()) { return 2 }
         a(1); p('.Has('); a(2); p(')'); s()
       } else if (thisLowered === 'objrawset') {
         // ObjRawSet(Object, Key, Value)
         // Object[Key]:=Value
-        if (!(argsArr = getArgs())) { return 2 }
+        if (getArgs()) { return 2 }
         a(1); p('['); a(2); p(']:='); a(3); s()
       } else if (thisLowered === 'objrawget') {
         // ObjRawGet(Object, Key)
         // Object[Key]
-        if (!(argsArr = getArgs())) { return 2 }
+        if (getArgs()) { return 2 }
         a(1); p('['); a(2); p(']'); s()
       } else {
         while (true) {
@@ -451,7 +474,7 @@ export default (everything: {
       if (numIfNum[dTextLowered]) {
         if (skipFirstSeparatorOfCommand()) { return 3 }
         if (next.type === 'v1String findV1Expression') {
-          if (!isNaN(next.text)) {
+          if (!isNaN(Number(next.text))) {
             next.type = 'edit'
           }
         }
@@ -484,7 +507,7 @@ export default (everything: {
           if (on1off0[dText.toLowerCase()]) {
             next.type = 'edit'
             next.text = on1off0[dText.toLowerCase()]
-          } else if (!isNaN(dText)) {
+          } else if (!isNaN(Number(dText))) {
             next.type = 'edit'
           }
         }
@@ -500,7 +523,7 @@ export default (everything: {
         // OutputVar:=SubStr(InputVar,1,-Count)
         //#command
         commandAllEdit()
-        if (!(commandParamsArr = getCommandParams())) { return 2 }
+        if (getCommandParams()) { return 2 }
         c_a(1); c_p(':=SubStr('); c_a(2); c_p(',1,-'); c_a(3); c_p(')')
         spaceIfComment(); c_s()
       } else if (objValue = stringUpperLower[dTextLowered]) {
@@ -509,14 +532,14 @@ export default (everything: {
         // StringUpper, OutputVar, InputVar, T
         // OutputVar:=StrUpper(InputVar,"T")
         //#command
-        if (!(commandParamsArr = getCommandParams())) { return 2 }
+        if (getCommandParams()) { return 2 }
         c_a(1); c_p(`:=${objValue}(`); c_a(2); c_o(',',3); c_a(3); c_p(')')
         spaceIfComment(); c_s()
       } else if (dTextLowered === 'random') {
         // Random, OutputVar [, Min, Max]
         // OutputVar:=Random([Min, Max])
         commandAllEdit()
-        if (!(commandParamsArr = getCommandParams())) { return 2 }
+        if (getCommandParams()) { return 2 }
         c_a(1); c_p(':=Random('); c_a(2); c_o(',',3); c_a(3); c_p(')')
         spaceIfComment(); c_s()
       }
@@ -640,7 +663,7 @@ export default (everything: {
         }
       }
     } else {
-      return false
+      return 0
     }
     return 3
   }
@@ -716,7 +739,7 @@ export default (everything: {
     }
   }
 
-  function commandAllEditChoose(whichParamsObj) {
+  function commandAllEditChoose(whichParamsObj: stringIndexBool) {
     let paramNum = 1
     while (true) {
       next = everything[++b]
@@ -752,7 +775,7 @@ export default (everything: {
     }
   }
 
-  function c_a(index) {
+  function c_a(index: number) {
     const paramArr = commandParamsArr[index - 1]
     let paramsLen
     if (paramArr && (paramsLen = paramArr.length)) {
@@ -764,10 +787,10 @@ export default (everything: {
     }
   }
   // arrFromCParamsToInsert.push(...paramArr)
-  function c_p(str) {
+  function c_p(str: string) {
     arrFromCParamsToInsert.push({text:str})
   }
-  function c_o(str,index) {
+  function c_o(str: string,index: number) {
     if (commandParamsArr[index - 1]) {
       arrFromCParamsToInsert.push({text:str})
     }
@@ -777,7 +800,7 @@ export default (everything: {
     i += arrFromCParamsToInsert.length
   }
 
-  function a(index) {
+  function a(index: number) {
     const paramArr = argsArr[index - 1]
     let paramsLen
     if (paramArr && (paramsLen = paramArr.length)) {
@@ -789,10 +812,10 @@ export default (everything: {
     }
   }
   // arrFromArgsToInsert.push(...paramArr)
-  function p(str) {
+  function p(str: string) {
     arrFromArgsToInsert.push({text:str})
   }
-  function o(str,index) {
+  function o(str: string,index: number) {
     if (argsArr[index - 1]) {
       arrFromArgsToInsert.push({text:str})
     }
@@ -818,9 +841,10 @@ export default (everything: {
             { type: 'emptyLines'},
             { type: 'ok'},
           ]) */
-  function trimEmptyLinesWsFromArr(paramArr) {
+  function trimEmptyLinesWsFromArr(paramArr: ExtendedEverythingType) {
     let n = 0
     for (let len = paramArr.length; n < len; n++) {
+
       if (!wsOrEmptyLine[paramArr[n].type]) {
         break
       }
@@ -840,13 +864,13 @@ export default (everything: {
     arrFromCParamsToInsert = []
     let paramStartIndex = i
     let next
-    const arrOfArrOfE = []
+    commandParamsArr = []
     while (true) {
       innerLoop:
       while (true) {
         next = everything[i]
         if (!next) {
-          return false
+          return true
         }
         const bType = next.type
 
@@ -854,7 +878,7 @@ export default (everything: {
         if (allReturn === 1) {
           continue innerLoop
         } else if (allReturn === 2) {
-          return false
+          return true
         } else if (allReturn === 3) {
           i++
           continue innerLoop
@@ -862,12 +886,12 @@ export default (everything: {
 
         if (bType === 'end command') {
           const spliceLen = i + 1 - functionStartIndex
-          arrOfArrOfE.push(everything.slice(paramStartIndex, i))
+          commandParamsArr.push(everything.slice(paramStartIndex, i))
           everything.splice(functionStartIndex, spliceLen)
           i -= spliceLen
-          return arrOfArrOfE
+          return false
         } else if (bType === ', command comma') {
-          arrOfArrOfE.push(everything.slice(paramStartIndex, i))
+          commandParamsArr.push(everything.slice(paramStartIndex, i))
           paramStartIndex = i + 1
         }
         i++
@@ -880,13 +904,13 @@ export default (everything: {
     arrFromArgsToInsert = []
     let paramStartIndex = i
     let next
-    const arrOfArrOfE = []
+    argsArr = []
     while (true) {
       innerLoop:
       while (true) {
         next = everything[i]
         if (!next) {
-          return false
+          return true
         }
         const bType = next.type
 
@@ -894,7 +918,7 @@ export default (everything: {
         if (allReturn === 1) {
           continue innerLoop
         } else if (allReturn === 2) {
-          return false
+          return true
         } else if (allReturn === 3) {
           i++
           continue innerLoop
@@ -902,12 +926,12 @@ export default (everything: {
 
         if (bType === ') function CALL') {
           const spliceLen = i + 1 - functionStartIndex
-          arrOfArrOfE.push(everything.slice(paramStartIndex, i))
+          argsArr.push(everything.slice(paramStartIndex, i))
           everything.splice(functionStartIndex, spliceLen)
           i -= spliceLen
-          return arrOfArrOfE
+          return false
         } else if (bType === ', function CALL') {
-          arrOfArrOfE.push(everything.slice(paramStartIndex, i))
+          argsArr.push(everything.slice(paramStartIndex, i))
           paramStartIndex = i + 1
         }
         i++
@@ -949,7 +973,7 @@ export default (everything: {
       }
     }
   }
-  function findNextAnyInObj(insideThisObj) {
+  function findNextAnyInObj(insideThisObj: stringIndexBool|stringIndexString): string|false {
     let next
     next = everything[++b]
     while (next) {
