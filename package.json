@@ -21,6 +21,9 @@
     "objToMap": "ts-node-dev --respawn --transpile-only src/object_to_map.ts",
     "dev": "ts-node-dev --respawn --transpile-only src/usage.ts",
     "dev2": "ts-node-dev src/usage.ts",
+
+    "webpackGithubPages": "webpack --mode production --config build/webpack.config.js",
+
     "package": "yarn webpackProd && yarn dtsBundle && yarn unlink_d.ts",
     "webpackProd": "webpack --mode production --config build/webpack.config.js",
     "bundleDeclarations": "yarn declarations && yarn dtsBundle && yarn unlink_d.ts",

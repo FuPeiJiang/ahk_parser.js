@@ -2,14 +2,43 @@ import { trace } from 'console'
 import { whiteSpaceObj, variableCharsObj, operatorsObj, legacyIfOperators, v1Continuator, typeOfValidVarName, whiteSpaceOverrideAssign, propCharsObj, namedIf, assignmentOperators, elseLoopReturn, v2Continuator, thisCouldBeFuncName } from './tokens'
 const d = console.debug.bind(console)
 
-export default (content: string): {
+/* type EverythingType = {
   type: string, //'String', 'Integer', everything...
   text?: string,
   i1?: number, //line start (0-based so first line is 0)
   c1?: number, //column start
   c2?: number, //column end (I omit this if text is 1 char)
   i2?: number, //line end (I omit this if text is on 1 line)
-}[] => {
+}[] */
+
+type EverythingType = ({
+  type: string;
+  text: string;
+  i1: number;
+  c1: number;
+  c2?: undefined;
+} | {
+  type: string;
+  text: string;
+  i1: number;
+  c1: number;
+  c2: number;
+} | {
+  type: string;
+  text: string;
+  i1: number;
+  c1: number;
+  i2: number;
+  c2: number;
+} | {
+  type: string;
+  text?: undefined;
+  i1?: undefined;
+  c1?: undefined;
+  c2?: undefined;
+})[]
+
+export default (content: string): EverythingType => {
   // https://stackoverflow.com/questions/6784799/what-is-this-char-65279#answer-6784805
   // https://stackoverflow.com/questions/13024978/removing-bom-characters-from-ajax-posted-string#answer-13027802
   if (content[0] === '\ufeff') {
@@ -17,11 +46,12 @@ export default (content: string): {
   }
   const lines = content.split('\n')
   const howManyLines = lines.length
-  const everything: any[] = []
+  const everything: EverythingType = []
   const toFile = ''
   const rangeAndReplaceTextArr: [[[number, number], [number, number]], string][] = []
 
-  const wsOrEmptyLine = {'whiteSpaces':true,'emptyLines':true}
+  const wsOrEmptyLine: {[key: string]: boolean}
+   = {'whiteSpaces':true,'emptyLines':true}
 
   let okk: number
   okk = 0
@@ -776,7 +806,7 @@ export default (content: string): {
 
   if (everything.length) {
     const lastIndex = everything.length - 1, lastEverything = everything[lastIndex]
-    if (lastEverything.i1 + 1 === howManyLines && lastEverything.text === '\n') {
+    if (lastEverything.i1 && lastEverything.i1 + 1 === howManyLines && lastEverything.text === '\n') {
       everything.splice(lastIndex, 1)
     }
   }
@@ -2746,11 +2776,6 @@ export default (content: string): {
     while (c < numberOfChars && variableCharsObj[lines[i][c]]) {
       c++
     }
-  }
-  function writeSync(content: string) {
-    const fs = require('fs')
-    fs.writeFileSync('outputToFile.txt', content, 'utf-8')
-    // console.log('readFileSync complete')
   }
   function printString() {
     if (strStartLine === i) {
