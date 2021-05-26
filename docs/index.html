@@ -10,11 +10,16 @@
   <button id="convertButton" style="font-size:20px;">convert!</button>
   <p>if you find a bug, please github issue (no need for context, just paste the v1 code that broke it)</p>
   <div>
-    <a
+    <a style="display:block; margin-block-end:3em;"
       href="https://github.com/FuPeiJiang/ahk_parser.js/issues/new">https://github.com/FuPeiJiang/ahk_parser.js/issues/new</a>
   </div>
+  <div>
+    <textarea id="v1Everything" placeholder="v1 Everything will be here" rows="20" cols="50"></textarea>
+    <textarea id="v2Everything" placeholder="v2 Everything will be here" rows="20" cols="50"></textarea>
+  </div>
 
-  <script src="./v1Tov2.js"></script>
+  <script src="./ahkParser.js"></script>
+  <script src="./modifyEverythingToV2.js"></script>
   <script>
     // https://stackoverflow.com/questions/3211505/detect-pasted-text-with-ctrlv-or-right-click-paste#3212056
     /* function getTextAreaSelection(textarea) {
@@ -44,26 +49,88 @@
       };
     } */
 
+    const v1InputTextArea = document.getElementById("v1Input")
     const v2OutputTextArea = document.getElementById("v2Output")
-    const v2OutputSetText = (convertedAHK) => {
+    const v1EverythingTextArea = document.getElementById("v1Everything")
+    const v2EverythingTextArea = document.getElementById("v2Everything")
+
+    const v2OutputSetText = (newText) => {
       // https://stackoverflow.com/questions/1642447/how-to-change-the-content-of-a-textarea-with-javascript#1642452
-      v2OutputTextArea.value = convertedAHK
+      v2OutputTextArea.value = newText
+    }
+    const v1EverythingSetText = (newText) => {
+      v1EverythingTextArea.value = newText
+    }
+    const v2EverythingSetText = (newText) => {
+      v2EverythingTextArea.value = newText
     }
 
-    const v1InputTextArea = document.getElementById("v1Input")
+    const doEverything = (v1AHK) => {
+      const everything = ahkParser(v1AHK)
+      v1EverythingSetText(arrOrObjToString(everything))
+      //modifyEverythingToV2 returns a string
+      v2OutputSetText(modifyEverythingToV2(everything))
+      //modifyEverythingToV2 also modified everything
+      //we put the modified everything here
+      v2EverythingSetText(arrOrObjToString(everything))
+    }
+
+
+
     v1InputTextArea.onpaste = function () {
       setTimeout(function () {
-        v2OutputSetText(v1Tov2(v1InputTextArea.value))
+        doEverything(v1InputTextArea.value)
       }, 1)
     }
 
     const convertButton = document.getElementById("convertButton")
     convertButton.onclick = () => {
-      v2OutputSetText(v1Tov2(v1InputTextArea.value))
+      doEverything(v1InputTextArea.value)
     }
 
 
+    function arrOrObjToString(obj) {
+      const objDelim = ', ',
+        objDelimLen = objDelim.length
+      return innerFunc(obj)
 
+      function innerFunc(obj) {
+        var str = ''
+        if (typeof obj === 'object') {
+          if (Array.isArray(obj)) {
+            for (let i = 0, len = obj.length; i < len; i++) {
+              if (typeof obj[i] === 'object') {
+                str += `\n${innerFunc(obj[i])},`
+              } else {
+                if (typeof obj[i] === 'string') {
+                  str += `\n'${obj[i]}',` //lol this implicitly calls func.toString()
+                } else {
+                  str += `\n${obj[i]},` //lol this implicitly calls func.toString()
+                }
+              }
+            }
+            return `[\n${str.slice(1)}\n]` //remove the first , from string. removes nothing if empty string
+          } else {
+            for (var p in obj) {
+              if (obj.hasOwnProperty(p)) {
+                if (typeof obj[p] === 'object') {
+                  str += `${objDelim}${p}:${innerFunc(obj[p])}`
+                } else {
+                  if (typeof obj[p] === 'string') {
+                    str += `${objDelim}${p}:'${obj[p]}'` //lol this implicitly calls func.toString()
+                  } else {
+                    str += `${objDelim}${p}:${obj[p]}` //lol this implicitly calls func.toString()
+                  }
+                }
+              }
+            }
+            return `{${str.slice(objDelimLen)}}` //remove the first , from string. removes nothing if empty string
+          }
+        } else {
+          return ''
+        }
+      }
+    }
     /* v2OutputSetText("4235")
     console.log(v1Tov2)
     console.log(typeof window.v1Tov2)
