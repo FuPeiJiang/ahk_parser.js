@@ -2311,3 +2311,8 @@ a.foo() {
 }
 Error:  Unexpected "{"
 fiouf ?
+
+
+to do:
+everything.splice( -> everything.push + everything[spliceStartIndex].type = 'stuff'
+

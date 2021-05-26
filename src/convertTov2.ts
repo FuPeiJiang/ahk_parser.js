@@ -1,8 +1,8 @@
 import fs from 'fs'
-import ahkParser from './parser/index'
-const d = console.debug.bind(console)
-import { variableCharsObj, whiteSpaceObj } from './parser/tokens'
 
+import ahkParser from './parser/index'
+import { variableCharsObj, whiteSpaceObj } from './parser/tokens'
+const d = console.debug.bind(console)
 
 const content: Buffer =
 // fs.readFileSync('tests3/redo func definition.ahk')
@@ -41,7 +41,6 @@ fs.readFileSync('tov2/string.ahk')
 fs.readFileSync('tests/ahk_explorer.ahk')
 const everything = ahkParser(content.toString().replace(/\r/g, ''))
 // d(everything)
-const reconstructed = []
 let i = 0, b
 const classToStatic = {'biga':true,'WinClip':true,'WinClipAPI':true}
 
@@ -370,22 +369,7 @@ function all() {
 
   } else if (idkVariableOrAssignment[eType]) {
     const theText = everything[i].text
-    const parsedIdkVar = parseIdkVariable(theText)
-    if (parsedIdkVar) {
-      /* const arrToJoin = []
-      for (let n = 0, len = parsedIdkVar.length; n < len; n++) {
-        if (parsedIdkVar[n].type) {
-          if (parsedIdkVar[n].text.toLowerCase() === 'clipboard') {
-            arrToJoin.push('%A_Clipboard%')
-          } else {
-            arrToJoin.push(parsedIdkVar[n].text)
-          }
-        }
-      } */
-    } else {
-      /* if (theText.toLowerCase() === 'clipboard') {
-        reconstructed.push('A_Clipboard')
-      } else  */
+    if (theText.indexOf('%') === -1) {
       if (theText.toLowerCase() === 'a_isunicode') {
 
         while (true) {
@@ -630,7 +614,7 @@ function all() {
       if (isNaN(Number(validVarStr))) {
 
         everything.splice(b + 1,0,{type:'edit',text:'.Ptr'})
-        // reconstructed.push('StrPtr(')
+        // 'StrPtr('
         // everything.splice(b + 1,0,{type:'edit',text:')'})
       }
     }
