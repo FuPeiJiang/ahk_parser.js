@@ -14,7 +14,7 @@ const config = {
   entry: `${rootDir}/src/v1Tov2.ts`, // the entry point of this extension, 📖 -> https://webpack.js.org/configuration/entry-context/
   output: {
     // the bundle is stored in the 'lib' folder (check package.json), 📖 -> https://webpack.js.org/configuration/output/
-    path: `${rootDir}/github pages`,
+    path: `${rootDir}/docs`,
     filename: 'v1Tov2.js',
     //https://webpack.js.org/guides/author-libraries/#expose-the-library
     library: {

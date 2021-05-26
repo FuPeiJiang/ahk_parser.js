@@ -2322,3 +2322,6 @@ so when I hover over I know that it's a string ? or a number ?
 
 it's just producing errors... typescript is useless for me
 trying to be cool be like
+
+// GitHub Actions to publish on the gh-pages branch 
+https://github.community/t/can-i-define-a-custom-source-or-folder-from-which-my-site-hosted-on-github-pages-can-load-from/10237/6
