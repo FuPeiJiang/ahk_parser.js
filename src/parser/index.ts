@@ -2350,7 +2350,7 @@ export default (content: string): EverythingType => {
           skipThroughWhiteSpaces()
         } else {
           if (i !== legalObjLine ) {
-            d('ILLEGAL ] Array i !== legalObjLine', char())
+            d('ILLEGAL } Array i !== legalObjLine', char())
           }
         }
         //skipSpaces
