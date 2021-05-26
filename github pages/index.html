@@ -3,19 +3,68 @@
 <html>
 
 <body>
-    <div>
-      <textarea id="toConvertTA" placeholder="v1 here" rows="20" cols="50"></textarea>
-      <textarea id="convertedTA" placeholder="AHK_H v2 will be here" rows="20" cols="50"></textarea>
-    </div>
-    <!-- <button width="100" height="20px"></button> -->
+  <div>
+    <textarea id="v1Input" placeholder="v1 here" rows="20" cols="50"></textarea>
+    <textarea id="v2Output" placeholder="AHK_H v2 will be here" rows="20" cols="50"></textarea>
+  </div>
+  <button id="convertButton" style="font-size:20px;">convert!</button>
 
 
   <script src="./v1Tov2.js"></script>
   <script>
+    // https://stackoverflow.com/questions/3211505/detect-pasted-text-with-ctrlv-or-right-click-paste#3212056
+    /* function getTextAreaSelection(textarea) {
+        var start = textarea.selectionStart, end = textarea.selectionEnd;
+        return {
+            start: start,
+            end: end,
+            length: end - start,
+            text: textarea.value.slice(start, end)
+        };
+    }
+    function detectPaste(textarea, callback) {
+      textarea.onpaste = function () {
+        var sel = getTextAreaSelection(textarea);
+        var initialLength = textarea.value.length;
+        window.setTimeout(function () {
+          var val = textarea.value;
+          var pastedTextLength = val.length - (initialLength - sel.length);
+          var end = sel.start + pastedTextLength;
+          callback({
+            start: sel.start,
+            end: end,
+            length: pastedTextLength,
+            text: val.slice(sel.start, end)
+          });
+        }, 1);
+      };
+    } */
+
+    const v2OutputTextArea = document.getElementById("v2Output")
+    const v2OutputSetText = (convertedAHK) => {
+      // https://stackoverflow.com/questions/1642447/how-to-change-the-content-of-a-textarea-with-javascript#1642452
+      v2OutputTextArea.value = convertedAHK
+    }
+
+    const v1InputTextArea = document.getElementById("v1Input")
+    v1InputTextArea.onpaste = function () {
+      setTimeout(function () {
+        v2OutputSetText(v1Tov2(v1InputTextArea.value))
+      }, 1)
+    }
+
+    const convertButton = document.getElementById("convertButton")
+    convertButton.onclick = () => {
+      v2OutputSetText(v1Tov2(v1InputTextArea.value))
+    }
+
+
+
+    /* v2OutputSetText("4235")
     console.log(v1Tov2)
     console.log(typeof window.v1Tov2)
     console.log(window.v1Tov2)
-    console.log(window.v1Tov2("v:={}"))
+    console.log(window.v1Tov2("v:={}")) */
   </script>
 
 </body>
