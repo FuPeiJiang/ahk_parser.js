@@ -17,7 +17,12 @@ const config = {
     path: `${rootDir}/github pages`,
     filename: 'v1Tov2.js',
     //https://webpack.js.org/guides/author-libraries/#expose-the-library
-    library: 'v1Tov2',
+    library: {
+      name: 'v1Tov2',
+      // type: 'umd',
+      type: 'window',
+      export: 'default', //omg I finally understood that you need this
+    },
   },
   resolve: {
     // support reading TypeScript and JavaScript files, 📖 -> https://github.com/TypeStrong/ts-loader

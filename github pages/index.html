@@ -3,11 +3,19 @@
 <html>
 
 <body>
-  <script src="./v1Tov2.js"></script>
+    <div>
+      <textarea id="toConvertTA" placeholder="v1 here" rows="20" cols="50"></textarea>
+      <textarea id="convertedTA" placeholder="AHK_H v2 will be here" rows="20" cols="50"></textarea>
+    </div>
+    <!-- <button width="100" height="20px"></button> -->
 
+
+  <script src="./v1Tov2.js"></script>
   <script>
-    console.log(typeof v1Tov2)
-    console.log(v1Tov2("v:={}"))
+    console.log(v1Tov2)
+    console.log(typeof window.v1Tov2)
+    console.log(window.v1Tov2)
+    console.log(window.v1Tov2("v:={}"))
   </script>
 
 </body>
