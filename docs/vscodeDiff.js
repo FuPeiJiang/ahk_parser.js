@@ -18,7 +18,8 @@ function vscodeDiff(rootElement, one, other) {
   const pre1 = document.createElement('pre')
   pre1.style.position = 'relative'
   // pre1.style.width = '49vw'
-  pre1.style.width = '50%'
+  pre1.style.maxWidth = '50%'
+  // pre1.style.width = '50%'
   pre1.style.display = 'inline-block'
   pre1.style.overflow = 'hidden'
   // pre1.style.overflowX = 'hidden'
@@ -27,7 +28,7 @@ function vscodeDiff(rootElement, one, other) {
   const pre2 = pre1.cloneNode()
 
   // fragment = document.createDocumentFragment()
-  console.log(diff)
+  d(diff)
 
 
   // 0x4B1818, 814, 169
@@ -209,7 +210,6 @@ function vscodeDiff(rootElement, one, other) {
     whichCurrentLine[idx1].appendChild(tDiv)
     if (lenMOne) {
       for (let i = 1, len = lenMOne + 1; i < len; i++) {
-        d(whichCurrentLine[idx1])
         firstFragment[idx1].appendChild(whichCurrentLine[idx1])
         whichCurrentLine[idx1] = whichHighlight[idx1].cloneNode()
         tDiv = whichDiv[idx1].cloneNode()
