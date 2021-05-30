@@ -1,48 +1,6 @@
 function vscodeDiff(rootElement, one, other) {
   const d = console.log.bind(console)
 
-  /*   const one = `[
-    {type:'assignment', text:'v', i1:0, c1:undefined, c2:1},
-    {type:'2operator', text:':=', i1:0, c1:1, c2:3},
-    {type:'{ object', text:'{', i1:0, c1:3},
-    ooffewfwefwef1
-    {type:'} object', text:'}', i1:0, c1:4},
-    ooffewfwefwef2
-    {type:'2operator', text:':=', i1:0, c1:1, c2:3},
-    {type:'end assignment'},
-    ooffewfwefwef3
-  {type:'2operator', text:':=', i1:0, c1:1, c2:3},
-    first
-    second
-    third
-  ]`,
-    other = `[
-    {type:'assignment', text:'v', i1:0, c1:undefined, c2:1},
-    {type:'2operator', text:':=', i1:0, c1:1, c2:3},
-    {type:'{ object', text:'Map(', i1:0, c1:3},
-    ooffewfwefwef1
-    {type:'} object', text:')', i1:0, c1:4},
-    ooffewfwefwef2
-    {type:'2operator', text:'multi
-    line
-    3rd
-    ', i1:0, c1:1, c2:3},
-    {type:'end assignment'},
-    ooffewfwefwef3
-    first
-    second
-  {type:'2operator', text:':=', i1:0, c1:1, c2:3},
-  ]` */
-  /* const one = `[
-  {type:'2operator', text:':=', i1:0, c1:1, c2:3},
-    first
-    second
-    third
-  ]`,
-    other = `[
-  {type:'2operator', text:':=', i1:0, c1:1, c2:3},
-  ]` */
-
   // rootElement.style.backgroundColor = "#1e1e1e"
   document.body.style.backgroundColor = '#1e1e1e'
 
@@ -50,8 +8,7 @@ function vscodeDiff(rootElement, one, other) {
 
   // console.log(Diff.diffLines(one, other))
 
-  const diff = Diff.diffWordsWithSpace(one, other)
-  // const diff = Diff.diffChars(one, other)
+  const diff = Diff.diffChars(one, other)
 
   //<pre id="pre1" style="position: relative;width: 49vw;display: inline-block"></pre>
   //<pre id="pre2" style="position: relative;width: 49vw;display: inline-block"></pre>
@@ -178,20 +135,7 @@ function vscodeDiff(rootElement, one, other) {
   // -45deg
   // , rgba(204, 204, 204, 0.2) 12.5%, #0000 12.5%, #0000 50%, rgba(204, 204, 204, 0.2) 50%, rgba(204, 204, 204, 0.2) 62.5%, #0000 62.5%, #0000 100% );
   // background-size: 8px 8px;
-  function getTop(num) {
-    return `${num * theEmSize}em`
-  }
-  function getWidth(num) {
-    return `${num * topOffSetUnit}px`
-  }
-  function doCurrentLineDiv(howManyFound) {
-    for (let i = 0, howManyFoundMOne = howManyFound - 1; i < howManyFoundMOne; i++) {
-      fragment1.appendChild(baseHighlight.cloneNode())
-    }
-    redCurrentLineDiv = baseHighlight.cloneNode()
-  }
-  let lineNumber = 0
-  let alreadyHighlighted = false
+
   //red
   const fragment1 = document.createDocumentFragment()
   const fragment2 = document.createDocumentFragment()
@@ -202,40 +146,16 @@ function vscodeDiff(rootElement, one, other) {
     , firstFragment = [fragment1, fragment2]
     , secondFragment = [fragment2, fragment1]
     , whichHighlight = [removedHighlight, addedHighlight]
+  let howManyDiagonalLines = 0, diagonalIndex = 0
 
-  diff.forEach((part) => {
+  for (let n = 0, diffLen = diff.length; n < diffLen; n++) {
+    const part = diff[n]
     const text = part.value
-    // const span = theSpan.cloneNode()
-    // span.appendChild(document.createTextNode(text))
-    // span.style.top = `${lineNumber * topOffSetUnit}px`
-    let LR, idx1, idx2
+    let idx1, idx2
     if (part.removed) {
-      /*      const splitByNewline = text.split('\n')
-           let len = splitByNewline.length
-           //assume text is NOT empty
-           if (text[text.length - 1] === '\n') {
-             len--
-           }
-           redCurrentLineDiv.style.backgroundColor = '#4B1818'
-           let tDiv = redDiv.cloneNode()
-           tDiv.textContent = splitByNewline[0]
-           redCurrentLineDiv.appendChild(tDiv)
-           let tSpan
-           if (len - 1) {
-             lineNumber += len - 1
-             for (let i = 1; i < len; i++) {
-               fragment1.appendChild(redCurrentLineDiv)
-               redCurrentLineDiv = removedHighlight.cloneNode()
-               tSpan = redDiv.cloneNode()
-               tSpan.textContent = splitByNewline[i]
-               redCurrentLineDiv.appendChild(tSpan)
-             }
-           } */
-      LR = 0
       idx1 = 0
       idx2 = 1
     } else if (part.added) {
-      LR = 1
       idx1 = 1
       idx2 = 0
     } else {
@@ -252,7 +172,16 @@ function vscodeDiff(rootElement, one, other) {
       whichCurrentLine[0].appendChild(tDiv.cloneNode(true))
       whichCurrentLine[1].appendChild(tDiv)
       if (len - 1) {
-        lineNumber += len - 1
+        if (howManyDiagonalLines) {
+          firstFragment[diagonalIndex].appendChild(whichCurrentLine[diagonalIndex])
+          whichCurrentLine[diagonalIndex] = diagonalFill.cloneNode()
+          // currentLineDiv.style.height = `${lenMOne}em`
+          whichCurrentLine[diagonalIndex].style.height = `${howManyDiagonalLines * topOffSetUnit}px`
+          // firstFragment[diagonalIndex].appendChild(whichCurrentLine[diagonalIndex])
+          // whichCurrentLine[diagonalIndex] = baseHighlight.cloneNode()
+          howManyDiagonalLines = 0
+        }
+
         for (let i = 1; i < len; i++) {
           fragment1.appendChild(whichCurrentLine[0])
           fragment2.appendChild(whichCurrentLine[1])
@@ -265,8 +194,9 @@ function vscodeDiff(rootElement, one, other) {
         }
         // doCurrentLineDiv(howManyFound)
       }
+
       // fragment1.appendChild(currentLineDiv)
-      return
+      continue
     }
     const splitByNewline = text.split('\n')
     let lenMOne = splitByNewline.length - 1
@@ -274,143 +204,37 @@ function vscodeDiff(rootElement, one, other) {
     if (text[text.length - 1] === '\n') {
       lenMOne--
     }
-    let tDiv = whichDiv[LR].cloneNode()
+    let tDiv = whichDiv[idx1].cloneNode()
     tDiv.textContent = splitByNewline[0]
     whichCurrentLine[idx1].appendChild(tDiv)
     if (lenMOne) {
-      lineNumber += lenMOne
-
       for (let i = 1, len = lenMOne + 1; i < len; i++) {
-        // d(whichCurrentLine[idx1])
-        firstFragment[LR].appendChild(whichCurrentLine[idx1])
-        whichCurrentLine[idx1] = whichHighlight[LR].cloneNode()
-        tDiv = whichDiv[LR].cloneNode()
+        d(whichCurrentLine[idx1])
+        firstFragment[idx1].appendChild(whichCurrentLine[idx1])
+        whichCurrentLine[idx1] = whichHighlight[idx1].cloneNode()
+        tDiv = whichDiv[idx1].cloneNode()
         tDiv.textContent = splitByNewline[i]
         whichCurrentLine[idx1].appendChild(tDiv)
       }
 
-      secondFragment[LR].appendChild(whichCurrentLine[idx2])
-      whichCurrentLine[idx2] = diagonalFill.cloneNode()
-      // currentLineDiv.style.height = `${lenMOne}em`
-      whichCurrentLine[idx2].style.height = `${(lenMOne - 1) * topOffSetUnit}px`
-      secondFragment[LR].appendChild(whichCurrentLine[idx2])
-      whichCurrentLine[idx2] = baseHighlight.cloneNode()
+      secondFragment[idx1].appendChild(whichCurrentLine[idx2])
+      howManyDiagonalLines += lenMOne
+      diagonalIndex = idx2
     }
-  })
+  }
+  if (howManyDiagonalLines) {
+    firstFragment[diagonalIndex].appendChild(whichCurrentLine[diagonalIndex])
+    whichCurrentLine[diagonalIndex] = diagonalFill.cloneNode()
+    whichCurrentLine[diagonalIndex].style.height = `${howManyDiagonalLines * topOffSetUnit}px`
+    howManyDiagonalLines = 0
+  }
   fragment1.appendChild(whichCurrentLine[0]) //push the final
   fragment2.appendChild(whichCurrentLine[1]) //push the final
-  // fragment1.appendChild(redCurrentLineDiv) //push the final
-  // fragment2.appendChild(greenCurrentLineDiv) //push the final
 
   pre1.appendChild(fragment1)
   pre2.appendChild(fragment2)
 
-  // const fragmentAll = document.createDocumentFragment()
-  // fragmentAll.appendChild(pre1)
-  // fragmentAll.appendChild(pre2)
-  // rootElement.appendChild(fragmentAll)
   rootElement.replaceChildren(pre1, pre2)
-  // rootElement.appendChild(document.createDocumentFragment().appendChild(pre1))
   return
-  throw 234
-
-
-  lineNumber = 0
-
-  // const fragment2 = document.createDocumentFragment()
-  //green
-  diff.forEach((part) => {
-    const text = part.value
-    if (part.removed) {
-      const howManyFound = occurrences(text, '\n')
-      if (howManyFound) {
-        lineNumber += howManyFound
-        const highlight = diagonalFill.cloneNode()
-        d(highlight.style.backgroundImage)
-        highlight.style.height = `${howManyFound * 19}px`
-        // highlight.style.top = `${lineNumber * 19}px`
-        fragment2.appendChild(highlight)
-      }
-    } else if (part.added) {
-
-      span = theSpan.cloneNode()
-      // if (part.added) {
-      // span.style.backgroundColor = '#4ec9b0'
-      span.style.backgroundColor = '#618311'
-      // span.style.backgroundColor = '#4B5632'
-      // span.style.backgroundColor = '#32564B'
-      // span.style.backgroundColor = 'green'
-
-      const highlight = addedHighlight.cloneNode()
-      highlight.style.top = `${lineNumber * 19}px`
-      fragment2.appendChild(highlight)
-
-      let howManyFound = occurrences(text, '\n')
-      if (text.slice(-1) === '\n') {
-        howManyFound--
-      }
-      for (let i = 0; i < howManyFound; i++) {
-        lineNumber++
-        const highlight = addedHighlight.cloneNode()
-        d(lineNumber)
-        highlight.style.top = `${lineNumber * 19}px`
-        fragment2.appendChild(highlight)
-      }
-
-    } else {
-      // span.style.backgroundColor = '#373D29'
-      const howManyFound = occurrences(text, '\n')
-      if (howManyFound) {
-        lineNumber += howManyFound
-      }
-    }
-
-    span.appendChild(document
-      .createTextNode(text))
-
-
-
-    fragment2.appendChild(span)
-    // }
-  })
-  pre1.appendChild(fragment1)
-  pre2.appendChild(fragment2)
-
-  // const fragmentAll = document.createDocumentFragment()
-  fragmentAll.appendChild(pre1)
-  fragmentAll.appendChild(pre2)
-  rootElement.appendChild(fragmentAll)
-
-  /* diff.forEach((part) => {
-    // green for additions, red for deletions
-    // grey for common parts
-    const color = part.added ? 'green' :
-      part.removed ? 'red' : 'grey'
-    span = document.createElement('span')
-    span.style.color = color
-    span.appendChild(document
-      .createTextNode(part.value))
-    fragment1.appendChild(span)
-  }) */
-
-  function occurrences(string, subString) {
-    const substrLen = subString.length
-    string += ''
-    subString += ''
-    if (substrLen <= 0) {return (string.length + 1)}
-
-    var n = 0,
-      pos = 0,
-      step = substrLen
-
-    while (true) {
-      pos = string.indexOf(subString, pos)
-      if (pos >= 0) {
-        ++n
-        pos += step
-      } else {break}
-    }
-    return n
-  }
 
 }
