@@ -39,6 +39,7 @@ fs.readFileSync('tov2/string.ahk') */
 fs.readFileSync('tests/ahk_explorer.ahk')
 
 const everything = ahkParser(content.toString().replace(/\r/g, ''))
+// writeSync(arrOrObjToString(everything),'everything_before.txt')
 const converted = modifyEverythingToV2(everything)
 
 writeSync(converted,'reconstructed.ah2')

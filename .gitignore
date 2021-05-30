@@ -10,6 +10,7 @@ coverage
 /ahk_parser.js-v*.*.*.tgz
 outputToFile.txt
 objectConvertedToMap.ahk
+everything_before.txt
 everything.txt
 reconstructed.ahk
 reconstructed.ah2

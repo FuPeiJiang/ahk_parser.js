@@ -2332,3 +2332,11 @@ why though
 to do: ERROR: missing opening brace
 f3::
 ExitApp
+
+1.find another javascript diff
+2.try fix it myself
+3.don't diff
+found something!
+https://github.com/google/diff-match-patch
+this works https://neil.fraser.name/software/diff_match_patch/demos/diff.html
+

@@ -1,3 +1,4 @@
+const dmp = new diff_match_patch()
 function vscodeDiff(rootElement, one, other) {
   const d = console.log.bind(console)
 
@@ -7,7 +8,8 @@ function vscodeDiff(rootElement, one, other) {
   let span = null
 
   // console.log(Diff.diffLines(one, other))
-  const diff = Diff.diffWordsWithSpace(one, other)
+  const result = dmp.diff_main(one, other)
+  // const diff = Diff.diffWordsWithSpace(one, other)
   // const diff = Diff.diffChars(one, other)
 
   //<pre id="pre1" style="position: relative;width: 49vw;display: inline-block"></pre>
@@ -26,11 +28,14 @@ function vscodeDiff(rootElement, one, other) {
   pre1.style.verticalAlign = 'top'
   // pre1.style.backgroundColor = "#1e1e1e"
   const pre2 = pre1.cloneNode()
-
+  // pre2.style.paddingLeft = '3px'
+  pre2.style.borderLeft = 'thick solid #000000'
+  pre2.style.maxWidth = '49%'
+  pre2.style.width = '49%'
   // fragment = document.createDocumentFragment()
-  d(diff)
+  // d(result)
 
-
+  // 0x424242, 961, 437
   // 0x4B1818, 814, 169
 
   // const fragment2 = document.createDocumentFragment()
@@ -149,14 +154,16 @@ function vscodeDiff(rootElement, one, other) {
     , whichHighlight = [removedHighlight, addedHighlight]
   let howManyDiagonalLines = 0, diagonalIndex = 0
 
-  for (let n = 0, diffLen = diff.length; n < diffLen; n++) {
-    const part = diff[n]
-    const text = part.value
+  for (let n = 0, diffLen = result.length; n < diffLen; n++) {
+    const type = result[n][0]
+    const text = result[n][1]
     let idx1, idx2
-    if (part.removed) {
+    //removed
+    if (type === -1) {
       idx1 = 0
       idx2 = 1
-    } else if (part.added) {
+    //added
+    } else if (type === 1) {
       idx1 = 1
       idx2 = 0
     } else {
