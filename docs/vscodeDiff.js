@@ -8,7 +8,10 @@ function vscodeDiff(rootElement, one, other) {
   let span = null
 
   // console.log(Diff.diffLines(one, other))
+  const z0 = performance.now()
   const result = dmp.diff_main(one, other)
+  const z1 = performance.now()
+  console.log(`Call to diff took ${z1 - z0} milliseconds.`)
   // const diff = Diff.diffWordsWithSpace(one, other)
   // const diff = Diff.diffChars(one, other)
 
@@ -143,6 +146,7 @@ function vscodeDiff(rootElement, one, other) {
   // background-size: 8px 8px;
 
   //red
+  const t0 = performance.now()
   const fragment1 = document.createDocumentFragment()
   const fragment2 = document.createDocumentFragment()
   let redCurrentLineDiv = baseHighlight.cloneNode()
@@ -240,7 +244,8 @@ function vscodeDiff(rootElement, one, other) {
 
   pre1.appendChild(fragment1)
   pre2.appendChild(fragment2)
-
+  const t1 = performance.now()
+  console.log(`Call to appendChild took ${t1 - t0} milliseconds.`)
   rootElement.replaceChildren(pre1, pre2)
   return
 

@@ -2340,3 +2340,7 @@ found something!
 https://github.com/google/diff-match-patch
 this works https://neil.fraser.name/software/diff_match_patch/demos/diff.html
 
+Call to parse took 117.29500000365078 milliseconds.
+Call to modifyEverythingToV2 took 132.2500000242144 milliseconds.
+Call to diff took 653.5900000017136 milliseconds.
+Call to appendChild took 308.0500001087785 milliseconds.

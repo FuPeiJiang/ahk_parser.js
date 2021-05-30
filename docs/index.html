@@ -5,7 +5,8 @@
 <body>
   <div>
     <textarea id="v1Input" placeholder="v1 here" rows="20" cols="50" style="white-space: nowrap;"></textarea>
-    <textarea id="v2Output" placeholder="AHK_H v2 will be here" rows="20" cols="50" style="white-space: nowrap;"></textarea>
+    <textarea id="v2Output" placeholder="AHK_H v2 will be here" rows="20" cols="50"
+      style="white-space: nowrap;"></textarea>
   </div>
   <button id="convertButton" style="font-size:20px;">convert!</button>
   <p>if you find a bug, please github issue (no need for context, just paste the v1 code that broke it)</p>
@@ -64,18 +65,24 @@
       v2OutputTextArea.value = newText
     }
     // const v1EverythingSetText = (newText) => {
-      // v1EverythingTextArea.value = newText
+    // v1EverythingTextArea.value = newText
     // }
     // const v2EverythingSetText = (newText) => {
-      // v2EverythingTextArea.value = newText
+    // v2EverythingTextArea.value = newText
     // }
 
     const doEverything = (v1AHK) => {
+      const t0 = performance.now()
       const everything = ahkParser(v1AHK)
+      const t1 = performance.now()
+      console.log(`Call to parse took ${t1 - t0} milliseconds.`)
       // v1EverythingSetText(arrOrObjToString(everything))
       const v1EverythingTextBak = arrOrObjToString(everything)
       //modifyEverythingToV2 returns a string
+      const z0 = performance.now()
       v2OutputSetText(modifyEverythingToV2(everything))
+      const z1 = performance.now()
+      console.log(`Call to modifyEverythingToV2 took ${z1 - z0} milliseconds.`)
       //modifyEverythingToV2 also modified everything
       //we put the modified everything here
       vscodeDiff(everythingDiff, v1EverythingTextBak, arrOrObjToString(everything))
