@@ -4,8 +4,8 @@
 
 <body>
   <div>
-    <textarea id="v1Input" placeholder="v1 here" rows="20" cols="50"></textarea>
-    <textarea id="v2Output" placeholder="AHK_H v2 will be here" rows="20" cols="50"></textarea>
+    <textarea id="v1Input" placeholder="v1 here" rows="20" cols="50" style="white-space: nowrap;"></textarea>
+    <textarea id="v2Output" placeholder="AHK_H v2 will be here" rows="20" cols="50" style="white-space: nowrap;"></textarea>
   </div>
   <button id="convertButton" style="font-size:20px;">convert!</button>
   <p>if you find a bug, please github issue (no need for context, just paste the v1 code that broke it)</p>
@@ -13,13 +13,16 @@
     <a style="display:block; margin-block-end:3em;"
       href="https://github.com/FuPeiJiang/ahk_parser.js/issues/new">https://github.com/FuPeiJiang/ahk_parser.js/issues/new</a>
   </div>
-  <div>
-    <textarea id="v1Everything" placeholder="v1 Everything will be here" rows="20" cols="50"></textarea>
-    <textarea id="v2Everything" placeholder="v2 Everything will be here" rows="20" cols="50"></textarea>
-  </div>
+  <div id="vscodeDiff"></div>
+  <!-- <div> -->
+  <!-- <textarea id="v1Everything" placeholder="v1 Everything will be here" rows="20" cols="50"></textarea> -->
+  <!-- <textarea id="v2Everything" placeholder="v2 Everything will be here" rows="20" cols="50"></textarea> -->
+  <!-- </div> -->
 
   <script src="./ahkParser.js"></script>
   <script src="./modifyEverythingToV2.js"></script>
+  <script src="diff.js"></script>
+  <script src="vscodeDiff.js"></script>
   <script>
     // https://stackoverflow.com/questions/3211505/detect-pasted-text-with-ctrlv-or-right-click-paste#3212056
     /* function getTextAreaSelection(textarea) {
@@ -51,28 +54,30 @@
 
     const v1InputTextArea = document.getElementById("v1Input")
     const v2OutputTextArea = document.getElementById("v2Output")
-    const v1EverythingTextArea = document.getElementById("v1Everything")
-    const v2EverythingTextArea = document.getElementById("v2Everything")
+    // const v1EverythingTextArea = document.getElementById("v1Everything")
+    // const v2EverythingTextArea = document.getElementById("v2Everything")
+    const everythingDiff = document.getElementById("vscodeDiff")
 
     const v2OutputSetText = (newText) => {
       // https://stackoverflow.com/questions/1642447/how-to-change-the-content-of-a-textarea-with-javascript#1642452
       v2OutputTextArea.value = newText
     }
-    const v1EverythingSetText = (newText) => {
-      v1EverythingTextArea.value = newText
-    }
-    const v2EverythingSetText = (newText) => {
-      v2EverythingTextArea.value = newText
-    }
+    // const v1EverythingSetText = (newText) => {
+      // v1EverythingTextArea.value = newText
+    // }
+    // const v2EverythingSetText = (newText) => {
+      // v2EverythingTextArea.value = newText
+    // }
 
     const doEverything = (v1AHK) => {
       const everything = ahkParser(v1AHK)
-      v1EverythingSetText(arrOrObjToString(everything))
+      // v1EverythingSetText(arrOrObjToString(everything))
+      const v1EverythingTextBak = arrOrObjToString(everything)
       //modifyEverythingToV2 returns a string
       v2OutputSetText(modifyEverythingToV2(everything))
       //modifyEverythingToV2 also modified everything
       //we put the modified everything here
-      v2EverythingSetText(arrOrObjToString(everything))
+      vscodeDiff(everythingDiff, v1EverythingTextBak, arrOrObjToString(everything))
     }
 
 
