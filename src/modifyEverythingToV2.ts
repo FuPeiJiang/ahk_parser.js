@@ -562,16 +562,20 @@ export default (everything: ExtendedEverythingType): string => {
             }
             if (next.type === 'v1String findV1Expression') {
               let typeCheckFunc
-              if (next.text.toLowerCase() === 'number') {
+              const lowerText = next.text.toLowerCase()
+              if (lowerText === 'number') {
                 // if var is number
                 // if IsNumber(var)
                 typeCheckFunc = 'IsNumber'
-              } else if (next.text.toLowerCase() === 'alnum') {
+              } else if (lowerText === 'alnum') {
                 typeCheckFunc = 'IsAlnum'
-              } else if (next.text.toLowerCase() === 'float') {
+              } else if (lowerText === 'float') {
                 typeCheckFunc = 'IsFloat'
+              } else if (lowerText === 'integer') {
+                typeCheckFunc = 'IsInteger'
               } else {
-                d('unknown type, tell me')
+                d('unknown type, tell me', next)
+                typeCheckFunc = `Is${lowerText.charAt(0).toUpperCase()}${lowerText.slice(1)}`
               }
               everything.splice(i,b - i + 1,{text:`${hasNot ? '!' : ''}${typeCheckFunc}(${everything[i].text})`,type:'v2: if is type'})
               return 3
