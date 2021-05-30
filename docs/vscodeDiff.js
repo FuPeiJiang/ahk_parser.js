@@ -7,8 +7,8 @@ function vscodeDiff(rootElement, one, other) {
   let span = null
 
   // console.log(Diff.diffLines(one, other))
-
-  const diff = Diff.diffChars(one, other)
+  const diff = Diff.diffWordsWithSpace(one, other)
+  // const diff = Diff.diffChars(one, other)
 
   //<pre id="pre1" style="position: relative;width: 49vw;display: inline-block"></pre>
   //<pre id="pre2" style="position: relative;width: 49vw;display: inline-block"></pre>
