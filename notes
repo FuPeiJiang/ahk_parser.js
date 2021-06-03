@@ -2347,4 +2347,6 @@ Call to appendChild took 308.0500001087785 milliseconds.
 
 fix recursive VarSetCapacity->BufferAlloc
 fix WinClip
-convert "!Mouse get position.ahk"
+convert "!get colour.ahk"
+
+CoordMode

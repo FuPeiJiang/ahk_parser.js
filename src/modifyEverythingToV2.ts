@@ -33,7 +33,7 @@ const anyCommand: stringIndexBool = {'DIRECTIVE OR COMMAND comma':true,'command 
 const idkVariableOrAssignment: stringIndexBool = {'idkVariable':true,'assignment':true}
 const startingBlock: stringIndexBool = {'{ legacyIf':true,'{ if':true,'{ for':true,'{ else':true,'{ loop':true,'{ namedIf':true}
 const startingBlockForClass: stringIndexBool = {'{ class':true,'{ function DEFINITION':true,'{ legacyIf':true,'{ if':true,'{ for':true,'{ else':true,'{ loop':true,'{ namedIf':true}
-const v1Str: stringIndexBool = {'v1String findV1Expression':true,'v1String findPercentVarV1Expression':true}
+const v1Str: stringIndexBool = {'v1String findV1Expression':true,'v1String findPercentVarV1Expression':true,'v1String findV1Expression beforeSingleComma':true}
 const v1Percent: stringIndexBool = {'%START %Var%':true,'END% %Var%':true}
 // const removedDirectives :stringIndexBool= {'#noenv':true,'setbatchlines':true}
 const commandDelim: stringIndexBool = {', command comma':true,'end command':true }
@@ -45,6 +45,7 @@ const v1ExprToEdit: stringIndexBool = {'goto':true,'#singleinstance':true}
 const ternaryColonEndDelim: stringIndexBool = {'end assignment':true,', function CALL':true,') function CALL':true,', assignment':true,'end comma assignment':true}
 const doNotQuoteCommand: stringIndexBool = {'splitpath':true}
 const stringUpperLower: stringIndexString = {'stringupper':'StrUpper','stringlower':'StrLower'}
+const whiteSpaceNewlineOrComma: stringIndexBool = {' ':true,'\t':true,'\n':true,',':true}
 
 
 const varNames: {[key: string]: true} = {}
@@ -444,7 +445,7 @@ export default (everything: ExtendedEverythingType): string => {
           while (next) {
             if (next.text) {
               const firstChar = next.text[0]
-              if (!(whiteSpaceObj[firstChar] || firstChar === '\n')) {
+              if (!whiteSpaceNewlineOrComma[firstChar]) {
                 putAtEnd = ' '
               }
               break outerLoop
