@@ -1,4 +1,4 @@
-import type { EverythingType } from './parser/index'
+import type {EverythingType} from './parser/index'
 //challenge accepted
 // https://stackoverflow.com/questions/41253310/typescript-retrieve-element-type-information-from-array-type#51399781
 type ArrayElement<ArrayType extends readonly unknown[]> =
@@ -19,11 +19,11 @@ type EverythingElement = ArrayElement<EverythingType> |
 }
 type ExtendedEverythingType = EverythingElement[]
 
-import type { stringIndexBool } from './parser/tokens'
+import type {stringIndexBool} from './parser/tokens'
 type stringIndexString = {
   [key: string]: string,
 }
-import { variableCharsObj, whiteSpaceObj } from './parser/tokens'
+import {variableCharsObj,whiteSpaceObj} from './parser/tokens'
 const d = console.debug.bind(console)
 
 const classToStatic: stringIndexBool = {'biga':true,'WinClip':true,'WinClipAPI':true}
@@ -36,8 +36,8 @@ const startingBlockForClass: stringIndexBool = {'{ class':true,'{ function DEFIN
 const v1Str: stringIndexBool = {'v1String findV1Expression':true,'v1String findPercentVarV1Expression':true,'v1String findV1Expression beforeSingleComma':true}
 const v1Percent: stringIndexBool = {'%START %Var%':true,'END% %Var%':true}
 // const removedDirectives :stringIndexBool= {'#noenv':true,'setbatchlines':true}
-const commandDelim: stringIndexBool = {', command comma':true,'end command':true }
-const funcCallDelim: stringIndexBool = {', function CALL':true,') function CALL':true }
+const commandDelim: stringIndexBool = {', command comma':true,'end command':true}
+const funcCallDelim: stringIndexBool = {', function CALL':true,') function CALL':true}
 const wsOrEmptyLine: stringIndexBool = {'whiteSpaces':true,'emptyLines':true}
 const startGroupOrUnit: stringIndexString = {'( group':') group','start unit':'end unit'}
 const on1off0: stringIndexString = {'on':'1','off':'0'}
@@ -57,12 +57,12 @@ export default (everything: ExtendedEverythingType): string => {
   // I'd never think I'd come to this day, but..
   // preprocessing..
 
-  for (let n = 0, len = everything.length; n < len; n++) {
+  for (let n = 0,len = everything.length; n < len; n++) {
     if (typesThatAreVars[everything[n].type]) {
       const theText = everything[n].text
       const parsedIdkVar = parseIdkVariable(theText)
       if (parsedIdkVar) {
-        for (let i = 0, len2 = parsedIdkVar.length; i < len2; i++) {
+        for (let i = 0,len2 = parsedIdkVar.length; i < len2; i++) {
           if (parsedIdkVar[i].type) {
             const dText = parsedIdkVar[i].text
             varNames[dText] = true
@@ -84,14 +84,14 @@ export default (everything: ExtendedEverythingType): string => {
   replaceReservedVar('array','dArray','_array')
   replaceReservedVar('clipboard','A_Clipboard')
   const namesArr = Object.keys(varNames)
-  for (let n = 0, len = namesArr.length; n < len; n++) {
+  for (let n = 0,len = namesArr.length; n < len; n++) {
     const thisName = namesArr[n]
     const loweredName = thisName.toLowerCase()
     if ((loweredName.startsWith('true') && loweredName !== 'true')
      || (loweredName.startsWith('false') && loweredName !== 'false')) {
 
       const eIndexArr = lowerVarNames[loweredName]
-      for (let i = 0, len2 = eIndexArr.length; i < len2; i++) {
+      for (let i = 0,len2 = eIndexArr.length; i < len2; i++) {
         if (everything[eIndexArr[i]].type === 'assignment') {
           replaceReservedVar(loweredName,`d_${thisName}`,`_${thisName}`)
           break
@@ -99,11 +99,11 @@ export default (everything: ExtendedEverythingType): string => {
       }
     }
   }
-  function replaceReservedVar(theReservedVar: string, firstChoice: string, subfixForAutoGen = '') {
+  function replaceReservedVar(theReservedVar: string,firstChoice: string,subfixForAutoGen = '') {
     const eIndexArr = lowerVarNames[theReservedVar]
     if (eIndexArr) {
       const subfixForAutoGenLowered = subfixForAutoGen.toLowerCase()
-      let caseNameReplacement, idBak
+      let caseNameReplacement,idBak
       if (lowerVarNames[firstChoice.toLowerCase()]) {
         while (lowerVarNames[`${idBak = makeid(3)}${subfixForAutoGenLowered}`]) {
           //this will break when found unique name
@@ -112,7 +112,7 @@ export default (everything: ExtendedEverythingType): string => {
       } else {
         caseNameReplacement = firstChoice
       }
-      for (let n = 0, len = eIndexArr.length; n < len; n++) {
+      for (let n = 0,len = eIndexArr.length; n < len; n++) {
         everything[eIndexArr[n]].text = caseNameReplacement
       }
     }
@@ -131,8 +131,8 @@ export default (everything: ExtendedEverythingType): string => {
     return result.join('')
   }
 
-  let i = 0, b: number
-  let next: EverythingElement, argsArr: ExtendedEverythingType[], gArgsEInsertIndex: number, arrFromArgsToInsert: ExtendedEverythingType
+  let i = 0,b: number
+  let next: EverythingElement,argsArr: ExtendedEverythingType[],gArgsEInsertIndex: number,arrFromArgsToInsert: ExtendedEverythingType
   outOfLen:
   while (i < everything.length) {
     const allReturn = all()
@@ -149,7 +149,7 @@ export default (everything: ExtendedEverythingType): string => {
   }
 
   const arrToJoin = []
-  for (let i = 0, len = everything.length; i < len; i++) {
+  for (let i = 0,len = everything.length; i < len; i++) {
     arrToJoin.push(everything[i].text)
   }
   return arrToJoin.join('') //end of modifyEverythingToV2()
@@ -178,7 +178,7 @@ export default (everything: ExtendedEverythingType): string => {
             //splice off ( to )
             const spliceStart = b = i + 1
             if (!nextSkipThrough(') function CALL','( function CALL')) { return 2 }
-            everything.splice(spliceStart, b - spliceStart + 1)
+            everything.splice(spliceStart,b - spliceStart + 1)
           } else if (thisLowered === 'haskey') {
             // .HasKey() -> .Has()
             thisE.text = 'Has'
@@ -186,7 +186,7 @@ export default (everything: ExtendedEverythingType): string => {
             // a[k].count()
             // (type(a[k])=="Array"?a[k].Length:a[k].Count)
             b = i
-            if (!skipThroughSomethingMid('start unit', 'end unit')) { return 3 }
+            if (!skipThroughSomethingMid('start unit','end unit')) { return 3 }
             const spliceStart = b
             b = i + 1
             if (!nextSkipThrough(') function CALL','( function CALL')) { return 2 }
@@ -195,7 +195,7 @@ export default (everything: ExtendedEverythingType): string => {
             argsArr = [everything.slice(spliceStart + 1,i - 1 )]
             // splice off and insert at same time
             p('(Type('); a(1); p(')=="Array"?'); a(1); p('.Length:'); a(1); p('.Count)')
-            everything.splice(spliceStart, b - spliceStart + 1, ...arrFromArgsToInsert)
+            everything.splice(spliceStart,b - spliceStart + 1,...arrFromArgsToInsert)
           }
           return 3
         }
@@ -351,7 +351,7 @@ export default (everything: ExtendedEverythingType): string => {
             if (next.type === '] ArrAccess') {
               next.type = 'edit'
               next.text = ')'
-              if (!skipThroughSomethingMid('[ ArrAccess', '] ArrAccess')) { return 2 }
+              if (!skipThroughSomethingMid('[ ArrAccess','] ArrAccess')) { return 2 }
               const back = everything[b]
               back.type = 'edit'
               back.text = '.Has('
@@ -417,7 +417,7 @@ export default (everything: ExtendedEverythingType): string => {
               if (everything[b].text.includes('\n')) {
                 spliceLen--
               }
-              everything.splice(spliceStart,spliceLen, ...(everything.slice(ifTrueStart,ifTrueEnd)))
+              everything.splice(spliceStart,spliceLen,...(everything.slice(ifTrueStart,ifTrueEnd)))
 
               return 3
             }
@@ -437,7 +437,7 @@ export default (everything: ExtendedEverythingType): string => {
     } else if (v1Str[eType]) {
       const theText = everything[i].text
       if (theText !== '') {
-        let next, putAtEnd = ''
+        let next,putAtEnd = ''
         next = everything[i + 1]
         // skip through stuff like 'end command' which .text === undefined
         outerLoop:
@@ -454,7 +454,7 @@ export default (everything: ExtendedEverythingType): string => {
           }
           break outerLoop
         }
-        thisE.text = `${whiteSpaceObj[everything[i - 1].text.slice(-1)] ? '' : ' '}"${theText.replace(/"/g, '`"')}"${putAtEnd}`
+        thisE.text = `${whiteSpaceObj[everything[i - 1].text.slice(-1)] ? '' : ' '}"${theText.replace(/"/g,'`"')}"${putAtEnd}`
       }
     } else if (eType === '= v1Assignment') {
       thisE.text = ':='
@@ -467,7 +467,7 @@ export default (everything: ExtendedEverythingType): string => {
         }
       }
     } else if (eType === 'String') {
-      thisE.text = `"${everything[i].text.slice(1,-1).replace(/""/g, '`"')}"`
+      thisE.text = `"${everything[i].text.slice(1,-1).replace(/""/g,'`"')}"`
     } else if (anyCommand[eType]) {
       //if breakOrContinue, if is number, don't surround with quotes
       let objValue
@@ -578,7 +578,7 @@ export default (everything: ExtendedEverythingType): string => {
               } else if (lowerText === 'integer') {
                 typeCheckFunc = 'IsInteger'
               } else {
-                d('unknown type, tell me', next)
+                d('unknown type, tell me',next)
                 typeCheckFunc = `Is${lowerText.charAt(0).toUpperCase()}${lowerText.slice(1)}`
               }
               everything.splice(i,b - i + 1,{text:`${hasNot ? '!' : ''}${typeCheckFunc}(${everything[i].text})`,type:'v2: if is type'})
@@ -596,14 +596,14 @@ export default (everything: ExtendedEverythingType): string => {
         if (!(bType = findNextAnyInObj(startGroupOrUnit))) { return 2 }
         if (!nextSkipThrough(startGroupOrUnit[bType],bType)) { return 2 }
         //find ') group' or 'end unit'
-        const sliced = everything.slice(bSave + 1, b)
+        const sliced = everything.slice(bSave + 1,b)
         const allVariableCharsArr = []
         //to not & 2 -> 2.Ptr because Bitwise-and (&)
         //extract all validChars (variableCharsObj), see if the joined is a number?
-        for (let n = 0, len = sliced.length; n < len; n++) {
+        for (let n = 0,len = sliced.length; n < len; n++) {
           const dText = sliced[n].text
           if (dText) {
-            for (let c = 0, len = dText.length; c < len; c++) {
+            for (let c = 0,len = dText.length; c < len; c++) {
               if (variableCharsObj[dText[c]]) {
                 thisE.text = ''
                 allVariableCharsArr.push(dText[c])
@@ -657,7 +657,7 @@ export default (everything: ExtendedEverythingType): string => {
     } else if (eType === 'className') {
       if (classToStatic[everything[i].text]) {
         b = i + 1
-        let next, arrAccessDepth = 0
+        let next,arrAccessDepth = 0
         next = everything[++b]
         while (next) {
           const bType = next.type
@@ -753,7 +753,7 @@ export default (everything: ExtendedEverythingType): string => {
   }
   function printFromEverythingText(okArr) {
     const arrToJoin = []
-    for (let i = 0, len = okArr.length; i < len; i++) {
+    for (let i = 0,len = okArr.length; i < len; i++) {
       arrToJoin.push(okArr[i].text)
     }
     d(arrToJoin.join(''))
@@ -802,7 +802,7 @@ export default (everything: ExtendedEverythingType): string => {
   }
   function parseIdkVariable(text: string) {
     let startIndex = text.indexOf('%')
-    let pVar, notVar, endIndex
+    let pVar,notVar,endIndex
     const arrOfObj = []
     if (startIndex !== -1) {
       notVar = text.slice(0,startIndex)
@@ -886,7 +886,7 @@ export default (everything: ExtendedEverythingType): string => {
     }
   }
   function s() {
-    everything.splice(gArgsEInsertIndex, 0, ...arrFromArgsToInsert)
+    everything.splice(gArgsEInsertIndex,0,...arrFromArgsToInsert)
     i += arrFromArgsToInsert.length
   }
   /* trimEmptyLinesWsFromArr([
@@ -950,15 +950,15 @@ export default (everything: ExtendedEverythingType): string => {
 
         if (bType === 'end command') {
           const spliceLen = i + 1 - functionStartIndex
-          localArgsArr.push(everything.slice(paramStartIndex, i))
-          everything.splice(functionStartIndex, spliceLen)
+          localArgsArr.push(everything.slice(paramStartIndex,i))
+          everything.splice(functionStartIndex,spliceLen)
           i -= spliceLen
           argsArr = localArgsArr
           gArgsEInsertIndex = functionStartIndex
           arrFromArgsToInsert = []
           return false
         } else if (commaCommandObj[bType]) {
-          localArgsArr.push(everything.slice(paramStartIndex, i))
+          localArgsArr.push(everything.slice(paramStartIndex,i))
           paramStartIndex = i + 1
         }
         i++
@@ -992,15 +992,15 @@ export default (everything: ExtendedEverythingType): string => {
 
         if (bType === ') function CALL') {
           const spliceLen = i + 1 - functionStartIndex
-          localArgsArr.push(everything.slice(paramStartIndex, i))
-          everything.splice(functionStartIndex, spliceLen)
+          localArgsArr.push(everything.slice(paramStartIndex,i))
+          everything.splice(functionStartIndex,spliceLen)
           i -= spliceLen
           argsArr = localArgsArr
           gArgsEInsertIndex = functionStartIndex
           arrFromArgsToInsert = []
           return false
         } else if (bType === ', function CALL') {
-          localArgsArr.push(everything.slice(paramStartIndex, i))
+          localArgsArr.push(everything.slice(paramStartIndex,i))
           paramStartIndex = i + 1
         }
         i++
@@ -1100,8 +1100,8 @@ export default (everything: ExtendedEverythingType): string => {
     }
     return false
   }
-  function nextSkipThrough(lookForThisToEnd: string, ohNoAddAnotherOne: string) {
-    let next, arrAccessDepth = 1
+  function nextSkipThrough(lookForThisToEnd: string,ohNoAddAnotherOne: string) {
+    let next,arrAccessDepth = 1
     next = everything[++b]
     while (next) {
       const bType = next.type
@@ -1120,8 +1120,8 @@ export default (everything: ExtendedEverythingType): string => {
     return false
   }
 
-  function skipThroughSomethingMid(lookForThisToEnd: string, ohNoAddAnotherOne: string) {
-    let back, arrAccessDepth = 1
+  function skipThroughSomethingMid(lookForThisToEnd: string,ohNoAddAnotherOne: string) {
+    let back,arrAccessDepth = 1
     while (b--) {
       back = everything[b]
       const bType = back.type

@@ -1,232 +1,237 @@
 module.exports = {
-  'root': true,
-  'parser': '@typescript-eslint/parser',
-  'parserOptions': {
-    'ecmaVersion': 6,
-    'sourceType': 'module',
+  'root':true,
+  'parser':'@typescript-eslint/parser',
+  'parserOptions':{
+    'ecmaVersion':6,
+    'sourceType':'module',
   },
-  'plugins': [
+  'plugins':[
     '@typescript-eslint',
   ],
-  extends: [
+  extends:[
     'eslint:recommended',
     'plugin:@typescript-eslint/recommended',
   ],
-  'env': {
-    'node': true,
+  'env':{
+    'node':true,
   },
-  'rules': {
-    '@typescript-eslint/naming-convention': 'warn',
-    '@typescript-eslint/semi': ['error', 'never'],
-    'semi': 'off',
-    'curly': 'warn',
-    'eqeqeq': 'warn',
-    'no-throw-literal': 'warn',
+  'rules':{
+    'comma-spacing':'off',
+    '@typescript-eslint/comma-spacing':['error',{'after':false}],
+    'key-spacing':['error',{'afterColon':false}],
+    'object-curly-spacing':'off',
+    '@typescript-eslint/object-curly-spacing':['error','never'],
+    '@typescript-eslint/naming-convention':'warn',
+    '@typescript-eslint/semi':['error','never'],
+    'semi':'off',
+    'curly':'warn',
+    'eqeqeq':'warn',
+    'no-throw-literal':'warn',
 
-    'no-var': 'off',
-    'keyword-spacing': 'off',
-    '@typescript-eslint/keyword-spacing': ['error'],
-    'comma-dangle': 'off',
-    '@typescript-eslint/comma-dangle': ['error', 'always-multiline'],
-    'space-before-function-paren': 'off',
-    '@typescript-eslint/space-before-function-paren': ['error', 'never'],
-    '@typescript-eslint/type-annotation-spacing': 'error',
-    'template-curly-spacing': [
+    'no-var':'off',
+    'keyword-spacing':'off',
+    '@typescript-eslint/keyword-spacing':['error'],
+    'comma-dangle':'off',
+    '@typescript-eslint/comma-dangle':['error','always-multiline'],
+    'space-before-function-paren':'off',
+    '@typescript-eslint/space-before-function-paren':['error','never'],
+    '@typescript-eslint/type-annotation-spacing':'error',
+    'template-curly-spacing':[
       'error',
     ],
-    'no-multi-spaces': [
+    'no-multi-spaces':[
       'error',
     ],
-    'prefer-template': [
+    'prefer-template':[
       'error',
     ],
-    'no-trailing-spaces': [
+    'no-trailing-spaces':[
       'error',
     ],
-    'space-infix-ops': [
+    'space-infix-ops':[
       'error',
     ],
-    'indent': [
+    'indent':[
       'error',
       2,
     ],
-    'linebreak-style': [
+    'linebreak-style':[
       'error',
       'unix',
     ],
-    'quotes': [
+    'quotes':[
       'error',
       'single',
     ],
-    'constructor-super': [
+    'constructor-super':[
       'error',
     ],
-    'for-direction': [
+    'for-direction':[
       'error',
     ],
-    'getter-return': [
+    'getter-return':[
       'error',
     ],
-    'no-async-promise-executor': [
+    'no-async-promise-executor':[
       'error',
     ],
-    'no-case-declarations': [
+    'no-case-declarations':[
       'error',
     ],
-    'no-class-assign': [
+    'no-class-assign':[
       'error',
     ],
-    'no-compare-neg-zero': [
+    'no-compare-neg-zero':[
       'error',
     ],
-    'no-cond-assign': [
+    'no-cond-assign':[
       'error',
     ],
-    'no-const-assign': [
+    'no-const-assign':[
       'error',
     ],
-    'no-constant-condition': [
+    'no-constant-condition':[
       'error',
     ],
-    'no-control-regex': [
+    'no-control-regex':[
       'off',
     ],
-    'no-debugger': [
+    'no-debugger':[
       'error',
     ],
-    'no-delete-var': [
+    'no-delete-var':[
       'error',
     ],
-    'no-dupe-args': [
+    'no-dupe-args':[
       'error',
     ],
-    'no-dupe-class-members': [
+    'no-dupe-class-members':[
       'error',
     ],
-    'no-dupe-else-if': [
+    'no-dupe-else-if':[
       'error',
     ],
-    'no-dupe-keys': [
+    'no-dupe-keys':[
       'error',
     ],
-    'no-duplicate-case': [
+    'no-duplicate-case':[
       'error',
     ],
-    'no-empty': [
+    'no-empty':[
       'error',
     ],
-    'no-empty-character-class': [
+    'no-empty-character-class':[
       'error',
     ],
-    'no-empty-pattern': [
+    'no-empty-pattern':[
       'error',
     ],
-    'no-ex-assign': [
+    'no-ex-assign':[
       'error',
     ],
-    'no-extra-boolean-cast': [
+    'no-extra-boolean-cast':[
       'error',
     ],
-    'no-extra-semi': [
+    'no-extra-semi':[
       'error',
     ],
-    'no-fallthrough': [
+    'no-fallthrough':[
       'error',
     ],
-    'no-func-assign': [
+    'no-func-assign':[
       'error',
     ],
-    'no-global-assign': [
+    'no-global-assign':[
       'error',
     ],
-    'no-import-assign': [
+    'no-import-assign':[
       'error',
     ],
-    'no-inner-declarations': [
+    'no-inner-declarations':[
       'error',
     ],
-    'no-invalid-regexp': [
+    'no-invalid-regexp':[
       'error',
     ],
-    'no-irregular-whitespace': [
+    'no-irregular-whitespace':[
       'error',
     ],
-    'no-misleading-character-class': [
+    'no-misleading-character-class':[
       'error',
     ],
-    'no-mixed-spaces-and-tabs': [
+    'no-mixed-spaces-and-tabs':[
       'error',
     ],
-    'no-new-symbol': [
+    'no-new-symbol':[
       'error',
     ],
-    'no-obj-calls': [
+    'no-obj-calls':[
       'error',
     ],
-    'no-octal': [
+    'no-octal':[
       'error',
     ],
-    'no-prototype-builtins': [
+    'no-prototype-builtins':[
       'error',
     ],
-    'no-redeclare': [
+    'no-redeclare':[
       'off',
     ],
-    'no-regex-spaces': [
+    'no-regex-spaces':[
       'error',
     ],
-    'no-self-assign': [
+    'no-self-assign':[
       'error',
     ],
-    'no-setter-return': [
+    'no-setter-return':[
       'error',
     ],
-    'no-shadow-restricted-names': [
+    'no-shadow-restricted-names':[
       'error',
     ],
-    'no-sparse-arrays': [
+    'no-sparse-arrays':[
       'error',
     ],
-    'no-this-before-super': [
+    'no-this-before-super':[
       'error',
     ],
-    'no-undef': [
+    'no-undef':[
       'error',
     ],
-    'no-unexpected-multiline': [
+    'no-unexpected-multiline':[
       'error',
     ],
-    'no-unreachable': [
+    'no-unreachable':[
       'error',
     ],
-    'no-unsafe-finally': [
+    'no-unsafe-finally':[
       'error',
     ],
-    'no-unsafe-negation': [
+    'no-unsafe-negation':[
       'error',
     ],
-    'no-unused-labels': [
+    'no-unused-labels':[
       'error',
     ],
-    'no-unused-vars': [
+    'no-unused-vars':[
       'error',
     ],
-    'no-useless-catch': [
+    'no-useless-catch':[
       'error',
     ],
-    'no-useless-escape': [
+    'no-useless-escape':[
       'error',
     ],
-    'no-with': [
+    'no-with':[
       'error',
     ],
-    'require-yield': [
+    'require-yield':[
       'error',
     ],
-    'use-isnan': [
+    'use-isnan':[
       'error',
     ],
-    'valid-typeof': [
+    'valid-typeof':[
       'error',
     ],
 
