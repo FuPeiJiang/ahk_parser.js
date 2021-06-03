@@ -133,7 +133,6 @@ export default (everything: ExtendedEverythingType): string => {
 
   let i = 0, b: number
   let next: EverythingElement, argsArr: ExtendedEverythingType[], gArgsEInsertIndex: number, arrFromArgsToInsert: ExtendedEverythingType
-    ,commandParamsArr: ExtendedEverythingType[], cParamsEInsertIndex: number, arrFromCParamsToInsert: ExtendedEverythingType
   outOfLen:
   while (i < everything.length) {
     const allReturn = all()
@@ -864,31 +863,6 @@ export default (everything: ExtendedEverythingType): string => {
         return true
       }
     }
-  }
-
-  function a(index: number) {
-    const paramArr = commandParamsArr[index - 1]
-    let paramsLen
-    if (paramArr && (paramsLen = paramArr.length)) {
-      for (let n = 0; n < paramsLen; n++) {
-        if (!wsOrEmptyLine[paramArr[n].type]) {
-          arrFromCParamsToInsert.push(paramArr[n])
-        }
-      }
-    }
-  }
-  // arrFromCParamsToInsert.push(...paramArr)
-  function p(str: string) {
-    arrFromCParamsToInsert.push({text:str})
-  }
-  function o(str: string,index: number) {
-    if (commandParamsArr[index - 1]) {
-      arrFromCParamsToInsert.push({text:str})
-    }
-  }
-  function s() {
-    everything.splice(cParamsEInsertIndex, 0, ...arrFromCParamsToInsert)
-    i += arrFromCParamsToInsert.length
   }
 
   function a(index: number) {
