@@ -1,6 +1,6 @@
-import { trace } from 'console'
-import { whiteSpaceObj, variableCharsObj, operatorsObj, legacyIfOperators, v1Continuator, typeOfValidVarName, whiteSpaceOverrideAssign, propCharsObj, namedIf, assignmentOperators, elseLoopReturn, v2Continuator, thisCouldBeFuncName } from './tokens'
-import type { stringIndexBool } from './tokens'
+import {trace} from 'console'
+import {whiteSpaceObj,variableCharsObj,operatorsObj,legacyIfOperators,v1Continuator,typeOfValidVarName,whiteSpaceOverrideAssign,propCharsObj,namedIf,assignmentOperators,elseLoopReturn,v2Continuator,thisCouldBeFuncName} from './tokens'
+import type {stringIndexBool} from './tokens'
 const d = console.debug.bind(console)
 
 /* type EverythingType = {
@@ -103,16 +103,16 @@ export default (content: string): EverythingType => {
   const howManyLines = lines.length
   const everything: EverythingType = []
   const toFile = ''
-  const rangeAndReplaceTextArr: [[[number, number], [number, number]], string][] = []
+  const rangeAndReplaceTextArr: [[[number,number],[number,number]],string][] = []
 
   const wsOrEmptyLine: stringIndexBool = {'whiteSpaces':true,'emptyLines':true}
 
   let okk: number
   okk = 0
 
-  let i = 0, c = 0, numberOfChars = 0, b = 0, validName = '', strStartLine: number, strStartPos: number, insideContinuation = false, beforeConcat: number, nonWhiteSpaceStart: number, exprFoundLine = -1, colonDeep = 0, usingStartOfLineLoop = false, variadicAsterisk = false, lineWhereCanConcat = -1, v1ExpressionC1: number, cNotWhiteSpace: number, percentVarStart: number, propertyC1 = -1, lookingForAnd = false, doubleComma = false, singleComma = false, insideV1Continuation = false
+  let i = 0,c = 0,numberOfChars = 0,b = 0,validName = '',strStartLine: number,strStartPos: number,insideContinuation = false,beforeConcat: number,nonWhiteSpaceStart: number,exprFoundLine = -1,colonDeep = 0,usingStartOfLineLoop = false,variadicAsterisk = false,lineWhereCanConcat = -1,v1ExpressionC1: number,cNotWhiteSpace: number,percentVarStart: number,propertyC1 = -1,lookingForAnd = false,doubleComma = false,singleComma = false,insideV1Continuation = false
   let everythingPushCounter: number; everythingPushCounter = 0
-  let spliceStartIndex: number, validNameStart: number, validNameLine: number, validNameEnd: number, findingVarName = false, varNameCanLtrimSpaces: false, idkVarC1 = 0, legalObjLine = -1, lastTrailingWasFunc: boolean|number = false, spliceIndexEverythingAtHotkeyLine: number|boolean = false, operatorAtHotkeyLine = -1, v1StartLine = -1, funcParenStartIndex = -1
+  let spliceStartIndex: number,validNameStart: number,validNameLine: number,validNameEnd: number,findingVarName = false,varNameCanLtrimSpaces: false,idkVarC1 = 0,legalObjLine = -1,lastTrailingWasFunc: boolean|number = false,spliceIndexEverythingAtHotkeyLine: number|boolean = false,operatorAtHotkeyLine = -1,v1StartLine = -1,funcParenStartIndex = -1
   lineLoop:
   while (i < howManyLines) {
     c = 0
@@ -129,7 +129,7 @@ export default (content: string): EverythingType => {
       }
       //nothing left, continue
       if (c === numberOfChars) {
-        everything.push({ type: 'newLine startOfLineLoop', text: '\n', i1: i, c1: c })
+        everything.push({type:'newLine startOfLineLoop',text:'\n',i1:i,c1:c})
         i++
         continue lineLoop
       }
@@ -138,9 +138,9 @@ export default (content: string): EverythingType => {
       if (lines[i][c] === ';') {
         // d('SemiColonComment', `${c}-END`, l())
         // everything.push({type: 'SemiColonComment', line: i, colStart: c})
-        const text = lines[i].slice(c, numberOfChars)
-        everything.push({ type: 'SemiColonComment', text: text, i1: i, c1: c, c2: numberOfChars })
-        everything.push({ type: 'newLine SemiColonComment', text: '\n', i1: i, c1: c })
+        const text = lines[i].slice(c,numberOfChars)
+        everything.push({type:'SemiColonComment',text:text,i1:i,c1:c,c2:numberOfChars})
+        everything.push({type:'newLine SemiColonComment',text:'\n',i1:i,c1:c})
         i++
         continue lineLoop
       }
@@ -150,7 +150,7 @@ export default (content: string): EverythingType => {
       //#function DEFINITION END
       if (lines[i][c] === '}') {
         // d(`} Function DEFINITION ${char()}`)
-        everything.push({ type: '} unknown', text: '}', i1: i, c1: c })
+        everything.push({type:'} unknown',text:'}',i1:i,c1:c})
         c++
         if (!skipThroughEmptyLines()) { break lineLoop }
         usingStartOfLineLoop = true
@@ -166,8 +166,8 @@ export default (content: string): EverythingType => {
         c++
         skipValidChar()
 
-        validName = lines[i].slice(nonWhiteSpaceStart, c)
-        validNameEnd = c, validNameLine = i
+        validName = lines[i].slice(nonWhiteSpaceStart,c)
+        validNameEnd = c,validNameLine = i
         const isEol = c === numberOfChars ? true : false
 
         const idkType = typeOfValidVarName[validName.toLowerCase()]
@@ -177,7 +177,7 @@ export default (content: string): EverythingType => {
           const lenghtBeforeSkipLine = everything.length
           if (skipThroughEmptyLines()) {
             if (lines[i][c] === ',') {
-              everything.push({ type: '(statement) ,', text: ',', i1: i, c1: c })
+              everything.push({type:'(statement) ,',text:',',i1:i,c1:c})
               c++
 
               // directive or command
@@ -192,7 +192,7 @@ export default (content: string): EverythingType => {
                   continue lineLoop
                 }
 
-                everything.splice(spliceStartIndex, 0, { type: 'DIRECTIVE OR COMMAND comma', text: validName, i1: validNameLine, c1: validNameStart, c2: validNameEnd })
+                everything.splice(spliceStartIndex,0,{type:'DIRECTIVE OR COMMAND comma',text:validName,i1:validNameLine,c1:validNameStart,c2:validNameEnd})
                 singleComma = true
                 findV1Expression()
                 singleComma = false
@@ -200,7 +200,7 @@ export default (content: string): EverythingType => {
                 recurseFindCommaV1Expression(', command comma')
 
                 const eLen = everything.length - 1
-                everything.splice(everything.length - (everything[eLen].type === 'emptyLines' ? 1 : 0), 0, {type:'end command'})
+                everything.splice(everything.length - (everything[eLen].type === 'emptyLines' ? 1 : 0),0,{type:'end command'})
 
                 usingStartOfLineLoop = true
                 continue startOfLineLoop
@@ -212,18 +212,18 @@ export default (content: string): EverythingType => {
               // only directives and "if" override assignment and ONLY when there's a whiteSpace
               if (idkType === 1) {
                 // d(validName, 'whiteSpace DIRECTIVE', char())
-                everything.splice(spliceStartIndex, 0, { type: 'directive', text: validName, i1: validNameLine, c1: validNameStart, c2: validNameEnd })
-                const text = lines[i].slice(c, numberOfChars)
-                everything.push({ type: 'directive to EOL', text: text, i1: i, c1: nonWhiteSpaceStart, c2: numberOfChars })
-                everything.push({ type: 'newLine directive', text: '\n', i1: i, c1: c })
+                everything.splice(spliceStartIndex,0,{type:'directive',text:validName,i1:validNameLine,c1:validNameStart,c2:validNameEnd})
+                const text = lines[i].slice(c,numberOfChars)
+                everything.push({type:'directive to EOL',text:text,i1:i,c1:nonWhiteSpaceStart,c2:numberOfChars})
+                everything.push({type:'newLine directive',text:'\n',i1:i,c1:c})
                 i++
                 continue lineLoop
               } else if (idkType === 2) {
-                everything.splice(spliceStartIndex, 0, { type: 'if', text: validName, i1: validNameLine, c1: validNameStart, c2: validNameEnd })
+                everything.splice(spliceStartIndex,0,{type:'if',text:validName,i1:validNameLine,c1:validNameStart,c2:validNameEnd})
                 spliceStartIndex = everything.length
                 breakToGoFindV2:
                 while (variableCharsObj[lines[i][c]]) {
-                  const saveC = c, saveI = i, saveNumChars = numberOfChars
+                  const saveC = c,saveI = i,saveNumChars = numberOfChars
                   while (findPercentVar() || variableCharsObj[lines[i][c]]) {
                     c++
                   }
@@ -233,50 +233,50 @@ export default (content: string): EverythingType => {
                   }
                   const whiteSpacesTextc = c
 
-                  let validNamestart = c, spliceStartIndex = everything.length
+                  let validNamestart = c,spliceStartIndex = everything.length
                   skipValidChar()
-                  validNameEnd = c, validNameLine = i
-                  let validName = lines[validNameLine].slice(validNamestart, validNameEnd)
+                  validNameEnd = c,validNameLine = i
+                  let validName = lines[validNameLine].slice(validNamestart,validNameEnd)
                   findV1ExpressiondummyLoop:
                   while (true) {
                     if (!validName) {
-                      c = saveC, i = saveI , numberOfChars = saveNumChars
+                      c = saveC,i = saveI,numberOfChars = saveNumChars
                       break breakToGoFindV2
                     }
                     let checkThese = false
-                    let text, cPlusLen
+                    let text,cPlusLen
                     if (validName.toLowerCase() === 'not' && (c === numberOfChars || whiteSpaceObj[lines[i][c]])) {
-                      everything.push({ type: 'legacyIf not', text: validName, i1: i, c1: validNamestart, c2: c })
+                      everything.push({type:'legacyIf not',text:validName,i1:i,c1:validNamestart,c2:c})
                       skipThroughWhiteSpaces()
-                      validNamestart = c, spliceStartIndex = everything.length
+                      validNamestart = c,spliceStartIndex = everything.length
                       skipValidChar()
-                      validNameEnd = c, validNameLine = i
-                      validName = lines[validNameLine].slice(validNamestart, validNameEnd)
+                      validNameEnd = c,validNameLine = i
+                      validName = lines[validNameLine].slice(validNamestart,validNameEnd)
                     } else {
                       checkThese = true
                     }
 
                     if (validName.toLowerCase() === 'in' && (c === numberOfChars || whiteSpaceObj[lines[i][c]])) {
-                      everything.push({ type: 'legacyIf in', text: validName, i1: i, c1: validNamestart, c2: c })
+                      everything.push({type:'legacyIf in',text:validName,i1:i,c1:validNamestart,c2:c})
                       doubleComma = true
                     } else if (validName.toLowerCase() === 'contains' && (c === numberOfChars || whiteSpaceObj[lines[i][c]])) {
-                      everything.push({ type: 'legacyIf contains', text: validName, i1: i, c1: validNamestart, c2: c })
+                      everything.push({type:'legacyIf contains',text:validName,i1:i,c1:validNamestart,c2:c})
                       doubleComma = true
                     } else if (validName.toLowerCase() === 'between' && (c === numberOfChars || whiteSpaceObj[lines[i][c]])) {
-                      everything.push({ type: 'legacyIf between', text: validName, i1: i, c1: validNamestart, c2: c })
+                      everything.push({type:'legacyIf between',text:validName,i1:i,c1:validNamestart,c2:c})
                       lookingForAnd = true
                       break findV1ExpressiondummyLoop
                     }
 
                     if (checkThese) {
                       if (validName.toLowerCase() === 'is' && (c === numberOfChars || whiteSpaceObj[lines[i][c]])) {
-                        everything.push({ type: 'legacyIf is', text: validName, i1: i, c1: validNamestart, c2: c })
+                        everything.push({type:'legacyIf is',text:validName,i1:i,c1:validNamestart,c2:c})
                         skipThroughWhiteSpaces()
 
 
-                        validName = lines[i].slice(c, cPlusLen = c + 3)
+                        validName = lines[i].slice(c,cPlusLen = c + 3)
                         if (validName.toLowerCase() === 'not' && !variableCharsObj[lines[i][cPlusLen]]) {
-                          everything.push({ type: 'legacyIf (is) not', text: validName, i1: i, c1: c, c2: c + 3 })
+                          everything.push({type:'legacyIf (is) not',text:validName,i1:i,c1:c,c2:c + 3})
                           c += 3
                           skipThroughWhiteSpaces()
                         }
@@ -284,10 +284,10 @@ export default (content: string): EverythingType => {
                       }
                     }
 
-                    const cBeforeSkipLines = c, iBeforeSkipLines = i
+                    const cBeforeSkipLines = c,iBeforeSkipLines = i
                     if (!skipThroughEmptyLines()) {
-                      c = saveC, i = saveI , numberOfChars = saveNumChars
-                      everything.splice(everything.length - 1, 1)
+                      c = saveC,i = saveI,numberOfChars = saveNumChars
+                      everything.splice(everything.length - 1,1)
                       break breakToGoFindV2
                     }
                     let removeTheEmptyLines = true
@@ -295,33 +295,33 @@ export default (content: string): EverythingType => {
                       removeTheEmptyLines = false
                     }
 
-                    if (c < numberOfChars - 1 && legacyIfOperators[lines[i].slice(c, c + 2)]) {
-                      everything.push({ type: '2legacyIfOperators', text: lines[i].slice(c, c + 2), i1: i, c1: c, c2: c + 2 })
+                    if (c < numberOfChars - 1 && legacyIfOperators[lines[i].slice(c,c + 2)]) {
+                      everything.push({type:'2legacyIfOperators',text:lines[i].slice(c,c + 2),i1:i,c1:c,c2:c + 2})
                       c += 2
                       break findV1ExpressiondummyLoop
                     } else if (c < numberOfChars && legacyIfOperators[lines[i][c]]) {
-                      everything.push({ type: '1legacyIfOperators', text: lines[i][c], i1: i, c1: c })
+                      everything.push({type:'1legacyIfOperators',text:lines[i][c],i1:i,c1:c})
                       c++
                       break findV1ExpressiondummyLoop
                     }
-                    c = saveC, i = saveI , numberOfChars = saveNumChars
+                    c = saveC,i = saveI,numberOfChars = saveNumChars
                     if (removeTheEmptyLines) {
-                      everything.splice(everything.length - 1, 1)
+                      everything.splice(everything.length - 1,1)
                     }
                     break breakToGoFindV2
                   }
 
 
-                  const whiteSpacesText = lines[saveI].slice(cendOfLegacyIfVar, whiteSpacesTextc)
+                  const whiteSpacesText = lines[saveI].slice(cendOfLegacyIfVar,whiteSpacesTextc)
                   if (whiteSpacesText) {
-                    everything.splice(spliceStartIndex, 0, { type: 'whiteSpaces', text: whiteSpacesText, i1: i, c1: cendOfLegacyIfVar, c2: c })
+                    everything.splice(spliceStartIndex,0,{type:'whiteSpaces',text:whiteSpacesText,i1:i,c1:cendOfLegacyIfVar,c2:c})
                   }
-                  everything.splice(spliceStartIndex, 0, { type: 'legacyIf var', text: lines[saveI].slice(saveC, cendOfLegacyIfVar), i1: saveI, c1: saveC, c2: cendOfLegacyIfVar })
+                  everything.splice(spliceStartIndex,0,{type:'legacyIf var',text:lines[saveI].slice(saveC,cendOfLegacyIfVar),i1:saveI,c1:saveC,c2:cendOfLegacyIfVar})
                   findV1Expression()
                   doubleComma = false
 
                   if (lines[i][c] === '{') {
-                    everything.push({ type: '{ legacyIf', text: '{', i1: i, c1: c })
+                    everything.push({type:'{ legacyIf',text:'{',i1:i,c1:c})
                     c++
                     if (!skipThroughEmptyLines()) { break lineLoop }
                   }
@@ -340,14 +340,14 @@ export default (content: string): EverythingType => {
                 // if (everything[endIfIndex].type === 'emptyLines') {
                 // endIfIndex--
                 // }
-                everything.splice(everything.length - 1, 0, { type: 'end if' })
+                everything.splice(everything.length - 1,0,{type:'end if'})
                 // d(') group', char())
                 // everything.push({ type: ') if', text: ')', i1: i, c1: c })
                 // c++
                 if (i === howManyLines) { break lineLoop }
                 // I don't need to skip empty lines because the above does it for me
                 if (lines[i][c] === '{') {
-                  everything.push({ type: '{ if', text: '{', i1: i, c1: c })
+                  everything.push({type:'{ if',text:'{',i1:i,c1:c})
                   // d(lines[i][c])
 
                   c++
@@ -358,8 +358,8 @@ export default (content: string): EverythingType => {
                 continue startOfLineLoop
               //#whiteSpace v1 expression
               } else if (c < numberOfChars && lines[i][c] === '=') {
-                everything.splice(spliceStartIndex, 0, { type: 'var at whiteSpace v1Assignment', text: validName, i1: i, c1: nonWhiteSpaceStart, c2: c })
-                everything.push({ type: '= whiteSpace v1Assignment', text: '=', i1: i, c1: c })
+                everything.splice(spliceStartIndex,0,{type:'var at whiteSpace v1Assignment',text:validName,i1:i,c1:nonWhiteSpaceStart,c2:c})
+                everything.push({type:'= whiteSpace v1Assignment',text:'=',i1:i,c1:c})
                 c++
                 findV1Expression()
                 usingStartOfLineLoop = true
@@ -373,7 +373,7 @@ export default (content: string): EverythingType => {
               }
               if (idkType === 3) {
                 // d(validName, 'global local or static', char())
-                everything.splice(spliceStartIndex, 0, { type: 'global local or static{ws}', text: validName, i1: validNameLine, c1: validNameStart, c2: validNameEnd })
+                everything.splice(spliceStartIndex,0,{type:'global local or static{ws}',text:validName,i1:validNameLine,c1:validNameStart,c2:validNameEnd})
 
                 findVariableName()
                 recurseBetweenExpression()
@@ -392,17 +392,17 @@ export default (content: string): EverythingType => {
                 }
 
                 if (validName.toLowerCase() === 'for') {
-                  everything.splice(spliceStartIndex, 0, { type: 'for', text: validName, i1: validNameLine, c1: nonWhiteSpaceStart, c2: validNameEnd })
+                  everything.splice(spliceStartIndex,0,{type:'for',text:validName,i1:validNameLine,c1:nonWhiteSpaceStart,c2:validNameEnd})
                   findVariableName()
                   if (lines[i][c] === ',') {
-                    everything.push({ type: ', for', text: ',', i1: i, c1: c })
+                    everything.push({type:', for',text:',',i1:i,c1:c})
                     c++
                     findVariableName()
                   }
                   // lookForIn
-                  let text, cPlusLen, wsText
-                  if ((text = lines[i].slice(c, cPlusLen = c + 2)).toLowerCase() === 'in' && (cPlusLen === numberOfChars || whiteSpaceObj[wsText = lines[i][cPlusLen]])) {
-                    everything.push({ type: 'in{ws} lookForIn', text: `${text}${wsText || ''}`, i1: i, c1: c, c2: cPlusLen })
+                  let text,cPlusLen,wsText
+                  if ((text = lines[i].slice(c,cPlusLen = c + 2)).toLowerCase() === 'in' && (cPlusLen === numberOfChars || whiteSpaceObj[wsText = lines[i][cPlusLen]])) {
+                    everything.push({type:'in{ws} lookForIn',text:`${text}${wsText || ''}`,i1:i,c1:c,c2:cPlusLen})
                   } else {
                     d('ILLEGAL, (for) is missing `in`')
                   }
@@ -412,10 +412,10 @@ export default (content: string): EverythingType => {
                   if (i === howManyLines) { break lineLoop }
 
                   const eLen = everything.length - 1
-                  everything.splice(everything.length - (everything[eLen].type === 'emptyLines' ? 1 : 0), 0, {type:'end command'})
+                  everything.splice(everything.length - (everything[eLen].type === 'emptyLines' ? 1 : 0),0,{type:'end command'})
 
                   if (lines[i][c] === '{') {
-                    everything.push({ type: '{ for', text: '{', i1: i, c1: c })
+                    everything.push({type:'{ for',text:'{',i1:i,c1:c})
                     c++
                     if (!skipThroughEmptyLines()) { break lineLoop }
                   }
@@ -424,9 +424,9 @@ export default (content: string): EverythingType => {
                 }
 
                 if (validName.toLowerCase() === 'else') {
-                  everything.splice(spliceStartIndex, 0, { type: 'else whiteSpace', text: validName, i1: validNameLine, c1: nonWhiteSpaceStart, c2: validNameEnd })
+                  everything.splice(spliceStartIndex,0,{type:'else whiteSpace',text:validName,i1:validNameLine,c1:nonWhiteSpaceStart,c2:validNameEnd})
                   if (lines[i][c] === '{') {
-                    everything.push({ type: '{ else', text: '{', i1: i, c1: c })
+                    everything.push({type:'{ else',text:'{',i1:i,c1:c})
                     c++
                     if (!skipThroughEmptyLines()) { break lineLoop }
                   }
@@ -434,7 +434,7 @@ export default (content: string): EverythingType => {
                   continue startOfLineLoop
                 }
 
-                everything.splice(spliceStartIndex, 0, { type: 'command', text: validName, i1: validNameLine, c1: nonWhiteSpaceStart, c2: validNameEnd })
+                everything.splice(spliceStartIndex,0,{type:'command',text:validName,i1:validNameLine,c1:nonWhiteSpaceStart,c2:validNameEnd})
                 singleComma = true
                 findV1Expression()
                 singleComma = false
@@ -444,30 +444,30 @@ export default (content: string): EverythingType => {
                 continue startOfLineLoop
                 //class
               } else if (idkType === 5) {
-                everything.splice(spliceStartIndex, 0, { type: 'class', text: validName, i1: validNameLine, c1: nonWhiteSpaceStart, c2: validNameEnd })
+                everything.splice(spliceStartIndex,0,{type:'class',text:validName,i1:validNameLine,c1:nonWhiteSpaceStart,c2:validNameEnd})
                 const classNameStart = c
                 skipValidChar()
-                everything.push({ type: 'className', text: lines[i].slice(classNameStart,c), i1: i, c1: classNameStart, c2: c })
+                everything.push({type:'className',text:lines[i].slice(classNameStart,c),i1:i,c1:classNameStart,c2:c})
                 if (!skipThroughEmptyLines()) { break lineLoop }
                 let extendsText
-                if ((extendsText = lines[i].slice(c, c + 7)).toLowerCase() === 'extends') {
-                  everything.push({ type: 'className', text: extendsText, i1: i, c1: c, c2: c + 7 })
+                if ((extendsText = lines[i].slice(c,c + 7)).toLowerCase() === 'extends') {
+                  everything.push({type:'className',text:extendsText,i1:i,c1:c,c2:c + 7})
                   c += 7
                   skipThroughWhiteSpaces()
                   const extendedClassNameStart = c
                   skipValidChar()
                   const extendedClassName = lines[i].slice(extendedClassNameStart,c)
                   if (extendedClassName) {
-                    everything.push({ type: 'extendedClassName', text: extendedClassName, i1: i, c1: extendedClassNameStart, c2: c })
+                    everything.push({type:'extendedClassName',text:extendedClassName,i1:i,c1:extendedClassNameStart,c2:c})
                   }
                   if (!skipThroughEmptyLines()) { break lineLoop }
                 }
                 if (lines[i][c] === '{') {
-                  everything.push({ type: '{ class', text: '{', i1: i, c1: c })
+                  everything.push({type:'{ class',text:'{',i1:i,c1:c})
                   c++
                   if (!skipThroughEmptyLines()) { break lineLoop }
                 } else {
-                  d('illegal class name', linesPlusChar())
+                  d('illegal class name',linesPlusChar())
                 }
                 usingStartOfLineLoop = true
                 continue startOfLineLoop
@@ -476,12 +476,12 @@ export default (content: string): EverythingType => {
               }
             } else if (lines[i][c] === '(') {
               if (idkType === 2) {
-                everything.splice(spliceStartIndex, 0, { type: 'if', text: validName, i1: validNameLine, c1: validNameStart, c2: validNameEnd })
+                everything.splice(spliceStartIndex,0,{type:'if',text:validName,i1:validNameLine,c1:validNameStart,c2:validNameEnd})
                 if (!recurseBetweenExpression()) { findExpression() }
-                everything.splice(everything.length - 1, 0, { type: 'end if' })
+                everything.splice(everything.length - 1,0,{type:'end if'})
                 if (i === howManyLines) { break lineLoop }
                 if (lines[i][c] === '{') {
-                  everything.push({ type: '{ if', text: '{', i1: i, c1: c })
+                  everything.push({type:'{ if',text:'{',i1:i,c1:c})
                   c++
                   if (!skipThroughEmptyLines()) { break lineLoop }
                 }
@@ -498,8 +498,8 @@ export default (content: string): EverythingType => {
 
             } else if (lines[i][c] === '{') {
               if (validName.toLowerCase() === 'loop') {
-                everything.splice(spliceStartIndex, 0, { type: 'loop', text: validName, i1: validNameLine, c1: nonWhiteSpaceStart, c2: validNameEnd })
-                everything.push({ type: '{ loop', text: '{', i1: i, c1: c })
+                everything.splice(spliceStartIndex,0,{type:'loop',text:validName,i1:validNameLine,c1:nonWhiteSpaceStart,c2:validNameEnd})
+                everything.push({type:'{ loop',text:'{',i1:i,c1:c})
                 c++
                 if (!skipThroughEmptyLines()) { break lineLoop }
                 usingStartOfLineLoop = true
@@ -511,7 +511,7 @@ export default (content: string): EverythingType => {
           //can only be from skipThroughEmptyLines()
           if (everything.length === lenghtBeforeSkipLine + 1 || i === howManyLines) {
             //EOL: ???    OR COMMENT ?????
-            everything.splice(spliceStartIndex, 0, { type: 'command EOL or comment', text: validName, i1: validNameLine, c1: nonWhiteSpaceStart, c2: validNameEnd })
+            everything.splice(spliceStartIndex,0,{type:'command EOL or comment',text:validName,i1:validNameLine,c1:nonWhiteSpaceStart,c2:validNameEnd})
             spliceIndexEverythingAtHotkeyLine = everything.length
             operatorAtHotkeyLine = i
             // i = v1StartLine, c = validNameEnd
@@ -521,13 +521,13 @@ export default (content: string): EverythingType => {
                 //ok..
               } else if (validNameLowercase === 'else') {
                 if (lines[i][c] === '{') {
-                  everything.push({ type: '{ else', text: '{', i1: i, c1: c })
+                  everything.push({type:'{ else',text:'{',i1:i,c1:c})
                   c++
                   if (!skipThroughEmptyLines()) { break lineLoop }
                 }
               } else if (validNameLowercase === 'loop') {
                 if (lines[i][c] === '{') {
-                  everything.push({ type: '{ loop', text: '{', i1: i, c1: c })
+                  everything.push({type:'{ loop',text:'{',i1:i,c1:c})
                   c++
                   if (!skipThroughEmptyLines()) { break lineLoop }
                 }
@@ -546,8 +546,8 @@ export default (content: string): EverythingType => {
         }
         if (i === validNameLine && lines[i][c] === ':' && (c + 1 === numberOfChars || whiteSpaceObj[lines[i][c + 1]])) {
           c++
-          const text = lines[i].slice(nonWhiteSpaceStart, c)
-          everything.push({ type: 'label:', text: text, i1: i, c1: nonWhiteSpaceStart, c2: c })
+          const text = lines[i].slice(nonWhiteSpaceStart,c)
+          everything.push({type:'label:',text:text,i1:i,c1:nonWhiteSpaceStart,c2:c})
           if (!skipThroughEmptyLines()) { break lineLoop }
           usingStartOfLineLoop = true
           continue startOfLineLoop
@@ -561,12 +561,12 @@ export default (content: string): EverythingType => {
         c++
       }
       if (c === numberOfChars) {
-        d('illegal: unexpected EOL after var parsing', char())
+        d('illegal: unexpected EOL after var parsing',char())
         i++
         continue lineLoop
       }
-      validName = lines[i].slice(nonWhiteSpaceStart, c)
-      validNameEnd = c, validNameLine = i
+      validName = lines[i].slice(nonWhiteSpaceStart,c)
+      validNameEnd = c,validNameLine = i
 
       lastTrailingWasFunc = false
       if (validName) {
@@ -676,15 +676,15 @@ export default (content: string): EverythingType => {
 
         if (i === howManyLines || !skipThroughEmptyLines()) {
           if (lastTrailingWasFunc) {
-            everything.splice(spliceStartIndex, 0, { type: 'functionName', text: validName, i1: validNameLine, c1: validNameStart, c2: validNameEnd })
+            everything.splice(spliceStartIndex,0,{type:'functionName',text:validName,i1:validNameLine,c1:validNameStart,c2:validNameEnd})
           }
           break lineLoop
         }
 
         //#v1 expression
         if (c < numberOfChars && lines[i][c] === '=' && lines[i][c + 1] !== ':' ) {
-          everything.splice(spliceStartIndex, 0, { type: 'var at v1Assignment', text: validName, i1: validNameLine, c1: validNameStart, c2: validNameEnd })
-          everything.push({ type: '= v1Assignment', text: '=', i1: i, c1: c })
+          everything.splice(spliceStartIndex,0,{type:'var at v1Assignment',text:validName,i1:validNameLine,c1:validNameStart,c2:validNameEnd})
+          everything.push({type:'= v1Assignment',text:'=',i1:i,c1:c})
           c++
           v1StartLine = i
           findV1Expression()
@@ -702,11 +702,11 @@ export default (content: string): EverythingType => {
 
         if (lastTrailingWasFunc) {
           if (!skipThroughEmptyLines()) {
-            everything.splice(spliceStartIndex, 0, { type: 'functionName', text: validName, i1: validNameLine, c1: validNameStart, c2: validNameEnd })
+            everything.splice(spliceStartIndex,0,{type:'functionName',text:validName,i1:validNameLine,c1:validNameStart,c2:validNameEnd})
             break lineLoop
           }
           if (lines[i][c] === '{') {
-            everything.splice(spliceStartIndex, 0, { type: 'function DEFINITION name', text: validName, i1: validNameLine, c1: validNameStart, c2: validNameEnd })
+            everything.splice(spliceStartIndex,0,{type:'function DEFINITION name',text:validName,i1:validNameLine,c1:validNameStart,c2:validNameEnd})
 
             if (funcParenStartIndex === spliceStartIndex) {
               b = funcParenStartIndex + 1
@@ -767,7 +767,7 @@ export default (content: string): EverythingType => {
 
             // d(everything[everything.length - 2])
 
-            everything.push({ type: '{ function DEFINITION', text: '{', i1: i, c1: c })
+            everything.push({type:'{ function DEFINITION',text:'{',i1:i,c1:c})
             c++
             usingStartOfLineLoop = true
             continue startOfLineLoop
@@ -775,7 +775,7 @@ export default (content: string): EverythingType => {
           }
 
 
-          everything.splice(spliceStartIndex, 0, { type: 'functionName', text: validName, i1: validNameLine, c1: validNameStart, c2: validNameEnd })
+          everything.splice(spliceStartIndex,0,{type:'functionName',text:validName,i1:validNameLine,c1:validNameStart,c2:validNameEnd})
           if (skipCommaV2Expr()) {break lineLoop}
           usingStartOfLineLoop = true
           continue startOfLineLoop
@@ -801,17 +801,17 @@ export default (content: string): EverythingType => {
           c++
           if (c < numberOfChars && lines[i][c] === ':') {
             c++
-            const hotkey = lines[i].slice(nonWhiteSpaceStart, c)
+            const hotkey = lines[i].slice(nonWhiteSpaceStart,c)
             if (i === operatorAtHotkeyLine) {
               if (spliceIndexEverythingAtHotkeyLine !== false) {
                 everything.splice(spliceIndexEverythingAtHotkeyLine)
               }
             }
-            everything.push({ type: 'hotkey', text: hotkey, i1: i, c1: nonWhiteSpaceStart, c2: c })
+            everything.push({type:'hotkey',text:hotkey,i1:i,c1:nonWhiteSpaceStart,c2:c})
             const replacementChar = lines[i][c]
             const cPlueOne = c + 1
             if (replacementChar && !whiteSpaceObj[replacementChar] && (cPlueOne === numberOfChars || whiteSpaceObj[lines[i][cPlueOne]])) {
-              everything.push({ type: 'hotkey replacementChar', text: replacementChar, i1: i, c1: c })
+              everything.push({type:'hotkey replacementChar',text:replacementChar,i1:i,c1:c})
               c++
             }
             if (!skipThroughEmptyLines()) { break lineLoop }
@@ -821,8 +821,8 @@ export default (content: string): EverythingType => {
             //label
             // L:L: is a legal label because IsLabel("L:L")==1
           } else if (c === numberOfChars || whiteSpaceObj[lines[i][c]]) {
-            const text = lines[i].slice(nonWhiteSpaceStart, c)
-            everything.push({ type: 'label:', text: text, i1: i, c1: nonWhiteSpaceStart, c2: c })
+            const text = lines[i].slice(nonWhiteSpaceStart,c)
+            everything.push({type:'label:',text:text,i1:i,c1:nonWhiteSpaceStart,c2:c})
             if (!skipThroughEmptyLines()) { break lineLoop }
             usingStartOfLineLoop = true
             continue startOfLineLoop
@@ -851,9 +851,9 @@ export default (content: string): EverythingType => {
   // writeSync(toFile)
 
   if (everything.length) {
-    const lastIndex = everything.length - 1, lastEverything = everything[lastIndex]
+    const lastIndex = everything.length - 1,lastEverything = everything[lastIndex]
     if (lastEverything.i1 && lastEverything.i1 + 1 === howManyLines && lastEverything.text === '\n') {
-      everything.splice(lastIndex, 1)
+      everything.splice(lastIndex,1)
     }
   }
 
@@ -895,7 +895,7 @@ export default (content: string): EverythingType => {
   function doAssignment() {
     const assignmentOperatorReturnValue = findAssignmentOperators()
     if (assignmentOperatorReturnValue === 1) {
-      everything.splice(spliceStartIndex, 0, { type: 'assignment', text: validName, i1: validNameLine, c1: validNameStart, c2: validNameEnd })
+      everything.splice(spliceStartIndex,0,{type:'assignment',text:validName,i1:validNameLine,c1:validNameStart,c2:validNameEnd})
       const legalExprLine = i
       maybePercentV1ToV2()
       if (!recurseBetweenExpression()) {
@@ -904,7 +904,7 @@ export default (content: string): EverythingType => {
         }
       }
       const eLen = everything.length - 1
-      everything.splice(everything.length - (everything[eLen].type === 'emptyLines' ? 1 : 0), 0, { type: 'end assignment'})
+      everything.splice(everything.length - (everything[eLen].type === 'emptyLines' ? 1 : 0),0,{type:'end assignment'})
       if (skipCommaV2Expr()) {return 2}
       usingStartOfLineLoop = true
       return 1
@@ -914,7 +914,7 @@ export default (content: string): EverythingType => {
     const parenStartIndex = everything.length
     const back = everything[everything.length - 1]
 
-    everything.push({ type: `( ${which} CALL`, text: '(', i1: i, c1: c })
+    everything.push({type:`( ${which} CALL`,text:'(',i1:i,c1:c})
     legalObjLine = i
     lineWhereCanConcat = -1
     c++
@@ -922,7 +922,7 @@ export default (content: string): EverythingType => {
     while (true) {
 
       if (!skipThroughEmptyLines()) {
-        d(`ILLEGAL ) ${which} CALL OUT OF LINES`, char())
+        d(`ILLEGAL ) ${which} CALL OUT OF LINES`,char())
         return 2
       } else if (lines[i][c] === ',') {
         c++
@@ -931,7 +931,7 @@ export default (content: string): EverythingType => {
         lineWhereCanConcat = -1
       } else {
         if (i !== legalObjLine ) {
-          d(`ILLEGAL ) ${which} CALL i !== legalObjLine`, char())
+          d(`ILLEGAL ) ${which} CALL i !== legalObjLine`,char())
         }
       }
 
@@ -939,27 +939,27 @@ export default (content: string): EverythingType => {
       if (recurseBetweenExpression() || findExpression()) {
         if (isComma) {
           isComma = false
-          everything.splice(arrSpliceStartIndex, 0, { type: `, ${which} CALL`, text: ',', i1: i, c1: c })
+          everything.splice(arrSpliceStartIndex,0,{type:`, ${which} CALL`,text:',',i1:i,c1:c})
         }
         if (i === howManyLines) {
           return 2
         }
       } else {
         if (lines[i][c] === ',') {
-          everything.splice(arrSpliceStartIndex, 0, { type: `, ${which} CALL`, text: ',', i1: i, c1: c })
+          everything.splice(arrSpliceStartIndex,0,{type:`, ${which} CALL`,text:',',i1:i,c1:c})
           continue
         }
 
         if (isComma) {
           isComma = false
-          d(`ILLEGAL trailling , ${which} CALL`, char())
-          everything.splice(arrSpliceStartIndex, 0, { type: `ILLEGAL trailling , ${which} CALL`, text: ',', i1: i, c1: c })
+          d(`ILLEGAL trailling , ${which} CALL`,char())
+          everything.splice(arrSpliceStartIndex,0,{type:`ILLEGAL trailling , ${which} CALL`,text:',',i1:i,c1:c})
         }
 
         if (lines[i][c] !== ')') {
           d(`\`${lines[i][c]}\` illegal NOT ) ${which} CALL ${linesPlusChar()}`)
         }
-        everything.push({ type: `) ${which} CALL`, text: ')', i1: i, c1: c })
+        everything.push({type:`) ${which} CALL`,text:')',i1:i,c1:c})
         c++
 
         //this happens after everything INSIDE the function, so this has the last word on lastTrailingWasFunc
@@ -990,7 +990,7 @@ export default (content: string): EverythingType => {
   }
   function findCommaV1Expression(which: string) {
     if (lines[i][c] === ',') {
-      everything.push({ type: which, text: ',', i1: i, c1: c })
+      everything.push({type:which,text:',',i1:i,c1:c})
       c++
       singleComma = true
       findV1Expression()
@@ -1002,7 +1002,7 @@ export default (content: string): EverythingType => {
     if (!recurseBetweenExpression()) { findExpression() }
     if (i < howManyLines) {
       if (lines[i][c] === ',') {
-        everything.push({ type: ', doUntil', text: ',', i1: i, c1: c })
+        everything.push({type:', doUntil',text:',',i1:i,c1:c})
         c++
         skipThroughEmptyLines()
       }
@@ -1013,7 +1013,7 @@ export default (content: string): EverythingType => {
     //this is, NOT while
     if (i < howManyLines) {
       if (lines[i][c] === ',') {
-        everything.push({ type: ', doThrow', text: ',', i1: i, c1: c })
+        everything.push({type:', doThrow',text:',',i1:i,c1:c})
         c++
         skipThroughEmptyLines()
       }
@@ -1026,7 +1026,7 @@ export default (content: string): EverythingType => {
     //this is, NOT while
     if (i < howManyLines) {
       if (lines[i][c] === ',') {
-        everything.push({ type: ', doReturn', text: ',', i1: i, c1: c })
+        everything.push({type:', doReturn',text:',',i1:i,c1:c})
         c++
         skipThroughEmptyLines()
       }
@@ -1038,11 +1038,11 @@ export default (content: string): EverythingType => {
       if (lines[i][c] !== ',') {
         return false
       }
-      everything.push({ type: ', assignment', text: ',', i1: i, c1: c })
+      everything.push({type:', assignment',text:',',i1:i,c1:c})
       c++
       if (!recurseBetweenExpression()) { findExpression() }
       const eLen = everything.length - 1
-      everything.splice(everything.length - (everything[eLen].type === 'end comma assignment' ? 1 : 0), 0, { type: 'end assignment'})
+      everything.splice(everything.length - (everything[eLen].type === 'end comma assignment' ? 1 : 0),0,{type:'end assignment'})
     }
     return true
   }
@@ -1051,7 +1051,7 @@ export default (content: string): EverythingType => {
       if (lines[i][c] !== ',') {
         return false
       }
-      everything.push({ type: ', assignment', text: ',', i1: i, c1: c })
+      everything.push({type:', assignment',text:',',i1:i,c1:c})
       c++
       findVariableName()
       recurseBetweenExpression()
@@ -1079,21 +1079,21 @@ export default (content: string): EverythingType => {
     if (foundSendMessage) { return foundSendMessage }
 
     if (validName.toLowerCase() === 'return') {
-      everything.splice(spliceStartIndex, 0, { type: 'return', text: validName, i1: validNameLine, c1: nonWhiteSpaceStart, c2: validNameEnd })
+      everything.splice(spliceStartIndex,0,{type:'return',text:validName,i1:validNameLine,c1:nonWhiteSpaceStart,c2:validNameEnd})
       doReturn()
       usingStartOfLineLoop = true
       return 1
     }
 
     if (validName.toLowerCase() === 'throw') {
-      everything.splice(spliceStartIndex, 0, { type: 'throw', text: validName, i1: validNameLine, c1: nonWhiteSpaceStart, c2: validNameEnd })
+      everything.splice(spliceStartIndex,0,{type:'throw',text:validName,i1:validNameLine,c1:nonWhiteSpaceStart,c2:validNameEnd})
       doThrow()
       usingStartOfLineLoop = true
       return 1
     }
 
     if (validName.toLowerCase() === 'until') {
-      everything.splice(spliceStartIndex, 0, { type: 'until', text: validName, i1: validNameLine, c1: nonWhiteSpaceStart, c2: validNameEnd })
+      everything.splice(spliceStartIndex,0,{type:'until',text:validName,i1:validNameLine,c1:nonWhiteSpaceStart,c2:validNameEnd})
       doUntil()
       usingStartOfLineLoop = true
       return 1
@@ -1101,12 +1101,12 @@ export default (content: string): EverythingType => {
   }
   function findWhile() {
     if (validName.toLowerCase() === 'while') {
-      everything.splice(spliceStartIndex, 0, { type: 'while', text: validName, i1: validNameLine, c1: nonWhiteSpaceStart, c2: validNameEnd })
+      everything.splice(spliceStartIndex,0,{type:'while',text:validName,i1:validNameLine,c1:nonWhiteSpaceStart,c2:validNameEnd})
 
       if (!recurseBetweenExpression()) { findExpression() }
 
       if (lines[i][c] === '{') {
-        everything.push({ type: '{ loop', text: '{', i1: i, c1: c })
+        everything.push({type:'{ loop',text:'{',i1:i,c1:c})
         c++
         if (!skipThroughEmptyLines()) { return 2 }
       }
@@ -1116,36 +1116,36 @@ export default (content: string): EverythingType => {
   }
   function findLoop() {
     if (validName.toLowerCase() === 'loop') {
-      everything.splice(spliceStartIndex, 0, { type: 'loop', text: validName, i1: validNameLine, c1: nonWhiteSpaceStart, c2: validNameEnd })
+      everything.splice(spliceStartIndex,0,{type:'loop',text:validName,i1:validNameLine,c1:nonWhiteSpaceStart,c2:validNameEnd})
       if (!skipThroughEmptyLines()) { return 2 }
       if (variableCharsObj[lines[i][c]]) {
 
         breakToGoFindV1Expression:
         while (true) {
-          let text, cPlusLen
-          if ((text = lines[i].slice(c, cPlusLen = c + 3)).toLowerCase() === 'reg' && !variableCharsObj[lines[i][cPlusLen]]) {
-            everything.push({ type: '(loop) Reg', text: text, i1: i, c1: c, c2: cPlusLen })
+          let text,cPlusLen
+          if ((text = lines[i].slice(c,cPlusLen = c + 3)).toLowerCase() === 'reg' && !variableCharsObj[lines[i][cPlusLen]]) {
+            everything.push({type:'(loop) Reg',text:text,i1:i,c1:c,c2:cPlusLen})
             c += 3
             if (!skipThroughEmptyLines()) { return 2 }
             if (findCommaV1Expression(', 1 (loop) Reg')) {
               findCommaV1Expression(', 2 (loop) Reg')
             }
-          } else if ((text = lines[i].slice(c, cPlusLen = c + 4)).toLowerCase() === 'files' && !variableCharsObj[lines[i][cPlusLen]]) {
-            everything.push({ type: '(loop) read', text: text, i1: i, c1: c, c2: cPlusLen })
+          } else if ((text = lines[i].slice(c,cPlusLen = c + 4)).toLowerCase() === 'files' && !variableCharsObj[lines[i][cPlusLen]]) {
+            everything.push({type:'(loop) read',text:text,i1:i,c1:c,c2:cPlusLen})
             c += 4
             if (!skipThroughEmptyLines()) { return 2 }
             if (findCommaV1Expression(', 1 (loop) read')) {
               findCommaV1Expression(', 2 (loop) read')
             }
-          } else if ((text = lines[i].slice(c, cPlusLen = c + 5)).toLowerCase() === 'files' && !variableCharsObj[lines[i][cPlusLen]]) {
-            everything.push({ type: '(loop) files', text: text, i1: i, c1: c, c2: cPlusLen })
+          } else if ((text = lines[i].slice(c,cPlusLen = c + 5)).toLowerCase() === 'files' && !variableCharsObj[lines[i][cPlusLen]]) {
+            everything.push({type:'(loop) files',text:text,i1:i,c1:c,c2:cPlusLen})
             c += 5
             if (!skipThroughEmptyLines()) { return 2 }
             if (findCommaV1Expression(', 1 (loop) files')) {
               findCommaV1Expression(', 2 (loop) files')
             }
-          } else if ((text = lines[i].slice(c, cPlusLen = c + 5)).toLowerCase() === 'parse' && !variableCharsObj[lines[i][cPlusLen]]) {
-            everything.push({ type: '(loop) parse', text: text, i1: i, c1: c, c2: cPlusLen })
+          } else if ((text = lines[i].slice(c,cPlusLen = c + 5)).toLowerCase() === 'parse' && !variableCharsObj[lines[i][cPlusLen]]) {
+            everything.push({type:'(loop) parse',text:text,i1:i,c1:c,c2:cPlusLen})
             c += 5
             if (!skipThroughEmptyLines()) { return 2 }
             if (findCommaV1Expression(', 1 (loop) parse')) {
@@ -1158,7 +1158,7 @@ export default (content: string): EverythingType => {
           }
 
           if (lines[i][c] === '{') {
-            everything.push({ type: '{ loop', text: '{', i1: i, c1: c })
+            everything.push({type:'{ loop',text:'{',i1:i,c1:c})
             c++
             if (!skipThroughEmptyLines()) { return 2 }
           }
@@ -1170,7 +1170,7 @@ export default (content: string): EverythingType => {
       }
 
       if (lines[i][c] === '{') {
-        everything.push({ type: '{ loop', text: '{', i1: i, c1: c })
+        everything.push({type:'{ loop',text:'{',i1:i,c1:c})
         c++
         if (!skipThroughEmptyLines()) { return 2 }
         usingStartOfLineLoop = true
@@ -1187,7 +1187,7 @@ export default (content: string): EverythingType => {
       }
 
       if (lines[i][c] === '{') {
-        everything.push({ type: '{ loop', text: '{', i1: i, c1: c })
+        everything.push({type:'{ loop',text:'{',i1:i,c1:c})
         c++
         if (!skipThroughEmptyLines()) { return 2 }
       }
@@ -1197,7 +1197,7 @@ export default (content: string): EverythingType => {
   }
   function findSendMessage() {
     if (validName.toLowerCase() === 'sendmessage') {
-      everything.splice(spliceStartIndex, 0, { type: 'sendmessage', text: validName, i1: validNameLine, c1: nonWhiteSpaceStart, c2: validNameEnd })
+      everything.splice(spliceStartIndex,0,{type:'sendmessage',text:validName,i1:validNameLine,c1:nonWhiteSpaceStart,c2:validNameEnd})
 
       maybePercentV1ToV2()
       if (!recurseBetweenExpression()) { findExpression() }
@@ -1211,7 +1211,7 @@ export default (content: string): EverythingType => {
   }
   function findCommaV2ExprMaybePercent(which: string) {
     if (lines[i][c] === ',') {
-      everything.push({ type: which, text: ',', i1: i, c1: c })
+      everything.push({type:which,text:',',i1:i,c1:c})
       c++
       maybePercentV1ToV2()
       if (!recurseBetweenExpression()) { findExpression() }
@@ -1222,14 +1222,14 @@ export default (content: string): EverythingType => {
     skipThroughWhiteSpaces()
     let whiteSpaceText
     if (c < numberOfChars - 1 && lines[i][c] === '%' && whiteSpaceObj[whiteSpaceText = lines[i][c + 1]]) {
-      everything.push({ type: '% v1->v2 expr', text: `%${whiteSpaceText}`, i1: i, c1: c, c2: c + 2 })
+      everything.push({type:'% v1->v2 expr',text:`%${whiteSpaceText}`,i1:i,c1:c,c2:c + 2})
       c += 2
       lineWhereCanConcat = -1
     }
   }
   function findCommaV2Expr(which: string) {
     if (lines[i][c] === ',') {
-      everything.push({ type: which, text: ',', i1: i, c1: c })
+      everything.push({type:which,text:',',i1:i,c1:c})
       c++
       if (!recurseBetweenExpression()) { findExpression() }
       return true
@@ -1237,23 +1237,23 @@ export default (content: string): EverythingType => {
   }
   function findNamedIf() {
     if (namedIf[validName.toLowerCase()]) {
-      everything.splice(spliceStartIndex, 0, { type: 'named if', text: validName, i1: validNameLine, c1: nonWhiteSpaceStart, c2: validNameEnd })
+      everything.splice(spliceStartIndex,0,{type:'named if',text:validName,i1:validNameLine,c1:nonWhiteSpaceStart,c2:validNameEnd})
       skipThroughWhiteSpaces()
       singleComma = true
       findV1ExpressionMid()
-      everything.push({ type: ', 1 namedIf', text: ',', i1: i, c1: c })
+      everything.push({type:', 1 namedIf',text:',',i1:i,c1:c})
       c++
       singleComma = false
       if (!recurseBetweenExpression()) { findExpression() }
       if (lines[i][c] === ',') {
-        everything.push({ type: ', 2 namedIf', text: ',', i1: i, c1: c })
+        everything.push({type:', 2 namedIf',text:',',i1:i,c1:c})
         c++
         // oof, command here
         const saveC = c
         skipThroughWhiteSpaces()
         nonWhiteSpaceStart = c
         skipValidChar()
-        validName = lines[i].slice(nonWhiteSpaceStart, c)
+        validName = lines[i].slice(nonWhiteSpaceStart,c)
         const idkType = typeOfValidVarName[validName.toLowerCase()]
         //if is command
         //though global or local.. , they CAN count as commands..
@@ -1270,7 +1270,7 @@ export default (content: string): EverythingType => {
       } else {
         if (!skipThroughEmptyLines()) { return 2 }
         if (lines[i][c] === '{') {
-          everything.push({ type: '{ namedIf', text: '{', i1: i, c1: c })
+          everything.push({type:'{ namedIf',text:'{',i1:i,c1:c})
           c++
         }
         findV1Expression()
@@ -1293,30 +1293,30 @@ export default (content: string): EverythingType => {
   } */
   function lookForAnd(which: string) {
     if (lookingForAnd) {
-      let text, cPlusLen, wsText
-      if ((text = lines[i].slice(c, cPlusLen = c + 3)).toLowerCase() === 'and' && (cPlusLen === numberOfChars || whiteSpaceObj[wsText = lines[i][cPlusLen]])) {
+      let text,cPlusLen,wsText
+      if ((text = lines[i].slice(c,cPlusLen = c + 3)).toLowerCase() === 'and' && (cPlusLen === numberOfChars || whiteSpaceObj[wsText = lines[i][cPlusLen]])) {
         lookingForAnd = false
         endV1Str(which)
-        everything.push({ type: `legacyIf and{ws} ${which}`, text: `${text}${wsText || ''}`, i1: i, c1: c, c2: cPlusLen })
+        everything.push({type:`legacyIf and{ws} ${which}`,text:`${text}${wsText || ''}`,i1:i,c1:c,c2:cPlusLen})
         c += 4
-        v1ExpressionC1 = c, cNotWhiteSpace = c - 1
+        v1ExpressionC1 = c,cNotWhiteSpace = c - 1
         return true
       }
     }
   }
   function beforeCommaV1Str(which: string) {
-    const text = lines[i].slice(v1ExpressionC1, cNotWhiteSpace)
-    everything.push({ type: `v1String ${which}`, text: text, i1: i, c1: v1ExpressionC1, c2: cNotWhiteSpace })
+    const text = lines[i].slice(v1ExpressionC1,cNotWhiteSpace)
+    everything.push({type:`v1String ${which}`,text:text,i1:i,c1:v1ExpressionC1,c2:cNotWhiteSpace})
   }
   function endV1Str(which: string) {
     const cEndOfV1Expression = cNotWhiteSpace + 1
-    const text = lines[i].slice(v1ExpressionC1, cEndOfV1Expression)
-    everything.push({ type: `v1String ${which}`, text: text, i1: i, c1: v1ExpressionC1, c2: cEndOfV1Expression })
+    const text = lines[i].slice(v1ExpressionC1,cEndOfV1Expression)
+    everything.push({type:`v1String ${which}`,text:text,i1:i,c1:v1ExpressionC1,c2:cEndOfV1Expression})
 
-    const endingWhiteSpaces = lines[i].slice(cEndOfV1Expression, c)
+    const endingWhiteSpaces = lines[i].slice(cEndOfV1Expression,c)
     // d('endingWhiteSpaces v1Expression', `\`${endingWhiteSpaces}\` ${endingWhiteSpaces.length}LENGTH`)
     if (endingWhiteSpaces) {
-      everything.push({ type: `endingWhiteSpaces v1Expression ${which}`, text: endingWhiteSpaces, i1: i, c1: cEndOfV1Expression, c2: c })
+      everything.push({type:`endingWhiteSpaces v1Expression ${which}`,text:endingWhiteSpaces,i1:i,c1:cEndOfV1Expression,c2:c})
     }
   }
   function ifDoubleComma() {
@@ -1329,24 +1329,24 @@ export default (content: string): EverythingType => {
   }
   function insideDoubleComma() {
     if (lines[i][c + 1] === ',') {
-      everything.push({ type: ',, legacyIf var in', text: ',,', i1: i, c1: c, c2: c + 2 })
+      everything.push({type:',, legacyIf var in',text:',,',i1:i,c1:c,c2:c + 2})
       c += 2
       findV1Expression()
     } else {
-      everything.push({ type: ', legacyIf var in', text: ',', i1: i, c1: c })
+      everything.push({type:', legacyIf var in',text:',',i1:i,c1:c})
       c++
       findV1Expression()
     }
   }
   function ws() {
-    d(`\`${lines[i].slice(nonWhiteSpaceStart, c)}\``)
+    d(`\`${lines[i].slice(nonWhiteSpaceStart,c)}\``)
   }
   function applyRangeReplacements() {
     //reverse iterate to not change [c,i]
     const linesCopy = lines.slice()
     replaceRangesLoop:
     for (let i = rangeAndReplaceTextArr.length - 1; i > -1; i--) {
-      const [[[c1, i1], [c2, i2]], replacementText] = rangeAndReplaceTextArr[i]
+      const [[[c1,i1],[c2,i2]],replacementText] = rangeAndReplaceTextArr[i]
       const textArr = replacementText.split('\n')
       // const textArr = ['test1']
       // textArr.push('test1')
@@ -1376,16 +1376,16 @@ export default (content: string): EverythingType => {
       if (replaceLength === sourceLength) {
         //all on same line
         if (sourceLength === 1) {
-          linesCopy[i1] = linesCopy[i1].slice(0, c1) + textArr[0] + linesCopy[i1].slice(c2)
+          linesCopy[i1] = linesCopy[i1].slice(0,c1) + textArr[0] + linesCopy[i1].slice(c2)
           // d(linesCopy.join('\n'))
           continue replaceRangesLoop
         } else if (sourceLength === 2) {
-          linesCopy[i1] = linesCopy[i1].slice(0, c1) + textArr[0]
+          linesCopy[i1] = linesCopy[i1].slice(0,c1) + textArr[0]
           linesCopy[i2] = textArr[1] + linesCopy[i2].slice(c2)
           // d(linesCopy.join('\n'))
           continue replaceRangesLoop
         } else if (sourceLength > 2) {
-          linesCopy[i1] = linesCopy[i1].slice(0, c1) + textArr[0]
+          linesCopy[i1] = linesCopy[i1].slice(0,c1) + textArr[0]
           for (let n = 1; n < replaceLength - 1; n++) {
             linesCopy[i1 + n] = textArr[n]
           }
@@ -1402,20 +1402,20 @@ export default (content: string): EverythingType => {
           //save right slice because we gon delete it
           //I'm using i1 instead of i2 to show that they are on the same line
           const rightSlice = linesCopy[i1].slice(c2)
-          linesCopy[i1] = linesCopy[i1].slice(0, c1) + textArr[0]
+          linesCopy[i1] = linesCopy[i1].slice(0,c1) + textArr[0]
           // DOCS: arr.splice(start, deleteCount, item1_
           // arr[start] becomes item1
           // what was arr[start] is now at start+1
           // so we insert to start+1
-          for (let n = 1, len = replaceLength - 1; n < len; n++) {
+          for (let n = 1,len = replaceLength - 1; n < len; n++) {
             // d('loop',n)
-            linesCopy.splice(i1 + n, 0, textArr[n])
+            linesCopy.splice(i1 + n,0,textArr[n])
           }
           // d(linesCopy[i1])
           // d(linesCopy[i1 + 1])
           // d(linesCopy[i1 + 2])
           // this is the last line
-          linesCopy.splice(i1 + 1, 0, textArr[replaceLength - 1] + rightSlice)
+          linesCopy.splice(i1 + 1,0,textArr[replaceLength - 1] + rightSlice)
 
           // d(linesCopy[i1])
           // d(linesCopy[i1 + 1])
@@ -1431,11 +1431,11 @@ export default (content: string): EverythingType => {
         } else if (sourceLength === 2) {
           // this is the last line
           linesCopy[i2] = textArr[replaceLength - 1] + linesCopy[i2].slice(c2)
-          for (let n = 1, len = replaceLength - 1; n < len; n++) {
-            linesCopy.splice(i1 + n, 0, textArr[n])
+          for (let n = 1,len = replaceLength - 1; n < len; n++) {
+            linesCopy.splice(i1 + n,0,textArr[n])
           }
           // first line
-          linesCopy[i1] = linesCopy[i1].slice(0, c1) + textArr[0]
+          linesCopy[i1] = linesCopy[i1].slice(0,c1) + textArr[0]
           // d(linesCopy[i1])
           // d(linesCopy[i1 + 1])
           // d(linesCopy[i1 + 2])
@@ -1450,11 +1450,11 @@ export default (content: string): EverythingType => {
             linesCopy[i1 + n] = textArr[n]
           }
           //insert
-          for (let n = middlePointReplaceInsert, len = replaceLength - 1; n < len; n++) {
-            linesCopy.splice(i1 + n, 0, textArr[n])
+          for (let n = middlePointReplaceInsert,len = replaceLength - 1; n < len; n++) {
+            linesCopy.splice(i1 + n,0,textArr[n])
           }
           // d(linesCopy.join('\n'))
-          linesCopy[i1] = linesCopy[i1].slice(0, c1) + textArr[0]
+          linesCopy[i1] = linesCopy[i1].slice(0,c1) + textArr[0]
           // d(linesCopy.join('\n'))
           continue replaceRangesLoop
         }
@@ -1468,26 +1468,26 @@ export default (content: string): EverythingType => {
         //lets start how does 2 become 1 line
         if (replaceLength === 1) {
           // replace the first line and remove the rest
-          linesCopy[i1] = linesCopy[i1].slice(0, c1) + textArr[0] + linesCopy[i2].slice(c2)
+          linesCopy[i1] = linesCopy[i1].slice(0,c1) + textArr[0] + linesCopy[i2].slice(c2)
           //remove line
           //DOCS: arr.splice(start, deleteCount)
-          linesCopy.splice(i1 + 1, sourceLength - replaceLength)
+          linesCopy.splice(i1 + 1,sourceLength - replaceLength)
           // d(linesCopy.join('\n'))
           continue replaceRangesLoop
           //how does 3 become 2 lines ? or 1 ?
           //first how does 3 become 1 line ?
         } else if (replaceLength > 1) {
           //first line
-          linesCopy[i1] = linesCopy[i1].slice(0, c1) + textArr[0]
+          linesCopy[i1] = linesCopy[i1].slice(0,c1) + textArr[0]
           //last line
           linesCopy[i2] = textArr[replaceLength - 1] + linesCopy[i2].slice(c2)
           //remove between
-          linesCopy.splice(i1 + 1, sourceLength - 2)
+          linesCopy.splice(i1 + 1,sourceLength - 2)
           //add between
           // d(linesCopy.join('\n'))
           // insert
-          for (let n = 1, len = replaceLength - 1; n < len; n++) {
-            linesCopy.splice(i1 + n, 0, textArr[n])
+          for (let n = 1,len = replaceLength - 1; n < len; n++) {
+            linesCopy.splice(i1 + n,0,textArr[n])
           }
           // d(linesCopy.join('\n'))
           continue replaceRangesLoop
@@ -1501,21 +1501,21 @@ export default (content: string): EverythingType => {
 
 
 
-  function textFromPosToCurrent(startPos: [number, number]) {
-    const [strStartPos, strStartLine] = startPos
+  function textFromPosToCurrent(startPos: [number,number]) {
+    const [strStartPos,strStartLine] = startPos
     if (strStartLine === i) {
-      return lines[i].slice(strStartPos, c)
+      return lines[i].slice(strStartPos,c)
     } else {
       let strToPrint = lines[strStartLine].slice(strStartPos)
       for (let i2 = strStartLine + 1; i2 < i; i2++) {
         strToPrint += `\n${lines[i2]}`
       }
-      strToPrint += `\n${lines[i].slice(0, c)}`
+      strToPrint += `\n${lines[i].slice(0,c)}`
       return strToPrint
     }
   }
   function isFunctionDefinition() {
-    const iBak = i, cBak = c, numberOfCharsBak = numberOfChars
+    const iBak = i,cBak = c,numberOfCharsBak = numberOfChars
     let toReturn: boolean | number = false
     //after next ')'
     if (skipThroughFindChar(')')) {
@@ -1539,7 +1539,7 @@ export default (content: string): EverythingType => {
         }
         i++
         if (i < howManyLines) {
-          c = 0, numberOfChars = lines[i].length
+          c = 0,numberOfChars = lines[i].length
         } else {
           break iCantDirectlyReturn
         }
@@ -1548,10 +1548,10 @@ export default (content: string): EverythingType => {
       // }
     } else {
       //haven't found closing )
-      d('illegal: haven\'t found closing ) isFunctionDefinition', char())
+      d('illegal: haven\'t found closing ) isFunctionDefinition',char())
       toReturn = 2
     }
-    i = iBak, c = cBak, numberOfChars = numberOfCharsBak
+    i = iBak,c = cBak,numberOfChars = numberOfCharsBak
     //default return false
     return toReturn
   }
@@ -1569,19 +1569,19 @@ export default (content: string): EverythingType => {
           if (lines[i][c] === ',') {
             beforeCommaV1Str(`${which} beforeDoubleComma`)
             if (lines[i][c + 1] === ',') {
-              everything.push({ type: ',, legacyIf var in findV1Expression', text: ',,', i1: i, c1: c, c2: c + 2 })
+              everything.push({type:',, legacyIf var in findV1Expression',text:',,',i1:i,c1:c,c2:c + 2})
               c += 2
             } else {
-              everything.push({ type: ', legacyIf var in findV1Expression', text: ',', i1: i, c1: c })
+              everything.push({type:', legacyIf var in findV1Expression',text:',',i1:i,c1:c})
               c++
             }
-            v1ExpressionC1 = c, cNotWhiteSpace = c - 1
+            v1ExpressionC1 = c,cNotWhiteSpace = c - 1
             continue
           }
         } else if (singleComma && !insideV1Continuation) {
           if (lines[i][c] === ',' && lines[i][c - 1] !== '`') {
             beforeCommaV1Str(`${which} beforeSingleComma`)
-            v1ExpressionC1 = c, cNotWhiteSpace = c - 1
+            v1ExpressionC1 = c,cNotWhiteSpace = c - 1
             return true
           }
         }
@@ -1604,19 +1604,19 @@ export default (content: string): EverythingType => {
           if (lines[i][c] === ',') {
             beforeCommaV1Str(`${which} beforeDoubleComma`)
             if (lines[i][c + 1] === ',') {
-              everything.push({ type: ',, legacyIf var in findV1Expression', text: ',,', i1: i, c1: c, c2: c + 2 })
+              everything.push({type:',, legacyIf var in findV1Expression',text:',,',i1:i,c1:c,c2:c + 2})
               c += 2
             } else {
-              everything.push({ type: ', legacyIf var in findV1Expression', text: ',', i1: i, c1: c })
+              everything.push({type:', legacyIf var in findV1Expression',text:',',i1:i,c1:c})
               c++
             }
-            v1ExpressionC1 = c, cNotWhiteSpace = c - 1
+            v1ExpressionC1 = c,cNotWhiteSpace = c - 1
             continue
           }
         } else if (singleComma && !insideV1Continuation) {
           if (lines[i][c] === ',' && lines[i][c - 1] !== '`') {
             beforeCommaV1Str(`${which} beforeSingleComma`)
-            v1ExpressionC1 = c, cNotWhiteSpace = c - 1
+            v1ExpressionC1 = c,cNotWhiteSpace = c - 1
             return true
           }
         }
@@ -1637,7 +1637,7 @@ export default (content: string): EverythingType => {
 
     let whiteSpaceText
     if (c < numberOfChars - 1 && lines[i][c] === '%' && whiteSpaceObj[whiteSpaceText = lines[i][c + 1]]) {
-      everything.push({ type: '% v1->v2 expr', text: `%${whiteSpaceText}`, i1: i, c1: c, c2: c + 2 })
+      everything.push({type:'% v1->v2 expr',text:`%${whiteSpaceText}`,i1:i,c1:c,c2:c + 2})
       c += 2
       lineWhereCanConcat = -1
       if (!recurseBetweenExpression()) { findExpression() }
@@ -1654,7 +1654,7 @@ export default (content: string): EverythingType => {
       findingVarName = false
       return
     } else {
-      v1ExpressionC1 = c, cNotWhiteSpace = c - 1
+      v1ExpressionC1 = c,cNotWhiteSpace = c - 1
 
       foundComment:
       while (true) {
@@ -1687,14 +1687,14 @@ export default (content: string): EverythingType => {
     }
     if (lines[i][c] === '(') {
       insideV1Continuation = true
-      everything.push({ type: '( resolveV1Continuation', text: '(', i1: i, c1: c })
+      everything.push({type:'( resolveV1Continuation',text:'(',i1:i,c1:c})
       c++
-      const text = lines[i].slice(c, numberOfChars)
-      everything.push({ type: 'resolveV1Continuation to EOL', text: text, i1: i, c1: c, c2: numberOfChars })
+      const text = lines[i].slice(c,numberOfChars)
+      everything.push({type:'resolveV1Continuation to EOL',text:text,i1:i,c1:c,c2:numberOfChars})
 
       while (++i < howManyLines) {
-        everything.push({ type: 'newline resolveV1Continuation', text: '\n', i1: i, c1: numberOfChars })
-        c = 0, numberOfChars = lines[i].length
+        everything.push({type:'newline resolveV1Continuation',text:'\n',i1:i,c1:numberOfChars})
+        c = 0,numberOfChars = lines[i].length
 
         const c1 = c
         // inside continuation, whiteSpaces to the left do count
@@ -1704,11 +1704,11 @@ export default (content: string): EverythingType => {
 
         if (lines[i][c] === ')') {
           insideV1Continuation = false
-          const whiteSpacesText = lines[i].slice(c1, c)
+          const whiteSpacesText = lines[i].slice(c1,c)
           if (whiteSpacesText) {
-            everything.push({ type: 'whiteSpaces before ) resolveV1Continuation', text: whiteSpacesText, i1: i, c1: c1, c2: c })
+            everything.push({type:'whiteSpaces before ) resolveV1Continuation',text:whiteSpacesText,i1:i,c1:c1,c2:c})
           }
-          everything.push({ type: ') resolveV1Continuation', text: ')', i1: i, c1: c })
+          everything.push({type:') resolveV1Continuation',text:')',i1:i,c1:c})
           c++
 
           findV1ExpressionMid()
@@ -1716,7 +1716,7 @@ export default (content: string): EverythingType => {
           return true
         }
 
-        v1ExpressionC1 = 0, cNotWhiteSpace = -1
+        v1ExpressionC1 = 0,cNotWhiteSpace = -1
         while (c < numberOfChars) {
           findV1StrMid('resolveV1Continuation')
         }
@@ -1725,17 +1725,17 @@ export default (content: string): EverythingType => {
 
       return true
     } else if (!findingVarName) {
-      if (c < numberOfChars - 2 && v1Continuator[lines[i].slice(c, c + 3)]) {
-        everything.push({ type: '3 v1Continuator', text: lines[i].slice(c, c + 3), i1: i, c1: c, c2: c + 3 })
+      if (c < numberOfChars - 2 && v1Continuator[lines[i].slice(c,c + 3)]) {
+        everything.push({type:'3 v1Continuator',text:lines[i].slice(c,c + 3),i1:i,c1:c,c2:c + 3})
         c += 3
-      } else if (c < numberOfChars - 1 && v1Continuator[lines[i].slice(c, c + 2)]) {
-        everything.push({ type: '2 v1Continuator', text: lines[i].slice(c, c + 2), i1: i, c1: c, c2: c + 2 })
+      } else if (c < numberOfChars - 1 && v1Continuator[lines[i].slice(c,c + 2)]) {
+        everything.push({type:'2 v1Continuator',text:lines[i].slice(c,c + 2),i1:i,c1:c,c2:c + 2})
         c += 2
       } else if (c < numberOfChars && v1Continuator[lines[i][c]]) {
         if (ifDoubleComma()) {return false}
         if (singleComma) {return false}
 
-        everything.push({ type: '1 v1Continuator', text: lines[i][c], i1: i, c1: c })
+        everything.push({type:'1 v1Continuator',text:lines[i][c],i1:i,c1:c})
 
         c++
       } else {
@@ -1762,9 +1762,9 @@ export default (content: string): EverythingType => {
       if (lines[i][c + 3] === ':') {
         return 2
       } else {
-        if (c < numberOfChars - 2 && assignmentOperators[text = lines[i].slice(c, c + 3)]) {
+        if (c < numberOfChars - 2 && assignmentOperators[text = lines[i].slice(c,c + 3)]) {
           // d(lines[i].slice(c, c + 3), '3operator', char())
-          everything.push({ type: '3operator', text: text, i1: i, c1: c, c2: c + 3 })
+          everything.push({type:'3operator',text:text,i1:i,c1:c,c2:c + 3})
           c += 3
           break dummyLoop
         }
@@ -1772,11 +1772,11 @@ export default (content: string): EverythingType => {
         if (lines[i][c + 2] === ':') {
           return 2
         } else {
-          if (c < numberOfChars - 1 && assignmentOperators[text = lines[i].slice(c, c + 2)]) {
+          if (c < numberOfChars - 1 && assignmentOperators[text = lines[i].slice(c,c + 2)]) {
             // if (text === '++' || text === '--') {
             //allow empty assignment
             // }
-            everything.push({ type: '2operator', text: text, i1: i, c1: c, c2: c + 2 })
+            everything.push({type:'2operator',text:text,i1:i,c1:c,c2:c + 2})
             c += 2
             break dummyLoop
           }
@@ -1793,12 +1793,12 @@ export default (content: string): EverythingType => {
   function findOperatorsNotSameLine() {
     //#VARIABLE ASSIGNMENT
     let toReturn = true
-    let text, lowerText, cPlusLen
+    let text,lowerText,cPlusLen
     dummyLoop:
     while (true) {
       checkNext:
       while (true) {
-        if (c < numberOfChars - 2 && v2Continuator[lowerText = (text = lines[i].slice(c, cPlusLen = c + 3)).toLowerCase()]) {
+        if (c < numberOfChars - 2 && v2Continuator[lowerText = (text = lines[i].slice(c,cPlusLen = c + 3)).toLowerCase()]) {
 
           if (lowerText === 'and') {
 
@@ -1811,7 +1811,7 @@ export default (content: string): EverythingType => {
             }
           }
 
-          everything.push({ type: '3operator', text: text, i1: i, c1: c, c2: c + 3 })
+          everything.push({type:'3operator',text:text,i1:i,c1:c,c2:c + 3})
           c += 3
           break dummyLoop
         }
@@ -1820,7 +1820,7 @@ export default (content: string): EverythingType => {
 
       checkNext:
       while (true) {
-        if (c < numberOfChars - 1 && v2Continuator[lowerText = (lines[i].slice(c, cPlusLen = c + 2).toLowerCase())]) {
+        if (c < numberOfChars - 1 && v2Continuator[lowerText = (lines[i].slice(c,cPlusLen = c + 2).toLowerCase())]) {
 
           if (lowerText === 'or') {
             if (variableCharsObj[lines[i][cPlusLen]]) {
@@ -1828,7 +1828,7 @@ export default (content: string): EverythingType => {
             }
           }
 
-          everything.push({ type: '2operator', text: lines[i].slice(c, c + 2), i1: i, c1: c, c2: c + 2 })
+          everything.push({type:'2operator',text:lines[i].slice(c,c + 2),i1:i,c1:c,c2:c + 2})
           c += 2
           break dummyLoop
         }
@@ -1837,16 +1837,16 @@ export default (content: string): EverythingType => {
 
       if (c < numberOfChars && v2Continuator[lines[i][c].toLowerCase()]) {
         if (lines[i][c] === '+' && lines[i][c + 1] === '+') {
-          d('illegal v2Continuator `++`', linesPlusChar())
+          d('illegal v2Continuator `++`',linesPlusChar())
         }
         if (lines[i][c] === '-' && lines[i][c + 1] === '-') {
-          d('illegal v2Continuator `++`', linesPlusChar())
+          d('illegal v2Continuator `++`',linesPlusChar())
         }
         //if ?, ternary, so expect :
         if (lines[i][c] === '?') {
           // d('? ternary', char())
-          everything.push({ type: '? ternary', text: '?', i1: i, c1: c })
-          colonDeep++, c++
+          everything.push({type:'? ternary',text:'?',i1:i,c1:c})
+          colonDeep++,c++
 
           lineWhereCanConcat = -1
           legalObjLine = i
@@ -1855,31 +1855,31 @@ export default (content: string): EverythingType => {
           //where findExpression stopped at
           if (lines[i][c] === ':') {
             // d(': ternary', char())
-            everything.push({ type: ': ternary', text: ':', i1: i, c1: c })
-            colonDeep--, c++
+            everything.push({type:': ternary',text:':',i1:i,c1:c})
+            colonDeep--,c++
           } else {
-            d('illegal: why is there no : after ? ternary', char())
+            d('illegal: why is there no : after ? ternary',char())
             //pretend it was legal
-            colonDeep--, c++, toReturn = false
+            colonDeep--,c++,toReturn = false
             //I don't know what returning false does
           }
         } else if (lines[i][c] === ':') {
           //'?' will make colonDeep true
           if (!colonDeep) {
             //if encounter ':' in the wild BEFORE '?'
-            d('illegal: unexpected :', char())
+            d('illegal: unexpected :',char())
           }
           toReturn = false
         //for variadic function definition
         } else if (variadicAsterisk && lines[i][c] === '*') {
           // d('* variadic Argument', char())
-          everything.push({ type: '* variadic Argument', text: '*', i1: i, c1: c })
+          everything.push({type:'* variadic Argument',text:'*',i1:i,c1:c})
           c++
         } else {
           // d(lines[i][c], '1operator', char())
 
 
-          everything.push({ type: '1operator', text: lines[i][c], i1: i, c1: c })
+          everything.push({type:'1operator',text:lines[i][c],i1:i,c1:c})
           c++
         }
         break dummyLoop
@@ -1895,12 +1895,12 @@ export default (content: string): EverythingType => {
   function findOperators() {
     //#VARIABLE ASSIGNMENT
     let toReturn = true
-    let text, lowerText, cPlusLen
+    let text,lowerText,cPlusLen
     dummyLoop:
     while (true) {
       checkNext:
       while (true) {
-        if (c < numberOfChars - 2 && operatorsObj[lowerText = (text = lines[i].slice(c, cPlusLen = c + 3)).toLowerCase()]) {
+        if (c < numberOfChars - 2 && operatorsObj[lowerText = (text = lines[i].slice(c,cPlusLen = c + 3)).toLowerCase()]) {
           // d(lines[i].slice(c, c + 3), '3operator', char())
 
           if (lowerText === 'and') {
@@ -1920,7 +1920,7 @@ export default (content: string): EverythingType => {
             }
           }
 
-          everything.push({ type: '3operator', text: text, i1: i, c1: c, c2: c + 3 })
+          everything.push({type:'3operator',text:text,i1:i,c1:c,c2:c + 3})
           c += 3
           break dummyLoop
         }
@@ -1929,7 +1929,7 @@ export default (content: string): EverythingType => {
 
       checkNext:
       while (true) {
-        if (c < numberOfChars - 1 && operatorsObj[lowerText = (lines[i].slice(c, cPlusLen = c + 2).toLowerCase())]) {
+        if (c < numberOfChars - 1 && operatorsObj[lowerText = (lines[i].slice(c,cPlusLen = c + 2).toLowerCase())]) {
         // d(lines[i].slice(c, c + 2), '2operator', char())
 
           if (lowerText === 'or') {
@@ -1938,7 +1938,7 @@ export default (content: string): EverythingType => {
             }
           }
 
-          everything.push({ type: '2operator', text: lines[i].slice(c, c + 2), i1: i, c1: c, c2: c + 2 })
+          everything.push({type:'2operator',text:lines[i].slice(c,c + 2),i1:i,c1:c,c2:c + 2})
           c += 2
           break dummyLoop
         }
@@ -1949,8 +1949,8 @@ export default (content: string): EverythingType => {
         //if ?, ternary, so expect :
         if (lines[i][c] === '?') {
           // d('? ternary', char())
-          everything.push({ type: '? ternary', text: '?', i1: i, c1: c })
-          colonDeep++, c++
+          everything.push({type:'? ternary',text:'?',i1:i,c1:c})
+          colonDeep++,c++
 
           lineWhereCanConcat = -1
           legalObjLine = i
@@ -1959,31 +1959,31 @@ export default (content: string): EverythingType => {
           //where findExpression stopped at
           if (lines[i][c] === ':') {
             // d(': ternary', char())
-            everything.push({ type: ': ternary', text: ':', i1: i, c1: c })
-            colonDeep--, c++
+            everything.push({type:': ternary',text:':',i1:i,c1:c})
+            colonDeep--,c++
           } else {
-            d('illegal: why is there no : after ? ternary', char())
+            d('illegal: why is there no : after ? ternary',char())
             //pretend it was legal
-            colonDeep--, c++, toReturn = false
+            colonDeep--,c++,toReturn = false
             //I don't know what returning false does
           }
         } else if (lines[i][c] === ':') {
           //'?' will make colonDeep true
           if (!colonDeep) {
             //if encounter ':' in the wild BEFORE '?'
-            d('illegal: unexpected :', char())
+            d('illegal: unexpected :',char())
           }
           toReturn = false
         //for variadic function definition
         } else if (variadicAsterisk && lines[i][c] === '*') {
           // d('* variadic Argument', char())
-          everything.push({ type: '* variadic Argument', text: '*', i1: i, c1: c })
+          everything.push({type:'* variadic Argument',text:'*',i1:i,c1:c})
           c++
         } else {
           // d(lines[i][c], '1operator', char())
 
 
-          everything.push({ type: '1operator', text: lines[i][c], i1: i, c1: c })
+          everything.push({type:'1operator',text:lines[i][c],i1:i,c1:c})
           c++
         }
         break dummyLoop
@@ -2016,7 +2016,7 @@ export default (content: string): EverythingType => {
     if (insideContinuation) {
       skipThroughWhiteSpaces()
       if (c !== numberOfChars && lines[i][c] === ';') {
-        d('ILLEGAL semiColonComment insideContinuation', char())
+        d('ILLEGAL semiColonComment insideContinuation',char())
         if (endExprContinuation()) {
           return findExpression()
         }
@@ -2111,7 +2111,7 @@ export default (content: string): EverythingType => {
     }
   }
   function arrayMid(which: string) {
-    everything.push({ type: `[ ${which}`, text: '[', i1: i, c1: c })
+    everything.push({type:`[ ${which}`,text:'[',i1:i,c1:c})
     legalObjLine = i
 
     c++
@@ -2127,7 +2127,7 @@ export default (content: string): EverythingType => {
         lineWhereCanConcat = -1
       } else {
         if (i !== legalObjLine ) {
-          d(`ILLEGAL ] ${which} i !== legalObjLine`, char())
+          d(`ILLEGAL ] ${which} i !== legalObjLine`,char())
         }
       }
 
@@ -2135,19 +2135,19 @@ export default (content: string): EverythingType => {
       if (recurseBetweenExpression() || findExpression()) {
         if (isComma) {
           isComma = false
-          everything.splice(arrSpliceStartIndex, 0, { type: `, ${which}`, text: ',', i1: i, c1: c })
+          everything.splice(arrSpliceStartIndex,0,{type:`, ${which}`,text:',',i1:i,c1:c})
         }
       } else {
         if (isComma) {
           isComma = false
-          d('ILLEGAL trailling , ARRAY', char())
-          everything.splice(arrSpliceStartIndex, 0, { type: `ILLEGAL trailling , ${which}`, text: ',', i1: i, c1: c })
+          d('ILLEGAL trailling , ARRAY',char())
+          everything.splice(arrSpliceStartIndex,0,{type:`ILLEGAL trailling , ${which}`,text:',',i1:i,c1:c})
         }
 
         if (lines[i][c] !== ']') {
           d(`\`${lines[i][c]}\` illegal NOT ] ${which} ${linesPlusChar()}`)
         }
-        everything.push({ type: `] ${which}`, text: ']', i1: i, c1: c })
+        everything.push({type:`] ${which}`,text:']',i1:i,c1:c})
         c++
         return true
       }
@@ -2159,11 +2159,11 @@ export default (content: string): EverythingType => {
     // everything.push({ type: 'ArrAccess', text: validName, i1: i, c1: nonWhiteSpaceStart, c2: c })
 
     // d('[ ArrAccess', char())
-    everything.push({ type: '[ ArrAccess', text: '[', i1: i, c1: c })
+    everything.push({type:'[ ArrAccess',text:'[',i1:i,c1:c})
     c++
     if (!recurseBetweenExpression()) { findExpression() }
     // d('] ArrAccess', char())
-    everything.push({ type: '] ArrAccess', text: ']', i1: i, c1: c })
+    everything.push({type:'] ArrAccess',text:']',i1:i,c1:c})
     c++
     recurseFindTrailingExpr()
   }
@@ -2183,10 +2183,10 @@ export default (content: string): EverythingType => {
     if (lines[i][c] === '.') {
       lastTrailingWasFunc = false
       c++
-      everything.push({ type: '. property', text: '.', i1: i, c1: c })
+      everything.push({type:'. property',text:'.',i1:i,c1:c})
       const c1 = c
       skipValidChar()
-      everything.push({ type: '(.) property findTrailingExpr', text: lines[i].slice(c1,c), i1: i, c1: c1, c2: c })
+      everything.push({type:'(.) property findTrailingExpr',text:lines[i].slice(c1,c),i1:i,c1:c1,c2:c})
       /* if (isNaN(Number(validName))) {
         // everything.push({ type: 'obj with property', text: validName, i1: i, c1: nonWhiteSpaceStart, c2: c })
       } else {
@@ -2214,7 +2214,7 @@ export default (content: string): EverythingType => {
   }
   function findExpression() {
     if (i === howManyLines) {
-      d('illegal empty assignment', char())
+      d('illegal empty assignment',char())
       return false
     }
 
@@ -2231,7 +2231,7 @@ export default (content: string): EverythingType => {
         }
       } else {
         if (startContinuation()) {
-          i++, c = 0, numberOfChars = lines[i].length
+          i++,c = 0,numberOfChars = lines[i].length
           findExpression()
         }
       }
@@ -2243,38 +2243,38 @@ export default (content: string): EverythingType => {
     if (lines[i][c] === '%' || variableCharsObj[lines[i][c]]) {
       c++
 
-      everything.push({ type: 'start unit' })
+      everything.push({type:'start unit'})
 
       //skip through % OR valid variable Chars
       while (c < numberOfChars && (findPercentVar() || variableCharsObj[lines[i][c]])) {
         c++
       }
-      const fEvalidName = lines[i].slice(nonWhiteSpaceStart, c)
+      const fEvalidName = lines[i].slice(nonWhiteSpaceStart,c)
 
       if (isNaN(Number(fEvalidName))) {
         // d(`${validName} idkVariable ${char()}`)
         if (lookingForAnd && fEvalidName.toLowerCase() === 'and') {
           lookingForAnd = false
-          everything.push({ type: 'legacyIf and{ws} findExpression', text: `${fEvalidName} `, i1: i, c1: nonWhiteSpaceStart, c2: c + 1 })
+          everything.push({type:'legacyIf and{ws} findExpression',text:`${fEvalidName} `,i1:i,c1:nonWhiteSpaceStart,c2:c + 1})
           c++
           return false
         } else {
-          everything.push({ type: 'idkVariable', text: fEvalidName, i1: i, c1: nonWhiteSpaceStart, c2: c })
+          everything.push({type:'idkVariable',text:fEvalidName,i1:i,c1:nonWhiteSpaceStart,c2:c})
           lineWhereCanConcat = i
         }
       } else {
         // d(`${validName} Integer ${char()}`)
-        everything.push({ type: 'Integer', text: fEvalidName, i1: i, c1: nonWhiteSpaceStart, c2: c })
+        everything.push({type:'Integer',text:fEvalidName,i1:i,c1:nonWhiteSpaceStart,c2:c})
       }
 
       if (recurseFindTrailingExpr()) {
-        everything.push({ type: 'end unit' })
+        everything.push({type:'end unit'})
 
         recurseBetweenExpression()
         return true
       }
 
-      everything.push({ type: 'end unit' })
+      everything.push({type:'end unit'})
       recurseBetweenExpression()
       return true
 
@@ -2312,12 +2312,12 @@ export default (content: string): EverythingType => {
         break
       }
 
-      everything.push({ type: `( ${which}`, text: '(', i1: i, c1: c })
+      everything.push({type:`( ${which}`,text:'(',i1:i,c1:c})
       c++
       lineWhereCanConcat = -1
       if (!recurseBetweenExpression()) { findExpression() }
       // d(') group', char())
-      everything.push({ type: `) ${which}`, text: ')', i1: i, c1: c })
+      everything.push({type:`) ${which}`,text:')',i1:i,c1:c})
       c++
       recurseBetweenExpression()
       return true
@@ -2331,9 +2331,9 @@ export default (content: string): EverythingType => {
       return false
     }
     if (i !== lineWhereCanConcat && lines[i][c] === '{') {
-      everything.push({ type: '{ object', text: '{', i1: i, c1: c })
+      everything.push({type:'{ object',text:'{',i1:i,c1:c})
       legalObjLine = i
-      colonDeep++, c++
+      colonDeep++,c++
 
       let isComma = false
       const singleVarEverythingIndex = -1
@@ -2350,7 +2350,7 @@ export default (content: string): EverythingType => {
           skipThroughWhiteSpaces()
         } else {
           if (i !== legalObjLine ) {
-            d('ILLEGAL } Array i !== legalObjLine', char())
+            d('ILLEGAL } Array i !== legalObjLine',char())
           }
         }
         //skipSpaces
@@ -2381,21 +2381,21 @@ export default (content: string): EverythingType => {
           }
           if (isComma) {
             isComma = false
-            everything.splice(objSpliceStartIndex, 0, { type: ', object', text: ',', i1: i, c1: c })
+            everything.splice(objSpliceStartIndex,0,{type:', object',text:',',i1:i,c1:c})
           }
         } else {
           // if haven't expression, it is only illegal if haventFoundSingleVar, which is a valid key
           if (isComma) {
             isComma = false
-            d('ILLEGAL trailling , object', char())
-            everything.splice(objSpliceStartIndex, 0, { type: 'ILLEGAL trailling , object', text: ',', i1: i, c1: c })
+            d('ILLEGAL trailling , object',char())
+            everything.splice(objSpliceStartIndex,0,{type:'ILLEGAL trailling , object',text:',',i1:i,c1:c})
           }
           if (lines[i][c] !== '}') {
             d(`\`${lines[i][c]}\` illegal NOT } object ${linesPlusChar()}`)
           }
-          everything.push({ type: '} object', text: '}', i1: i, c1: c })
+          everything.push({type:'} object',text:'}',i1:i,c1:c})
           lineWhereCanConcat = -1
-          colonDeep--, c++
+          colonDeep--,c++
           trailingAndRecurse()
           recurseBetweenExpression()
           return true
@@ -2404,13 +2404,13 @@ export default (content: string): EverythingType => {
 
         if (lines[i][c] === ':') {
           // d(': object', char())
-          everything.push({ type: ': object', text: ':', i1: i, c1: c })
+          everything.push({type:': object',text:':',i1:i,c1:c})
           c++ //skip :
           legalObjLine = i
           skipThroughWhiteSpaces()
           if (!recurseBetweenExpression()) { findExpression() }
         } else {
-          d('illegal obj2, key without : ', char())
+          d('illegal obj2, key without : ',char())
           return false
         }
 
@@ -2434,14 +2434,14 @@ export default (content: string): EverythingType => {
         innerDecimalFinder()
         return false
       }
-      validName = lines[i].slice(nonWhiteSpaceStart, c)
+      validName = lines[i].slice(nonWhiteSpaceStart,c)
       return true
     }
   }
   //true if current char is ", false if it isn't
   function findDoubleQuotedString() {
     if (lines[i][c] === '"') {
-      strStartPos = c, strStartLine = i
+      strStartPos = c,strStartLine = i
       c++
       //noClosing " found on the same line
       if (!findClosingQuoteInLine()) {
@@ -2449,7 +2449,7 @@ export default (content: string): EverythingType => {
         if (!recurseContinuation()) {
           //script is broken at this point but we still try to continue
           c++
-          d('AS LAST RESORT: doing skipThroughEmptyLines', char())
+          d('AS LAST RESORT: doing skipThroughEmptyLines',char())
           insideContinuation = true
           skipThroughEmptyLines()
         }
@@ -2470,17 +2470,17 @@ export default (content: string): EverythingType => {
           continue
         } else {
           //this IS closing quote because not escapechar
-          c++, lineWhereCanConcat = i
+          c++,lineWhereCanConcat = i
           // strStartPos, strStartLine
-          const text = textFromPosToCurrent([strStartPos, strStartLine])
+          const text = textFromPosToCurrent([strStartPos,strStartLine])
           // d(text === printString(), 'String')
           // d(printString(), 'String')
-          everything.push({ type: 'String', text: text, i1: strStartLine, c1: strStartPos, i2: i, c2: c })
+          everything.push({type:'String',text:text,i1:strStartLine,c1:strStartPos,i2:i,c2:c})
           return true
         }
         // semiColonComment must be preceded by whiteSpace
       } else if (lines[i][c] === ';' && whiteSpaceObj[lines[i][c - 1]]) {
-        d('semiColonComment when findClosingQuote', char())
+        d('semiColonComment when findClosingQuote',char())
         return false
       }
       //anything else found, next char
@@ -2544,7 +2544,7 @@ export default (content: string): EverythingType => {
  */
   }
   function endExprContinuation() {
-    i++, c = 0, numberOfChars = lines[i].length
+    i++,c = 0,numberOfChars = lines[i].length
     skipThroughWhiteSpaces()
     if (c !== numberOfChars && lines[i][c] === ')') {
       insideContinuation = false
@@ -2562,7 +2562,7 @@ export default (content: string): EverythingType => {
     //now continue until I find a line starting with ')'
     i++
     while (i < howManyLines) {
-      c = 0, numberOfChars = lines[i].length
+      c = 0,numberOfChars = lines[i].length
       skipThroughWhiteSpaces()
       //true if found line starting with ) AND closingQuote on the same line
       if (c < numberOfChars && lines[i][c] === ')') {
@@ -2594,7 +2594,7 @@ export default (content: string): EverythingType => {
       charLoop:
       while (c < numberOfChars) {
         if (lines[i][c] === ';' && (c === 1 || whiteSpaceObj[lines[i][c - 1]])) {
-          d('comment while skipThroughFindChar', char())
+          d('comment while skipThroughFindChar',char())
           break charLoop
         } else if (lines[i][c] === charToFind) {
           // d('found', charToFind, 'at', char())
@@ -2604,7 +2604,7 @@ export default (content: string): EverythingType => {
       }
       i++
       if (i < howManyLines) {
-        c = 0, numberOfChars = lines[i].length
+        c = 0,numberOfChars = lines[i].length
         continue outer
       } else {
         return false
@@ -2613,7 +2613,7 @@ export default (content: string): EverythingType => {
   }
   //true if found anything !whiteSpace, false if outOfLines
   function skipThroughEmptyLines() {
-    const c1 = c, i1 = i
+    const c1 = c,i1 = i
     //also skip through whiteSpaces, comments
     outOfLines:
     while (i < howManyLines) {
@@ -2625,7 +2625,7 @@ export default (content: string): EverythingType => {
         //comment: next line
       } else if (lines[i][c] === ';' && (c === 0 || whiteSpaceObj[lines[i][c - 1]])) {
         //
-      } else if (c < numberOfChars - 1 && lines[i].slice(c, c + 2) === '/*') {
+      } else if (c < numberOfChars - 1 && lines[i].slice(c,c + 2) === '/*') {
         while (true) {
           if (++i === howManyLines) {
             break outOfLines
@@ -2635,31 +2635,31 @@ export default (content: string): EverythingType => {
           while (c < numberOfChars && whiteSpaceObj[lines[i][c]]) {
             c++
           }
-          if (c < numberOfChars - 1 && lines[i].slice(c, c + 2) === '*/') {
+          if (c < numberOfChars - 1 && lines[i].slice(c,c + 2) === '*/') {
             c += 2
             continue outOfLines
           }
         }
       } else {
         //anything else, return found
-        const text = textFromPosToCurrent([c1, i1])
+        const text = textFromPosToCurrent([c1,i1])
         if (text) {
-          everything.push({ type: 'emptyLines', text: text, i1: i1, c1: c1, i2: i, c2: c })
+          everything.push({type:'emptyLines',text:text,i1:i1,c1:c1,i2:i,c2:c})
         }
         return true
       }
       i++
       if (i < howManyLines) {
-        c = 0, numberOfChars = lines[i].length
+        c = 0,numberOfChars = lines[i].length
       } else {
         break outOfLines
       }
     }
     i--
     c = numberOfChars
-    const text = textFromPosToCurrent([c1, i1])
+    const text = textFromPosToCurrent([c1,i1])
     if (text) {
-      everything.push({ type: 'emptyLines EOF', text: text, i1: i1, c1: c1, i2: i, c2: c })
+      everything.push({type:'emptyLines EOF',text:text,i1:i1,c1:c1,i2:i,c2:c})
     }
     i++
     return false
@@ -2669,10 +2669,10 @@ export default (content: string): EverythingType => {
     while (c < numberOfChars && whiteSpaceObj[lines[i][c]]) {
       c++
     }
-    const text = lines[i].slice(c1, c)
+    const text = lines[i].slice(c1,c)
     if (text) {
       // d(`WHITESPACES '${text}'`)
-      everything.push({ type: 'whiteSpaces', text: text, i1: i, c1: c1, c2: c })
+      everything.push({type:'whiteSpaces',text:text,i1:i,c1:c1,c2:c})
     }
   }
   function findCommentsAndEndLine() {
@@ -2685,9 +2685,9 @@ export default (content: string): EverythingType => {
       }
 
       if (lines[i][c] === ';' && whiteSpaceObj[lines[i][c - 1]]) {
-        const commentToEOL = lines[i].slice(c, numberOfChars)
+        const commentToEOL = lines[i].slice(c,numberOfChars)
         // d(commentToEOL,'semiColonComment at findCommentsAndEndLine')
-        everything.push({ type: 'semiColonComment at findCommentsAndEndLine', text: commentToEOL, i1: i, c1: c, c2: numberOfChars })
+        everything.push({type:'semiColonComment at findCommentsAndEndLine',text:commentToEOL,i1:i,c1:c,c2:numberOfChars})
         break dummyLoop
       }
 
@@ -2698,7 +2698,7 @@ export default (content: string): EverythingType => {
 
       d('this isn\'t supposed to happen #445')
     }
-    everything.push({ type: 'newLine findCommentsAndEndLine', text: '\n', i1: i, c1: c })
+    everything.push({type:'newLine findCommentsAndEndLine',text:'\n',i1:i,c1:c})
     i++; return toReturn
   }
   function findPercentVarV1Expression() {
@@ -2707,11 +2707,11 @@ export default (content: string): EverythingType => {
         d('literal % in findV1Expression')
       } else {
         const cEndOfV1Expression = cNotWhiteSpace
-        const text = lines[i].slice(v1ExpressionC1, cEndOfV1Expression)
-        everything.push({ type: 'v1String findPercentVarV1Expression', text: text, i1: i, c1: v1ExpressionC1, c2: cEndOfV1Expression })
+        const text = lines[i].slice(v1ExpressionC1,cEndOfV1Expression)
+        everything.push({type:'v1String findPercentVarV1Expression',text:text,i1:i,c1:v1ExpressionC1,c2:cEndOfV1Expression})
 
 
-        everything.push({ type: '%START %Var%', text: '%', i1: i, c1: c })
+        everything.push({type:'%START %Var%',text:'%',i1:i,c1:c})
         c++
 
         percentVarStart = c
@@ -2722,15 +2722,15 @@ export default (content: string): EverythingType => {
         while (c < numberOfChars && variableCharsObj[lines[i][c]]) {
           c++
         }
-        const percentVar = lines[i].slice(percentVarStart, c)
-        d('percentVar====', percentVar)
-        everything.push({ type: 'percentVar v1Expression', text: percentVar, i1: i, c1: percentVarStart, c2: c })
+        const percentVar = lines[i].slice(percentVarStart,c)
+        d('percentVar====',percentVar)
+        everything.push({type:'percentVar v1Expression',text:percentVar,i1:i,c1:percentVarStart,c2:c})
 
         if (lines[i][c] !== '%') {
-          d('illegal %VAR% in v1Expression', char())
+          d('illegal %VAR% in v1Expression',char())
         }
         cNotWhiteSpace = c
-        everything.push({ type: 'END% %Var%', text: lines[i][c], i1: i, c1: c })
+        everything.push({type:'END% %Var%',text:lines[i][c],i1:i,c1:c})
         return true
       }
     }
@@ -2746,7 +2746,7 @@ export default (content: string): EverythingType => {
         // d(`${lines[i].slice(percentVarStart, c)} %VAR% ${char()} #988`)
         return true
       } else {
-        d(lines[i].slice(nonWhiteSpaceStart, c), 'ILLEGAL %VAR%', char())
+        d(lines[i].slice(nonWhiteSpaceStart,c),'ILLEGAL %VAR%',char())
         return false
       }
     } else {
@@ -2758,7 +2758,7 @@ export default (content: string): EverythingType => {
       idkVarC1 = c
       c++
     } else if (c < numberOfChars && lines[i][c] === '%') {
-      everything.push({ type: '% checkPercent', text: '%', i1: i, c1: c })
+      everything.push({type:'% checkPercent',text:'%',i1:i,c1:c})
       percentVarMid()
       c++
       idkVarC1 = c
@@ -2767,8 +2767,8 @@ export default (content: string): EverythingType => {
     }
     while (c < numberOfChars) {
       if (c < numberOfChars && lines[i][c] === '%') {
-        everything.push({ type: 'v1String findIdkVar', text: lines[i].slice(idkVarC1,c), i1: i, c1: idkVarC1, c2: c })
-        everything.push({ type: '% checkPercent', text: '%', i1: i, c1: c })
+        everything.push({type:'v1String findIdkVar',text:lines[i].slice(idkVarC1,c),i1:i,c1:idkVarC1,c2:c})
+        everything.push({type:'% checkPercent',text:'%',i1:i,c1:c})
         percentVarMid()
         c++
         if (c === numberOfChars) {
@@ -2785,7 +2785,7 @@ export default (content: string): EverythingType => {
     }
     const text = lines[i].slice(idkVarC1,c)
     if (text) {
-      everything.push({ type: 'v1String findIdkVar', text: text, i1: i, c1: idkVarC1, c2: c })
+      everything.push({type:'v1String findIdkVar',text:text,i1:i,c1:idkVarC1,c2:c})
     }
     return true
   }
@@ -2794,11 +2794,11 @@ export default (content: string): EverythingType => {
     idkVarC1 = c
     skipValidChar()
     if (c < numberOfChars && lines[i][c] === '%') {
-      everything.push({ type: 'v1String percentVarMid', text: lines[i].slice(idkVarC1,c), i1: i, c1: idkVarC1, c2: c })
-      everything.push({ type: '% percentVarMid', text: '%', i1: i, c1: c })
+      everything.push({type:'v1String percentVarMid',text:lines[i].slice(idkVarC1,c),i1:i,c1:idkVarC1,c2:c})
+      everything.push({type:'% percentVarMid',text:'%',i1:i,c1:c})
       return true
     } else {
-      d(lines[i].slice(nonWhiteSpaceStart, c), 'ILLEGAL %VAR%', char())
+      d(lines[i].slice(nonWhiteSpaceStart,c),'ILLEGAL %VAR%',char())
       return false
     }
   }
@@ -2810,8 +2810,8 @@ export default (content: string): EverythingType => {
       while (c < numberOfChars && propCharsObj[lines[i][c]]) {
         c++
       }
-      const text = lines[i].slice(c1, c)
-      everything.push({ type: 'singleVar', text: text, i1: i, c1: c1, c2: c })
+      const text = lines[i].slice(c1,c)
+      everything.push({type:'singleVar',text:text,i1:i,c1:c1,c2:c})
       lineWhereCanConcat = i
       return true
     }
@@ -2825,14 +2825,14 @@ export default (content: string): EverythingType => {
   }
   function printString() {
     if (strStartLine === i) {
-      return lines[i].slice(strStartPos, c)
+      return lines[i].slice(strStartPos,c)
     } else {
       let strToPrint = lines[strStartLine].slice(strStartPos)
       for (let i2 = strStartLine + 1; i2 < i; i2++) {
         // console.log(lines[i2])
         strToPrint += `\n${lines[i2]}`
       }
-      strToPrint += `\n${lines[i].slice(0, c)}`
+      strToPrint += `\n${lines[i].slice(0,c)}`
       return strToPrint
     }
     // d('no quote after DoubleQuotesString', `Ln ${strStartLine + 1}, Col ${strStartPos + 1} - Ln ${i + 1}, Col ${c + 1}`)
