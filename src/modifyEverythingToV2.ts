@@ -831,17 +831,20 @@ export default (everything: ExtendedEverythingType): string => {
       return true
     }
     if (next.type === 'emptyLines') {
+      next.text = ' '
       next = everything[++b]
       if (!next) {
         return true
       }
     }
     if (next.type === '(statement) ,') {
+      next.text = ' '
       next = everything[++b]
       if (!next) {
         return true
       }
       if (next.type === 'whiteSpaces') {
+        next.text = ''
         next = everything[++b]
         if (!next) {
           return true

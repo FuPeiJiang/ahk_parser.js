@@ -11,7 +11,7 @@ MouseGetPos, xpos, ypos
 MouseGetPos OutputVarX, OutputVarY, OutputVarWin, OutputVarControl, Flag
 MouseGetPos OutputVarX, OutputVarY, OutputVarWin, OutputVarControl, 24
 
-MouseMove, 0, 1, 100, R
+MouseMove 0, 1, 100, R
 MouseMove, 0, 0 , 0
 MouseMove, 0, -1, 100, R
 
