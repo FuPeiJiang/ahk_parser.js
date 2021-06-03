@@ -46,6 +46,7 @@ const ternaryColonEndDelim: stringIndexBool = {'end assignment':true,', function
 const doNotQuoteCommand: stringIndexBool = {'splitpath':true}
 const stringUpperLower: stringIndexString = {'stringupper':'StrUpper','stringlower':'StrLower'}
 const whiteSpaceNewlineOrComma: stringIndexBool = {' ':true,'\t':true,'\n':true,',':true}
+const commaCommandObj: stringIndexBool = {', command whiteSpace':true,', command comma':true}
 
 
 const varNames: {[key: string]: true} = {}
@@ -479,6 +480,9 @@ export default (everything: ExtendedEverythingType): string => {
             next.type = 'edit'
           }
         }
+      } else if (dTextLowered === 'mousegetpos') {
+        // MouseGetPos [OutputVarX, OutputVarY, OutputVarWin, OutputVarControl, Flag]
+        if (modCommandOfVarnameAfterNum(4)) { return 3 }
       } else if (dTextLowered === '#noenv') {
         thisE.text = ''
         const next = everything[i + 1]
@@ -678,6 +682,76 @@ export default (everything: ExtendedEverythingType): string => {
     return 3
   }
   // functions
+  function modCommandOfVarnameAfterNum(howManyVarName) {
+    if (skipFirstSeparatorOfCommand()) { return true }
+    i = b
+    if (howManyVarName) {
+      let whichParam = 0
+      innerLoop:
+      while (whichParam < howManyVarName) {
+        next = everything[i]
+        if (!next) {
+          return true
+        }
+        const bType = next.type
+
+        if (v1Str[bType]) {
+          next.type = 'edit'
+          i++
+          continue innerLoop
+        }
+
+        const allReturn = all()
+        if (allReturn === 1) {
+          continue innerLoop
+        } else if (allReturn === 2) {
+          return true
+        } else if (allReturn === 3) {
+          i++
+          continue innerLoop
+        }
+
+        if (bType === 'end command') {
+          return false
+        } else if (commaCommandObj[bType]) {
+          whichParam++
+        }
+        i++
+        continue innerLoop
+      }
+    }
+    innerLoop:
+    while (true) {
+      next = everything[i]
+      if (!next) {
+        return true
+      }
+      const bType = next.type
+
+      if (v1Str[bType]) {
+        if (!isNaN(Number(next.text))) {
+          next.type = 'edit'
+          i++
+          continue innerLoop
+        }
+      }
+
+      const allReturn = all()
+      if (allReturn === 1) {
+        continue innerLoop
+      } else if (allReturn === 2) {
+        return true
+      } else if (allReturn === 3) {
+        i++
+        continue innerLoop
+      }
+
+      if (bType === 'end command') {
+        return false
+      }
+      i++
+    }
+  }
   function printFromEverythingText(okArr) {
     const arrToJoin = []
     for (let i = 0, len = okArr.length; i < len; i++) {
@@ -768,7 +842,7 @@ export default (everything: ExtendedEverythingType): string => {
         if (whichParamsObj[paramNum]) {
           next.type = 'edit'
         }
-      } else if (dType === ', command comma') {
+      } else if (commaCommandObj[dType]) {
         paramNum++
       } else if (dType === 'end command') {
         return true
@@ -909,7 +983,7 @@ export default (everything: ExtendedEverythingType): string => {
           gArgsEInsertIndex = functionStartIndex
           arrFromArgsToInsert = []
           return false
-        } else if (bType === ', command comma') {
+        } else if (commaCommandObj[bType]) {
           localArgsArr.push(everything.slice(paramStartIndex, i))
           paramStartIndex = i + 1
         }

@@ -2350,3 +2350,5 @@ fix WinClip
 convert "!get colour.ahk"
 
 CoordMode
+
+numIfNum

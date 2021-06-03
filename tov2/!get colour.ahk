@@ -7,7 +7,8 @@ SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
 CoordMode, Pixel, Screen
 CoordMode, Mouse, Screen
 f1::
-MouseGetPos, xpos, ypos
+; MouseGetPos, xpos, ypos
+MouseGetPos OutputVarX, OutputVarY, OutputVarWin, OutputVarControl, Flag
 
 MouseMove, 0, 1, 100, R
 MouseMove, 0, 0 , 0
