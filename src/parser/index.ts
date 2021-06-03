@@ -440,6 +440,10 @@ export default (content: string): EverythingType => {
                 singleComma = false
                 if (i === howManyLines) { break lineLoop }
                 recurseFindCommaV1Expression(', command whiteSpace')
+
+                const eLen = everything.length - 1
+                everything.splice(everything.length - (everything[eLen].type === 'emptyLines' ? 1 : 0),0,{type:'end command'})
+
                 usingStartOfLineLoop = true
                 continue startOfLineLoop
                 //class
