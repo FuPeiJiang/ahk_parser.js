@@ -712,7 +712,7 @@ export default (everything: ExtendedEverythingType): string => {
     return 3
   }
   // functions
-  function modCommandOfInteger(howManyInteger) {
+  function modCommandOfInteger(howManyInteger: number) {
     if (skipFirstSeparatorOfCommand()) { return true }
     if (howManyInteger) {
       let whichParam = 0
@@ -755,7 +755,7 @@ export default (everything: ExtendedEverythingType): string => {
       }
     }
   }
-  function modCommandOfVarnameThenXNum(howManyVarName,howManyNum) {
+  function modCommandOfVarnameThenXNum(howManyVarName: number,howManyNum: number) {
     if (skipFirstSeparatorOfCommand()) { return true }
     if (howManyVarName) {
       let whichParam = 0
@@ -829,7 +829,7 @@ export default (everything: ExtendedEverythingType): string => {
       continue innerLoop
     }
   }
-  function spliceTill(searchType) {
+  function spliceTill(searchType: string) {
     b = i
     while (true) {
       if (everything[++b].type === searchType) {
@@ -838,7 +838,7 @@ export default (everything: ExtendedEverythingType): string => {
       }
     }
   }
-  function modCommandOfVarnameAfterNum(howManyVarName) {
+  function modCommandOfVarnameAfterNum(howManyVarName: number) {
     if (skipFirstSeparatorOfCommand()) { return true }
     if (howManyVarName) {
       let whichParam = 0
@@ -910,7 +910,7 @@ export default (everything: ExtendedEverythingType): string => {
       i++
     }
   }
-  function printFromEverythingText(okArr) {
+  function printFromEverythingText(okArr: ExtendedEverythingType) {
     const arrToJoin = []
     for (let i = 0,len = okArr.length; i < len; i++) {
       arrToJoin.push(okArr[i].text)
