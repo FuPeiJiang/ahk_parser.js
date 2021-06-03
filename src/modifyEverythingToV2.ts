@@ -524,8 +524,8 @@ export default (everything: ExtendedEverythingType): string => {
         //#command
         commandAllEdit()
         if (getCommandParams()) { return 2 }
-        c_a(1); c_p(':=SubStr('); c_a(2); c_p(',1,-'); c_a(3); c_p(')')
-        spaceIfComment(); c_s()
+        a(1); p(':=SubStr('); a(2); p(',1,-'); a(3); p(')')
+        spaceIfComment(); s()
       } else if (objValue = stringUpperLower[dTextLowered]) {
         if (skipFirstSeparatorOfCommand()) { return 3 }
         commandAllEditChoose({1:true,2:true})
@@ -533,15 +533,15 @@ export default (everything: ExtendedEverythingType): string => {
         // OutputVar:=StrUpper(InputVar,"T")
         //#command
         if (getCommandParams()) { return 2 }
-        c_a(1); c_p(`:=${objValue}(`); c_a(2); c_o(',',3); c_a(3); c_p(')')
-        spaceIfComment(); c_s()
+        a(1); p(`:=${objValue}(`); a(2); o(',',3); a(3); p(')')
+        spaceIfComment(); s()
       } else if (dTextLowered === 'random') {
         // Random, OutputVar [, Min, Max]
         // OutputVar:=Random([Min, Max])
         commandAllEdit()
         if (getCommandParams()) { return 2 }
-        c_a(1); c_p(':=Random('); c_a(2); c_o(',',3); c_a(3); c_p(')')
-        spaceIfComment(); c_s()
+        a(1); p(':=Random('); a(2); o(',',3); a(3); p(')')
+        spaceIfComment(); s()
       }
     } else if (eType === 'legacyIf var') {
       b = i + 2
@@ -672,13 +672,20 @@ export default (everything: ExtendedEverythingType): string => {
     return 3
   }
   // functions
+  function printFromEverythingText(okArr) {
+    const arrToJoin = []
+    for (let i = 0, len = okArr.length; i < len; i++) {
+      arrToJoin.push(okArr[i].text)
+    }
+    d(arrToJoin.join(''))
+  }
   function spaceIfComment() {
     const next = everything[i + 1]
 
     if (next) {
       if (next.type === 'emptyLines') {
         if (next.text[0] === ';') {
-          c_p(' ')
+          p(' ')
         }
       }
     }
@@ -779,7 +786,7 @@ export default (everything: ExtendedEverythingType): string => {
     }
   }
 
-  function c_a(index: number) {
+  function a(index: number) {
     const paramArr = commandParamsArr[index - 1]
     let paramsLen
     if (paramArr && (paramsLen = paramArr.length)) {
@@ -791,15 +798,15 @@ export default (everything: ExtendedEverythingType): string => {
     }
   }
   // arrFromCParamsToInsert.push(...paramArr)
-  function c_p(str: string) {
+  function p(str: string) {
     arrFromCParamsToInsert.push({text:str})
   }
-  function c_o(str: string,index: number) {
+  function o(str: string,index: number) {
     if (commandParamsArr[index - 1]) {
       arrFromCParamsToInsert.push({text:str})
     }
   }
-  function c_s() {
+  function s() {
     everything.splice(cParamsEInsertIndex, 0, ...arrFromCParamsToInsert)
     i += arrFromCParamsToInsert.length
   }
@@ -863,12 +870,11 @@ export default (everything: ExtendedEverythingType): string => {
   }
 
   function getCommandParams() {
-    const functionStartIndex = cParamsEInsertIndex = i
+    const functionStartIndex = i
     i += 2
-    arrFromCParamsToInsert = []
     let paramStartIndex = i
     let next
-    commandParamsArr = []
+    const localArgsArr = []
     while (true) {
       innerLoop:
       while (true) {
@@ -890,12 +896,15 @@ export default (everything: ExtendedEverythingType): string => {
 
         if (bType === 'end command') {
           const spliceLen = i + 1 - functionStartIndex
-          commandParamsArr.push(everything.slice(paramStartIndex, i))
+          localArgsArr.push(everything.slice(paramStartIndex, i))
           everything.splice(functionStartIndex, spliceLen)
           i -= spliceLen
+          argsArr = localArgsArr
+          gArgsEInsertIndex = functionStartIndex
+          arrFromArgsToInsert = []
           return false
         } else if (bType === ', command comma') {
-          commandParamsArr.push(everything.slice(paramStartIndex, i))
+          localArgsArr.push(everything.slice(paramStartIndex, i))
           paramStartIndex = i + 1
         }
         i++
@@ -903,12 +912,11 @@ export default (everything: ExtendedEverythingType): string => {
     }
   }
   function getArgs() {
-    const functionStartIndex = gArgsEInsertIndex = i
+    const functionStartIndex = i
     i += 2
-    arrFromArgsToInsert = []
     let paramStartIndex = i
     let next
-    argsArr = []
+    const localArgsArr = []
     while (true) {
       innerLoop:
       while (true) {
@@ -930,12 +938,15 @@ export default (everything: ExtendedEverythingType): string => {
 
         if (bType === ') function CALL') {
           const spliceLen = i + 1 - functionStartIndex
-          argsArr.push(everything.slice(paramStartIndex, i))
+          localArgsArr.push(everything.slice(paramStartIndex, i))
           everything.splice(functionStartIndex, spliceLen)
           i -= spliceLen
+          argsArr = localArgsArr
+          gArgsEInsertIndex = functionStartIndex
+          arrFromArgsToInsert = []
           return false
         } else if (bType === ', function CALL') {
-          argsArr.push(everything.slice(paramStartIndex, i))
+          localArgsArr.push(everything.slice(paramStartIndex, i))
           paramStartIndex = i + 1
         }
         i++

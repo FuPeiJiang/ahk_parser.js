@@ -737,6 +737,7 @@ class WinClip extends WinClip_base
             gdip_token := WinClipAPI.Gdip_Startup()
             pBitmap:=0
             DllCall("gdiplus\GdipCreateBitmapFromFileICM", "wstr", bitmap, "Ptr*", pBitmap )
+            hBitmap:=0
             DllCall("gdiplus\GdipCreateHBITMAPFromBitmap", "Ptr", pBitmap, "Ptr*", hBitmap, "int", 0xffffffff )
             DllCall("gdiplus\GdipDisposeImage", "Ptr", pBitmap)
             WinClipAPI.Gdip_Shutdown( gdip_token )

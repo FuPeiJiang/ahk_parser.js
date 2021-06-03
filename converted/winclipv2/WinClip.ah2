@@ -301,7 +301,7 @@ class WinClip extends WinClip_base
             SendInput "^{Ins}" 
         else
             SendInput "^{vk43sc02E}" ;ctrl+c
-        ClipWait timeout, "1" 
+        ClipWait timeout, "1"
         if ( ret := this._isClipEmpty() )
             this.Restore( data )
         return !ret
@@ -737,6 +737,7 @@ class WinClip extends WinClip_base
             gdip_token := WinClipAPI.Gdip_Startup()
             pBitmap:=0
             DllCall("gdiplus\GdipCreateBitmapFromFileICM", "wstr", bitmap, "Ptr*", pBitmap )
+            hBitmap:=0
             DllCall("gdiplus\GdipCreateHBITMAPFromBitmap", "Ptr", pBitmap, "Ptr*", hBitmap, "int", 0xffffffff )
             DllCall("gdiplus\GdipDisposeImage", "Ptr", pBitmap)
             WinClipAPI.Gdip_Shutdown( gdip_token )
@@ -763,8 +764,8 @@ class WinClip extends WinClip_base
         bmi:=BufferAlloc(bmiLen,0)
         ;BITMAPINFOHEADER initialization
         NumPut("Uint",40,bmi,0)
-        NumPut("Uint",NumGet( bm, 4, "Uint" ),bmi,4)   ;width
-        NumPut("Uint",biHeight:=NumGet( bm, 8, "Uint" ),bmi,8) ;height
+        NumPut("Uint",NumGet(bm,4,"Uint"),bmi,4)   ;width
+        NumPut("Uint",biHeight:=NumGet(bm,8,"Uint"),bmi,8) ;height
         NumPut("UShort",1,bmi,12)
         NumPut("UShort",biBitCount,bmi,14)
         NumPut("UInt",0,bmi,16) ;compression must be BI_RGB
@@ -785,7 +786,7 @@ class WinClip extends WinClip_base
             biBitCount := numget( bmi.Ptr, 14, "UShort" )
             biWidth := numget( bmi.Ptr, 4, "UInt" )
             biHeight := numget( bmi.Ptr, 8, "UInt" )
-            biSizeImage := (((( biWidth * biBitCount + 31 ) & ~31 ) >> 3 ) * biHeight )
+            biSizeImage := (((( biWidth * biBitCount + 31 )  ~31 ) >> 3 ) * biHeight )
             ;~ dwCompression := numget( bmi, 16, "UInt" )
             ;~ if ( dwCompression != 0 ) ;BI_RGB
                 ;~ biSizeImage := ( biSizeImage * 3 ) / 2

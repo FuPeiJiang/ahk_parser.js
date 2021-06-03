@@ -2344,3 +2344,7 @@ Call to parse took 117.29500000365078 milliseconds.
 Call to modifyEverythingToV2 took 132.2500000242144 milliseconds.
 Call to diff took 653.5900000017136 milliseconds.
 Call to appendChild took 308.0500001087785 milliseconds.
+
+fix recursive VarSetCapacity->BufferAlloc
+fix WinClip
+convert "!Mouse get position.ahk"
