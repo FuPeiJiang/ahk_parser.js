@@ -2352,3 +2352,6 @@ convert "!get colour.ahk"
 CoordMode
 
 numIfNum
+
+to do:
+ what do I do with ErrorLevel ? BIG OOF
