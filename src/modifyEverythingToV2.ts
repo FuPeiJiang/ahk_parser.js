@@ -482,6 +482,9 @@ export default (everything: ExtendedEverythingType): string => {
       } else if (dTextLowered === 'mousegetpos') {
         // MouseGetPos [OutputVarX, OutputVarY, OutputVarWin, OutputVarControl, Flag]
         if (modCommandOfVarnameAfterNum(4)) { return 3 }
+      } else if (dTextLowered === 'mousemove') {
+        // MouseMove X, Y [, Speed, Relative]
+        if (modCommandOfInteger(3)) { return 3 }
       } else if (dTextLowered === '#noenv') {
         thisE.text = ''
         const next = everything[i + 1]
@@ -681,13 +684,62 @@ export default (everything: ExtendedEverythingType): string => {
     return 3
   }
   // functions
+  function modCommandOfInteger(howManyInteger) {
+    if (skipFirstSeparatorOfCommand()) { return true }
+    i = b
+    next = everything[i]
+    if (!next) {
+      return true
+    }
+    d(next)
+    if (howManyInteger) {
+      let whichParam = 0
+      innerLoop:
+      while (true) {
+        next = everything[i]
+        if (!next) {
+          return true
+        }
+        const bType = next.type
+
+        if (v1Str[bType]) {
+          // if (!isNaN(Number(next.text))) {
+          next.type = 'edit'
+          i++
+          continue innerLoop
+          // }
+        }
+
+        const allReturn = all()
+        if (allReturn === 1) {
+          continue innerLoop
+        } else if (allReturn === 2) {
+          return true
+        } else if (allReturn === 3) {
+          i++
+          continue innerLoop
+        }
+
+        if (bType === 'end command') {
+          return false
+        } else if (commaCommandObj[bType]) {
+          whichParam++
+          if (whichParam === howManyInteger) {
+            return false
+          }
+        }
+        i++
+        continue innerLoop
+      }
+    }
+  }
   function modCommandOfVarnameAfterNum(howManyVarName) {
     if (skipFirstSeparatorOfCommand()) { return true }
     i = b
     if (howManyVarName) {
       let whichParam = 0
       innerLoop:
-      while (whichParam < howManyVarName) {
+      while (true) {
         next = everything[i]
         if (!next) {
           return true
@@ -714,6 +766,9 @@ export default (everything: ExtendedEverythingType): string => {
           return false
         } else if (commaCommandObj[bType]) {
           whichParam++
+          if (whichParam === whichParam) {
+            break innerLoop
+          }
         }
         i++
         continue innerLoop

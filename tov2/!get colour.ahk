@@ -7,8 +7,9 @@ SetWorkingDir %A_ScriptDir%  ; Ensures a consistent starting directory.
 CoordMode, Pixel, Screen
 CoordMode, Mouse, Screen
 f1::
-; MouseGetPos, xpos, ypos
+MouseGetPos, xpos, ypos
 MouseGetPos OutputVarX, OutputVarY, OutputVarWin, OutputVarControl, Flag
+MouseGetPos OutputVarX, OutputVarY, OutputVarWin, OutputVarControl, 24
 
 MouseMove, 0, 1, 100, R
 MouseMove, 0, 0 , 0
@@ -19,9 +20,14 @@ MouseMove, 0, -1, 100, R
 ; PixelGetColor, OutputVar, %xpos%, %ypos%,Slow
 PixelGetColor, OutputVar, %xpos%, %ypos%,Alt RGB
 
-MouseMove, 0, 1, 100, R
-MouseMove %  xpos, ypos, 0
+MouseMove, 0, 1, 100, R 
+
+MouseMove 0, 0 , 0
 MouseMove, 0, -1, 100, R
+MouseMove xpos, ypos, 0, R
+MouseMove xpos, ypos, 0
+MouseMove, xpos, ypos, 0, R
+; MouseMove, 0, -1, 100, R
 
 ;MsgBox, %OutputVar%, %xpos%, %ypos%
 
