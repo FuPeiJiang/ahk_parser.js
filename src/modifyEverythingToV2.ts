@@ -51,7 +51,7 @@ const commaCommandObj: stringIndexBool = {', command whiteSpace':true,', command
 
 const varNames: {[key: string]: true} = {}
 const lowerVarNames: {[key: string]: number[]} = {}
-const typesThatAreVars: stringIndexBool = {'Param':true,'idkVariable':true,'assignment':true,'v1String findIdkVar':true}
+const typesThatAreVars: stringIndexBool = {'Param':true,'idkVariable':true,'assignment':true,'v1String findIdkVar':true,'var at v1Assignment':true}
 
 export default (everything: ExtendedEverythingType): string => {
   // I'd never think I'd come to this day, but..
