@@ -27,3 +27,4 @@ export const legacyIfOperators: stringIndexBool = {'=':true,'<>':true,'!=':true,
 export const elseLoopReturn: stringIndexBool = {'else':true,'loop':true,'return':true}
 
 export const thisCouldBeFuncName: stringIndexBool = {'idkVariable':true,'(.) property findTrailingExpr':true}
+export const emptyLinesObj: stringIndexBool = {'emptyLines':true,'emptyLines EOF':true}

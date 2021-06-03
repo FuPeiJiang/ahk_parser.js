@@ -454,7 +454,7 @@ export default (everything: ExtendedEverythingType): string => {
           }
           break outerLoop
         }
-        thisE.text = `${whiteSpaceObj[everything[i - 1].text.slice(-1)] ? '' : ' '}"${theText.replace(/"/g,'`"')}"${putAtEnd}`
+        thisE.text = `${whiteSpaceNewlineOrComma[everything[i - 1].text.slice(-1)] ? '' : ' '}"${theText.replace(/"/g,'`"')}"${putAtEnd}`
       }
     } else if (eType === '= v1Assignment') {
       thisE.text = ':='
@@ -548,6 +548,31 @@ export default (everything: ExtendedEverythingType): string => {
         commandAllEdit()
         if (getCommandParams()) { return 2 }
         a(1); p(':=Random('); a(2); o(',',3); a(3); p(')')
+        spaceIfComment(); s()
+      } else if (dTextLowered === 'pixelgetcolor') {
+        // PixelGetColor, OutputVar, X, Y , Mode
+        // Color := PixelGetColor(X, Y [, Mode])
+        const iBak = i
+        if (modCommandOfInteger(3)) { return 3 }
+        i = iBak
+        if (getCommandParams()) { return 2 }
+        a(1); p(':=PixelGetColor('); a(2); o(',',3); a(3); o(',',4)
+        //Alt RGB -> Alt
+        //RGB Alt  -> Alt
+        const paramArr = argsArr[3]
+        let paramsLen
+        if (paramArr && (paramsLen = paramArr.length)) {
+          for (let n = 0; n < paramsLen; n++) {
+            const dType = paramArr[n].type
+            if (!wsOrEmptyLine[paramArr[n].type]) {
+              if (v1Str[dType] || dType === 'String') {
+                paramArr[n].text = paramArr[n].text.replace(/ RGB/ig,'').replace(/RGB /ig,'')
+              }
+              arrFromArgsToInsert.push(paramArr[n])
+            }
+          }
+        }
+        p(')')
         spaceIfComment(); s()
       }
     } else if (eType === 'legacyIf var') {

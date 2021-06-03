@@ -1,5 +1,5 @@
 import {trace} from 'console'
-import {whiteSpaceObj,variableCharsObj,operatorsObj,legacyIfOperators,v1Continuator,typeOfValidVarName,whiteSpaceOverrideAssign,propCharsObj,namedIf,assignmentOperators,elseLoopReturn,v2Continuator,thisCouldBeFuncName} from './tokens'
+import {whiteSpaceObj,variableCharsObj,operatorsObj,legacyIfOperators,v1Continuator,typeOfValidVarName,whiteSpaceOverrideAssign,propCharsObj,namedIf,assignmentOperators,elseLoopReturn,v2Continuator,thisCouldBeFuncName,emptyLinesObj} from './tokens'
 import type {stringIndexBool} from './tokens'
 const d = console.debug.bind(console)
 
@@ -200,7 +200,7 @@ export default (content: string): EverythingType => {
                 recurseFindCommaV1Expression(', command comma')
 
                 const eLen = everything.length - 1
-                everything.splice(everything.length - (everything[eLen].type === 'emptyLines' ? 1 : 0),0,{type:'end command'})
+                everything.splice(everything.length - (emptyLinesObj[everything[eLen].type] ? 1 : 0),0,{type:'end command'})
 
                 usingStartOfLineLoop = true
                 continue startOfLineLoop
@@ -412,7 +412,7 @@ export default (content: string): EverythingType => {
                   if (i === howManyLines) { break lineLoop }
 
                   const eLen = everything.length - 1
-                  everything.splice(everything.length - (everything[eLen].type === 'emptyLines' ? 1 : 0),0,{type:'end command'})
+                  everything.splice(everything.length - (emptyLinesObj[everything[eLen].type] ? 1 : 0),0,{type:'end command'})
 
                   if (lines[i][c] === '{') {
                     everything.push({type:'{ for',text:'{',i1:i,c1:c})
@@ -442,7 +442,7 @@ export default (content: string): EverythingType => {
                 recurseFindCommaV1Expression(', command whiteSpace')
 
                 const eLen = everything.length - 1
-                everything.splice(everything.length - (everything[eLen].type === 'emptyLines' ? 1 : 0),0,{type:'end command'})
+                everything.splice(everything.length - (emptyLinesObj[everything[eLen].type] ? 1 : 0),0,{type:'end command'})
 
                 usingStartOfLineLoop = true
                 continue startOfLineLoop
@@ -908,7 +908,7 @@ export default (content: string): EverythingType => {
         }
       }
       const eLen = everything.length - 1
-      everything.splice(everything.length - (everything[eLen].type === 'emptyLines' ? 1 : 0),0,{type:'end assignment'})
+      everything.splice(everything.length - (emptyLinesObj[everything[eLen].type] ? 1 : 0),0,{type:'end assignment'})
       if (skipCommaV2Expr()) {return 2}
       usingStartOfLineLoop = true
       return 1

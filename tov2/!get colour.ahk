@@ -17,6 +17,7 @@ MouseMove, 0, -1, 100, R
 
 ; PixelGetColor, OutputVar, %xpos%, %ypos%,Slow
 PixelGetColor, OutputVar, %xpos%, %ypos%,Alt RGB
+PixelGetColor, OutputVar, %xpos%, %ypos%,RGB Alt
 
 MouseMove, 0, 1, 100, R
 MouseMove %  xpos, ypos, 0

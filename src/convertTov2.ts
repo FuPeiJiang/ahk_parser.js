@@ -3,7 +3,8 @@ import ahkParser from './parser/index'
 import modifyEverythingToV2 from './modifyEverythingToV2'
 
 const content: Buffer =
-fs.readFileSync('tov2/!get colour.ahk')
+fs.readFileSync('v2tests/PixelGetColor.ahk')
+// fs.readFileSync('tov2/!get colour.ahk')
 // fs.readFileSync('tests3/redo func definition.ahk')
 // fs.readFileSync('tests3/fix multiline comments.ahk')
 // fs.readFileSync('tests3/L colon L colon.ahk')
@@ -39,7 +40,7 @@ fs.readFileSync('tov2/use_string.ahk')
 fs.readFileSync('tov2/string.ahk')
 fs.readFileSync('tests/ahk_explorer.ahk')
 
-const everything = ahkParser(content.toString().replace(/\r/g, ''))
+const everything = ahkParser(content.toString().replace(/\r/g,''))
 // writeSync(arrOrObjToString(everything),'everything_before.txt')
 const converted = modifyEverythingToV2(everything)
 
@@ -47,14 +48,14 @@ writeSync(converted,'reconstructed.ah2')
 writeSync(arrOrObjToString(everything),'everything.txt')
 
 function arrOrObjToString(obj) {
-  const objDelim = ', ', objDelimLen = objDelim.length
+  const objDelim = ', ',objDelimLen = objDelim.length
   return innerFunc(obj)
   function innerFunc(obj) {
     var str = ''
     if (typeof obj === 'object')
     {
       if (Array.isArray(obj)) {
-        for (let i = 0, len = obj.length; i < len; i++) {
+        for (let i = 0,len = obj.length; i < len; i++) {
           if (typeof obj[i] === 'object') {
             str += `\n${innerFunc(obj[i])},`
           } else {
@@ -88,7 +89,7 @@ function arrOrObjToString(obj) {
   }
 }
 
-function writeSync(content: string, fileName: string) {
-  fs.writeFileSync(fileName, `${content}`, 'utf-8')
+function writeSync(content: string,fileName: string) {
+  fs.writeFileSync(fileName,`${content}`,'utf-8')
   // console.log('readFileSync complete')
 }
