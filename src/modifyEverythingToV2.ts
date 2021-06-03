@@ -636,11 +636,16 @@ export default (everything: ExtendedEverythingType): string => {
           return 3
         } else if (anyCommand[dType]) {
           if (blockDepth === 0) {
-            if (next.text.toLowerCase() === 'return') {
+            const lText = next.text.toLowerCase()
+            if (lText === 'return') {
               next.type = 'edit'
               next.text = '}'
               everything.splice(hotkeyI + 1,0,{text:'\n{',type:'edit'})
               return 3
+            } else if (lText === 'exitapp') {
+              next.type = 'edit'
+              next.text = 'ExitApp\n}'
+              everything.splice(hotkeyI + 1,0,{text:'\n{',type:'edit'})
             }
           }
         }
