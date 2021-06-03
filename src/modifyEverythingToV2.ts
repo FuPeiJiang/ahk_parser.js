@@ -438,7 +438,8 @@ export default (everything: ExtendedEverythingType): string => {
       const theText = everything[i].text
       if (theText !== '') {
         let next,putAtEnd = ''
-        next = everything[i + 1]
+        b = i + 1
+        next = everything[b]
         // skip through stuff like 'end command' which .text === undefined
         outerLoop:
         while (true) {
