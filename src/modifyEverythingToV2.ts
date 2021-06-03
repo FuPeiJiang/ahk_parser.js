@@ -486,6 +486,8 @@ export default (everything: ExtendedEverythingType): string => {
       } else if (dTextLowered === 'mousemove') {
         // MouseMove X, Y [, Speed, Relative]
         if (modCommandOfInteger(3)) { return 3 }
+      } else if (dTextLowered === 'pixelsearch') {
+        if (modCommandOfVarnameThenXNum(2,6)) { return 3 }
       } else if (dTextLowered === '#noenv') {
         thisE.text = ''
         const next = everything[i + 1]
@@ -750,6 +752,89 @@ export default (everything: ExtendedEverythingType): string => {
         }
         i++
         continue innerLoop
+      }
+    }
+  }
+  function modCommandOfVarnameThenXNum(howManyVarName,howManyNum) {
+    if (skipFirstSeparatorOfCommand()) { return true }
+    if (howManyVarName) {
+      let whichParam = 0
+      innerLoop:
+      while (true) {
+        next = everything[i]
+        if (!next) {
+          return true
+        }
+        const bType = next.type
+        if (v1Str[bType]) {
+          next.type = 'edit'
+          i++
+          continue innerLoop
+        }
+        const allReturn = all()
+        if (allReturn === 1) {
+          continue innerLoop
+        } else if (allReturn === 2) {
+          return true
+        } else if (allReturn === 3) {
+          i++
+          continue innerLoop
+        }
+        if (bType === 'end command') {
+          return false
+        } else if (commaCommandObj[bType]) {
+          whichParam++
+          if (whichParam === howManyVarName) {
+            break innerLoop
+          }
+        }
+        i++
+        continue innerLoop
+      }
+    }
+    let whichParam = -1
+    innerLoop:
+    while (true) {
+      next = everything[i]
+      if (!next) {
+        return true
+      }
+      const bType = next.type
+      if (v1Str[bType]) {
+        if (!isNaN(Number(next.text))) {
+          next.type = 'edit'
+          i++
+          continue innerLoop
+        }
+      }
+      const allReturn = all()
+      if (allReturn === 1) {
+        continue innerLoop
+      } else if (allReturn === 2) {
+        return true
+      } else if (allReturn === 3) {
+        i++
+        continue innerLoop
+      }
+      if (bType === 'end command') {
+        return false
+      } else if (commaCommandObj[bType]) {
+        whichParam++
+        if (whichParam === howManyNum) {
+          spliceTill('end command')
+          return false
+        }
+      }
+      i++
+      continue innerLoop
+    }
+  }
+  function spliceTill(searchType) {
+    b = i
+    while (true) {
+      if (everything[++b].type === searchType) {
+        everything.splice(i,b - i)
+        return true
       }
     }
   }
