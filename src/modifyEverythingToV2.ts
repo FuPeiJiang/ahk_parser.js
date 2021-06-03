@@ -686,12 +686,6 @@ export default (everything: ExtendedEverythingType): string => {
   // functions
   function modCommandOfInteger(howManyInteger) {
     if (skipFirstSeparatorOfCommand()) { return true }
-    i = b
-    next = everything[i]
-    if (!next) {
-      return true
-    }
-    d(next)
     if (howManyInteger) {
       let whichParam = 0
       innerLoop:
@@ -735,7 +729,6 @@ export default (everything: ExtendedEverythingType): string => {
   }
   function modCommandOfVarnameAfterNum(howManyVarName) {
     if (skipFirstSeparatorOfCommand()) { return true }
-    i = b
     if (howManyVarName) {
       let whichParam = 0
       innerLoop:
@@ -766,7 +759,7 @@ export default (everything: ExtendedEverythingType): string => {
           return false
         } else if (commaCommandObj[bType]) {
           whichParam++
-          if (whichParam === whichParam) {
+          if (whichParam === howManyVarName) {
             break innerLoop
           }
         }
@@ -825,27 +818,26 @@ export default (everything: ExtendedEverythingType): string => {
     }
   }
   function skipFirstSeparatorOfCommand() {
-    b = i + 1
-    next = everything[b]
+    next = everything[++i]
     if (!next) {
       return true
     }
     if (next.type === 'emptyLines') {
       next.text = ' '
-      next = everything[++b]
+      next = everything[++i]
       if (!next) {
         return true
       }
     }
     if (next.type === '(statement) ,') {
       next.text = ' '
-      next = everything[++b]
+      next = everything[++i]
       if (!next) {
         return true
       }
       if (next.type === 'whiteSpaces') {
         next.text = ''
-        next = everything[++b]
+        next = everything[++i]
         if (!next) {
           return true
         }
