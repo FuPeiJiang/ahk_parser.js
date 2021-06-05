@@ -196,6 +196,9 @@ export default (everything: ExtendedEverythingType): string => {
             // splice off and insert at same time
             p('(Type('); a(1); p(')=="Array"?'); a(1); p('.Length:'); a(1); p('.Count)')
             everything.splice(spliceStart,b - spliceStart + 1,...arrFromArgsToInsert)
+          // } else if (thisLowered === 'readline') {
+            // if (getArgs()) { return 2 }
+            // p('ReadLine() "`n"'); s()
           }
           return 3
         }
