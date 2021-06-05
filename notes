@@ -2355,3 +2355,7 @@ numIfNum
 
 to do:
  what do I do with ErrorLevel ? BIG OOF
+
+remove '( if' ') if'
+'( while' ') while'
+we have 'end if' already

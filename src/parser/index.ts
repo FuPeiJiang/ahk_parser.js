@@ -199,8 +199,7 @@ export default (content: string): EverythingType => {
                 if (i === howManyLines) {break lineLoop}
                 recurseFindCommaV1Expression(', command comma')
 
-                const eLen = everything.length - 1
-                everything.splice(everything.length - (emptyLinesObj[everything[eLen].type] ? 1 : 0),0,{type:'end command'})
+                addEnd('end command')
 
                 usingStartOfLineLoop = true
                 continue startOfLineLoop
@@ -411,8 +410,7 @@ export default (content: string): EverythingType => {
                   if (!recurseBetweenExpression()) { findExpression() }
                   if (i === howManyLines) { break lineLoop }
 
-                  const eLen = everything.length - 1
-                  everything.splice(everything.length - (emptyLinesObj[everything[eLen].type] ? 1 : 0),0,{type:'end command'})
+                  addEnd('end command')
 
                   if (lines[i][c] === '{') {
                     everything.push({type:'{ for',text:'{',i1:i,c1:c})
@@ -441,8 +439,7 @@ export default (content: string): EverythingType => {
                 if (i === howManyLines) { break lineLoop }
                 recurseFindCommaV1Expression(', command whiteSpace')
 
-                const eLen = everything.length - 1
-                everything.splice(everything.length - (emptyLinesObj[everything[eLen].type] ? 1 : 0),0,{type:'end command'})
+                addEnd('end command')
 
                 usingStartOfLineLoop = true
                 continue startOfLineLoop
@@ -865,6 +862,10 @@ export default (content: string): EverythingType => {
   return everything
 
   // start of functions
+  function addEnd(eType: string) {
+    const eLen = everything.length - 1
+    everything.splice(everything.length - (emptyLinesObj[everything[eLen].type] ? 1 : 0),0,{type:eType})
+  }
   function bConcatToWsSkipEmptyTextOrWs() {
     while (true) {
       const next = everything[b]
@@ -908,8 +909,7 @@ export default (content: string): EverythingType => {
           findExpression()
         }
       }
-      const eLen = everything.length - 1
-      everything.splice(everything.length - (emptyLinesObj[everything[eLen].type] ? 1 : 0),0,{type:'end assignment'})
+      addEnd('end assignment')
       if (skipCommaV2Expr()) {return 2}
       usingStartOfLineLoop = true
       return 1
@@ -1046,8 +1046,7 @@ export default (content: string): EverythingType => {
       everything.push({type:', assignment',text:',',i1:i,c1:c})
       c++
       if (!recurseBetweenExpression()) { findExpression() }
-      const eLen = everything.length - 1
-      everything.splice(everything.length - (everything[eLen].type === 'end comma assignment' ? 1 : 0),0,{type:'end assignment'})
+      addEnd('end assignment')
     }
     return true
   }
@@ -1109,6 +1108,8 @@ export default (content: string): EverythingType => {
       everything.splice(spliceStartIndex,0,{type:'while',text:validName,i1:validNameLine,c1:nonWhiteSpaceStart,c2:validNameEnd})
 
       if (!recurseBetweenExpression()) { findExpression() }
+
+      if (i === howManyLines) { return 2 }
 
       if (lines[i][c] === '{') {
         everything.push({type:'{ loop',text:'{',i1:i,c1:c})
