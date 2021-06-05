@@ -237,6 +237,12 @@ export default (everything: ExtendedEverythingType): string => {
           a(3)
         }
         p(')'); s()
+      } else if (thisLowered === 'numget') {
+        // Number := NumGet(Source [, Offset := 0][, Type := "UPtr"])
+        // Number := NumGet(Source, [Offset,] Type)
+        if (getArgs()) { return 2 }
+        const len = argsArr.length
+        p('NumGet('); a(1); p(',');a(2); p(','); (len === 3 ? a(3) : p('"UPtr"')); p(')'); s()
       } else if (thisLowered === 'objgetaddress') {
         // ObjGetAddress( this, "allData" )
         // this["allData"].Ptr
