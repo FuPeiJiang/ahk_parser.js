@@ -3,10 +3,11 @@ import ahkParser from './parser/index'
 import modifyEverythingToV2 from './modifyEverythingToV2'
 
 const content: Buffer =
+// fs.readFileSync('tov2/RunCMD.ahk')
 // fs.readFileSync('v2tests/PixelGetColor.ahk')
-fs.readFileSync('tov2/!get colour_mid.ahk')
+// fs.readFileSync('tov2/!get colour_mid.ahk')
 // fs.readFileSync('tov2/!get colour.ahk')
-// fs.readFileSync('tests3/redo func definition.ahk')
+fs.readFileSync('tests3/redo func definition.ahk')
 // fs.readFileSync('tests3/fix multiline comments.ahk')
 // fs.readFileSync('tests3/L colon L colon.ahk')
 // fs.readFileSync('tests3/msgbox up colon.ahk')

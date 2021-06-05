@@ -1,3 +1,5 @@
+RunCMD() {  ;         RunCMD v0.94        
+}
 ; a.foo(ok:=")") {
 ; }
 ; p({b:"c"}.b)

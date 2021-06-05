@@ -773,6 +773,7 @@ export default (content: string): EverythingType => {
 
             everything.push({type:'{ function DEFINITION',text:'{',i1:i,c1:c})
             c++
+            if (!skipThroughEmptyLines()) { break lineLoop }
             usingStartOfLineLoop = true
             continue startOfLineLoop
             // if (everything[spliceStartIndex])
