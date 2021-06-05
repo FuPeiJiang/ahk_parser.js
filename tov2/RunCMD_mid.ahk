@@ -1,7 +1,6 @@
 RunCMD(CmdLine, WorkingDir:="", Codepage:="CP0", Fn:="RunCMD_Output") {  ;         RunCMD v0.94        
 Local         ; RunCMD v0.94 by SKAN on D34E/D37C @ autohotkey.com/boards/viewtopic.php?t=74647                                                             
-Global A_Args ; Based on StdOutToVar.ahk by Sean @ autohotkey.com/board/topic/15455-stdouttovar
-
+Global RunCMD_PID
   Fn := IsFunc(Fn) ? Func(Fn) : 0
 , DllCall("CreatePipe", "PtrP",hPipeR:=0, "PtrP",hPipeW:=0, "Ptr",0, "Int",0)
 , DllCall("SetHandleInformation", "Ptr",hPipeW, "Int",1, "Int",1)
@@ -22,16 +21,16 @@ Global A_Args ; Based on StdOutToVar.ahk by Sean @ autohotkey.com/board/topic/15
                    ,DllCall("CloseHandle", "Ptr",hPipeW), DllCall("CloseHandle", "Ptr",hPipeR))
 
   DllCall("CloseHandle", "Ptr",hPipeW)
-, A_Args.RunCMD := { "PID": NumGet(PI, P8? 16 : 8, "UInt") }      
+, RunCMD_PID := NumGet(PI, P8? 16 : 8, "UInt")
 , File := FileOpen(hPipeR, "h", Codepage)
 
 , LineNum := 1,  sOutput := ""
-  While (A_Args.RunCMD.PID + DllCall("Sleep", "Int",0))
+  While (RunCMD_PID + DllCall("Sleep", "Int",0))
     and DllCall("PeekNamedPipe", "Ptr",hPipeR, "Ptr",0, "Int",0, "Ptr",0, "Ptr",0, "Ptr",0)
-        While A_Args.RunCMD.PID and (Line := File.ReadLine())
+        While RunCMD_PID and (Line := File.ReadLine())
           sOutput .= Fn ? Fn.Call(Line, LineNum++) : Line
 
-  A_Args.RunCMD.PID := 0
+  RunCMD_PID := 0
 , hProcess := NumGet(PI, 0)
 , hThread  := NumGet(PI, A_PtrSize)
 
