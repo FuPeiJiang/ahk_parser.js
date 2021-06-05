@@ -1808,7 +1808,7 @@ export default (content: string): EverythingType => {
 
           if (lowerText === 'and') {
 
-            if (variableCharsObj[cPlusLen]) {
+            if (variableCharsObj[lines[i][cPlusLen]]) {
               break checkNext
             } else {
               if (lookingForAnd) {
@@ -1911,7 +1911,7 @@ export default (content: string): EverythingType => {
 
           if (lowerText === 'and') {
 
-            if (variableCharsObj[cPlusLen]) {
+            if (variableCharsObj[lines[i][cPlusLen]]) {
               break checkNext
             } else {
               if (lookingForAnd) {

@@ -1,1 +1,2 @@
-if (a) and b
+while a
+and b
