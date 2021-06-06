@@ -2356,6 +2356,11 @@ numIfNum
 to do:
  what do I do with ErrorLevel ? BIG OOF
 
-remove '( if' ') if'
-'( while' ') while'
-we have 'end if' already
+to do:
+  remove '( if' ') if'
+  '( while' ') while'
+  we have 'end if' already
+
+
+to do:
+  make winclip work for bitmap/image to cliboard

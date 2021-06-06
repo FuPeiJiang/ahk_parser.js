@@ -733,8 +733,12 @@ export default (content: string): EverythingType => {
                   next.type = 'Param'
                   b++
                   next = bSkipEmptyTextOrWs()
-                  if (next.text === '*' && next.type === '1operator') {
-                    next.type = '* variadic Argument'
+                  if (next.type === '1operator') {
+                    if (next.text === '*') {
+                      next.type = '* variadic Argument'
+                    } else if (next.text === '=') {
+                      next.type = '= v1Assignment'
+                    }
                   }
                 }
 

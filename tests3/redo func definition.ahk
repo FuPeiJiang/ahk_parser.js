@@ -11,5 +11,7 @@ foo(d  *  ) {
 }
 foo(d) {
 }
+foo(a="str") {
+}
 ; foo(byref ok*)() {
 ; }
