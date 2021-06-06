@@ -693,7 +693,6 @@ export default (everything: ExtendedEverythingType): string => {
           }
         }
       }
-    //#HERE
     } else if (eType === 'className') {
       if (classToStatic[everything[i].text]) {
         b = i + 1
@@ -715,12 +714,44 @@ export default (everything: ExtendedEverythingType): string => {
           next = everything[++b]
         }
       }
+    //#HERE
+    } else if (eType === ', 1 (loop) parse') {
+      if (varnameTill(', 2 (loop) parse')) { return 3 }
     } else {
       return 0
     }
     return 3
   }
   // functions
+  function varnameTill(eType: string) {
+    i++
+    innerLoop:
+    while (true) {
+      next = everything[i]
+      if (!next) {
+        return true
+      }
+      const bType = next.type
+
+      if (v1Str[bType]) {
+        next.type = 'edit'
+        i++
+        continue innerLoop
+      } else if (bType === eType) {
+        i--
+        return false
+      }
+
+      const allReturn = all()
+      if (allReturn === 1) {
+        continue innerLoop
+      } else if (allReturn === 2) {
+        return true
+      }
+      i++
+      continue innerLoop
+    }
+  }
   function modCommandOfInteger(howManyInteger: number) {
     if (skipFirstSeparatorOfCommand()) { return true }
     if (howManyInteger) {

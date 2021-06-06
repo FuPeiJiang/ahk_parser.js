@@ -130,7 +130,7 @@ class WinClipAPI extends WinClip_base
         threadWnd := this.GetWindowThreadProcessId( hwnd )
         if not DllCall( "GetGUIThreadInfo", "uint", threadWnd, "UPtr", GuiThreadInfo.Ptr )
                 return 0
-        return NumGet( GuiThreadInfo, 8+A_PtrSize,"UPtr")  ; Retrieve the hwndFocus field from the struct.
+        return NumGet(GuiThreadInfo,8+A_PtrSize,"UPtr")  ; Retrieve the hwndFocus field from the struct.
     }
     static GetPixelInfo( ByRef DIB ) {
         ;~ typedef struct tagBITMAPINFOHEADER {
@@ -147,18 +147,18 @@ class WinClipAPI extends WinClip_base
         ;~ DWORD biClrImportant;      36
         
         bmi := DIB.Ptr  ;BITMAPINFOHEADER  pointer from DIB
-        biSize := numget( bmi+0, 0, "UInt" )
+        biSize := NumGet(bmi+0,0,"UInt")
         ;~ return bmi + biSize
-        biSizeImage := numget( bmi+0, 20, "UInt" )
-        biBitCount := numget( bmi+0, 14, "UShort" )
+        biSizeImage := NumGet(bmi+0,20,"UInt")
+        biBitCount := NumGet(bmi+0,14,"UShort")
         if ( biSizeImage == 0 )
         {
-            biWidth := numget( bmi+0, 4, "UInt" )
-            biHeight := numget( bmi+0, 8, "UInt" )
+            biWidth := NumGet(bmi+0,4,"UInt")
+            biHeight := NumGet(bmi+0,8,"UInt")
             biSizeImage := (((( biWidth * biBitCount + 31 ) & ~31 ) >> 3 ) * biHeight )
             NumPut("UInt",biSizeImage,bmi+0,20)
         }
-        p := numget( bmi+0, 32, "UInt" )  ;biClrUsed
+        p := NumGet(bmi+0,32,"UInt")  ;biClrUsed
         if ( p == 0 && biBitCount <= 8 )
             p := 1 << biBitCount
         p := p * 4 + biSize + bmi
@@ -184,7 +184,7 @@ class WinClipAPI extends WinClip_base
         if (strlen(delim) > 1)
         {
             ;StringReplace,str,str,% delim,ƒ,1      ;■¶╬
-            str := StrReplace(str, delim, "ƒ")
+            str := StrReplace(str,delim,"ƒ")
             delim := "ƒ"
         }
         ra := Array()
@@ -246,7 +246,7 @@ class WinClipAPI extends WinClip_base
         loop num
         {
             pici := ImageCodecInfo.Ptr + ( 48+7*A_PtrSize )*(A_Index-1)
-            pMime := NumGet( pici+0, 32+4*A_PtrSize, "UPtr" )
+            pMime := NumGet(pici+0,32+4*A_PtrSize,"UPtr")
             MimeType := StrGet( pMime, "UTF-16")
             if ( MimeType = format )
             {
