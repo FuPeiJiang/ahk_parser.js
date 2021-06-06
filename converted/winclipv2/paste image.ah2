@@ -8,35 +8,21 @@ SetWorkingDir A_ScriptDir ; Ensures a consistent starting directory.
 #Include WinClipAPI.ah2
 #Include WinClip.ah2
 
-p WinClip.GetHtml()
-
-; sleep 10
-WinClip.Snap( data )
+; $f1::
+; {
+; WinClip.Snap( data )
 WinClip.Clear()
 WinClip.SetBitmap("vector.png")
-WinClip.SetBitmap("vector.png")
+; WinClip.SetBitmap("vector.png")
 ; sleep 10
-WinClip.Paste()
+; send "^v"
 ; sleep 200
-WinClip.Restore( data )
-return
+; WinClip.Restore( data )
+; }
 
 
-return
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-f3::Exitapp
+f3::
+  {
+    DetectHiddenWindows 1
+    ProcessClose WinGetPID(A_ScriptFullPath " - AutoHotkey v2.0-alpha ahk_exe AutoHotkey.exe")
+  }

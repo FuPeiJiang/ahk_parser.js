@@ -2364,3 +2364,19 @@ to do:
 
 to do:
   make winclip work for bitmap/image to cliboard
+
+if ( A_ThisLabel = "_BITMAPtoDIB_cleanup" ) 
+    return 0
+return DIBLen
+->
+if (_BITMAPtoDIB_cleanup_cameDirectly)
+    return DIBLen
+return 0
+
+_BITMAPtoDIB_cleanup:
+->
+_BITMAPtoDIB_cleanup_cameDirectly:=true
+_BITMAPtoDIB_cleanup:
+
+POSSIBLE, but I'm too lazy rn..
+

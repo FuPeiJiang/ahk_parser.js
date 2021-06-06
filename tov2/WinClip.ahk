@@ -804,15 +804,16 @@ class WinClip extends WinClip_base
                             ,"ptr",&DIB  ;lpbi 
                             ,"uint",0)    ;DIB_RGB_COLORS
             goto, _BITMAPtoDIB_cleanup
+_BITMAPtoDIB_cleanup_cameDirectly:=true
 _BITMAPtoDIB_cleanup:
         if bmMade
             DllCall( "DeleteObject", "ptr", hBitmap )
         DllCall( "SelectPalette", "ptr", hdc, "ptr", hPal, "Uint", 0 )
         DllCall( "RealizePalette", "ptr", hdc )
         DllCall("ReleaseDC","ptr",hdc)
-        ; if ( A_ThisLabel = "_BITMAPtoDIB_cleanup" )
+        if (_BITMAPtoDIB_cleanup_cameDirectly)
+            return DIBLen
         return 0
-        ; return DIBLen
     }
     
     _setBitmap( ByRef DIB, DIBSize, ByRef clipData, clipSize )
