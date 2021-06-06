@@ -29,7 +29,8 @@ const d = console.debug.bind(console)
 const classToStatic: stringIndexBool = {'biga':true,'WinClip':true,'WinClipAPI':true}
 
 const numIfNum: stringIndexBool = {'break':true,'continue':true,'settitlematchmode':true}
-const anyCommand: stringIndexBool = {'DIRECTIVE OR COMMAND comma':true,'command EOL or comment':true,'command':true}
+const anyCommand: stringIndexBool = {'DIRECTIVE OR COMMAND comma':true,'command':true}
+// const anyCommand: stringIndexBool = {'DIRECTIVE OR COMMAND comma':true,'command EOL or comment':true,'command':true}
 const idkVariableOrAssignment: stringIndexBool = {'idkVariable':true,'assignment':true}
 const startingBlock: stringIndexBool = {'{ legacyIf':true,'{ if':true,'{ for':true,'{ else':true,'{ loop':true,'{ namedIf':true}
 const startingBlockForClass: stringIndexBool = {'{ class':true,'{ function DEFINITION':true,'{ legacyIf':true,'{ if':true,'{ for':true,'{ else':true,'{ loop':true,'{ namedIf':true}
@@ -645,7 +646,6 @@ export default (everything: ExtendedEverythingType): string => {
           if (dText) {
             for (let c = 0,len = dText.length; c < len; c++) {
               if (variableCharsObj[dText[c]]) {
-                thisE.text = ''
                 allVariableCharsArr.push(dText[c])
               }
             }
@@ -654,7 +654,7 @@ export default (everything: ExtendedEverythingType): string => {
         }
         const validVarStr = allVariableCharsArr.join('')
         if (isNaN(Number(validVarStr))) {
-
+          thisE.text = ''
           everything.splice(b + 1,0,{type:'edit',text:'.Ptr'})
           // 'StrPtr('
           // everything.splice(b + 1,0,{type:'edit',text:')'})
@@ -677,7 +677,7 @@ export default (everything: ExtendedEverythingType): string => {
           blockDepth--
         } else if (dType === 'hotkey') {
           return 3
-        } else if (anyCommand[dType]) {
+        } else if (dType === 'command EOL or comment') {
           if (blockDepth === 0) {
             const lText = next.text.toLowerCase()
             if (lText === 'return') {

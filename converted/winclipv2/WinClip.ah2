@@ -15,10 +15,10 @@ class WinClip extends WinClip_base
         WinClipAPI.EmptyClipboard()
         while ( offset < size )
         {
-            if !( fmt := NumGet( data, offset, "UInt" ) )
+            if !( fmt := NumGet(data,offset,"UInt") )
                 break
             offset += 4
-            if !( dataSize := NumGet( data, offset, "UInt" ) )
+            if !( dataSize := NumGet(data,offset,"UInt") )
                 break
             offset += 4
             if ( ( offset + dataSize ) > size )
@@ -166,10 +166,10 @@ class WinClip extends WinClip_base
         formats := Map()
         while ( offset < size )
         {
-            if !( fmt := NumGet( data, offset, "UInt" ) )
+            if !( fmt := NumGet(data,offset,"UInt") )
                 break
             offset += 4
-            if !( dataSize := NumGet( data, offset, "UInt" ) )
+            if !( dataSize := NumGet(data,offset,"UInt") )
                 break
             offset += 4
             if ( ( offset + dataSize ) > size )
@@ -298,7 +298,7 @@ class WinClip extends WinClip_base
         this.Snap( data )
         this.Clear()    ;clearing the clipboard
         if( method = 1 )
-            SendInput "^{Ins}" 
+            SendInput "^{Ins}"
         else
             SendInput "^{vk43sc02E}" ;ctrl+c
         ClipWait timeout, "1"
@@ -313,7 +313,7 @@ class WinClip extends WinClip_base
         this.Snap( data )
         this.Clear()    ;clearing the clipboard
         if( method = 1 )
-            SendInput "^{Ins}" 
+            SendInput "^{Ins}"
         else
             SendInput "^{vk43sc02E}" ;ctrl+c
         ClipWait timeout, "1"
@@ -337,7 +337,7 @@ class WinClip extends WinClip_base
             ret := this.SetText( plainText )
         }
         if( method = 1 )
-            SendInput "+{Ins}" 
+            SendInput "+{Ins}"
         else
             SendInput "^{vk56sc02F}" ;ctrl+v
         this._waitClipReady( 3000 )
@@ -357,7 +357,7 @@ class WinClip extends WinClip_base
         if !( bytesRestored := this.iRestore() )
             return 0
         if( method = 1 )
-            SendInput "+{Ins}" 
+            SendInput "+{Ins}"
         else
             SendInput "^{vk56sc02F}" ;ctrl+v
         this._waitClipReady( 3000 )
@@ -564,10 +564,10 @@ class WinClip extends WinClip_base
     
     static _getFiles( pDROPFILES )
     {
-        fWide := numget( pDROPFILES + 0, 16, "uchar" ) ;getting fWide value from DROPFILES struct
-        pFiles := numget( pDROPFILES + 0, 0, "UInt" ) + pDROPFILES  ;getting address of files list
+        fWide := NumGet(pDROPFILES+0,16,"uchar") ;getting fWide value from DROPFILES struct
+        pFiles := NumGet(pDROPFILES+0,0,"UInt") + pDROPFILES  ;getting address of files list
         list := ""
-        while numget( pFiles + 0, 0, fWide ? "UShort" : "UChar" )
+        while NumGet(pFiles+0,0,fWide?"UShort":"UChar")
         {
             lastPath := strget( pFiles+0, fWide ? "UTF-16" : "CP0" )
             list .= ( list ? "`n" : "" ) lastPath
@@ -678,10 +678,10 @@ class WinClip extends WinClip_base
         offset := 0
         while ( offset < size )
         {
-            if !( fmt := NumGet( data, offset, "UInt" ) )
+            if !( fmt := NumGet(data,offset,"UInt") )
                 break
             offset += 4
-            if !( dataSize := NumGet( data, offset, "UInt" ) )
+            if !( dataSize := NumGet(data,offset,"UInt") )
                 break
             offset += 4
             if ( fmt == needleFormat )
@@ -756,7 +756,7 @@ class WinClip extends WinClip_base
         size := DllCall( "GetObject", "Ptr", hBitmap, "Uint", 0, "ptr", 0 )
         bm:=BufferAlloc(size,0)
         DllCall( "GetObject", "Ptr", hBitmap, "Uint", size, "ptr", bm.Ptr )
-        biBitCount := NumGet( bm, 16, "UShort" )*NumGet( bm, 18, "UShort" )
+        biBitCount := NumGet(bm,16,"UShort")*NumGet(bm,18,"UShort")
         nColors := (1 << biBitCount)
     if ( nColors > 256 ) 
         nColors := 0
@@ -780,13 +780,13 @@ class WinClip extends WinClip_base
                             ,"ptr",bmi.Ptr  ;lpbi 
                             ,"uint",0)    ;DIB_RGB_COLORS
             goto _BITMAPtoDIB_cleanup
-        biSizeImage := NumGet( bmi.Ptr, 20, "UInt" )
+        biSizeImage := NumGet(bmi.Ptr,20,"UInt")
         if ( biSizeImage = 0 )
         {
-            biBitCount := numget( bmi.Ptr, 14, "UShort" )
-            biWidth := numget( bmi.Ptr, 4, "UInt" )
-            biHeight := numget( bmi.Ptr, 8, "UInt" )
-            biSizeImage := (((( biWidth * biBitCount + 31 )  ~31 ) >> 3 ) * biHeight )
+            biBitCount := NumGet(bmi.Ptr,14,"UShort")
+            biWidth := NumGet(bmi.Ptr,4,"UInt")
+            biHeight := NumGet(bmi.Ptr,8,"UInt")
+            biSizeImage := (((( biWidth * biBitCount + 31 ) & ~31 ) >> 3 ) * biHeight )
             ;~ dwCompression := numget( bmi, 16, "UInt" )
             ;~ if ( dwCompression != 0 ) ;BI_RGB
                 ;~ biSizeImage := ( biSizeImage * 3 ) / 2
@@ -935,12 +935,12 @@ _BITMAPtoDIB_cleanup:
         offset := 0
         while ( offset < size )
         {
-            if !( fmt := NumGet( data, offset, "UInt" ) )
+            if !( fmt := NumGet(data,offset,"UInt") )
                 break
             if ( fmt == needleFormat )
                 return 1
             offset += 4
-            if !( dataSize := NumGet( data, offset, "UInt" ) )
+            if !( dataSize := NumGet(data,offset,"UInt") )
                 break
             offset += 4 + dataSize
         }
