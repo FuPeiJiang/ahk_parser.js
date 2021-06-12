@@ -514,7 +514,7 @@ export default (content: string): EverythingType => {
             //EOL: ???    OR COMMENT ?????
             everything.splice(spliceStartIndex,0,{type:'command EOL or comment',text:validName,i1:validNameLine,c1:nonWhiteSpaceStart,c2:validNameEnd})
             spliceIndexEverythingAtHotkeyLine = everything.length
-            operatorAtHotkeyLine = i
+            // operatorAtHotkeyLine = i
             // i = v1StartLine, c = validNameEnd
             const validNameLowercase = validName.toLowerCase()
             if (elseLoopReturn[validNameLowercase]) {
