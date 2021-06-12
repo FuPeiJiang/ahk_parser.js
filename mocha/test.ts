@@ -1,6 +1,7 @@
 import {strictEqual} from 'assert'
 import ahkParser from '../src/parser/index'
 import modifyEverythingToV2 from '../src/modifyEverythingToV2'
+import fs from 'fs'
 
 function toV2(text) {
   const everything = ahkParser(text.replace(/\r/g,''))
@@ -10,6 +11,14 @@ function toV2(text) {
 function doIt(v1,v2) {
   it(`\`${v1}\`,\`${v2}\``,function() {
     strictEqual(toV2(v1),v2)
+  })
+}
+function readFileToString(path) {
+  return fs.readFileSync(`${__dirname}/${path}`).toString()
+}
+function doItFiles(path1,path2) {
+  it(`\`${path1}\`,\`${path2}\``,function() {
+    strictEqual(toV2(readFileToString(path1)),readFileToString(path2))
   })
 }
 
@@ -26,4 +35,5 @@ describe('toV2(text)',function() {
   // describe('v1 removed #DIRECTIVES',function() {
   // doIt('#NoEnv\n','')
   // })
+  doItFiles('../tov2/jpgs to pdf.ahk','correct/jpgs to pdf.ah2')
 })

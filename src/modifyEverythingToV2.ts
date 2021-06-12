@@ -50,13 +50,13 @@ const whiteSpaceNewlineOrComma: stringIndexBool = {' ':true,'\t':true,'\n':true,
 const commaCommandObj: stringIndexBool = {', command whiteSpace':true,', command comma':true}
 
 
-const varNames: {[key: string]: true} = {}
-const lowerVarNames: {[key: string]: number[]} = {}
 const typesThatAreVars: stringIndexBool = {'Param':true,'idkVariable':true,'assignment':true,'v1String findIdkVar':true,'var at v1Assignment':true}
 
 export default (everything: ExtendedEverythingType): string => {
   // I'd never think I'd come to this day, but..
   // preprocessing..
+  const varNames: {[key: string]: true} = {}
+  const lowerVarNames: {[key: string]: number[]} = {}
 
   for (let n = 0,len = everything.length; n < len; n++) {
     if (typesThatAreVars[everything[n].type]) {
@@ -482,7 +482,6 @@ export default (everything: ExtendedEverythingType): string => {
     } else if (anyCommand[eType]) {
       //if breakOrContinue, if is number, don't surround with quotes
       let objValue
-      d(thisE.text)
       const dTextLowered = thisE.text.toLowerCase()
       if (numIfNum[dTextLowered]) {
         if (skipFirstSeparatorOfCommand()) { return 3 }
