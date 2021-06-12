@@ -651,10 +651,21 @@ export default (everything: ExtendedEverythingType): string => {
         }
       }
     } else if (eType === 'hotkey') {
+      const hotkeyLine = thisE.i1
       b = i
       const hotkeyI = i
       let next
       let blockDepth = 0
+      //skip to next line
+      while (true) {
+        next = everything[++b]
+        if (!next) {
+          return 3
+        }
+        if (next.i1 !== hotkeyLine) {
+          break
+        }
+      }
       while (true) {
         next = everything[++b]
         if (!next) {
