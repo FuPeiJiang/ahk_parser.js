@@ -478,11 +478,12 @@ export default (everything: ExtendedEverythingType): string => {
         }
       }
     } else if (eType === 'String') {
-      thisE.text = `"${everything[i].text.slice(1,-1).replace(/""/g,'`"')}"`
+      thisE.text = `"${thisE.text.slice(1,-1).replace(/""/g,'`"')}"`
     } else if (anyCommand[eType]) {
       //if breakOrContinue, if is number, don't surround with quotes
       let objValue
-      const dTextLowered = everything[i].text.toLowerCase()
+      d(thisE.text)
+      const dTextLowered = thisE.text.toLowerCase()
       if (numIfNum[dTextLowered]) {
         if (skipFirstSeparatorOfCommand()) { return 3 }
         if (next.type === 'v1String findV1Expression') {
@@ -498,28 +499,11 @@ export default (everything: ExtendedEverythingType): string => {
         if (modCommandOfInteger(3)) { return 3 }
       } else if (dTextLowered === 'pixelsearch') {
         if (modCommandOfVarnameThenXNum(2,6)) { return 3 }
-      } else if (dTextLowered === '#noenv') {
-        thisE.text = ''
-        const next = everything[i + 1]
-        if (next) {
-          if (next.type === 'emptyLines') {
-            next.text = ''
-          }
-        }
       } else if (dTextLowered === 'setbatchlines') {
-        if (!skipFirstSeparatorOfCommand()) {
-          if (findNext('end command')) {
-            everything.splice(i - 1,b + 1 - i)
-            return 1
-          }
-        }
-        thisE.text = ''
-        return 3
+        deleteCommand()
+        return 1
       } else if (v1ExprToEdit[dTextLowered]) {
-        if (skipFirstSeparatorOfCommand()) { return 3 }
-        if (next.type === 'v1String findV1Expression') {
-          next.type = 'edit'
-        }
+        if (modCommandOfInteger(1)) { return 3 }
       } else if (dTextLowered === 'listlines') {
         if (skipFirstSeparatorOfCommand()) { return 3 }
         if (next.type === 'v1String findV1Expression') {
@@ -587,6 +571,12 @@ export default (everything: ExtendedEverythingType): string => {
         }
         p(')')
         spaceIfComment(); s()
+      }
+    } else if (eType === 'command EOL or comment') {
+      const dTextLowered = everything[i].text.toLowerCase()
+      if (dTextLowered === '#noenv') {
+        deleteCommand()
+        return 1
       }
     } else if (eType === 'legacyIf var') {
       b = i + 2
@@ -877,6 +867,14 @@ export default (everything: ExtendedEverythingType): string => {
         return true
       }
     }
+  }
+  function spliceTillIndex(index: number) {
+    everything.splice(i,index - i)
+  }
+  function deleteCommand() {
+    b = i
+    findNext('end command')
+    spliceTillIndex(b + 2)
   }
   function modCommandOfVarnameAfterNum(howManyVarName: number) {
     if (skipFirstSeparatorOfCommand()) { return true }
@@ -1259,8 +1257,7 @@ export default (everything: ExtendedEverythingType): string => {
     let next
     next = everything[++b]
     while (next) {
-      const bType = next.type
-      if (bType === stopAtThis) {
+      if (next.type === stopAtThis) {
         return true
       }
       next = everything[++b]

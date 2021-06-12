@@ -537,7 +537,7 @@ export default (content: string): EverythingType => {
               if (i === howManyLines) { break lineLoop }
               resolveV1Continuation()
               recurseFindCommaV1Expression('command EOL or comment')
-              everything.push({type:'command end'})
+              addEnd('end command')
             }
 
             usingStartOfLineLoop = true
