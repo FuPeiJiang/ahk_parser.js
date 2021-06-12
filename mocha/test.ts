@@ -23,6 +23,7 @@ describe('toV2(text)',function() {
     doIt('foo( bufName, A_IsUnicode ? 510 : 255 , 0 )','foo( bufName, 510, 0 )')
     doItFiles('../v2tests/A_IsUnicode.ahk','correct/A_IsUnicode.ah2')
   })
+  doItFiles('../tov2/!get colour_mid.ahk','correct/!get colour.ah2')
 })
 
 function toV2(text) {

@@ -662,6 +662,7 @@ export default (everything: ExtendedEverythingType): string => {
           return 3
         }
         if (next.i1 !== hotkeyLine) {
+          b--
           break
         }
       }
