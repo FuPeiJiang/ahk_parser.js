@@ -24,6 +24,7 @@ describe('toV2(text)',function() {
     doItFiles('../v2tests/A_IsUnicode.ahk','correct/A_IsUnicode.ah2')
   })
   doItFiles('../tov2/!get colour_mid.ahk','correct/!get colour.ah2')
+  doItFiles('../tov2/RunCMD_mid.ahk','correct/RunCMD_mid.ah2')
 })
 
 function toV2(text) {
