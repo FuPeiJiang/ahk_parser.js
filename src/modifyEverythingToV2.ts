@@ -508,6 +508,10 @@ export default (everything: ExtendedEverythingType): string => {
             next.text = on1off0[dText.toLowerCase()]
           } else if (!isNaN(Number(dText))) {
             next.type = 'edit'
+          } else {
+            // gwegwegweg or 3 for example is equivalent to off or 0
+            next.type = 'edit'
+            next.text = '0'
           }
         }
       } else if (doNotQuoteCommand[dTextLowered]) {
