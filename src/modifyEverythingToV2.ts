@@ -31,6 +31,8 @@ const classToStatic: stringIndexBool = {'biga':true,'WinClip':true,'WinClipAPI':
 const numIfNum: stringIndexBool = {'settitlematchmode':true}
 const v1ExprToEdit: stringIndexBool = {'goto':true,'#singleinstance':true,'break':true,'continue':true}
 
+const stringUpperLower: stringIndexString = {'stringupper':'StrUpper','stringlower':'StrLower'}
+
 const anyCommand: stringIndexBool = {'DIRECTIVE OR COMMAND comma':true,'command':true}
 // const anyCommand: stringIndexBool = {'DIRECTIVE OR COMMAND comma':true,'command EOL or comment':true,'command':true}
 const idkVariableOrAssignment: stringIndexBool = {'idkVariable':true,'assignment':true}
@@ -45,8 +47,6 @@ const wsOrEmptyLine: stringIndexBool = {'whiteSpaces':true,'emptyLines':true}
 const startGroupOrUnit: stringIndexString = {'( group':') group','start unit':'end unit'}
 const on1off0: stringIndexString = {'on':'1','off':'0'}
 const ternaryColonEndDelim: stringIndexBool = {'end assignment':true,', function CALL':true,') function CALL':true,', assignment':true,'end comma assignment':true}
-const doNotQuoteCommand: stringIndexBool = {'splitpath':true}
-const stringUpperLower: stringIndexString = {'stringupper':'StrUpper','stringlower':'StrLower'}
 const whiteSpaceNewlineOrComma: stringIndexBool = {' ':true,'\t':true,'\n':true,',':true}
 const commaCommandObj: stringIndexBool = {', command whiteSpace':true,', command comma':true}
 
@@ -491,14 +491,14 @@ export default (everything: ExtendedEverythingType): string => {
         if (modCommandOfVarnameAfterNum(4)) { return 3 }
       } else if (dTextLowered === 'mousemove') {
         // MouseMove X, Y [, Speed, Relative]
-        if (modCommandOfInteger(3)) { return 3 }
+        if (modV1StrToEdit(3)) { return 3 }
       } else if (dTextLowered === 'pixelsearch') {
         if (modCommandOfVarnameThenXNum(2,6)) { return 3 }
       } else if (dTextLowered === 'setbatchlines') {
         deleteCommand()
         return 1
       } else if (v1ExprToEdit[dTextLowered]) {
-        if (modCommandOfInteger(1)) { return 3 }
+        if (modV1StrToEdit(1)) { return 3 }
       } else if (dTextLowered === 'listlines') {
         if (skipFirstSeparatorOfCommand()) { return 3 }
         if (next.type === 'v1String findV1Expression') {
@@ -514,10 +514,8 @@ export default (everything: ExtendedEverythingType): string => {
             next.text = '0'
           }
         }
-      } else if (doNotQuoteCommand[dTextLowered]) {
-        //until 'end command', do not quote every v1 expr
-        b = i
-        if (commandAllEdit()) { return 3 }
+      } else if (dTextLowered === 'splitpath') {
+        if (modV1StrToEdit(5)) { return 3 }
       } else if (dTextLowered === 'stringtrimright') {
         if (skipFirstSeparatorOfCommand()) { return 3 }
         // StringTrimRight, OutputVar, InputVar, Count
@@ -547,7 +545,7 @@ export default (everything: ExtendedEverythingType): string => {
         // PixelGetColor, OutputVar, X, Y , Mode
         // Color := PixelGetColor(X, Y [, Mode])
         const iBak = i
-        if (modCommandOfInteger(3)) { return 3 }
+        if (modV1StrToEdit(3)) { return 3 }
         i = iBak
         if (getCommandParams()) { return 2 }
         a(1); p(':=PixelGetColor('); a(2); o(',',3); a(3); o(',',4)
@@ -794,7 +792,7 @@ export default (everything: ExtendedEverythingType): string => {
       }
     }
   }
-  function modCommandOfInteger(howManyInteger: number) {
+  function modV1StrToEdit(howManyInteger: number) {
     if (skipFirstSeparatorOfCommand()) { return true }
     if (howManyInteger) {
       let whichParam = 0

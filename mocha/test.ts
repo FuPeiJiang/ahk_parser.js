@@ -27,6 +27,7 @@ describe('toV2(text)',function() {
   doItFiles('../tov2/RunCMD_mid.ahk','correct/RunCMD_mid.ah2')
   doItFiles('../tests3/numIfNum.ahk','correct/numIfNum.ah2')
   doItFiles('../tests3/listlines.ahk','correct/listlines.ah2')
+  doIt('SplitPath % ar[1],, Ou%t%Dir,,firstOutNameNoExt','SplitPath ar[1],, OutDir,,firstOutNameNoExt')
 })
 
 function toV2(text) {
