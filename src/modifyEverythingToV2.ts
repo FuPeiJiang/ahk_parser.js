@@ -28,7 +28,9 @@ const d = console.debug.bind(console)
 
 const classToStatic: stringIndexBool = {'biga':true,'WinClip':true,'WinClipAPI':true}
 
-const numIfNum: stringIndexBool = {'break':true,'continue':true,'settitlematchmode':true}
+const numIfNum: stringIndexBool = {'settitlematchmode':true}
+const v1ExprToEdit: stringIndexBool = {'goto':true,'#singleinstance':true,'break':true,'continue':true}
+
 const anyCommand: stringIndexBool = {'DIRECTIVE OR COMMAND comma':true,'command':true}
 // const anyCommand: stringIndexBool = {'DIRECTIVE OR COMMAND comma':true,'command EOL or comment':true,'command':true}
 const idkVariableOrAssignment: stringIndexBool = {'idkVariable':true,'assignment':true}
@@ -42,7 +44,6 @@ const funcCallDelim: stringIndexBool = {', function CALL':true,') function CALL'
 const wsOrEmptyLine: stringIndexBool = {'whiteSpaces':true,'emptyLines':true}
 const startGroupOrUnit: stringIndexString = {'( group':') group','start unit':'end unit'}
 const on1off0: stringIndexString = {'on':'1','off':'0'}
-const v1ExprToEdit: stringIndexBool = {'goto':true,'#singleinstance':true}
 const ternaryColonEndDelim: stringIndexBool = {'end assignment':true,', function CALL':true,') function CALL':true,', assignment':true,'end comma assignment':true}
 const doNotQuoteCommand: stringIndexBool = {'splitpath':true}
 const stringUpperLower: stringIndexString = {'stringupper':'StrUpper','stringlower':'StrLower'}
@@ -484,12 +485,7 @@ export default (everything: ExtendedEverythingType): string => {
       let objValue
       const dTextLowered = thisE.text.toLowerCase()
       if (numIfNum[dTextLowered]) {
-        if (skipFirstSeparatorOfCommand()) { return 3 }
-        if (next.type === 'v1String findV1Expression') {
-          if (!isNaN(Number(next.text))) {
-            next.type = 'edit'
-          }
-        }
+        if (modNumIfNum(1)) { return 3 }
       } else if (dTextLowered === 'mousegetpos') {
         // MouseGetPos [OutputVarX, OutputVarY, OutputVarWin, OutputVarControl, Flag]
         if (modCommandOfVarnameAfterNum(4)) { return 3 }
@@ -517,9 +513,7 @@ export default (everything: ExtendedEverythingType): string => {
       } else if (doNotQuoteCommand[dTextLowered]) {
         //until 'end command', do not quote every v1 expr
         b = i
-        if (commandAllEdit()) {
-          return 3
-        }
+        if (commandAllEdit()) { return 3 }
       } else if (dTextLowered === 'stringtrimright') {
         if (skipFirstSeparatorOfCommand()) { return 3 }
         // StringTrimRight, OutputVar, InputVar, Count
@@ -751,6 +745,49 @@ export default (everything: ExtendedEverythingType): string => {
       }
       i++
       continue innerLoop
+    }
+  }
+  function modNumIfNum(howManyInteger: number) {
+    if (skipFirstSeparatorOfCommand()) { return true }
+    if (howManyInteger) {
+      let whichParam = 0
+      innerLoop:
+      while (true) {
+        next = everything[i]
+        if (!next) {
+          return true
+        }
+        const bType = next.type
+
+        if (v1Str[bType]) {
+          if (!isNaN(Number(next.text))) {
+            next.type = 'edit'
+            i++
+            continue innerLoop
+          }
+        }
+
+        const allReturn = all()
+        if (allReturn === 1) {
+          continue innerLoop
+        } else if (allReturn === 2) {
+          return true
+        } else if (allReturn === 3) {
+          i++
+          continue innerLoop
+        }
+
+        if (bType === 'end command') {
+          return false
+        } else if (commaCommandObj[bType]) {
+          whichParam++
+          if (whichParam === howManyInteger) {
+            return false
+          }
+        }
+        i++
+        continue innerLoop
+      }
     }
   }
   function modCommandOfInteger(howManyInteger: number) {

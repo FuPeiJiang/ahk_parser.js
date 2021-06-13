@@ -25,6 +25,7 @@ describe('toV2(text)',function() {
   })
   doItFiles('../tov2/!get colour_mid.ahk','correct/!get colour.ah2')
   doItFiles('../tov2/RunCMD_mid.ahk','correct/RunCMD_mid.ah2')
+  doItFiles('../tests3/numIfNum.ahk','correct/numIfNum.ah2')
 })
 
 function toV2(text) {
