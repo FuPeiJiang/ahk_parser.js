@@ -13,7 +13,13 @@ let i = 0,b: number
 // if (findNextTypeText(': ternary')) { break }
 // break
 // }
-// writeSync(converted,'reconstructed.ah2')
+
+const arrToJoin = []
+for (let i = 0,len = everything.length; i < len; i++) {
+  arrToJoin.push(everything[i].text)
+}
+const converted = arrToJoin.join('')
+writeSync(converted,'reconstructed.ah2')
 writeSync(arrOrObjToString(everything),'everything.txt')
 
 function findNextTypeText(dType: string,dText: string) {

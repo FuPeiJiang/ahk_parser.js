@@ -25,7 +25,7 @@ d(expected)
  */
 ;now other continuation mode
 
-expected := "
+/* expected := "
 (Join`r`n %
 " var
 )
@@ -51,3 +51,16 @@ d(expected)
                                  FileAppend, %msg%, *
          )"
 d(expected)
+*/
+
+expected := "      ;comment
+(Join`r`n %
+hello
+)"
+d(expected)
+
+expected := "a      ;comment
+(Join`r`n %
+hello
+)"
+d(expected) ;ahello

@@ -122,7 +122,9 @@ export default (content: string,literalDoubleQuoteInContinuation = false): Every
       i++
       while (i < howManyLines) {
         c = 0,numberOfChars = lines[i].length
-        skipThroughWhiteSpaces()
+        while (c < numberOfChars && whiteSpaceObj[lines[i][c]]) {
+          c++
+        }
         //true if found line starting with ) AND closingQuote on the same line
         if (c < numberOfChars && lines[i][c] === ')') {
           insideContinuation = false
@@ -2506,6 +2508,7 @@ export default (content: string,literalDoubleQuoteInContinuation = false): Every
       c++
       //noClosing " found on the same line
       if (!findClosingQuoteInLine()) {
+        everything.push({type:'open doubleQuote',text:'"',i1:i,c1:c})
         //continuation wasn't resolved
         if (!recurseContinuation()) {
           //script is broken at this point but we still try to continue
@@ -2541,7 +2544,11 @@ export default (content: string,literalDoubleQuoteInContinuation = false): Every
         }
         // semiColonComment must be preceded by whiteSpace
       } else if (lines[i][c] === ';' && whiteSpaceObj[lines[i][c - 1]]) {
-        d('semiColonComment when findClosingQuote',char())
+        //inefficient, but go back whiteSpaces, to let skipThroughEmptyLines capture them all
+        while (whiteSpaceObj[lines[i][--c]]) {
+          //lol
+        }
+        c++
         return false
       }
       //anything else found, next char

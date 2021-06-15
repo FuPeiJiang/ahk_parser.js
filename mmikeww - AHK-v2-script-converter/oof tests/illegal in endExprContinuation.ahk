@@ -1,9 +1,16 @@
-expected := "
+/* expected := "
    (Join`r`n %
                            var := "hello"
                            msg := var . " world"
                            FileAppend, %msg%, *
    )"
+ */
+expected := "  ;comment
+(Join`r`n %
+                        var := "hello"
+                        msg := var . " world"
+                        FileAppend, %msg%, *
+)"
 ; in v2 that could alternatively be:
 ; msg := "%var% world"
 

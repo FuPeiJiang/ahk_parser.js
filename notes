@@ -2403,3 +2403,10 @@ a:=bufferalloc
 
 I prefer all on top
 
+no one uses continuation section with variables..
+I won't support until I see it.
+why do I even push 'whiteSpaces' in continuation section?
+
+how do I insert the whiteSpaces into the start ?
+
+//inefficient, but go back whiteSpaces, to let skipThroughEmptyLines capture them all
