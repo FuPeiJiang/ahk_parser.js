@@ -330,7 +330,6 @@ export default (content: string,literalDoubleQuoteInContinuation = false): Every
                         everything.push({type:'legacyIf is',text:validName,i1:i,c1:validNamestart,c2:c})
                         skipThroughWhiteSpaces()
 
-
                         validName = lines[i].slice(c,cPlusLen = c + 3)
                         if (validName.toLowerCase() === 'not' && !variableCharsObj[lines[i][cPlusLen]]) {
                           everything.push({type:'legacyIf (is) not',text:validName,i1:i,c1:c,c2:c + 3})
@@ -367,7 +366,6 @@ export default (content: string,literalDoubleQuoteInContinuation = false): Every
                     }
                     break breakToGoFindV2
                   }
-
 
                   const whiteSpacesText = lines[saveI].slice(cendOfLegacyIfVar,whiteSpacesTextc)
                   if (whiteSpacesText) {
@@ -1303,6 +1301,7 @@ export default (content: string,literalDoubleQuoteInContinuation = false): Every
       return true
     }
   }
+  //ifEqual
   function findNamedIf() {
     if (namedIf[validName.toLowerCase()]) {
       everything.splice(spliceStartIndex,0,{type:'named if',text:validName,i1:validNameLine,c1:nonWhiteSpaceStart,c2:validNameEnd})
@@ -1312,6 +1311,7 @@ export default (content: string,literalDoubleQuoteInContinuation = false): Every
       everything.push({type:', 1 namedIf',text:',',i1:i,c1:c})
       c++
       singleComma = false
+      maybePercentV1ToV2()
       if (!recurseBetweenExpression()) { findExpression() }
       if (lines[i][c] === ',') {
         everything.push({type:', 2 namedIf',text:',',i1:i,c1:c})
