@@ -22,7 +22,8 @@
     "webpack-cli": "^4.6.0"
   },
   "scripts": {
-    "mocha": "ts-mocha mocha/*.ts",
+    "extractedTests": "ts-mocha mocha/AHK-v2-script-converter.ts",
+    "mocha": "ts-mocha mocha/test.ts",
     "test": "yarn mocha",
     "extractTests": "ts-node-dev --respawn --transpile-only \"mmikeww - AHK-v2-script-converter/extract tests.ts\"",
     "convertTov2": "ts-node-dev --respawn --transpile-only src/convertTov2.ts",

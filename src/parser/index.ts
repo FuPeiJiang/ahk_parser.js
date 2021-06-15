@@ -2778,7 +2778,7 @@ export default (content: string,literalDoubleQuoteInContinuation = false): Every
           c++
         }
         const percentVar = lines[i].slice(percentVarStart,c)
-        d('percentVar====',percentVar)
+        // d('percentVar====',percentVar)
         everything.push({type:'percentVar v1Expression',text:percentVar,i1:i,c1:percentVarStart,c2:c})
 
         if (lines[i][c] !== '%') {
