@@ -2380,3 +2380,26 @@ _BITMAPtoDIB_cleanup:
 
 POSSIBLE, but I'm too lazy rn..
 
+OMG the debug console !!
+I can log lines[i][c] IN DEBUG MODE
+
+msg
+(
+  box
+)
+varsetc
+(
+  apacity
+)
+-> same first chars ?
+a:=buff
+(
+  eralloc
+)
+-> all on top ?
+a:=bufferalloc
+)
+(
+
+I prefer all on top
+

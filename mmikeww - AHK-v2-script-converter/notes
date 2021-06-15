@@ -1,0 +1,6 @@
+Yunit.Use(YunitWindow).Test(ConvertTests, ToExpTests, ToStringExprTests
+                          , RemoveSurroundingQuotes, RemoveSurroundingPercents, ExecScriptTests)
+
+I think I only want the ConvertTests
+
+ConvertTests.ahk: it seems that " in continuation section is treated as literal, I should make an option in index.ts, just to parse it, even if illegal
