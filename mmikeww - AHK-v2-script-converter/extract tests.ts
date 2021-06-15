@@ -5,7 +5,7 @@ const content: Buffer =
   fs.readFileSync('mmikeww - AHK-v2-script-converter/oof tests/illegal in endExprContinuation.ahk')
 fs.readFileSync('mmikeww - AHK-v2-script-converter/ConvertTests.ahk')
 
-const everything = ahkParser(content.toString().replace(/\r/g,''))
+const everything = ahkParser(content.toString().replace(/\r/g,''),true)
 
 let i = 0,b: number
 

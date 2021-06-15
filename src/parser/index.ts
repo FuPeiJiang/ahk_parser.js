@@ -93,7 +93,7 @@ export type {EverythingType}
 // c1?: undefined;
 // c2?: undefined;
 
-export default (content: string): EverythingType => {
+export default (content: string,literalDoubleQuoteInContinuation = false): EverythingType => {
   // https://stackoverflow.com/questions/6784799/what-is-this-char-65279#answer-6784805
   // https://stackoverflow.com/questions/13024978/removing-bom-characters-from-ajax-posted-string#answer-13027802
   if (content[0] === '\ufeff') {
@@ -113,6 +113,57 @@ export default (content: string): EverythingType => {
   let i = 0,c = 0,numberOfChars = 0,b = 0,validName = '',strStartLine: number,strStartPos: number,insideContinuation = false,beforeConcat: number,nonWhiteSpaceStart: number,exprFoundLine = -1,colonDeep = 0,usingStartOfLineLoop = false,variadicAsterisk = false,lineWhereCanConcat = -1,v1ExpressionC1: number,cNotWhiteSpace: number,percentVarStart: number,propertyC1 = -1,lookingForAnd = false,doubleComma = false,singleComma = false,insideV1Continuation = false
   let everythingPushCounter: number; everythingPushCounter = 0
   let spliceStartIndex: number,validNameStart: number,validNameLine: number,validNameEnd: number,findingVarName = false,varNameCanLtrimSpaces: false,idkVarC1 = 0,legalObjLine = -1,lastTrailingWasFunc: boolean|number = false,spliceIndexEverythingAtHotkeyLine: number|boolean = false,operatorAtHotkeyLine = -1,v1StartLine = -1,funcParenStartIndex = -1
+
+  let endStringContinuation: {(): boolean}
+  if (literalDoubleQuoteInContinuation) {
+    //do not findClosingQuoteInLine(), as they are literal
+    endStringContinuation = function(){
+    //now continue until I find a line starting with ')'
+      i++
+      while (i < howManyLines) {
+        c = 0,numberOfChars = lines[i].length
+        skipThroughWhiteSpaces()
+        //true if found line starting with ) AND closingQuote on the same line
+        if (c < numberOfChars && lines[i][c] === ')') {
+          insideContinuation = false
+          // d('stringContinuation END', char())
+          c++
+          //if ) and no ", return false to start another continuation
+          return findClosingQuoteInLine()
+        //if found closing " first, expect expression
+        // " var
+        // but continuation didn't end, IDK what happens
+        }
+        i++
+      }
+    }
+  } else {
+    //now continue until I find a line starting with ')'
+    endStringContinuation = function() {
+      i++
+      while (i < howManyLines) {
+        c = 0,numberOfChars = lines[i].length
+        skipThroughWhiteSpaces()
+        //true if found line starting with ) AND closingQuote on the same line
+        if (c < numberOfChars && lines[i][c] === ')') {
+          insideContinuation = false
+          // d('stringContinuation END', char())
+          c++
+          //if ) and no ", return false to start another continuation
+          return findClosingQuoteInLine()
+        //if found closing " first, expect expression
+        // " var
+        // but continuation didn't end, IDK what happens
+        } else if (findClosingQuoteInLine()) {
+          recurseBetweenExpression()
+          return false
+        // return true
+        }
+        i++
+      }
+    }
+  }
+
   lineLoop:
   while (i < howManyLines) {
     c = 0
@@ -2567,31 +2618,6 @@ export default (content: string): EverythingType => {
     }
   }
 
-
-  function endStringContinuation() {
-    //now continue until I find a line starting with ')'
-    i++
-    while (i < howManyLines) {
-      c = 0,numberOfChars = lines[i].length
-      skipThroughWhiteSpaces()
-      //true if found line starting with ) AND closingQuote on the same line
-      if (c < numberOfChars && lines[i][c] === ')') {
-        insideContinuation = false
-        // d('stringContinuation END', char())
-        c++
-        //if ) and no ", return false to start another continuation
-        return findClosingQuoteInLine()
-        //if found closing " first, expect expression
-        // " var
-        // but continuation didn't end, IDK what happens
-      } else if (findClosingQuoteInLine()) {
-        recurseBetweenExpression()
-        return false
-        // return true
-      }
-      i++
-    }
-  }
   //true if found charToFind, false if outOfLines
   function skipThroughFindChar(charToFind: string) {
     //also skip through whiteSpaces, comments
