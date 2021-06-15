@@ -53,7 +53,7 @@ d(expected)
 d(expected)
 */
 
-expected := "      ;comment
+/* expected := "      ;comment
 (Join`r`n %
 hello
 )"
@@ -64,3 +64,8 @@ expected := "a      ;comment
 hello
 )"
 d(expected) ;ahello
+ */
+expected := "a      ;comment
+(Join`r`n %
+   )b"
+d(expected) ;it seems that they are rTrimmed

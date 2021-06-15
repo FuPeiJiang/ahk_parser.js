@@ -10,7 +10,7 @@ expected := "  ;comment
                         var := "hello"
                         msg := var . " world"
                         FileAppend, %msg%, *
-)"
+   )"
 ; in v2 that could alternatively be:
 ; msg := "%var% world"
 

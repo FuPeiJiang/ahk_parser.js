@@ -110,7 +110,7 @@ export default (content: string,literalDoubleQuoteInContinuation = false): Every
   let okk: number
   okk = 0
 
-  let i = 0,c = 0,numberOfChars = 0,b = 0,validName = '',strStartLine: number,strStartPos: number,insideContinuation = false,beforeConcat: number,nonWhiteSpaceStart: number,exprFoundLine = -1,colonDeep = 0,usingStartOfLineLoop = false,variadicAsterisk = false,lineWhereCanConcat = -1,v1ExpressionC1: number,cNotWhiteSpace: number,percentVarStart: number,propertyC1 = -1,lookingForAnd = false,doubleComma = false,singleComma = false,insideV1Continuation = false
+  let i = 0,c = 0,numberOfChars = 0,b = 0,validName = '',strStartLine: number,strStartPos: number,insideContinuation = false,beforeConcat: number,nonWhiteSpaceStart: number,exprFoundLine = -1,colonDeep = 0,usingStartOfLineLoop = false,variadicAsterisk = false,lineWhereCanConcat = -1,v1ExpressionC1: number,cNotWhiteSpace: number,percentVarStart: number,propertyC1 = -1,lookingForAnd = false,doubleComma = false,singleComma = false,insideV1Continuation = false,strContiStartPos: number,strContiStartLine: number
   let everythingPushCounter: number; everythingPushCounter = 0
   let spliceStartIndex: number,validNameStart: number,validNameLine: number,validNameEnd: number,findingVarName = false,varNameCanLtrimSpaces: false,idkVarC1 = 0,legalObjLine = -1,lastTrailingWasFunc: boolean|number = false,spliceIndexEverythingAtHotkeyLine: number|boolean = false,operatorAtHotkeyLine = -1,v1StartLine = -1,funcParenStartIndex = -1
 
@@ -125,16 +125,21 @@ export default (content: string,literalDoubleQuoteInContinuation = false): Every
         while (c < numberOfChars && whiteSpaceObj[lines[i][c]]) {
           c++
         }
-        //true if found line starting with ) AND closingQuote on the same line
         if (c < numberOfChars && lines[i][c] === ')') {
           insideContinuation = false
-          // d('stringContinuation END', char())
+
+          const cBak = c
+          i--,c = lines[i].length
+          const text = textFromPosToCurrent([strContiStartPos,strContiStartLine])
+          everything.push({type:'StringContinuation',text:text,i1:strStartLine,c1:strStartPos,i2:i,c2:c})
+          everything.push({type:'newline ) continuation',text:'\n',i1:i,c1:c})
+          i++,c = cBak
+          everything.push({type:'whiteSpaces ) continuation',text:lines[i].slice(0,c),i1:i,c1:0,c2:c})
+          everything.push({type:') continuation',text:')',i1:i,c1:c})
+
           c++
-          //if ) and no ", return false to start another continuation
+          strStartPos = c,strStartLine = i
           return findClosingQuoteInLine()
-        //if found closing " first, expect expression
-        // " var
-        // but continuation didn't end, IDK what happens
         }
         i++
       }
@@ -2582,6 +2587,13 @@ export default (content: string,literalDoubleQuoteInContinuation = false): Every
     }
     if (lines[i][c] === '(') {
       insideContinuation = true
+
+      everything.push({type:'( continuation',text:'(',i1:i,c1:c})
+      c++
+      everything.push({type:'continuation options',text:lines[i].slice(c,numberOfChars),i1:i,c1:c,c2:numberOfChars})
+      everything.push({type:'newline ( continuation',text:'\n',i1:i,c1:numberOfChars})
+
+      strContiStartPos = 0,strContiStartLine = i + 1
       return true
     }
     return false
