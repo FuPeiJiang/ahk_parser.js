@@ -7,7 +7,12 @@ SetBatchLines, -1
 #KeyHistory 0
 
 ; d(% "oof") ;nope
-var:="value"
+/* var:="value"
 IfEqual, var, % "value"
   p(123)
+*/
+;works
+var = 10
+if var > % 4*2
+  p(234)
 ;works

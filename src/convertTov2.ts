@@ -3,7 +3,8 @@ import ahkParser from './parser/index'
 import modifyEverythingToV2 from './modifyEverythingToV2'
 
 const content: Buffer =
-fs.readFileSync('mmikeww - AHK-v2-script-converter/input/ForcedExpression_IfEqual_CommandThenComma.ahk')
+fs.readFileSync('mmikeww - AHK-v2-script-converter/input/ForcedExpression_Traditional_If_GreaterThanInt.ahk')
+// fs.readFileSync('mmikeww - AHK-v2-script-converter/input/ForcedExpression_IfEqual_CommandThenComma.ahk')
 // fs.readFileSync('tests3/numIfNum.ahk')
 // fs.readFileSync('tests3/while and.ahk')
 // fs.readFileSync('tov2/RunCMD_mid.ahk')

@@ -3,6 +3,8 @@ import ahkParser from '../src/parser/index'
 import modifyEverythingToV2 from '../src/modifyEverythingToV2'
 import fs from 'fs'
 
+const d = console.debug.bind(console)
+
 const testsPath = `${__dirname}/../mmikeww - AHK-v2-script-converter/`
 describe('AHK-v2-script-converter',function() {
   const fileNames = fs.readdirSync(`${testsPath}input`)
@@ -26,6 +28,7 @@ function readFileToString(path) {
 }
 function doItFiles(path1,path2) {
   it(`FILE: '${path1}' vs '${path2}'`,function() {
+    d(`doing ${path1}`)
     strictEqual(toV2(readFileToString(path1)),readFileToString(path2))
   })
 }
