@@ -213,6 +213,10 @@ export default (content: string,literalDoubleQuoteInContinuation = false): Every
         if (!skipThroughEmptyLines()) { break lineLoop }
         usingStartOfLineLoop = true
         continue startOfLineLoop
+      } else if (lines[i][c] === '{') {
+        everything.push({type:'perhaps { namedIf',text:'{',i1:i,c1:c})
+        c++
+        if (!skipThroughEmptyLines()) { break lineLoop }
       }
 
       nonWhiteSpaceStart = c
@@ -1319,7 +1323,6 @@ export default (content: string,literalDoubleQuoteInContinuation = false): Every
         everything.push({type:', 2 namedIf',text:',',i1:i,c1:c})
         c++
         // oof, command here
-        const saveC = c
         skipThroughWhiteSpaces()
         nonWhiteSpaceStart = c
         skipValidChar()
@@ -1328,11 +1331,11 @@ export default (content: string,literalDoubleQuoteInContinuation = false): Every
         //if is command
         //though global or local.. , they CAN count as commands..
         if (idkType) {
-          c = saveC
+          c = nonWhiteSpaceStart
           usingStartOfLineLoop = true
           return 1
         } else {
-          c = saveC
+          c = nonWhiteSpaceStart
           findV1Expression()
           return 2
         }

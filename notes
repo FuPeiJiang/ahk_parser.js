@@ -2420,3 +2420,8 @@ Starting with an operator such as not or !:
 if !MyVar
 if not MyVar
 if not = MyVar
+
+to do : 'perhaps { namedIf' I don't like this
+wrap linesLoop in a function ?
+but functions are actually slow, way slower.
+
