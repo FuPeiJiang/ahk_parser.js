@@ -2410,3 +2410,13 @@ why do I even push 'whiteSpaces' in continuation section?
 how do I insert the whiteSpaces into the start ?
 
 //inefficient, but go back whiteSpaces, to let skipThroughEmptyLines capture them all
+
+If Var op Value, where op is one of the following operators: =, <>, !=, >, >=, <, <=.
+so I looked for 'in', now im just gonna also look for these 'op'
+
+when there was no not ?
+
+Starting with an operator such as not or !:
+if !MyVar
+if not MyVar
+if not = MyVar
