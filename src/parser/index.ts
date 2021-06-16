@@ -297,12 +297,23 @@ export default (content: string,literalDoubleQuoteInContinuation = false): Every
                   findV1ExpressiondummyLoop:
                   while (true) {
                     if (!validName) {
+
+                      if (c < numberOfChars - 1 && legacyIfOperators[lines[i].slice(c,c + 2)]) {
+                        everything.push({type:'2legacyIfOperators',text:lines[i].slice(c,c + 2),i1:i,c1:c,c2:c + 2})
+                        c += 2
+                        break findV1ExpressiondummyLoop
+                      } else if (c < numberOfChars && legacyIfOperators[lines[i][c]]) {
+                        everything.push({type:'1legacyIfOperators',text:lines[i][c],i1:i,c1:c})
+                        c++
+                        break findV1ExpressiondummyLoop
+                      }
+
                       c = saveC,i = saveI,numberOfChars = saveNumChars
                       break breakToGoFindV2
                     }
-                    let checkThese = false
-                    let text,cPlusLen
-                    if (validName.toLowerCase() === 'not' && (c === numberOfChars || whiteSpaceObj[lines[i][c]])) {
+                    const lowerValidName = validName.toLowerCase()
+                    let checkThese = false,cPlusLen
+                    if (lowerValidName === 'not' && (c === numberOfChars || whiteSpaceObj[lines[i][c]])) {
                       everything.push({type:'legacyIf not',text:validName,i1:i,c1:validNamestart,c2:c})
                       skipThroughWhiteSpaces()
                       validNamestart = c,spliceStartIndex = everything.length
@@ -313,20 +324,20 @@ export default (content: string,literalDoubleQuoteInContinuation = false): Every
                       checkThese = true
                     }
 
-                    if (validName.toLowerCase() === 'in' && (c === numberOfChars || whiteSpaceObj[lines[i][c]])) {
+                    if (lowerValidName === 'in' && (c === numberOfChars || whiteSpaceObj[lines[i][c]])) {
                       everything.push({type:'legacyIf in',text:validName,i1:i,c1:validNamestart,c2:c})
                       doubleComma = true
-                    } else if (validName.toLowerCase() === 'contains' && (c === numberOfChars || whiteSpaceObj[lines[i][c]])) {
+                    } else if (lowerValidName === 'contains' && (c === numberOfChars || whiteSpaceObj[lines[i][c]])) {
                       everything.push({type:'legacyIf contains',text:validName,i1:i,c1:validNamestart,c2:c})
                       doubleComma = true
-                    } else if (validName.toLowerCase() === 'between' && (c === numberOfChars || whiteSpaceObj[lines[i][c]])) {
+                    } else if (lowerValidName === 'between' && (c === numberOfChars || whiteSpaceObj[lines[i][c]])) {
                       everything.push({type:'legacyIf between',text:validName,i1:i,c1:validNamestart,c2:c})
                       lookingForAnd = true
                       break findV1ExpressiondummyLoop
                     }
 
                     if (checkThese) {
-                      if (validName.toLowerCase() === 'is' && (c === numberOfChars || whiteSpaceObj[lines[i][c]])) {
+                      if (lowerValidName === 'is' && (c === numberOfChars || whiteSpaceObj[lines[i][c]])) {
                         everything.push({type:'legacyIf is',text:validName,i1:i,c1:validNamestart,c2:c})
                         skipThroughWhiteSpaces()
 
@@ -351,15 +362,6 @@ export default (content: string,literalDoubleQuoteInContinuation = false): Every
                       removeTheEmptyLines = false
                     }
 
-                    if (c < numberOfChars - 1 && legacyIfOperators[lines[i].slice(c,c + 2)]) {
-                      everything.push({type:'2legacyIfOperators',text:lines[i].slice(c,c + 2),i1:i,c1:c,c2:c + 2})
-                      c += 2
-                      break findV1ExpressiondummyLoop
-                    } else if (c < numberOfChars && legacyIfOperators[lines[i][c]]) {
-                      everything.push({type:'1legacyIfOperators',text:lines[i][c],i1:i,c1:c})
-                      c++
-                      break findV1ExpressiondummyLoop
-                    }
                     c = saveC,i = saveI,numberOfChars = saveNumChars
                     if (removeTheEmptyLines) {
                       everything.splice(everything.length - 1,1)
