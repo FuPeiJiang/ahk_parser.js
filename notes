@@ -2425,3 +2425,15 @@ to do : 'perhaps { namedIf' I don't like this
 wrap linesLoop in a function ?
 but functions are actually slow, way slower.
 
+
+Assignments must have something on the right-hand side · Issue #10 · FuPeiJiang/ahk_parser.js
+https://github.com/FuPeiJiang/ahk_parser.js/issues/10
+
+Legacy If var op value · Issue #9 · FuPeiJiang/ahk_parser.js
+https://github.com/FuPeiJiang/ahk_parser.js/issues/9
+
+AutoHotkey_L/script.h at 2a30cfa9f8e59c8d9ebb8a6073c87ba210de952b · Lexikos/AutoHotkey_L
+https://github.com/Lexikos/AutoHotkey_L/blob/2a30cfa9f8e59c8d9ebb8a6073c87ba210de952b/source/script.h#L1056
+
+Renamed variables/functions · Issue #5 · FuPeiJiang/ahk_parser.js
+https://github.com/FuPeiJiang/ahk_parser.js/issues/5

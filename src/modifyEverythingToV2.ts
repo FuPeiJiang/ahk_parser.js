@@ -49,7 +49,7 @@ const on1off0: stringIndexString = {'on':'1','off':'0'}
 const ternaryColonEndDelim: stringIndexBool = {'end assignment':true,', function CALL':true,') function CALL':true,', assignment':true,'end comma assignment':true}
 const whiteSpaceNewlineOrComma: stringIndexBool = {' ':true,'\t':true,'\n':true,',':true}
 const commaCommandObj: stringIndexBool = {', command whiteSpace':true,', command comma':true}
-
+const startOfV1Expr: stringIndexBool = {'v1String findV1Expression':true,'%START %Var%':true,'v1String findPercentVarV1Expression':true}
 
 const typesThatAreVars: stringIndexBool = {'Param':true,'idkVariable':true,'assignment':true,'v1String findIdkVar':true,'var at v1Assignment':true}
 
@@ -447,37 +447,39 @@ export default (everything: ExtendedEverythingType): string => {
       thisE.text = ''
     } else if (v1Str[eType]) {
       const theText = everything[i].text
-      if (theText !== '') {
-        let next,putAtEnd = ''
-        b = i + 1
-        next = everything[b]
-        // skip through stuff like 'end command' which .text === undefined
-        outerLoop:
-        while (true) {
-          while (next) {
-            if (next.text) {
-              const firstChar = next.text[0]
-              if (!whiteSpaceNewlineOrComma[firstChar]) {
-                putAtEnd = ' '
-              }
-              break outerLoop
+      let next,putAtEnd = ''
+      b = i + 1
+      next = everything[b]
+      // skip through stuff like 'end command' which .text === undefined
+      outerLoop:
+      while (true) {
+        while (next) {
+          if (next.text) {
+            const firstChar = next.text[0]
+            if (!whiteSpaceNewlineOrComma[firstChar]) {
+              putAtEnd = ' '
             }
-            next = everything[++b]
+            break outerLoop
           }
-          break outerLoop
+          next = everything[++b]
         }
-        thisE.text = `${whiteSpaceNewlineOrComma[everything[i - 1].text.slice(-1)] ? '' : ' '}"${theText.replace(/"/g,'`"')}"${putAtEnd}`
+        break outerLoop
       }
+      thisE.text = `${whiteSpaceNewlineOrComma[everything[i - 1].text.slice(-1)] ? '' : ' '}"${theText.replace(/"/g,'`"')}"${putAtEnd}`
     } else if (eType === '= v1Assignment') {
       thisE.text = ':='
-      const next = everything[i + 1]
-      // var = -> var:=""
-      if (next.type === 'v1String findV1Expression') {
-        if (next.text === '') {
-          next.type = 'edit'
-          next.text = '""'
+      let next = everything[++i]
+      //# var = -> var:=""
+      if (next) {
+        if (next.type === 'whiteSpaces') {
+          next = everything[++i]
         }
       }
+      if (!next || !startOfV1Expr[next.type]) {
+        everything.splice(i,0,{type:'v1String findV1Expression',text:''})
+      }
+      return 1 //to actually parse the fake added 'v1String findV1Expression' to get correct trailing whiteSpace : ex if comments after.
+      //and to not skip the '%START %Var%'
     } else if (eType === 'String') {
       thisE.text = `"${thisE.text.slice(1,-1).replace(/""/g,'`"')}"`
     } else if (anyCommand[eType]) {
@@ -513,6 +515,8 @@ export default (everything: ExtendedEverythingType): string => {
             next.type = 'edit'
             next.text = '0'
           }
+        } else {
+          return 1 //for ex: '%START %Var%'
         }
       } else if (dTextLowered === 'splitpath') {
         if (modV1StrToEdit(5)) { return 3 }

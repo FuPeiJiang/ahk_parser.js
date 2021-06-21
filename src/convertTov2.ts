@@ -3,12 +3,13 @@ import ahkParser from './parser/index'
 import modifyEverythingToV2 from './modifyEverythingToV2'
 
 const content: Buffer =
-fs.readFileSync('tov2/Base64Enc().ahk')
+// fs.readFileSync('tests3/v1assign with whiteSpace then nothing.ahk')
+// fs.readFileSync('tov2/Base64Enc().ahk')
 // fs.readFileSync('tests3/IfEqual_SameLineAction_mod.ahk')
 // fs.readFileSync('mmikeww - AHK-v2-script-converter/input/ForcedExpression_Traditional_If_GreaterThanInt.ahk')
 // fs.readFileSync('mmikeww - AHK-v2-script-converter/input/ForcedExpression_IfEqual_CommandThenComma.ahk')
 // fs.readFileSync('tests3/numIfNum.ahk')
-fs.readFileSync('tests3/while and.ahk')
+// fs.readFileSync('tests3/while and.ahk')
 // fs.readFileSync('tov2/RunCMD_mid.ahk')
 // fs.readFileSync('tov2/RunCMD.ahk')
 // fs.readFileSync('v2tests/PixelGetColor.ahk')
@@ -38,7 +39,7 @@ fs.readFileSync('tests3/while and.ahk')
 fs.readFileSync('tests3/recurse VarSetCapacity replacement.ahk')
 fs.readFileSync('tov2/OpenInAhkExplorer.ahk') */
 // fs.readFileSync('tov2/sortAr.ahk')
-fs.readFileSync('tests3/splitpath.ahk')
+// fs.readFileSync('tests3/splitpath.ahk')
 // fs.readFileSync('tests3/not assignment operatEor.ahk')
 // fs.readFileSync('tests3/idkAnymore23.ahk')
 fs.readFileSync('tov2/jpgs to pdf.ahk')

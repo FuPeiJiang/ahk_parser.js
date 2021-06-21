@@ -28,6 +28,7 @@ describe('toV2(text)',function() {
   doItFiles('../tests3/numIfNum.ahk','correct/numIfNum.ah2')
   doItFiles('../tests3/listlines.ahk','correct/listlines.ah2')
   doIt('SplitPath % ar[1],, Ou%t%Dir,,firstOutNameNoExt','SplitPath ar[1],, OutDir,,firstOutNameNoExt')
+  doItFiles('../tests3/v1assign with whiteSpace then nothing.ahk','correct/v1assign with whiteSpace then nothing.ah2')
 })
 
 function toV2(text) {

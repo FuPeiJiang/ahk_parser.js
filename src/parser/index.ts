@@ -1379,12 +1379,16 @@ export default (content: string,literalDoubleQuoteInContinuation = false): Every
   }
   function beforeCommaV1Str(which: string) {
     const text = lines[i].slice(v1ExpressionC1,cNotWhiteSpace)
-    everything.push({type:`v1String ${which}`,text:text,i1:i,c1:v1ExpressionC1,c2:cNotWhiteSpace})
+    if (text) {
+      everything.push({type:`v1String ${which}`,text:text,i1:i,c1:v1ExpressionC1,c2:cNotWhiteSpace})
+    }
   }
   function endV1Str(which: string) {
     const cEndOfV1Expression = cNotWhiteSpace + 1
     const text = lines[i].slice(v1ExpressionC1,cEndOfV1Expression)
-    everything.push({type:`v1String ${which}`,text:text,i1:i,c1:v1ExpressionC1,c2:cEndOfV1Expression})
+    if (text) {
+      everything.push({type:`v1String ${which}`,text:text,i1:i,c1:v1ExpressionC1,c2:cEndOfV1Expression})
+    }
 
     const endingWhiteSpaces = lines[i].slice(cEndOfV1Expression,c)
     // d('endingWhiteSpaces v1Expression', `\`${endingWhiteSpaces}\` ${endingWhiteSpaces.length}LENGTH`)
@@ -2768,7 +2772,9 @@ export default (content: string,literalDoubleQuoteInContinuation = false): Every
       } else {
         const cEndOfV1Expression = cNotWhiteSpace
         const text = lines[i].slice(v1ExpressionC1,cEndOfV1Expression)
-        everything.push({type:'v1String findPercentVarV1Expression',text:text,i1:i,c1:v1ExpressionC1,c2:cEndOfV1Expression})
+        if (text) {
+          everything.push({type:'v1String findPercentVarV1Expression',text:text,i1:i,c1:v1ExpressionC1,c2:cEndOfV1Expression})
+        }
 
 
         everything.push({type:'%START %Var%',text:'%',i1:i,c1:c})
