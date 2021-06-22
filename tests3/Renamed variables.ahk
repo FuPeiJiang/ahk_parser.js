@@ -1,4 +1,4 @@
-v:=A_LoopFilePath
-. A_LoopFileFullPath
-. A_Clipboard
-. A_ComSpec
+v:=A_LoopFileFullPath
+. A_LoopFileLongPath
+. Clipboard
+. ComSpec
