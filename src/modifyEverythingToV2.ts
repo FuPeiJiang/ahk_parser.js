@@ -84,7 +84,11 @@ export default (everything: ExtendedEverythingType): string => {
   replaceReservedVar('case','dCase','_case')
   replaceReservedVar('object','dObject','_object')
   replaceReservedVar('array','dArray','_array')
-  replaceReservedVar('clipboard','A_Clipboard')
+  //https://www.autohotkey.com/v2/v2-changes.htm#built-in-variables
+  renameVar('a_loopfilefullpath','A_LoopFilePath')
+  renameVar('a_loopfilelongpath','A_LoopFileFullPath')
+  renameVar('clipboard','A_Clipboard')
+  renameVar('comspec','A_ComSpec')
   const namesArr = Object.keys(varNames)
   for (let n = 0,len = namesArr.length; n < len; n++) {
     const thisName = namesArr[n]
@@ -101,6 +105,7 @@ export default (everything: ExtendedEverythingType): string => {
       }
     }
   }
+  // theReservedVar should be lowercase
   function replaceReservedVar(theReservedVar: string,firstChoice: string,subfixForAutoGen = '') {
     const eIndexArr = lowerVarNames[theReservedVar]
     if (eIndexArr) {
@@ -119,7 +124,14 @@ export default (everything: ExtendedEverythingType): string => {
       }
     }
   }
-
+  function renameVar(varToRename: string,newName: string) {
+    const eIndexArr = lowerVarNames[varToRename]
+    if (eIndexArr) {
+      for (let n = 0,len = eIndexArr.length; n < len; n++) {
+        everything[eIndexArr[n]].text = newName
+      }
+    }
+  }
 
   // https://stackoverflow.com/questions/1349404/generate-random-string-characters-in-javascript#1349426
   function makeid(length: number) {
