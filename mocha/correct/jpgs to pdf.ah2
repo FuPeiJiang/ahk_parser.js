@@ -18,7 +18,7 @@ if (darkenWithIrfanView) {
 
         fileExist:=FileExist(convertTo)
         if (!fileExist) {
-            ok:= "`"C:\Program Files\IrfanView\i_view64.exe`" " input " /contrast=-30 /gamma=0.30 /convert=" convertTo
+            ok:="`"C:\Program Files\IrfanView\i_view64.exe`" " input " /contrast=-30 /gamma=0.30 /convert=" convertTo
             RunWait ok
         }
         tempAR.Push(convertTo)
@@ -42,7 +42,7 @@ if (tempAR.Length) {
 ; gamma 0.35
 
 SplitPath ar[1],, OutDir,,firstOutNameNoExt
-finalStr:= "python `"lib\jpgs to pdf.py`" `"" firstOutNameNoExt "`" `"" OutDir "`" `"" OutDir "`""
+finalStr:="python `"lib\jpgs to pdf.py`" `"" firstOutNameNoExt "`" `"" OutDir "`" `"" OutDir "`""
 
 for k, v in ar {
     if (!FileExist(v)) {

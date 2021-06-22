@@ -2,8 +2,8 @@
 type stringIndexBool = {
   [key: string]: boolean,
 }
-type stringIndexNum = { [key: string]: number }
-export type {stringIndexBool, stringIndexNum}
+type stringIndexNum = {[key: string]: number}
+export type {stringIndexBool,stringIndexNum}
 
 export const whiteSpace = /\u000B\u000C\u0020\u00A0/
 export const whiteSpaceObj: stringIndexBool = {' ':true,'\t':true}
@@ -19,8 +19,8 @@ export const typeOfValidVarName: stringIndexNum = {'class':5,'autotrim':4,'block
 export const whiteSpaceOverrideAssign: stringIndexBool = {1:true,2:true,3:true}
 
 export const operatorsObj: stringIndexBool = {'++':true,'--':true,'**':true,'!':true,'~':true,'&':true,'*':true,'/':true,'//':true,'-':true,'+':true,'<<':true,'>>':true,'^':true,'|':true,'.':true,'~=':true,'>':true,'<':true,'>=':true,'<=':true,'=':true,'==':true,'<>':true,'!=':true,'not':true,'and':true,'&&':true,'or':true,'||':true,'?':true,':':true,':=':true,'+=':true,'-=':true,'*=':true,'/=':true,'//=':true,'.=':true,'|=':true,'&=':true,'^=':true,'>>=':true,'<<=':true}
-export const assignmentOperators: stringIndexBool = {'++':true, '--':true, ':=':true,'+=':true,'-=':true,'*=':true,'/=':true,'//=':true,'.=':true,'|=':true,'&=':true,'^=':true,'>>=':true,'<<=':true}
-export const v1Continuator: stringIndexBool = {',':true, '**':true,'!':true,'~':true,'&':true,'*':true,'/':true,'//':true,'-':true,'+':true,'<<':true,'>>':true,'^':true,'|':true,'.':true,'~=':true,'>':true,'<':true,'>=':true,'<=':true,'=':true,'==':true,'<>':true,'!=':true,'&&':true,'||':true,'?':true,':=':true,'+=':true,'-=':true,'*=':true,'/=':true,'//=':true,'.=':true,'|=':true,'&=':true,'^=':true,'>>=':true,'<<=':true}
+export const assignmentOperators: stringIndexBool = {'++':true,'--':true,':=':true,'+=':true,'-=':true,'*=':true,'/=':true,'//=':true,'.=':true,'|=':true,'&=':true,'^=':true,'>>=':true,'<<=':true}
+export const v1Continuator: stringIndexBool = {',':true,'**':true,'!':true,'~':true,'&':true,'*':true,'/':true,'//':true,'-':true,'+':true,'<<':true,'>>':true,'^':true,'|':true,'.':true,'~=':true,'>':true,'<':true,'>=':true,'<=':true,'=':true,'==':true,'<>':true,'!=':true,'&&':true,'||':true,'?':true,':=':true,'+=':true,'-=':true,'*=':true,'/=':true,'//=':true,'.=':true,'|=':true,'&=':true,'^=':true,'>>=':true,'<<=':true}
 export const v2Continuator: stringIndexBool = {'**':true,'!':true,'~':true,'&':true,'*':true,'/':true,'//':true,'-':true,'+':true,'<<':true,'>>':true,'^':true,'|':true,'.':true,'~=':true,'>':true,'<':true,'>=':true,'<=':true,'=':true,'==':true,'<>':true,'!=':true,'and':true,'&&':true,'or':true,'||':true,'?':true,':':true,':=':true,'+=':true,'-=':true,'*=':true,'/=':true,'//=':true,'.=':true,'|=':true,'&=':true,'^=':true,'>>=':true,'<<=':true}
 export const legacyIfOperators: stringIndexBool = {'=':true,'<>':true,'!=':true,'>':true,'>=':true,'<':true,'<=':true}
 

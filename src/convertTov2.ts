@@ -3,7 +3,8 @@ import ahkParser from './parser/index'
 import modifyEverythingToV2 from './modifyEverythingToV2'
 
 const content: Buffer =
-// fs.readFileSync('tests3/v1assign with whiteSpace then nothing.ahk')
+fs.readFileSync('tests3/Legacy If var op value.ahk')
+fs.readFileSync('tests3/v1assign with whiteSpace then nothing.ahk')
 // fs.readFileSync('tov2/Base64Enc().ahk')
 // fs.readFileSync('tests3/IfEqual_SameLineAction_mod.ahk')
 // fs.readFileSync('mmikeww - AHK-v2-script-converter/input/ForcedExpression_Traditional_If_GreaterThanInt.ahk')

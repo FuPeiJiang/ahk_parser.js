@@ -47,7 +47,7 @@ const wsOrEmptyLine: stringIndexBool = {'whiteSpaces':true,'emptyLines':true}
 const startGroupOrUnit: stringIndexString = {'( group':') group','start unit':'end unit'}
 const on1off0: stringIndexString = {'on':'1','off':'0'}
 const ternaryColonEndDelim: stringIndexBool = {'end assignment':true,', function CALL':true,') function CALL':true,', assignment':true,'end comma assignment':true}
-const whiteSpaceNewlineOrComma: stringIndexBool = {' ':true,'\t':true,'\n':true,',':true}
+const noNeedToWhiteSpaceForConcat: stringIndexBool = {' ':true,'\t':true,'\n':true,',':true,'<':true,'>':true,'=':true,'!':true}
 const commaCommandObj: stringIndexBool = {', command whiteSpace':true,', command comma':true}
 const startOfV1Expr: stringIndexBool = {'v1String findV1Expression':true,'%START %Var%':true,'v1String findPercentVarV1Expression':true}
 
@@ -446,26 +446,28 @@ export default (everything: ExtendedEverythingType): string => {
     } else if (v1Percent[eType]) {
       thisE.text = ''
     } else if (v1Str[eType]) {
-      const theText = everything[i].text
-      let next,putAtEnd = ''
-      b = i + 1
-      next = everything[b]
-      // skip through stuff like 'end command' which .text === undefined
-      outerLoop:
-      while (true) {
-        while (next) {
-          if (next.text) {
-            const firstChar = next.text[0]
-            if (!whiteSpaceNewlineOrComma[firstChar]) {
-              putAtEnd = ' '
+      const theText = thisE.text
+      if (theText !== '' || eType === 'v1String findV1Expression') {
+        let next,putAtEnd = ''
+        b = i + 1
+        next = everything[b]
+        // skip through stuff like 'end command' which .text === undefined
+        outerLoop:
+        while (true) {
+          while (next) {
+            if (next.text) {
+              const firstChar = next.text[0]
+              if (!noNeedToWhiteSpaceForConcat[firstChar]) {
+                putAtEnd = ' '
+              }
+              break outerLoop
             }
-            break outerLoop
+            next = everything[++b]
           }
-          next = everything[++b]
+          break outerLoop
         }
-        break outerLoop
+        thisE.text = `${noNeedToWhiteSpaceForConcat[everything[i - 1].text.slice(-1)] ? '' : ' '}"${theText.replace(/"/g,'`"')}"${putAtEnd}`
       }
-      thisE.text = `${whiteSpaceNewlineOrComma[everything[i - 1].text.slice(-1)] ? '' : ' '}"${theText.replace(/"/g,'`"')}"${putAtEnd}`
     } else if (eType === '= v1Assignment') {
       thisE.text = ':='
       let next = everything[++i]

@@ -110,7 +110,7 @@ export default (content: string,literalDoubleQuoteInContinuation = false): Every
   let okk: number
   okk = 0
 
-  let i = 0,c = 0,numberOfChars = 0,b = 0,validName = '',strStartLine: number,strStartPos: number,insideContinuation = false,beforeConcat: number,nonWhiteSpaceStart: number,exprFoundLine = -1,colonDeep = 0,usingStartOfLineLoop = false,variadicAsterisk = false,lineWhereCanConcat = -1,v1ExpressionC1: number,cNotWhiteSpace: number,percentVarStart: number,propertyC1 = -1,lookingForAnd = false,doubleComma = false,singleComma = false,insideV1Continuation = false,strContiStartPos: number,strContiStartLine: number
+  let i = 0,c = 0,numberOfChars = 0,b = 0,validName = '',strStartLine: number,strStartPos: number,insideContinuation = false,beforeConcat: number,nonWhiteSpaceStart: number,exprFoundLine = -1,colonDeep = 0,usingStartOfLineLoop = false,variadicAsterisk = false,lineWhereCanConcat = -1,v1ExpressionC1: number,cNotWhiteSpace: number,percentVarStart: number,propertyC1 = -1,lookingForAnd = false,doubleComma = false,singleComma = false,insideV1Continuation = false,strContiStartPos: number,strContiStartLine: number,eLenBeforeV1Str: number
   let everythingPushCounter: number; everythingPushCounter = 0
   let spliceStartIndex: number,validNameStart: number,validNameLine: number,validNameEnd: number,findingVarName = false,varNameCanLtrimSpaces: false,idkVarC1 = 0,legalObjLine = -1,lastTrailingWasFunc: boolean|number = false,spliceIndexEverythingAtHotkeyLine: number|boolean = false,operatorAtHotkeyLine = -1,v1StartLine = -1,funcParenStartIndex = -1
 
@@ -381,6 +381,7 @@ export default (content: string,literalDoubleQuoteInContinuation = false): Every
                   findV1Expression()
                   doubleComma = false
 
+                  if (i === howManyLines) { break lineLoop }
                   if (lines[i][c] === '{') {
                     everything.push({type:'{ legacyIf',text:'{',i1:i,c1:c})
                     c++
@@ -1379,14 +1380,14 @@ export default (content: string,literalDoubleQuoteInContinuation = false): Every
   }
   function beforeCommaV1Str(which: string) {
     const text = lines[i].slice(v1ExpressionC1,cNotWhiteSpace)
-    if (text) {
-      everything.push({type:`v1String ${which}`,text:text,i1:i,c1:v1ExpressionC1,c2:cNotWhiteSpace})
-    }
+    everything.push({type:`v1String ${which}`,text:text,i1:i,c1:v1ExpressionC1,c2:cNotWhiteSpace})
   }
+  //pushes the last piece of abc `%var%abc`
+  //and pushes 'endingWhiteSpaces v1Expression'
   function endV1Str(which: string) {
     const cEndOfV1Expression = cNotWhiteSpace + 1
     const text = lines[i].slice(v1ExpressionC1,cEndOfV1Expression)
-    if (text) {
+    if (text || everything.length === eLenBeforeV1Str) {
       everything.push({type:`v1String ${which}`,text:text,i1:i,c1:v1ExpressionC1,c2:cEndOfV1Expression})
     }
 
@@ -1632,6 +1633,7 @@ export default (content: string,literalDoubleQuoteInContinuation = false): Every
     //default return false
     return toReturn
   }
+  // pushes %var% and abc except the last one, `%var%abc`, endV1Str() does this
   function findV1StrMid(which: string) {
     if (lookForAnd(which)) {
       findV1StrMid(which)
@@ -1731,7 +1733,7 @@ export default (content: string,literalDoubleQuoteInContinuation = false): Every
       findingVarName = false
       return
     } else {
-      v1ExpressionC1 = c,cNotWhiteSpace = c - 1
+      v1ExpressionC1 = c,cNotWhiteSpace = c - 1,eLenBeforeV1Str = everything.length
 
       foundComment:
       while (true) {

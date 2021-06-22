@@ -1,3 +1,3 @@
 var :=  "" ; comment - old
 var :=  ""
-var := ""
+var :=""
