@@ -3,7 +3,12 @@ type stringIndexBool = {
   [key: string]: boolean,
 }
 type stringIndexNum = {[key: string]: number}
-export type {stringIndexBool,stringIndexNum}
+
+type stringIndexString = {
+  [key: string]: string,
+}
+
+export type {stringIndexBool,stringIndexNum,stringIndexString}
 
 export const whiteSpace = /\u000B\u000C\u0020\u00A0/
 export const whiteSpaceObj: stringIndexBool = {' ':true,'\t':true}
@@ -24,7 +29,9 @@ export const v1Continuator: stringIndexBool = {',':true,'**':true,'!':true,'~':t
 export const v2Continuator: stringIndexBool = {'**':true,'!':true,'~':true,'&':true,'*':true,'/':true,'//':true,'-':true,'+':true,'<<':true,'>>':true,'^':true,'|':true,'.':true,'~=':true,'>':true,'<':true,'>=':true,'<=':true,'=':true,'==':true,'<>':true,'!=':true,'and':true,'&&':true,'or':true,'||':true,'?':true,':':true,':=':true,'+=':true,'-=':true,'*=':true,'/=':true,'//=':true,'.=':true,'|=':true,'&=':true,'^=':true,'>>=':true,'<<=':true}
 export const legacyIfOperators: stringIndexBool = {'=':true,'<>':true,'!=':true,'>':true,'>=':true,'<':true,'<=':true}
 
-export const elseLoopReturn: stringIndexBool = {'else':true,'loop':true,'return':true}
+export const elseLoopReturn: stringIndexBool = {'else':true,'loop':true,'return':true,'try':true,'finally':true}
+export const elseTryFinally: stringIndexString = {'else':'else','try':'try','finally':'finally'}
 
 export const thisCouldBeFuncName: stringIndexBool = {'idkVariable':true,'(.) property findTrailingExpr':true}
 export const emptyLinesObj: stringIndexBool = {'emptyLines':true,'emptyLines EOF':true}
+

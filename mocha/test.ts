@@ -30,6 +30,7 @@ describe('toV2(text)',function() {
   doIt('SplitPath % ar[1],, Ou%t%Dir,,firstOutNameNoExt','SplitPath ar[1],, OutDir,,firstOutNameNoExt')
   doItFiles('../tests3/v1assign with whiteSpace then nothing.ahk','correct/v1assign with whiteSpace then nothing.ah2')
   doItFiles('../tests3/Renamed variables.ahk','correct/Renamed variables.ah2')
+  doItFiles('../tests3/elseTryFinally.ahk','correct/elseTryFinally.ah2')
 })
 
 function toV2(text) {

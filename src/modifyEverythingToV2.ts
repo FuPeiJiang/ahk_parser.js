@@ -19,10 +19,8 @@ type EverythingElement = ArrayElement<EverythingType> |
 }
 type ExtendedEverythingType = EverythingElement[]
 
-import type {stringIndexBool} from './parser/tokens'
-type stringIndexString = {
-  [key: string]: string,
-}
+import type {stringIndexBool,stringIndexString} from './parser/tokens'
+
 import {variableCharsObj,whiteSpaceObj} from './parser/tokens'
 const d = console.debug.bind(console)
 

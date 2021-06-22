@@ -1,5 +1,5 @@
 import {trace} from 'console'
-import {whiteSpaceObj,variableCharsObj,operatorsObj,legacyIfOperators,v1Continuator,typeOfValidVarName,whiteSpaceOverrideAssign,propCharsObj,namedIf,assignmentOperators,elseLoopReturn,v2Continuator,thisCouldBeFuncName,emptyLinesObj} from './tokens'
+import {whiteSpaceObj,variableCharsObj,operatorsObj,legacyIfOperators,v1Continuator,typeOfValidVarName,whiteSpaceOverrideAssign,propCharsObj,namedIf,assignmentOperators,elseLoopReturn,v2Continuator,thisCouldBeFuncName,emptyLinesObj,elseTryFinally} from './tokens'
 import type {stringIndexBool} from './tokens'
 const d = console.debug.bind(console)
 
@@ -484,10 +484,11 @@ export default (content: string,literalDoubleQuoteInContinuation = false): Every
                   continue startOfLineLoop
                 }
 
-                if (validName.toLowerCase() === 'else') {
-                  everything.splice(spliceStartIndex,0,{type:'else whiteSpace',text:validName,i1:validNameLine,c1:nonWhiteSpaceStart,c2:validNameEnd})
+                let whichElseTryFinally
+                if ((whichElseTryFinally = elseTryFinally[validName.toLowerCase()])) {
+                  everything.splice(spliceStartIndex,0,{type:`${whichElseTryFinally} whiteSpace`,text:validName,i1:validNameLine,c1:nonWhiteSpaceStart,c2:validNameEnd})
                   if (lines[i][c] === '{') {
-                    everything.push({type:'{ else',text:'{',i1:i,c1:c})
+                    everything.push({type:`{ ${whichElseTryFinally}`,text:'{',i1:i,c1:c})
                     c++
                     if (!skipThroughEmptyLines()) { break lineLoop }
                   }
@@ -581,11 +582,12 @@ export default (content: string,literalDoubleQuoteInContinuation = false): Every
             // i = v1StartLine, c = validNameEnd
             const validNameLowercase = validName.toLowerCase()
             if (elseLoopReturn[validNameLowercase]) {
+              let whichElseTryFinally
               if (recurseBetweenExpression()) {
                 //ok..
-              } else if (validNameLowercase === 'else') {
+              } else if ((whichElseTryFinally = elseTryFinally[validNameLowercase])) {
                 if (lines[i][c] === '{') {
-                  everything.push({type:'{ else',text:'{',i1:i,c1:c})
+                  everything.push({type:`{ ${whichElseTryFinally}`,text:'{',i1:i,c1:c})
                   c++
                   if (!skipThroughEmptyLines()) { break lineLoop }
                 }

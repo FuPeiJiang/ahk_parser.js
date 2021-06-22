@@ -2437,3 +2437,6 @@ https://github.com/Lexikos/AutoHotkey_L/blob/2a30cfa9f8e59c8d9ebb8a6073c87ba210d
 
 Renamed variables/functions · Issue #5 · FuPeiJiang/ahk_parser.js
 https://github.com/FuPeiJiang/ahk_parser.js/issues/5
+
+Try/finally with same-line action is misinterpreted · Issue #8 · FuPeiJiang/ahk_parser.js
+https://github.com/FuPeiJiang/ahk_parser.js/issues/8
