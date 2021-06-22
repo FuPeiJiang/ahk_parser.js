@@ -1388,6 +1388,7 @@ export default (content: string,literalDoubleQuoteInContinuation = false): Every
     const cEndOfV1Expression = cNotWhiteSpace + 1
     const text = lines[i].slice(v1ExpressionC1,cEndOfV1Expression)
     if (text || everything.length === eLenBeforeV1Str) {
+      //'v1String findV1Expression' 'v1String resolveV1Continuation'
       everything.push({type:`v1String ${which}`,text:text,i1:i,c1:v1ExpressionC1,c2:cEndOfV1Expression})
     }
 

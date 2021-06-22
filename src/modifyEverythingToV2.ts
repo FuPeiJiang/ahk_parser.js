@@ -85,6 +85,8 @@ export default (everything: ExtendedEverythingType): string => {
   replaceReservedVar('object','dObject','_object')
   replaceReservedVar('array','dArray','_array')
   //https://www.autohotkey.com/v2/v2-changes.htm#built-in-variables
+  // this replaces: HERE:="" & v:=HERE & v=a%HERE%b
+  // I mean, var being assigned, var in v2Expression, %var% in v1Expression
   renameVar('a_loopfilefullpath','A_LoopFilePath')
   renameVar('a_loopfilelongpath','A_LoopFileFullPath')
   renameVar('clipboard','A_Clipboard')
