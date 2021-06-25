@@ -480,6 +480,8 @@ export default (everything: ExtendedEverythingType): string => {
         }
         thisE.text = `${noNeedToWhiteSpaceForConcat[everything[i - 1].text.slice(-1)] ? '' : ' '}"${theText.replace(/"/g,'`"')}"${putAtEnd}`
       }
+    } else if (thisE.text === '<>' && eType === '2operator') {
+      thisE.text = '!='
     } else if (eType === '= v1Assignment') {
       thisE.text = ':='
       let next = everything[++i]

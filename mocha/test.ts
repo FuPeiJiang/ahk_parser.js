@@ -31,6 +31,8 @@ describe('toV2(text)',function() {
   doItFiles('../tests3/v1assign with whiteSpace then nothing.ahk','correct/v1assign with whiteSpace then nothing.ah2')
   doItFiles('../tests3/Renamed variables.ahk','correct/Renamed variables.ah2')
   doItFiles('../tests3/elseTryFinally.ahk','correct/elseTryFinally.ah2')
+  doIt('if(v<>"W")','if(v!="W")')
+
 })
 
 function toV2(text) {
