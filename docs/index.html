@@ -135,6 +135,23 @@
       doEverything(v1InputTextArea.value)
     }
 
+    window.addEventListener('keypress', function(e){
+      // console.log(e.keyCode)
+      // console.log(e.ctrlKey)
+      //^b
+      if (e.ctrlKey && e.keyCode == 2) {
+      // if (e.ctrlKey && e.keyCode == 2) {
+        is_AHK_H = !is_AHK_H
+        if (is_AHK_H) {
+          HconvertButton.className = "convButton down"
+          LconvertButton.className = "convButton"
+        } else {
+          HconvertButton.className = "convButton"
+          LconvertButton.className = "convButton down"
+        }
+        // alert("Here it is.")
+      }
+    })
 
     function arrOrObjToString(obj) {
       const objDelim = ', ',
