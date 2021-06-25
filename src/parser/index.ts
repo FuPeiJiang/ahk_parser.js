@@ -1205,7 +1205,7 @@ export default (content: string,literalDoubleQuoteInContinuation = false): Every
             if (findCommaV1Expression(', 1 (loop) Reg')) {
               findCommaV1Expression(', 2 (loop) Reg')
             }
-          } else if ((text = lines[i].slice(c,cPlusLen = c + 4)).toLowerCase() === 'files' && !variableCharsObj[lines[i][cPlusLen]]) {
+          } else if ((text = lines[i].slice(c,cPlusLen = c + 4)).toLowerCase() === 'read' && !variableCharsObj[lines[i][cPlusLen]]) {
             everything.push({type:'(loop) read',text:text,i1:i,c1:c,c2:cPlusLen})
             c += 4
             if (!skipThroughEmptyLines()) { return 2 }

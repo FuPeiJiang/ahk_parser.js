@@ -3,7 +3,8 @@ import ahkParser from './parser/index'
 import modifyEverythingToV2 from './modifyEverythingToV2'
 
 const content: Buffer =
-fs.readFileSync('tests3/elseTryFinally.ahk')
+fs.readFileSync('tests3/Incorrect quoting of parameters #6.ahk')
+// fs.readFileSync('tests3/elseTryFinally.ahk')
 // fs.readFileSync('tests3/Renamed variables.ahk')
 // fs.readFileSync('tests3/Legacy If var op value.ahk')
 // fs.readFileSync('tests3/v1assign with whiteSpace then nothing.ahk')
