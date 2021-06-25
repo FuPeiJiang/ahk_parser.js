@@ -1,0 +1,1 @@
+IniRead, SQLiteDLL, %A_ScriptDir%\SQLiteDB.ini, Main, DllPath, %SQLiteDLL% ; old

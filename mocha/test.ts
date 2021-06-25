@@ -37,6 +37,10 @@ describe('toV2(text)',function() {
     doIt('DB:=new SQLiteDB','DB:=SQLiteDB.New()')
     doIt('DB:=new SQLiteDB','DB:=SQLiteDB()',false)
   })
+  describe('commandFirstParamToFunction',function() {
+    doIt(String.raw`IniRead, SQLiteDLL, %A_ScriptDir%\SQLiteDB.ini, Main, DllPath, %SQLiteDLL% ; old`
+      ,String.raw`SQLiteDLL:=IniRead(A_ScriptDir "\SQLiteDB.ini","Main","DllPath",SQLiteDLL ); old`)
+  })
 
 })
 

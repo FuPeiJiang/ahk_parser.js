@@ -555,6 +555,8 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
         if (getCommandParams()) { return 2 }
         a(1); p(`:=${objValue}(`); a(2); o(',',3); a(3); p(')')
         spaceIfComment(); s()
+      } else if (dTextLowered === 'iniread') {
+        return commandFirstParamToFunction('IniRead')
       } else if (dTextLowered === 'random') {
         // Random, OutputVar [, Min, Max]
         // OutputVar:=Random([Min, Max])
@@ -750,6 +752,21 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
     return 3
   }
   // functions
+  function commandFirstParamToFunction(funcName: string) {
+    const iBak = i
+    if (modV1StrToEdit(1)) { return 3 }
+    i = iBak
+    if (getCommandParams()) { return 2 }
+    a(1); p(`:=${funcName}(`)
+    if (argsArr.length > 1) {
+      a(2)
+    }
+    for (let n = 3,lenPlusOne = argsArr.length + 1; n < lenPlusOne; n++) {
+      p(','); a(n)
+    }
+    p(')'); spaceIfComment(); s()
+    return 3
+  }
   function skipEmpty() {
     next = everything[++i]
     while (next) {
