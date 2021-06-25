@@ -2,13 +2,36 @@
 
 <html>
 
+<head>
+  <style>
+    .convButton {
+      font-size:20px;
+      background: #ccc;
+      cursor: pointer;
+      border-top: solid 2px #eaeaea;
+      border-left: solid 2px #eaeaea;
+      border-bottom: solid 2px #777;
+      border-right: solid 2px #777;
+      padding: 5px 5px;
+    }
+    .convButton.down {
+      background: #bbb;
+      border-top: solid 2px #777;
+      border-left: solid 2px #777;
+      border-bottom: solid 2px #eaeaea;
+      border-right: solid 2px #eaeaea;
+    }
+  </style>
+</head>
+
 <body>
   <div>
     <textarea id="v1Input" placeholder="v1 here" rows="20" cols="50" style="white-space: nowrap;"></textarea>
     <textarea id="v2Output" placeholder="AHK_H v2 will be here" rows="20" cols="50"
       style="white-space: nowrap;"></textarea>
   </div>
-  <button id="convertButton" style="font-size:20px;">convert!</button>
+  <button id="HconvertButton" class="convButton down">convert to AHK_H</button>
+  <button id="LconvertButton" class="convButton">convert to AHK_L</button>
   <p>if you find a bug, please github issue (no need for context, just paste the v1 code that broke it)</p>
   <div>
     <a style="display:block; margin-block-end:3em;"
@@ -70,6 +93,7 @@
     // const v2EverythingSetText = (newText) => {
     // v2EverythingTextArea.value = newText
     // }
+    let is_AHK_H = true
 
     const doEverything = (v1AHK) => {
       const t0 = performance.now()
@@ -80,7 +104,7 @@
       const v1EverythingTextBak = arrOrObjToString(everything)
       //modifyEverythingToV2 returns a string
       const z0 = performance.now()
-      v2OutputSetText(modifyEverythingToV2(everything))
+      v2OutputSetText(modifyEverythingToV2(everything,is_AHK_H))
       const z1 = performance.now()
       console.log(`Call to modifyEverythingToV2 took ${z1 - z0} milliseconds.`)
       //modifyEverythingToV2 also modified everything
@@ -89,15 +113,25 @@
     }
 
 
-
     v1InputTextArea.onpaste = function () {
       setTimeout(function () {
         doEverything(v1InputTextArea.value)
       }, 1)
     }
 
-    const convertButton = document.getElementById("convertButton")
-    convertButton.onclick = () => {
+    const HconvertButton = document.getElementById("HconvertButton")
+    HconvertButton.onclick = () => {
+      is_AHK_H = true
+      HconvertButton.className = "convButton down"
+      LconvertButton.className = "convButton"
+      doEverything(v1InputTextArea.value)
+    }
+
+    const LconvertButton = document.getElementById("LconvertButton")
+    LconvertButton.onclick = () => {
+      is_AHK_H = false
+      HconvertButton.className = "convButton"
+      LconvertButton.className = "convButton down"
       doEverything(v1InputTextArea.value)
     }
 
