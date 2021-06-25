@@ -2,8 +2,10 @@ import fs from 'fs'
 import ahkParser from './parser/index'
 import modifyEverythingToV2 from './modifyEverythingToV2'
 
+
 const content: Buffer =
-fs.readFileSync('tests3/Incorrect quoting of parameters #6.ahk')
+fs.readFileSync('tests3/new class.ahk')
+// fs.readFileSync('tests3/Incorrect quoting of parameters #6.ahk')
 // fs.readFileSync('tests3/elseTryFinally.ahk')
 // fs.readFileSync('tests3/Renamed variables.ahk')
 // fs.readFileSync('tests3/Legacy If var op value.ahk')
@@ -56,6 +58,7 @@ fs.readFileSync('tests/ahk_explorer.ahk')
 
 const everything = ahkParser(content.toString().replace(/\r/g,''))
 // writeSync(arrOrObjToString(everything),'everything_before.txt')
+// const converted = modifyEverythingToV2(everything,false)
 const converted = modifyEverythingToV2(everything)
 
 writeSync(converted,'reconstructed.ah2')

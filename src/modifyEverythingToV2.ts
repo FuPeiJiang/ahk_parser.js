@@ -192,7 +192,7 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
             thisE.type = 'v2: prop'
             //splice off ( to )
             const spliceStart = b = i + 1
-            if (!nextSkipThrough(') function CALL','( function CALL')) { return 2 }
+            if (nextSkipThrough(') function CALL','( function CALL')) { return 2 }
             everything.splice(spliceStart,b - spliceStart + 1)
           } else if (thisLowered === 'haskey') {
             // .HasKey() -> .Has()
@@ -204,7 +204,7 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
             if (!skipThroughSomethingMid('start unit','end unit')) { return 3 }
             const spliceStart = b
             b = i + 1
-            if (!nextSkipThrough(') function CALL','( function CALL')) { return 2 }
+            if (nextSkipThrough(') function CALL','( function CALL')) { return 2 }
             arrFromArgsToInsert = []
             // a[k] be the slice, make a(1) be a[k]
             argsArr = [everything.slice(spliceStart + 1,i - 1 )]
@@ -365,7 +365,7 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
           hasParen = true
         }
         if (next.type === 'start unit') {
-          if (!nextSkipThrough('end unit','start unit')) { return 2 }
+          if (nextSkipThrough('end unit','start unit')) { return 2 }
         }
         next = everything[b + (hasParen ? 2 : 1)]
         if (next) {
@@ -427,7 +427,7 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
               const ifTrueEnd = b
               b = colonIndex
               if (findGroupEnd) {
-                if (!nextSkipThrough(') group','( group')) {break}
+                if (nextSkipThrough(') group','( group')) {break}
                 spliceEnd = b + 1
               } else {
                 if (!findNextAnyInObj(ternaryColonEndDelim)) {break}
@@ -641,7 +641,7 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
         b = i
         const bSave = b
         if (!(bType = findNextAnyInObj(startGroupOrUnit))) { return 2 }
-        if (!nextSkipThrough(startGroupOrUnit[bType],bType)) { return 2 }
+        if (nextSkipThrough(startGroupOrUnit[bType],bType)) { return 2 }
         //find ') group' or 'end unit'
         const sliced = everything.slice(bSave + 1,b)
         const allVariableCharsArr = []
@@ -732,15 +732,35 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
           next = everything[++b]
         }
       }
-    //#HERE
     } else if (eType === ', 1 (loop) parse') {
       if (varnameTill(', 2 (loop) parse')) { return 3 }
+    //#HERE
+    } else if (eType === '3operator' && thisE.text.toLowerCase() === 'new') {
+      const iBak = i
+      if (skipEmpty()) { return 2 }
+      if (next.type === 'idkVariable') {
+        everything.splice(iBak,i - iBak + 1,next,
+          (is_AHK_H ? {type:'.New()',text:'.New()'} : {type:'() new',text:'()'})
+        )
+        i = iBak + 1
+      }
     } else {
       return 0
     }
     return 3
   }
   // functions
+  function skipEmpty() {
+    next = everything[++i]
+    while (next) {
+      const bType = next.type
+      if (next.text && !wsOrEmptyLine[bType]) {
+        return false
+      }
+      next = everything[++i]
+    }
+    return true
+  }
   function varnameTill(eType: string) {
     i++
     innerLoop:
@@ -1381,12 +1401,12 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
           arrAccessDepth++
         }
         if (arrAccessDepth === 0) {
-          return true
+          return false
         }
       }
       next = everything[++b]
     }
-    return false
+    return true
   }
 
   function skipThroughSomethingMid(lookForThisToEnd: string,ohNoAddAnotherOne: string) {

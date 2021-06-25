@@ -33,6 +33,10 @@ describe('toV2(text)',function() {
   doItFiles('../tests3/Renamed variables.ahk','correct/Renamed variables.ah2')
   doItFiles('../tests3/elseTryFinally.ahk','correct/elseTryFinally.ah2')
   doIt('if(v<>"W")','if(v!="W")')
+  describe('new Class',function() {
+    doIt('DB:=new SQLiteDB','DB:=SQLiteDB.New()')
+    doIt('DB:=new SQLiteDB','DB:=SQLiteDB()',false)
+  })
 
 })
 
