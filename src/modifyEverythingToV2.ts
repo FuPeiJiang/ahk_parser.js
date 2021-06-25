@@ -51,7 +51,8 @@ const startOfV1Expr: stringIndexBool = {'v1String findV1Expression':true,'%START
 
 const typesThatAreVars: stringIndexBool = {'Param':true,'idkVariable':true,'assignment':true,'v1String findIdkVar':true,'var at v1Assignment':true}
 
-export default (everything: ExtendedEverythingType): string => {
+export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
+  const whichBuffer = is_AHK_H ? 'BufferAlloc' : 'Buffer'
   // I'd never think I'd come to this day, but..
   // preprocessing..
   const varNames: {[key: string]: true} = {}
@@ -227,7 +228,7 @@ export default (everything: ExtendedEverythingType): string => {
         } else {
           // VarSetStrCapacity(TargetVar, RequestedCapacity, FillByte)
           // TargetVar:=BufferAlloc(RequestedCapacity,FillByte)
-          a(1); p(':=BufferAlloc('); a(2); o(',',3); a(3); p(')'); s()
+          a(1); p(`:=${whichBuffer}(`); a(2); o(',',3); a(3); p(')'); s()
         }
       } else if (thisLowered === 'strreplace') {
         // StrReplace(Haystack, Needle [, ReplaceText, OutputVarCount, Limit])
@@ -271,7 +272,7 @@ export default (everything: ExtendedEverythingType): string => {
           // ObjSetCapacity( this, "allData", newSize )
           // NOPE: this["allData"].Size := newSize
           // this["allData"]:=BufferAlloc(newSize)
-          a(1); p('['); a(2); p(']:=BufferAlloc('); a(3); p(')'); s()
+          a(1); p('['); a(2); p(`]:=${whichBuffer}(`); a(3); p(')'); s()
         } else {
           p('ObjSetCapacity('); a(1); p(','); a(2); p(')'); s()
         }

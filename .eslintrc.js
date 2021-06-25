@@ -21,7 +21,7 @@ module.exports = {
     'key-spacing':['error',{'afterColon':false}],
     'object-curly-spacing':'off',
     '@typescript-eslint/object-curly-spacing':['error','never'],
-    '@typescript-eslint/naming-convention':'warn',
+    '@typescript-eslint/naming-convention':'off',
     '@typescript-eslint/semi':['error','never'],
     'semi':'off',
     'curly':'warn',

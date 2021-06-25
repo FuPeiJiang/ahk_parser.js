@@ -12,6 +12,7 @@ describe('toV2(text)',function() {
   describe('VarSetCapacity()',function() {
     doIt('VarSetCapacity(a,b,c)','a:=BufferAlloc(b,c)')
     doIt('VarSetCapacity(a,VarSetCapacity(a,b,c),c)','a:=BufferAlloc(a:=BufferAlloc(b,c),c)')
+    doIt('VarSetCapacity(a,b,c)','a:=Buffer(b,c)',false)
   })
   // describe('v1 removed #DIRECTIVES',function() {
   // doIt('#NoEnv\n','')
@@ -35,21 +36,21 @@ describe('toV2(text)',function() {
 
 })
 
-function toV2(text) {
+function toV2(text,is_AHK_H = true) {
   const everything = ahkParser(text.replace(/\r/g,''))
-  const converted = modifyEverythingToV2(everything)
+  const converted = modifyEverythingToV2(everything,is_AHK_H)
   return converted
 }
-function doIt(v1,v2) {
+function doIt(v1,v2,is_AHK_H = true) {
   it(`\`${v1}\`,\`${v2}\``,function() {
-    strictEqual(toV2(v1),v2)
+    strictEqual(toV2(v1,is_AHK_H),v2)
   })
 }
 function readFileToString(path) {
   return fs.readFileSync(`${__dirname}/${path}`).toString()
 }
-function doItFiles(path1,path2) {
+function doItFiles(path1,path2,is_AHK_H = true) {
   it(`FILE: '${path1}' vs '${path2}'`,function() {
-    strictEqual(toV2(readFileToString(path1)),readFileToString(path2))
+    strictEqual(toV2(readFileToString(path1),is_AHK_H),readFileToString(path2))
   })
 }
