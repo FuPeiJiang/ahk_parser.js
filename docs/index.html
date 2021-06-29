@@ -3,6 +3,7 @@
 <html>
 
 <head>
+  <meta charset="UTF-8" />
   <style>
     .convButton {
       font-size:20px;
@@ -113,6 +114,7 @@
       is_AHK_H = true
       HconvertButton.className = "convButton down"
       LconvertButton.className = "convButton"
+      v2OutputTextArea.placeholder = "AHK_H v2 will be here"
       doEverything(v1InputTextArea.value)
     }
 
@@ -121,22 +123,25 @@
       is_AHK_H = false
       HconvertButton.className = "convButton"
       LconvertButton.className = "convButton down"
+      v2OutputTextArea.placeholder = "AHK_L v2 will be here"
       doEverything(v1InputTextArea.value)
     }
 
-    window.addEventListener('keypress', function(e){
-      // console.log(e.keyCode)
-      // console.log(e.ctrlKey)
-      //^b
-      if (e.ctrlKey && e.keyCode == 2) {
+    window.addEventListener('keydown', function(e){
+      console.log(e.ctrlKey,e.shiftKey,e.key)
+      //^+f
+      if (e.ctrlKey && e.shiftKey && e.key === "F") { //^b is bookmark for firefox
+      // if (e.ctrlKey && e.key === "b") {
       // if (e.ctrlKey && e.keyCode == 2) {
         is_AHK_H = !is_AHK_H
         if (is_AHK_H) {
           HconvertButton.className = "convButton down"
           LconvertButton.className = "convButton"
+          v2OutputTextArea.placeholder = "AHK_H v2 will be here"
         } else {
           HconvertButton.className = "convButton"
           LconvertButton.className = "convButton down"
+          v2OutputTextArea.placeholder = "AHK_L v2 will be here"
         }
         // alert("Here it is.")
       }
