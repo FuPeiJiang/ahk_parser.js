@@ -128,11 +128,9 @@
     }
 
     window.addEventListener('keydown', function(e){
-      console.log(e.ctrlKey,e.shiftKey,e.key)
-      //^+f
-      if (e.ctrlKey && e.shiftKey && e.key === "F") { //^b is bookmark for firefox
-      // if (e.ctrlKey && e.key === "b") {
-      // if (e.ctrlKey && e.keyCode == 2) {
+      // console.log(e.ctrlKey,e.shiftKey,e.key)
+      //^+F
+      if (e.ctrlKey && e.shiftKey && e.key === "F") { //^+F instead of ^b because ^b is bookmark for firefox
         is_AHK_H = !is_AHK_H
         if (is_AHK_H) {
           HconvertButton.className = "convButton down"
@@ -143,7 +141,9 @@
           LconvertButton.className = "convButton down"
           v2OutputTextArea.placeholder = "AHK_L v2 will be here"
         }
-        // alert("Here it is.")
+      } else if (e.shiftKey && e.key === "Enter") {
+        e.preventDefault()
+        doEverything(v1InputTextArea.value)
       }
     })
 
