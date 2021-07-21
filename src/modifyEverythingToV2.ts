@@ -557,6 +557,8 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
         spaceIfComment(); s()
       } else if (dTextLowered === 'iniread') {
         return commandFirstParamToFunction('IniRead')
+      } else if (dTextLowered === 'wingettitle') {
+        return commandFirstParamToFunction('WinGetTitle')
       } else if (dTextLowered === 'random') {
         // Random, OutputVar [, Min, Max]
         // OutputVar:=Random([Min, Max])

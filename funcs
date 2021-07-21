@@ -1,0 +1,6 @@
+
+commandFirstParamToFunction() :
+  WinGetTitle, Title, WinTitle, WinText, ExcludeTitle, ExcludeText
+  <- move left
+  Title := WinGetTitle([WinTitle, WinText, ExcludeTitle, ExcludeText])
+
