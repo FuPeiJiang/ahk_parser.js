@@ -26,11 +26,6 @@ const d = console.debug.bind(console)
 
 const classToStatic: stringIndexBool = {'biga':true,'WinClip':true,'WinClipAPI':true}
 
-const numIfNum: stringIndexBool = {'settitlematchmode':true}
-const v1ExprToEdit: stringIndexBool = {'goto':true,'#singleinstance':true,'break':true,'continue':true}
-
-const stringUpperLower: stringIndexString = {'stringupper':'StrUpper','stringlower':'StrLower'}
-
 const anyCommand: stringIndexBool = {'DIRECTIVE OR COMMAND comma':true,'command':true}
 // const anyCommand: stringIndexBool = {'DIRECTIVE OR COMMAND comma':true,'command EOL or comment':true,'command':true}
 const idkVariableOrAssignment: stringIndexBool = {'idkVariable':true,'assignment':true}
@@ -501,24 +496,26 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
       thisE.text = `"${thisE.text.slice(1,-1).replace(/""/g,'`"')}"`
     } else if (anyCommand[eType]) {
       //if breakOrContinue, if is number, don't surround with quotes
-      let objValue
-      const dTextLowered = thisE.text.toLowerCase()
-      if (numIfNum[dTextLowered]) {
-        if (modNumIfNum(1)) { return 3 }
-      } else if (dTextLowered === 'mousegetpos') {
+      switch (thisE.text.toLowerCase()) {
+      case 'settitlematchmode':
+        if (modNumIfNum(1)) { return 3 } break
+      case 'mousegetpos':
         // MouseGetPos [OutputVarX, OutputVarY, OutputVarWin, OutputVarControl, Flag]
-        if (modCommandOfVarnameAfterNum(4)) { return 3 }
-      } else if (dTextLowered === 'mousemove') {
+        if (modCommandOfVarnameAfterNum(4)) { return 3 } break
+      case 'mousemove':
         // MouseMove X, Y [, Speed, Relative]
-        if (modV1StrToEdit(3)) { return 3 }
-      } else if (dTextLowered === 'pixelsearch') {
-        if (modCommandOfVarnameThenXNum(2,6)) { return 3 }
-      } else if (dTextLowered === 'setbatchlines') {
+        if (modV1StrToEdit(3)) { return 3 } break
+      case 'pixelsearch':
+        if (modCommandOfVarnameThenXNum(2,6)) { return 3 } break
+      case 'setbatchlines':
         deleteCommand()
         return 1
-      } else if (v1ExprToEdit[dTextLowered]) {
-        if (modV1StrToEdit(1)) { return 3 }
-      } else if (dTextLowered === 'listlines') {
+      case 'goto':
+      case '#singleinstance':
+      case 'break':
+      case 'continue':
+        if (modV1StrToEdit(1)) { return 3 } break
+      case 'listlines':
         if (skipFirstSeparatorOfCommand()) { return 3 }
         if (next.type === 'v1String findV1Expression') {
           const dText = next.text
@@ -535,9 +532,10 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
         } else {
           return 1 //for ex: '%START %Var%'
         }
-      } else if (dTextLowered === 'splitpath') {
-        if (modV1StrToEdit(5)) { return 3 }
-      } else if (dTextLowered === 'stringtrimright') {
+        break
+      case 'splitpath':
+        if (modV1StrToEdit(5)) { return 3 } break
+      case 'stringtrimright':
         if (skipFirstSeparatorOfCommand()) { return 3 }
         // StringTrimRight, OutputVar, InputVar, Count
         // OutputVar:=SubStr(InputVar,1,-Count)
@@ -545,55 +543,61 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
         commandAllEdit()
         if (getCommandParams()) { return 2 }
         a(1); p(':=SubStr('); a(2); p(',1,-'); a(3); p(')')
-        spaceIfComment(); s()
-      } else if (objValue = stringUpperLower[dTextLowered]) {
-        if (skipFirstSeparatorOfCommand()) { return 3 }
-        commandAllEditChoose({1:true,2:true})
+        spaceIfComment(); s(); break
+      case 'stringlower':
         // StringUpper, OutputVar, InputVar, T
         // OutputVar:=StrUpper(InputVar,"T")
         //#command
+        if (skipFirstSeparatorOfCommand()) { return 3 }
+        commandAllEditChoose({1:true,2:true})
         if (getCommandParams()) { return 2 }
-        a(1); p(`:=${objValue}(`); a(2); o(',',3); a(3); p(')')
-        spaceIfComment(); s()
-      } else if (dTextLowered === 'getkeystate') {
+        a(1); p(':=StrLower('); a(2); o(',',3); a(3); p(')')
+        spaceIfComment(); s(); break
+      case 'stringupper':
+        if (skipFirstSeparatorOfCommand()) { return 3 }
+        commandAllEditChoose({1:true,2:true})
+        if (getCommandParams()) { return 2 }
+        a(1); p(':=StrUpper('); a(2); o(',',3); a(3); p(')')
+        spaceIfComment(); s(); break
+      case 'getkeystate':
         return commandFirstParamToFunction('GetKeyState')
-      } else if (dTextLowered === 'controlgetfocus') {
+      case 'controlgetfocus':
         return commandFirstParamToFunction('ControlGetFocus')
-      } else if (dTextLowered === 'controlgettext') {
+      case 'controlgettext':
         return commandFirstParamToFunction('ControlGetText')
-      } else if (dTextLowered === 'statusbargettext') {
+      case 'statusbargettext':
         return commandFirstParamToFunction('StatusBarGetText')
-      } else if (dTextLowered === 'random') {
+      case 'random':
         return commandFirstParamToFunction('Random')
-      } else if (dTextLowered === 'iniread') {
+      case 'iniread':
         return commandFirstParamToFunction('IniRead')
-      } else if (dTextLowered === 'regread') {
+      case 'regread':
         return commandFirstParamToFunction('RegRead')
-      } else if (dTextLowered === 'fileread') {
+      case 'fileread':
         return commandFirstParamToFunction('FileRead')
-      } else if (dTextLowered === 'filegetattrib') {
+      case 'filegetattrib':
         return commandFirstParamToFunction('FileGetAttrib')
-      } else if (dTextLowered === 'filegettime') {
+      case 'filegettime':
         return commandFirstParamToFunction('FileGetTime')
-      } else if (dTextLowered === 'filegetsize') {
+      case 'filegetsize':
         return commandFirstParamToFunction('FileGetSize')
-      } else if (dTextLowered === 'filegetversion') {
+      case 'filegetversion':
         return commandFirstParamToFunction('FileGetVersion')
-      } else if (dTextLowered === 'wingettitle') {
+      case 'wingettitle':
         return commandFirstParamToFunction('WinGetTitle')
-      } else if (dTextLowered === 'wingetclass') {
+      case 'wingetclass':
         return commandFirstParamToFunction('WinGetClass')
-      } else if (dTextLowered === 'wingettext') {
+      case 'wingettext':
         return commandFirstParamToFunction('WinGetText')
-      } else if (dTextLowered === 'sysget') {
+      case 'sysget':
         return commandFirstParamToFunction('SysGet')
-      } else if (dTextLowered === 'envget') {
+      case 'envget':
         return commandFirstParamToFunction('EnvGet')
-      } else if (dTextLowered === 'formattime') {
+      case 'formattime':
         return commandFirstParamToFunction('FormatTime')
-      } else if (dTextLowered === 'Sort') {
+      case 'Sort':
         return commandFirstParamToFunction('Sort')
-      } else if (dTextLowered === 'pixelgetcolor') {
+      case 'pixelgetcolor':
         // PixelGetColor, OutputVar, X, Y , Mode
         // Color := PixelGetColor(X, Y [, Mode])
         const iBak = i
@@ -617,8 +621,9 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
           }
         }
         p(')')
-        spaceIfComment(); s()
+        spaceIfComment(); s(); break
       }
+
     } else if (eType === 'command EOL or comment') {
       const dTextLowered = everything[i].text.toLowerCase()
       if (dTextLowered === '#noenv') {
