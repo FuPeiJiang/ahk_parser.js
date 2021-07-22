@@ -26,3 +26,12 @@ v1:
   }
 v2:
 SortedString := Sort(String [, Options, Callback])
+
+woops, I missed
+  GETKEYSTATE
+  CONTROLGETFOCUS
+  CONTROLGETTEXT
+  INPUTBOX
+because of trailing whiteSpaces
+
+InputBox is special

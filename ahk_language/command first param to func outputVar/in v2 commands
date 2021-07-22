@@ -1,3 +1,6 @@
+getkeystate
+controlgetfocus
+controlgettext
 statusbargettext
 random
 iniread
@@ -15,4 +18,5 @@ envget
 formattime
 sort
 
+inputbox
 pixelgetcolor

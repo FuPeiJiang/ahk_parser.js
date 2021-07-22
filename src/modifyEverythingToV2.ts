@@ -555,6 +555,12 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
         if (getCommandParams()) { return 2 }
         a(1); p(`:=${objValue}(`); a(2); o(',',3); a(3); p(')')
         spaceIfComment(); s()
+      } else if (dTextLowered === 'getkeystate') {
+        return commandFirstParamToFunction('GetKeyState')
+      } else if (dTextLowered === 'controlgetfocus') {
+        return commandFirstParamToFunction('ControlGetFocus')
+      } else if (dTextLowered === 'controlgettext') {
+        return commandFirstParamToFunction('ControlGetText')
       } else if (dTextLowered === 'statusbargettext') {
         return commandFirstParamToFunction('StatusBarGetText')
       } else if (dTextLowered === 'random') {
