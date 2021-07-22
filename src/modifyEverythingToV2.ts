@@ -555,17 +555,38 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
         if (getCommandParams()) { return 2 }
         a(1); p(`:=${objValue}(`); a(2); o(',',3); a(3); p(')')
         spaceIfComment(); s()
+      } else if (dTextLowered === 'statusbargettext') {
+        return commandFirstParamToFunction('StatusBarGetText')
+      } else if (dTextLowered === 'random') {
+        return commandFirstParamToFunction('Random')
       } else if (dTextLowered === 'iniread') {
         return commandFirstParamToFunction('IniRead')
+      } else if (dTextLowered === 'regread') {
+        return commandFirstParamToFunction('RegRead')
+      } else if (dTextLowered === 'fileread') {
+        return commandFirstParamToFunction('FileRead')
+      } else if (dTextLowered === 'filegetattrib') {
+        return commandFirstParamToFunction('FileGetAttrib')
+      } else if (dTextLowered === 'filegettime') {
+        return commandFirstParamToFunction('FileGetTime')
+      } else if (dTextLowered === 'filegetsize') {
+        return commandFirstParamToFunction('FileGetSize')
+      } else if (dTextLowered === 'filegetversion') {
+        return commandFirstParamToFunction('FileGetVersion')
       } else if (dTextLowered === 'wingettitle') {
         return commandFirstParamToFunction('WinGetTitle')
-      } else if (dTextLowered === 'random') {
-        // Random, OutputVar [, Min, Max]
-        // OutputVar:=Random([Min, Max])
-        commandAllEdit()
-        if (getCommandParams()) { return 2 }
-        a(1); p(':=Random('); a(2); o(',',3); a(3); p(')')
-        spaceIfComment(); s()
+      } else if (dTextLowered === 'wingetclass') {
+        return commandFirstParamToFunction('WinGetClass')
+      } else if (dTextLowered === 'wingettext') {
+        return commandFirstParamToFunction('WinGetText')
+      } else if (dTextLowered === 'sysget') {
+        return commandFirstParamToFunction('SysGet')
+      } else if (dTextLowered === 'envget') {
+        return commandFirstParamToFunction('EnvGet')
+      } else if (dTextLowered === 'formattime') {
+        return commandFirstParamToFunction('FormatTime')
+      } else if (dTextLowered === 'Sort') {
+        return commandFirstParamToFunction('Sort')
       } else if (dTextLowered === 'pixelgetcolor') {
         // PixelGetColor, OutputVar, X, Y , Mode
         // Color := PixelGetColor(X, Y [, Mode])

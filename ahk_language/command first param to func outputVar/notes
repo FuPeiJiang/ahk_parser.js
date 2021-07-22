@@ -1,0 +1,28 @@
+v2 commands: https://github.com/Lexikos/AutoHotkey_L-Docs/tree/v2/docs/commands
+
+remove these:
+
+IFEQUAL
+IFNOTEQUAL
+IFLESS
+IFLESSOREQUAL
+IFGREATER
+IFGREATEROREQUAL
+
+CATCH
+
+STRINGLEFT doesn't have v2 func:
+
+ok, so if in v2 commands
+
+PIXELGETCOLOR is special
+sysget, I don't understand
+Sort has custom function
+v1:
+  Sort, MyVar, F IntegerSort D,
+  IntegerSort(a1, a2)
+  {
+    return a1 - a2
+  }
+v2:
+SortedString := Sort(String [, Options, Callback])
