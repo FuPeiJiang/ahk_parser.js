@@ -5,8 +5,7 @@ SetWorkingDir A_ScriptDir  ; Ensures a consistent starting directory.
 
 CoordMode "Pixel", "Screen"
 CoordMode "Mouse", "Screen"
-f1::
-{
+f1::{
 MouseGetPos xpos, ypos
 
 MouseMove 0, 1, 100, "R"
@@ -29,8 +28,7 @@ A_Clipboard := OutputVar ", " xpos ", " ypos
 ToolTip A_Clipboard
 }
 
-f2::
-{
+f2::{
 ;595, 518
 ;595, 520
 OutputVar:=PixelGetColor(595,520,"slow")
@@ -60,7 +58,6 @@ PixelSearch OutputVarX, OutputVarY, 595, 520, 595, 520, OutputVar , 100
 0x579957
 */
 
-f3::
-{
+f3::{
 ExitApp
 }

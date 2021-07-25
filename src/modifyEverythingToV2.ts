@@ -737,12 +737,12 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
             if (lText === 'return') {
               next.type = 'edit'
               next.text = '}'
-              everything.splice(hotkeyI + 1,0,{text:'\n{',type:'edit'})
+              everything.splice(hotkeyI + 1,0,{text:'{',type:'edit'})
               return 3
             } else if (lText === 'exitapp') {
               next.type = 'edit'
               next.text = 'ExitApp\n}'
-              everything.splice(hotkeyI + 1,0,{text:'\n{',type:'edit'})
+              everything.splice(hotkeyI + 1,0,{text:'{',type:'edit'})
             }
           }
         }
