@@ -42,6 +42,7 @@ describe('toV2(text)',function() {
       ,String.raw`SQLiteDLL:=IniRead(A_ScriptDir "\SQLiteDB.ini","Main","DllPath",SQLiteDLL ); old`)
   })
   doIt('WinGetTitle, OutputVar, A','OutputVar:=WinGetTitle("A")')
+  doIt('v:=spr " h"ySep " w"3*xSep " v" "t_" c "_" r','v:=spr " h" ySep " w" 3*xSep " v" "t_" c "_" r')
 
 })
 

@@ -494,6 +494,8 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
       //and to not skip the '%START %Var%'
     } else if (eType === 'String') {
       thisE.text = `"${thisE.text.slice(1,-1).replace(/""/g,'`"')}"`
+    } else if (eType === 'concat no whiteSpace') {
+      thisE.text = ' '
     } else if (anyCommand[eType]) {
       //if breakOrContinue, if is number, don't surround with quotes
       switch (thisE.text.toLowerCase()) {

@@ -2167,13 +2167,21 @@ export default (content: string,literalDoubleQuoteInContinuation = false): Every
     //if the next thing is expr, it is a concat
     // if char before is whiteSpace concat
     const everythingConcatIndex = everything.length - 1
-    if (i === lineWhereCanConcat && whiteSpaceObj[lines[i][c - 1]] && findExpression()) {
-      // const concatWhiteSpaces = lines[concatLineBak].slice(beforeConcatBak, afterConcat)
-      // d(`concat "${concatWhiteSpaces}" ${concatWhiteSpaces.length}LENGHT ${beforeConcatBak + 1} line ${concatLineBak + 1}`)
-      // I just have to replace the last whiteSpace with concat
-      everything[everythingConcatIndex].type = 'concat'
-      // everything.push({type: 'concat', text:concatWhiteSpaces,i1: concatLineBak, c1: beforeConcatBak,c2:afterConcat})
-      return true
+    if (i === lineWhereCanConcat) {
+      if (whiteSpaceObj[lines[i][c - 1]] && findExpression()) {
+        everything[everythingConcatIndex].type = 'concat'
+        // const concatWhiteSpaces = lines[concatLineBak].slice(beforeConcatBak, afterConcat)
+        // d(`concat "${concatWhiteSpaces}" ${concatWhiteSpaces.length}LENGHT ${beforeConcatBak + 1} line ${concatLineBak + 1}`)
+        // I just have to replace the last whiteSpace with concat
+        // everything.push({type: 'concat', text:concatWhiteSpaces,i1: concatLineBak, c1: beforeConcatBak,c2:afterConcat})
+        return false
+      } else if (everything[everythingConcatIndex].type === 'String') {
+        const iBak = i,cBak = c
+        if (findExpression()) {
+          everything.splice(everythingConcatIndex + 1,0,{type:'concat no whiteSpace',text:'',i1:iBak,c1:cBak,c2:cBak})
+          return false
+        }
+      }
     }
 
     if (insideContinuation) {
