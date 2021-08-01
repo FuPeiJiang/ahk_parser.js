@@ -14,7 +14,7 @@ b
 c
 )
 
-;function
+;group
 msgbox hi
 (ok() && Join(2))
 

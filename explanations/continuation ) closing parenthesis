@@ -1,0 +1,52 @@
+continuation:
+```
+msgbox,
+(Join(2) Join(3)
+a
+b
+c
+)
+```
+->a(3))b(3))c
+so what is taken is the last join
+and whiteSpace: space or tab is a delimeter
+___
+group:
+```
+msgbox "hi"
+(ok() && Join(2))
+```
+so start from end, `lastIndexOf(')')`, from there, get next whiteSpace,
+here: `)`
+```
+(ok() && Join(2))
+---------------^
+```
+whiteSpace
+```
+(ok() && Join(2))
+--------^
+```
+get next 4 letters
+```
+(ok() && Join(2))
+---------^^^^
+```
+if it toLowerCase() is 'join'
+continue
+```
+(ok() && Join(2))
+----^
+```
+say the first `(` is equivalent to a whiteSpace as a condition
+```
+(ok() && Join(2))
+^
+```
+get next 4 letters
+```
+(ok() && Join(2))
+-^^^^
+```
+this is not 'join'
+, so this whole thing is a 'group'
