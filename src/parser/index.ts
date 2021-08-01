@@ -1769,44 +1769,48 @@ export default (content: string,literalDoubleQuoteInContinuation = false): Every
       d('this shouldn\'t happen resolveV1Continuation lines[i][c] === undefined')
     }
     if (lines[i][c] === '(') {
-      insideV1Continuation = true
-      everything.push({type:'( resolveV1Continuation',text:'(',i1:i,c1:c})
-      c++
-      const text = lines[i].slice(c,numberOfChars)
-      everything.push({type:'resolveV1Continuation to EOL',text:text,i1:i,c1:c,c2:numberOfChars})
+      if (continuationCondition()) {
+        insideV1Continuation = true
+        everything.push({type:'( resolveV1Continuation',text:'(',i1:i,c1:c})
+        c++
+        const text = lines[i].slice(c,numberOfChars)
+        everything.push({type:'resolveV1Continuation to EOL',text:text,i1:i,c1:c,c2:numberOfChars})
 
-      while (++i < howManyLines) {
-        everything.push({type:'newline resolveV1Continuation',text:'\n',i1:i,c1:numberOfChars})
-        c = 0,numberOfChars = lines[i].length
+        while (++i < howManyLines) {
+          everything.push({type:'newline resolveV1Continuation',text:'\n',i1:i,c1:numberOfChars})
+          c = 0,numberOfChars = lines[i].length
 
-        const c1 = c
-        // inside continuation, whiteSpaces to the left do count
-        while (c < numberOfChars && whiteSpaceObj[lines[i][c]]) {
-          c++
-        }
-
-        if (lines[i][c] === ')') {
-          insideV1Continuation = false
-          const whiteSpacesText = lines[i].slice(c1,c)
-          if (whiteSpacesText) {
-            everything.push({type:'whiteSpaces before ) resolveV1Continuation',text:whiteSpacesText,i1:i,c1:c1,c2:c})
+          const c1 = c
+          // inside continuation, whiteSpaces to the left do count
+          while (c < numberOfChars && whiteSpaceObj[lines[i][c]]) {
+            c++
           }
-          everything.push({type:') resolveV1Continuation',text:')',i1:i,c1:c})
-          c++
 
-          findV1ExpressionMid()
+          if (lines[i][c] === ')') {
+            insideV1Continuation = false
+            const whiteSpacesText = lines[i].slice(c1,c)
+            if (whiteSpacesText) {
+              everything.push({type:'whiteSpaces before ) resolveV1Continuation',text:whiteSpacesText,i1:i,c1:c1,c2:c})
+            }
+            everything.push({type:') resolveV1Continuation',text:')',i1:i,c1:c})
+            c++
 
-          return true
+            findV1ExpressionMid()
+
+            return true
+          }
+
+          v1ExpressionC1 = 0,cNotWhiteSpace = -1
+          while (c < numberOfChars) {
+            findV1StrMid('resolveV1Continuation')
+          }
+          endV1Str('resolveV1Continuation')
         }
 
-        v1ExpressionC1 = 0,cNotWhiteSpace = -1
-        while (c < numberOfChars) {
-          findV1StrMid('resolveV1Continuation')
-        }
-        endV1Str('resolveV1Continuation')
+        return true
+      } else {
+        findExpression()
       }
-
-      return true
     } else if (!findingVarName) {
       if (c < numberOfChars - 2 && v1Continuator[lines[i].slice(c,c + 3)]) {
         everything.push({type:'3 v1Continuator',text:lines[i].slice(c,c + 3),i1:i,c1:c,c2:c + 3})
@@ -2587,6 +2591,31 @@ export default (content: string,literalDoubleQuoteInContinuation = false): Every
     return false
   }
 
+  function continuationCondition(): boolean {
+    const thisLine = lines[i]
+    let rightParenIndex = thisLine.lastIndexOf(')')
+    rightParenLoop:
+    while (rightParenIndex !== -1) {
+      let o = rightParenIndex - 1
+      while (o > 0) { //after (
+        if (whiteSpaceObj[thisLine[o]]) {
+          if (thisLine.slice(o + 1,o + 5).toLowerCase() === 'join') {
+            rightParenIndex = thisLine.lastIndexOf(')',o - 1)
+            continue rightParenLoop
+          } else {
+            return false
+          }
+        }
+        o--
+      }
+      if (thisLine.slice(o + 1,o + 5).toLowerCase() === 'join') {
+        return true
+      } else {
+        return false
+      }
+    }
+
+  }
   //true if legal, false if illegal startContinuation: which expects (
   function recurseContinuation(): boolean {
     if (startContinuation()) {
@@ -2610,15 +2639,17 @@ export default (content: string,literalDoubleQuoteInContinuation = false): Every
       return false
     }
     if (lines[i][c] === '(') {
-      insideContinuation = true
+      if (continuationCondition()) {
+        insideContinuation = true
 
-      everything.push({type:'( continuation',text:'(',i1:i,c1:c})
-      c++
-      everything.push({type:'continuation options',text:lines[i].slice(c,numberOfChars),i1:i,c1:c,c2:numberOfChars})
-      everything.push({type:'newline ( continuation',text:'\n',i1:i,c1:numberOfChars})
+        everything.push({type:'( continuation',text:'(',i1:i,c1:c})
+        c++
+        everything.push({type:'continuation options',text:lines[i].slice(c,numberOfChars),i1:i,c1:c,c2:numberOfChars})
+        everything.push({type:'newline ( continuation',text:'\n',i1:i,c1:numberOfChars})
 
-      strContiStartPos = 0,strContiStartLine = i + 1
-      return true
+        strContiStartPos = 0,strContiStartLine = i + 1
+        return true
+      }
     }
     return false
     /* while (i < howManyLines) {

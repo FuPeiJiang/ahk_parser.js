@@ -2440,3 +2440,72 @@ https://github.com/FuPeiJiang/ahk_parser.js/issues/5
 
 Try/finally with same-line action is misinterpreted · Issue #8 · FuPeiJiang/ahk_parser.js
 https://github.com/FuPeiJiang/ahk_parser.js/issues/8
+
+
+MouseGetPos, xpos, ypos
+(A_Gui) && (xpos<3*xSep || ypos<3*ySep) && move()
+%SplashyRef%(Splashy, {release: 1}*)
+
+MouseGetPos, xpos, ypos
+) [v1.1.01+]: If a closing parenthesis appears in the continuation section's options (except as a parameter of the Join option), the line is reinterpreted as an expression instead of the beginning of a continuation section. This allows expressions like (x.y)[z]() to work without the need to escape the opening parenthesis.
+
+
+Join(num) {
+  return num num
+}
+; p(Join(2))
+
+msgbox,
+(Join(2))
+a
+b
+c
+)
+->a(2))b(2))c
+
+msgbox,
+(JoinNO JoinOK
+a
+b
+c
+)
+->aOKbOKc
+
+msgbox,
+(Join(2) Join(3)
+a
+b
+c
+)
+->a(3))b(3))c
+
+msgbox,
+(ok() && Join(2))
+a
+b
+c
+)
+---------------------------
+Line Text: a
+Error: This line does not contain a recognized action.
+
+The program will exit.
+---------------------------
+OK   
+---------------------------
+msgbox,
+(Join(2) + ok())
+a
+b
+c
+)
+->same..
+
+
+msgbox,
+(Join(2)	Join(3))
+a
+b
+c
+)
+TAB also works as delim
