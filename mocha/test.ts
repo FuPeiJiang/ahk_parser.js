@@ -43,7 +43,7 @@ describe('toV2(text)',function() {
   })
   doIt('WinGetTitle, OutputVar, A','OutputVar:=WinGetTitle("A")')
   doIt('v:=spr " h"ySep " w"3*xSep " v" "t_" c "_" r','v:=spr " h" ySep " w" 3*xSep " v" "t_" c "_" r')
-
+  doIt('v:=2 "s"','v:=2 "s"')
 })
 
 function toV2(text,is_AHK_H = true) {

@@ -4,8 +4,9 @@ import modifyEverythingToV2 from './modifyEverythingToV2'
 
 
 const content: Buffer =
+fs.readFileSync('tests3/numeric string plus zero #20.ahk')
 // fs.readFileSync('v2tests/hotkey return to brackets.ahk')
-fs.readFileSync('tests3/SplashyTest gui add.ahk')
+// fs.readFileSync('tests3/SplashyTest gui add.ahk')
 // fs.readFileSync('v2tests/IniRead.ahk')
 // fs.readFileSync('tests3/new class.ahk')
 // fs.readFileSync('tests3/Incorrect quoting of parameters #6.ahk')

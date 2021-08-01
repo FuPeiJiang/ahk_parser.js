@@ -427,6 +427,7 @@ export default (content: string,literalDoubleQuoteInContinuation = false): Every
                 usingStartOfLineLoop = true
                 continue startOfLineLoop
               }
+              //#whitespace ASSIGNMENT
               const doAssignmentReturned = doAssignment()
               if (doAssignmentReturned === 1) {
                 continue startOfLineLoop
@@ -729,6 +730,7 @@ export default (content: string,literalDoubleQuoteInContinuation = false): Every
         } */
 
 
+        //#ASSIGNMENT
         let doAssignmentReturned = doAssignment()
         if (doAssignmentReturned === 1) {
           continue startOfLineLoop
@@ -758,7 +760,6 @@ export default (content: string,literalDoubleQuoteInContinuation = false): Every
           continue startOfLineLoop
         }
 
-        //#ASSIGNMENT
         doAssignmentReturned = doAssignment()
         if (doAssignmentReturned === 1) {
           continue startOfLineLoop
@@ -2355,6 +2356,7 @@ export default (content: string,literalDoubleQuoteInContinuation = false): Every
       } else {
         // d(`${validName} Integer ${char()}`)
         everything.push({type:'Integer',text:fEvalidName,i1:i,c1:nonWhiteSpaceStart,c2:c})
+        lineWhereCanConcat = i
       }
 
       if (recurseFindTrailingExpr()) {
