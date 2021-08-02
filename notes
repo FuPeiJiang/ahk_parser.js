@@ -2509,3 +2509,15 @@ b
 c
 )
 TAB also works as delim
+
+c:=true
+foo() {
+  p(111)
+}
+c && foo()
+---------------------------
+Line Text: c && foo()
+Error: This line does not contain a recognized action.
+The program will exit.
+---------------------------
+thank god this is illegal
