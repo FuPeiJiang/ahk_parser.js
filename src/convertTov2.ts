@@ -4,7 +4,10 @@ import modifyEverythingToV2 from './modifyEverythingToV2'
 
 
 const content: Buffer =
-fs.readFileSync('tests3/continuation ) closing parenthesis.ahk')
+// fs.readFileSync('tests2/if legacy in.ahk')
+fs.readFileSync('tests4/if var in.ahk')
+// fs.readFileSync('tests4/SplashyTest.ahk')
+// fs.readFileSync('tests3/continuation ) closing parenthesis.ahk')
 // fs.readFileSync('tests3/numeric string plus zero #20.ahk')
 // fs.readFileSync('v2tests/hotkey return to brackets.ahk')
 // fs.readFileSync('tests3/SplashyTest gui add.ahk')

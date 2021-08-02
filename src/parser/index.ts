@@ -331,9 +331,11 @@ export default (content: string,literalDoubleQuoteInContinuation = false): Every
                     if (lowerValidName === 'in' && (c === numberOfChars || whiteSpaceObj[lines[i][c]])) {
                       everything.push({type:'legacyIf in',text:validName,i1:i,c1:validNamestart,c2:c})
                       doubleComma = true
+                      break findV1ExpressiondummyLoop
                     } else if (lowerValidName === 'contains' && (c === numberOfChars || whiteSpaceObj[lines[i][c]])) {
                       everything.push({type:'legacyIf contains',text:validName,i1:i,c1:validNamestart,c2:c})
                       doubleComma = true
+                      break findV1ExpressiondummyLoop
                     } else if (lowerValidName === 'between' && (c === numberOfChars || whiteSpaceObj[lines[i][c]])) {
                       everything.push({type:'legacyIf between',text:validName,i1:i,c1:validNamestart,c2:c})
                       lookingForAnd = true
