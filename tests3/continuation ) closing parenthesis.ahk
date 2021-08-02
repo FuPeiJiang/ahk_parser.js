@@ -1,5 +1,13 @@
 ;continuation
 
+;normal
+msgbox,
+(
+a
+b
+)
+
+;join
 msgbox,
 (Join(2) Join(3))
 a

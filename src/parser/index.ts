@@ -912,7 +912,7 @@ export default (content: string,literalDoubleQuoteInContinuation = false): Every
       }
     }
     //end of lineLoop
-    d('end of lineLoop')
+    d('end of lineLoop',i + 1)
     // return everything
     // everything.push({type: 'end of lineLoop', text:'\n',i1: i, c1:c})
     i++
@@ -2614,7 +2614,7 @@ export default (content: string,literalDoubleQuoteInContinuation = false): Every
         return false
       }
     }
-
+    return true
   }
   //true if legal, false if illegal startContinuation: which expects (
   function recurseContinuation(): boolean {

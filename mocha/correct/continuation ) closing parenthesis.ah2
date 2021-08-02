@@ -1,5 +1,13 @@
 ;continuation
 
+;normal
+msgbox ""
+(
+a
+b
+) ""
+
+;join
 msgbox ""
 (Join(2) Join(3))
 a
@@ -14,7 +22,7 @@ b
 c
 ) ""
 
-;function
+;group
 msgbox "hi"
 (ok() && Join(2))
 
