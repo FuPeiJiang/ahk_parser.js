@@ -2521,3 +2521,51 @@ Error: This line does not contain a recognized action.
 The program will exit.
 ---------------------------
 thank god this is illegal
+
+index.html: zoom to 150%
+.ahkTextArea:
+<!-- 367x300, padding:2, border:1 -->
+
+306.667,306.\overline{6}, 920/3
+padding:2
+border:1
+
+920/3 * 1.5
+padding:2 * 1.5
+border:1 * 1.5
+
+460
+padding:3
+border:1.5
+border-width: 1.5px;
+
+13.3333, 40/3
+40/3 * 1.5
+20
+
+body:
+16 * 1.5
+24
+body-margin
+8 * 1.5
+12
+
+.convButton:
+20 * 1.5
+30
+border: 2
+padding: 1
+
+If the padding property has two values:
+
+padding: 25px 50px;
+top and bottom paddings are 25px
+right and left paddings are 50px
+
+top and bottom paddings are 1px
+right and left paddings are 6px
+so: padding: 1px 6px
+padding: 1.5px 9px
+
+border-width: 2*1.5
+border-width: 3

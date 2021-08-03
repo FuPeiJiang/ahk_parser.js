@@ -6,19 +6,30 @@
   <meta charset="UTF-8" />
   <style>
     .convButton {
-      font-size:20px;
+      font-size:30px;
+      /* padding: 1.5px 9px; */
+      padding: 2.5px 10px;
     }
     .convButton.down {
       background: rgb(134, 255, 164);
+      border-width: 3px;
     }
+    .ahkTextArea {
+      white-space: nowrap;
+      font-size: 20px;
+      padding: 4px;
+      /* border-width: 1.5px; */
+    }
+    /* body { */
+      /* font-size: 24px; */
+    /* } */
   </style>
 </head>
 
-<body>
+<body style="font-size: 24px; margin:12px">
   <div>
-    <textarea id="v1Input" placeholder="v1 here" rows="20" cols="50" style="white-space: nowrap;"></textarea>
-    <textarea id="v2Output" placeholder="AHK_H v2 will be here" rows="20" cols="50"
-      style="white-space: nowrap;"></textarea>
+    <textarea id="v1Input" placeholder="v1 here" rows="20" cols="50" class="ahkTextArea"></textarea>
+    <textarea id="v2Output" placeholder="AHK_H v2 will be here" rows="20" cols="50" class="ahkTextArea"></textarea>
   </div>
   <button id="HconvertButton" class="convButton down">convert to AHK_H</button>
   <button id="LconvertButton" class="convButton">convert to AHK_L</button>
