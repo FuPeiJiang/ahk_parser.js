@@ -1,5 +1,5 @@
 const dmp = new diff_match_patch()
-function vscodeDiff(rootElement, one, other) {
+function vscodeDiff(rootElement,one,other) {
   const d = console.log.bind(console)
 
   // rootElement.style.backgroundColor = "#1e1e1e"
@@ -9,7 +9,7 @@ function vscodeDiff(rootElement, one, other) {
 
   // console.log(Diff.diffLines(one, other))
   const z0 = performance.now()
-  const result = dmp.diff_main(one, other)
+  const result = dmp.diff_main(one,other)
   const z1 = performance.now()
   console.log(`Call to diff took ${z1 - z0} milliseconds.`)
   // const diff = Diff.diffWordsWithSpace(one, other)
@@ -151,17 +151,17 @@ function vscodeDiff(rootElement, one, other) {
   const fragment2 = document.createDocumentFragment()
   let redCurrentLineDiv = baseHighlight.cloneNode()
   let greenCurrentLineDiv = baseHighlight.cloneNode()
-  const whichDiv = [redDiv, greenDiv]
-    , whichCurrentLine = [redCurrentLineDiv, greenCurrentLineDiv]
-    , firstFragment = [fragment1, fragment2]
-    , secondFragment = [fragment2, fragment1]
-    , whichHighlight = [removedHighlight, addedHighlight]
-  let howManyDiagonalLines = 0, diagonalIndex = 0
+  const whichDiv = [redDiv,greenDiv]
+    ,whichCurrentLine = [redCurrentLineDiv,greenCurrentLineDiv]
+    ,firstFragment = [fragment1,fragment2]
+    ,secondFragment = [fragment2,fragment1]
+    ,whichHighlight = [removedHighlight,addedHighlight]
+  let howManyDiagonalLines = 0,diagonalIndex = 0
 
-  for (let n = 0, diffLen = result.length; n < diffLen; n++) {
+  for (let n = 0,diffLen = result.length; n < diffLen; n++) {
     const type = result[n][0]
     const text = result[n][1]
-    let idx1, idx2
+    let idx1,idx2
     //removed
     if (type === -1) {
       idx1 = 0
@@ -220,7 +220,7 @@ function vscodeDiff(rootElement, one, other) {
     tDiv.textContent = splitByNewline[0]
     whichCurrentLine[idx1].appendChild(tDiv)
     if (lenMOne) {
-      for (let i = 1, len = lenMOne + 1; i < len; i++) {
+      for (let i = 1,len = lenMOne + 1; i < len; i++) {
         firstFragment[idx1].appendChild(whichCurrentLine[idx1])
         whichCurrentLine[idx1] = whichHighlight[idx1].cloneNode()
         tDiv = whichDiv[idx1].cloneNode()
@@ -246,7 +246,7 @@ function vscodeDiff(rootElement, one, other) {
   pre2.appendChild(fragment2)
   const t1 = performance.now()
   console.log(`Call to appendChild took ${t1 - t0} milliseconds.`)
-  rootElement.replaceChildren(pre1, pre2)
+  rootElement.replaceChildren(pre1,pre2)
   return
 
 }
