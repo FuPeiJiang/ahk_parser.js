@@ -866,8 +866,8 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
   }
   // functions
   // https://stackoverflow.com/questions/3561493/is-there-a-regexp-escape-function-in-javascript#3561711
-  function escapeRegex(string) {
-    return string.replace(/[-/\\^$*+?.()|[\]{}]/g,'\\$&')
+  function escapeRegex(str: string) {
+    return str.replace(/[-/\\^$*+?.()|[\]{}]/g,'\\$&')
   }
   function commandFirstParamToFunction(funcName: string) {
     const iBak = i
