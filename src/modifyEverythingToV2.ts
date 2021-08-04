@@ -802,7 +802,6 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
       break
     case ', 1 (loop) parse':
       if (varnameTill(', 2 (loop) parse')) { return 3 } break
-      //#HERE
     case '3operator':
       if (thisE.text.toLowerCase() === 'new') {
         const iBak = i
@@ -815,12 +814,61 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
         }
       }
       break
+    case 'legacyIf in':{
+      i += 2
+      const nextType = everything[i].type
+      const escapedMatchArr = []
+      if (nextType !== '% v1->v2 expr') {
+        b = i
+        let arrToJoinOfDoubleComma = []
+        matchCommaLoop:
+        while (true) {
+          const next = everything[b]
+          if (!next) {
+            d(1)
+          }
+          switch (next.type) {
+          case ',, legacyIf var in findV1Expression':
+            arrToJoinOfDoubleComma.push(','); break
+          case 'endingWhiteSpaces v1Expression findV1Expression':
+            break
+          case ', legacyIf var in findV1Expression':
+            escapedMatchArr.push(escapeRegex(arrToJoinOfDoubleComma.join('').replace(/"/g,'`"')))
+            arrToJoinOfDoubleComma = []
+            break
+          case 'end legacyIf':
+            if (arrToJoinOfDoubleComma.length) {
+              escapedMatchArr.push(escapeRegex(arrToJoinOfDoubleComma.join('').replace(/"/g,'`"')))
+            }
+            break matchCommaLoop
+          default:
+            arrToJoinOfDoubleComma.push(next.text); break
+          }
+          b++
+        }
+
+        // (var ~= "i)^(Mon|Tue|Wed|Thu|Fri|Sat|Sun)$")
+        everything.splice(i - 4,b - i + 5,{
+          type:'converted `if var in`',
+          text:`(var ~= "i)^(${escapedMatchArr.join('|')})$")`,
+        })
+      } else {
+        return 1
+      }
+      break
+    }
+
+    //#HERE
     default:
       return 0
     }
     return 3 //this will execute if it doesn't go to else
   }
   // functions
+  // https://stackoverflow.com/questions/3561493/is-there-a-regexp-escape-function-in-javascript#3561711
+  function escapeRegex(string) {
+    return string.replace(/[-/\\^$*+?.()|[\]{}]/g,'\\$&')
+  }
   function commandFirstParamToFunction(funcName: string) {
     const iBak = i
     if (modV1StrToEdit(1)) { return 3 }

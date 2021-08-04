@@ -383,6 +383,10 @@ export default (content: string,literalDoubleQuoteInContinuation = false): Every
                   findV1Expression()
                   doubleComma = false
 
+                  let eLen = everything.length - 1
+                  emptyLinesObj[everything[eLen].type] && eLen--
+                  everything[eLen].type === 'endingWhiteSpaces v1Expression findV1Expression' && eLen--
+                  everything.splice(eLen + 1,0,{type:'end legacyIf'})
                   if (i === howManyLines) { break lineLoop }
                   if (lines[i][c] === '{') {
                     everything.push({type:'{ legacyIf',text:'{',i1:i,c1:c})

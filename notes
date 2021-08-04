@@ -2521,3 +2521,62 @@ Error: This line does not contain a recognized action.
 The program will exit.
 ---------------------------
 thank god this is illegal
+
+issue#21
+#implement convert `if var in` to v2
+parse into matchArr = []
+
+starts with 'legacyIf in'
+ends with 'v1String findV1Expression'
+IF NOT '% v1->v2 expr'
+
+delim is ', legacyIf var in findV1Expression'
+append ,, as ','
+
+'v1String findV1Expression beforeDoubleComma' is not actually before double comma
+it's anything before the last match
+
+it can end with a comma
+just append to string when you see it, it can't THAT big
+no, this is bad code
+
+empty string can only happen at the end,
+so I'll check if not empty using if.
+
+`if Var in a,`
+no, it does not match against an empty string
+
+let me save this:
+  i += 2
+  let arrToJoinOfDoubleComma = []
+  matchCommaLoop:
+  while (true) {
+    const next = everything[i]
+    switch (next.type) {
+    case ',, legacyIf var in findV1Expression':
+      arrToJoinOfDoubleComma.push(','); break
+    case 'endingWhiteSpaces v1Expression findV1Expression':
+      break
+    case ', legacyIf var in findV1Expression':
+      matchArr.push(arrToJoinOfDoubleComma.join(''))
+      arrToJoinOfDoubleComma = []
+      break
+    case 'end legacyIf':
+      if (arrToJoinOfDoubleComma.length) {
+        matchArr.push(arrToJoinOfDoubleComma.join(''))
+      }
+      d(matchArr)
+      break matchCommaLoop
+    default:
+      arrToJoinOfDoubleComma.push(next.text); break
+    }
+    i++
+  }
+;end of code
+
+compare \escape or \QLiteral Text\E
+if (var ~= "i)^(a\\)$")
+if (var ~= "i)^(\Qa\\E)$")
+
+if (var ~= "i)^(a\\\.\*\?\+\[\{\|\(\)\^\$)$")
+if (var ~= "i)^(\Qa\.*?+[{|()^$\E)$")

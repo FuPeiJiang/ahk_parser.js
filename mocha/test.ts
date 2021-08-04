@@ -45,6 +45,7 @@ describe('toV2(text)',function() {
   doIt('v:=spr " h"ySep " w"3*xSep " v" "t_" c "_" r','v:=spr " h" ySep " w" 3*xSep " v" "t_" c "_" r')
   doIt('v:=2 "s"','v:=2 "s"')
   doItFiles('../tests3/continuation ) closing parenthesis.ahk','correct/continuation ) closing parenthesis.ah2')
+  doItFiles('../tests4/if var in.ahk','correct/if var in.ah2')
 })
 
 function toV2(text,is_AHK_H = true) {
