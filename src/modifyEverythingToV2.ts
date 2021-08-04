@@ -166,17 +166,18 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
   function all(): number {
     const thisE = everything[i]
     const eType = thisE.type
-    if (eType === '{ object') {
-      thisE.text = 'Map('
-    } else if (eType === '} object') {
-      thisE.text = ')'
-    } else if (eType === ': object') {
-      thisE.text = ','
-    } else if (eType === 'singleVar') {
-      thisE.text = `"${everything[i].text}"`
-    } else if (eType === '% v1->v2 expr') {
-      thisE.text = ''
-    } else if (eType === 'functionName') {
+    switch (eType) {
+    case '{ object':
+      thisE.text = 'Map('; break
+    case '} object':
+      thisE.text = ')'; break
+    case ': object':
+      thisE.text = ','; break
+    case 'singleVar':
+      thisE.text = `"${everything[i].text}"`; break
+    case '% v1->v2 expr':
+      thisE.text = ''; break
+    case 'functionName':{
       const thisText = everything[i].text
       const back = everything[i - 1]
       const thisLowered = thisText.toLowerCase()
@@ -206,7 +207,7 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
             // splice off and insert at same time
             p('(Type('); a(1); p(')=="Array"?'); a(1); p('.Length:'); a(1); p('.Count)')
             everything.splice(spliceStart,b - spliceStart + 1,...arrFromArgsToInsert)
-          // } else if (thisLowered === 'readline') {
+            // } else if (thisLowered === 'readline') {
             // if (getArgs()) { return 2 }
             // p('ReadLine() "`n"'); s()
           }
@@ -336,20 +337,23 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
           }
         }
       }
-
-    } else if (eType === '(.) property findTrailingExpr') {
+      break
+    }
+    case '(.) property findTrailingExpr':
       if (everything[i - 2].type !== 'Integer') {
         everything[i - 1].text = ''
         thisE.text = `["${everything[i].text}"]`
         thisE.type = 'v2: arrAccess'
       }
-    } else if (eType === 'if') {
+      break
+    case 'if':{
+
       //skip 'emptyLines' after if
       //'if' (single unit ending with access), transform into .Has()
       b = i + 2
       let next = everything[b]
       if (next) {
-      //if '( if, skip'
+        //if '( if, skip'
         let hasParen = false
         if (next.type === '( if') {
           b++
@@ -380,8 +384,11 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
         }
 
       }
+      break
+    }
+    case 'idkVariable':
+    case 'assignment':{
 
-    } else if (idkVariableOrAssignment[eType]) {
       const theText = everything[i].text
       if (theText.indexOf('%') === -1) {
         if (theText.toLowerCase() === 'a_isunicode') {
@@ -445,15 +452,22 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
           thisE.text = 'true'
         }
       }
-    } else if (eType === '(statement) ,') {
+      break
+    }
+    case '(statement) ,':{
       thisE.text = ' '
       const next = everything[i + 1]
       if (wsOrEmptyLine[next.type]) {
         thisE.text = ''
       }
-    } else if (v1Percent[eType]) {
-      thisE.text = ''
-    } else if (v1Str[eType]) {
+      break
+    }
+    case '%START %Var%':
+    case 'END% %Var%':
+      thisE.text = ''; break
+    case 'v1String findV1Expression':
+    case 'v1String findPercentVarV1Expression':
+    case 'v1String findV1Expression beforeSingleComma':{
       const theText = thisE.text
       if (theText !== '' || eType === 'v1String findV1Expression') {
         let next,putAtEnd = ''
@@ -476,9 +490,14 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
         }
         thisE.text = `${noNeedToWhiteSpaceForConcat[everything[i - 1].text.slice(-1)] ? '' : ' '}"${theText.replace(/"/g,'`"')}"${putAtEnd}`
       }
-    } else if (thisE.text === '<>' && eType === '2operator') {
-      thisE.text = '!='
-    } else if (eType === '= v1Assignment') {
+      break
+    }
+    case '2operator':
+      if (thisE.text === '<>') {
+        thisE.text = '!='
+      }
+      break
+    case '= v1Assignment':{
       thisE.text = ':='
       let next = everything[++i]
       //# var = -> var:=""
@@ -492,11 +511,13 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
       }
       return 1 //to actually parse the fake added 'v1String findV1Expression' to get correct trailing whiteSpace : ex if comments after.
       //and to not skip the '%START %Var%'
-    } else if (eType === 'String') {
-      thisE.text = `"${thisE.text.slice(1,-1).replace(/""/g,'`"')}"`
-    } else if (eType === 'concat no whiteSpace') {
-      thisE.text = ' '
-    } else if (anyCommand[eType]) {
+    }
+    case 'String':
+      thisE.text = `"${thisE.text.slice(1,-1).replace(/""/g,'`"')}"`; break
+    case 'concat no whiteSpace':
+      thisE.text = ' '; break
+    case 'DIRECTIVE OR COMMAND comma':
+    case 'command':
       //if breakOrContinue, if is number, don't surround with quotes
       switch (thisE.text.toLowerCase()) {
       case 'settitlematchmode':
@@ -599,7 +620,7 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
         return commandFirstParamToFunction('FormatTime')
       case 'Sort':
         return commandFirstParamToFunction('Sort')
-      case 'pixelgetcolor':
+      case 'pixelgetcolor':{
         // PixelGetColor, OutputVar, X, Y , Mode
         // Color := PixelGetColor(X, Y [, Mode])
         const iBak = i
@@ -625,14 +646,17 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
         p(')')
         spaceIfComment(); s(); break
       }
-
-    } else if (eType === 'command EOL or comment') {
+      } //end of inner switch
+      break //break outer switch
+    case 'command EOL or comment':{
       const dTextLowered = everything[i].text.toLowerCase()
       if (dTextLowered === '#noenv') {
         deleteCommand()
         return 1
       }
-    } else if (eType === 'legacyIf var') {
+      break
+    }
+    case 'legacyIf var':{
       b = i + 2
       let next = everything[b]
       dummyLoopNotIs:
@@ -673,7 +697,9 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
         }
         break dummyLoopNotIs
       }
-    } else if (eType === '1operator') {
+      break
+    }
+    case '1operator':
       if (thisE.text === '&') {
         let bType
         b = i
@@ -704,7 +730,9 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
           // everything.splice(b + 1,0,{type:'edit',text:')'})
         }
       }
-    } else if (eType === 'hotkey') {
+      break
+    case 'hotkey':{
+
       const hotkeyLine = thisE.i1
       b = i
       const hotkeyI = i
@@ -749,7 +777,8 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
           }
         }
       }
-    } else if (eType === 'className') {
+    }
+    case 'className':
       if (classToStatic[everything[i].text]) {
         b = i + 1
         let next,arrAccessDepth = 0
@@ -770,22 +799,26 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
           next = everything[++b]
         }
       }
-    } else if (eType === ', 1 (loop) parse') {
-      if (varnameTill(', 2 (loop) parse')) { return 3 }
-    //#HERE
-    } else if (eType === '3operator' && thisE.text.toLowerCase() === 'new') {
-      const iBak = i
-      if (skipEmpty()) { return 2 }
-      if (next.type === 'idkVariable') {
-        everything.splice(iBak,i - iBak + 1,next,
-          (is_AHK_H ? {type:'.New()',text:'.New()'} : {type:'() new',text:'()'})
-        )
-        i = iBak + 1
+      break
+    case ', 1 (loop) parse':
+      if (varnameTill(', 2 (loop) parse')) { return 3 } break
+      //#HERE
+    case '3operator':
+      if (thisE.text.toLowerCase() === 'new') {
+        const iBak = i
+        if (skipEmpty()) { return 2 }
+        if (next.type === 'idkVariable') {
+          everything.splice(iBak,i - iBak + 1,next,
+            (is_AHK_H ? {type:'.New()',text:'.New()'} : {type:'() new',text:'()'})
+          )
+          i = iBak + 1
+        }
       }
-    } else {
+      break
+    default:
       return 0
     }
-    return 3
+    return 3 //this will execute if it doesn't go to else
   }
   // functions
   function commandFirstParamToFunction(funcName: string) {

@@ -1,0 +1,1 @@
+static PTR:=A_PtrSize
