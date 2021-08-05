@@ -4,3 +4,6 @@ commandFirstParamToFunction() :
   <- move left
   Title := WinGetTitle([WinTitle, WinText, ExcludeTitle, ExcludeText])
 
+
+function findNext(stopAtThis: string)
+if (next.type === stopAtThis) {

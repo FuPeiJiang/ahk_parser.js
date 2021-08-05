@@ -42,7 +42,9 @@ const on1off0: stringIndexString = {'on':'1','off':'0'}
 const ternaryColonEndDelim: stringIndexBool = {'end assignment':true,', function CALL':true,') function CALL':true,', assignment':true,'end comma assignment':true}
 const noNeedToWhiteSpaceForConcat: stringIndexBool = {' ':true,'\t':true,'\n':true,',':true,'<':true,'>':true,'=':true,'!':true}
 const commaCommandObj: stringIndexBool = {', command whiteSpace':true,', command comma':true}
-const startOfV1Expr: stringIndexBool = {'v1String findV1Expression':true,'%START %Var%':true,'v1String findPercentVarV1Expression':true}
+//added 'start unit' for Param=Integer, 'String' for Param=""
+const startOfV1Expr: stringIndexBool = {'v1String findV1Expression':true,'%START %Var%':true,'v1String findPercentVarV1Expression':true,'start unit':true,'String':true}
+
 
 const typesThatAreVars: stringIndexBool = {'Param':true,'idkVariable':true,'assignment':true,'v1String findIdkVar':true,'var at v1Assignment':true}
 
@@ -507,6 +509,22 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
         }
       }
       if (!next || !startOfV1Expr[next.type]) {
+        // const next = everything[++i]
+        // if (next) {
+        // if (next.type === 'Integer') { //param=0
+        // everything.splice(i,0,{type:'start wrap Integer "',text:'"'}) //param=1.2
+        // i++
+        /// 'start unit','Integer','. property','(.) property findTrailingExpr','end unit'
+        // let next
+        // while ((next = everything[++i])) {
+        // if (next.type === 'end unit') {
+        // everything.splice(i,0,{type:'start wrap Integer "',text:'"'})
+        // i += 2; return 1
+        // }
+        // }
+        ///it will never come here
+        // }
+        // }
         everything.splice(i,0,{type:'v1String findV1Expression',text:''})
       }
       return 1 //to actually parse the fake added 'v1String findV1Expression' to get correct trailing whiteSpace : ex if comments after.

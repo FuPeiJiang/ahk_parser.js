@@ -5,10 +5,10 @@ Detach(  HWND  ) {
 }
 foo() {
 }
-foo(a=0) {
+foo(a:=0) {
 }
-v=2
-foo(a=1.2) {
+v:="2"
+foo(a:=1.2) {
 }
-foo(a="") {
+foo(a:="") {
 }
