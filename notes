@@ -2580,3 +2580,39 @@ if (var ~= "i)^(\Qa\\E)$")
 
 if (var ~= "i)^(a\\\.\*\?\+\[\{\|\(\)\^\$)$")
 if (var ~= "i)^(\Qa\.*?+[{|()^$\E)$")
+
+fix `Loop 1 {` becoming `Loop "1 {"`
+
+loop 3 3 { ;does nothing
+loop 3 { ;get first number before whiteSpace
+  p(A_Index)
+}
+
+this doesn't need fixing
+while 3 {
+  p(A_Index)
+}
+
+to do: wrap if in () if there's no ( after 'if'
+
+loop 3{ ;OH NO
+  p(A_Index)
+}
+nvm, it only matches variable char.
+
+loop 1
+(
+1 
+){ ;hello there
+  p(A_Index)
+}
+
+SystemRoot
+when preprocessing variables
+know that var SystemRoot is a path
+and with that knowledge, convert that loop
+to loop Files,
+EnvGet SystemRoot, SystemRoot
+
+todo:
+stringIndexBool to stringIndexTrue

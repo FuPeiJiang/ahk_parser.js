@@ -47,6 +47,7 @@ describe('toV2(text)',function() {
   doItFiles('../tests3/continuation ) closing parenthesis.ahk','correct/continuation ) closing parenthesis.ah2')
   doItFiles('../tests4/if var in.ahk','correct/if var in.ah2')
   doItFiles('../tests2/function definition fix.ahk','correct/function definition fix.ah2')
+  doItFiles('../tests4/fix loop num bracket.ahk','correct/fix loop num bracket.ah2')
 })
 
 function toV2(text,is_AHK_H = true) {

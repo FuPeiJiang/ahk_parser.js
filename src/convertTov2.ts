@@ -4,8 +4,9 @@ import modifyEverythingToV2 from './modifyEverythingToV2'
 
 
 const content: Buffer =
+fs.readFileSync('tests4/fix loop num bracket.ahk')
 // fs.readFileSync('tov2/clr.ahk')
-fs.readFileSync('tests2/function definition fix.ahk')
+// fs.readFileSync('tests2/function definition fix.ahk')
 // fs.readFileSync('tests4/stuff.ahk')
 // fs.readFileSync('tests2/if legacy in.ahk')
 // fs.readFileSync('tests4/if var in.ahk')
@@ -59,13 +60,13 @@ fs.readFileSync('tov2/OpenInAhkExplorer.ahk') */
 // fs.readFileSync('tests3/splitpath.ahk')
 // fs.readFileSync('tests3/not assignment operatEor.ahk')
 // fs.readFileSync('tests3/idkAnymore23.ahk')
-fs.readFileSync('tov2/jpgs to pdf.ahk')
+// fs.readFileSync('tov2/jpgs to pdf.ahk')
 // fs.readFileSync('tests3/command EOF.ahk')
 // fs.readFileSync('tests3/test validName VARIABLE EOL.ahk')
-fs.readFileSync('tov2/use_string.ahk')
+// fs.readFileSync('tov2/use_string.ahk')
 // fs.readFileSync('tests3/fix if no paren.ahk')
-fs.readFileSync('tov2/string.ahk')
-fs.readFileSync('tests/ahk_explorer.ahk')
+// fs.readFileSync('tov2/string.ahk')
+// fs.readFileSync('tests/ahk_explorer.ahk')
 
 const everything = ahkParser(content.toString().replace(/\r/g,''))
 // writeSync(arrOrObjToString(everything),'everything_before.txt')

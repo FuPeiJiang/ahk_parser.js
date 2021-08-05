@@ -1259,9 +1259,24 @@ export default (content: string,literalDoubleQuoteInContinuation = false): Every
         return 1
       }
 
-      singleComma = true
-      findV1Expression()
-      singleComma = false
+      let whiteSpaceText
+      if (c < numberOfChars - 1 && lines[i][c] === '%' && whiteSpaceObj[whiteSpaceText = lines[i][c + 1]]) {
+        everything.push({type:'% v1->v2 expr',text:`%${whiteSpaceText}`,i1:i,c1:c,c2:c + 2})
+        c += 2
+        lineWhereCanConcat = -1
+        if (!recurseBetweenExpression()) { findExpression() }
+      } else {
+        // get until no more : check everything.length changed
+        // for this nonsense: loop 3 3 {
+        let lastEverythingLen = everything.length
+        findVariableName()
+        while (everything.length !== lastEverythingLen) {
+          lastEverythingLen = everything.length
+          everything[lastEverythingLen - (everything[lastEverythingLen - 1].type === 'v1String findIdkVar' ? 1 : 2)].type = 'loop findVariableName'
+          findVariableName()
+        }
+      }
+
       if (findCommaV1Expression(', 1 (loop) idk')) {
         if (findCommaV1Expression(', 2 (loop) idk')) {
           findCommaV1Expression(', 3 (loop) idk')
