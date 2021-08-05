@@ -45,8 +45,8 @@ const commaCommandObj: stringIndexBool = {', command whiteSpace':true,', command
 //added 'start unit' for Param=Integer, 'String' for Param=""
 const startOfV1Expr: stringIndexBool = {'v1String findV1Expression':true,'%START %Var%':true,'v1String findPercentVarV1Expression':true,'start unit':true,'String':true}
 
-
 const typesThatAreVars: stringIndexBool = {'Param':true,'idkVariable':true,'assignment':true,'v1String findIdkVar':true,'var at v1Assignment':true}
+const varsThatArePath: stringIndexBool = {}
 
 export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
   const whichBuffer = is_AHK_H ? 'BufferAlloc' : 'Buffer'
@@ -632,8 +632,18 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
         return commandFirstParamToFunction('WinGetText')
       case 'sysget':
         return commandFirstParamToFunction('SysGet')
-      case 'envget':
-        return commandFirstParamToFunction('EnvGet')
+      case 'envget':{
+        const iBak = i
+        if (modV1StrToEdit(1)) { return 3 }
+        i = iBak
+        if (getCommandParams()) { return 2 }
+        a(1); p(':=EnvGet('); a(2); p(')')
+        if (arrFromArgsToInsert[2].text.toLowerCase() === '"systemroot"') {
+          varsThatArePath[arrFromArgsToInsert[2].text.toLowerCase()] = true //lololool
+        }
+        spaceIfComment(); s()
+        return 3
+      }
       case 'formattime':
         return commandFirstParamToFunction('FormatTime')
       case 'Sort':
@@ -875,7 +885,20 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
       }
       break
     }
+    case 'loop':{
+      // d(everything)
+      d(thisE)
+      let next = everything[i + 2]
+      if (next && next.type === '% v1->v2 expr') {
+        next = everything[i + 4]
+        if (next && next.type === 'idkVariable') {
+          if (varsThatArePath[next.text.toLowerCase()]) {
 
+          }
+        }
+      }
+      break
+    }
     //#HERE
     default:
       return 0
