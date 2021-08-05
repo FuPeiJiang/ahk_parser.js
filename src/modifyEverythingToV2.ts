@@ -1,23 +1,4 @@
 import type {EverythingType} from './parser/index'
-//challenge accepted
-// https://stackoverflow.com/questions/41253310/typescript-retrieve-element-type-information-from-array-type#51399781
-type ArrayElement<ArrayType extends readonly unknown[]> =
-  ArrayType extends readonly (infer ElementType)[] ? ElementType : never
-type EverythingElement = ArrayElement<EverythingType> |
-{
-  type: string;
-  text: string;
-  i1?: undefined;
-  c1?: undefined;
-  c2?: undefined;
-} | {
-  text: string;
-  type?: undefined;
-  i1?: undefined;
-  c1?: undefined;
-  c2?: undefined;
-}
-type ExtendedEverythingType = EverythingElement[]
 
 import type {stringIndexBool,stringIndexString} from './parser/tokens'
 
@@ -41,12 +22,12 @@ const startGroupOrUnit: stringIndexString = {'( group':') group','start unit':'e
 const on1off0: stringIndexString = {'on':'1','off':'0'}
 const ternaryColonEndDelim: stringIndexBool = {'end assignment':true,', function CALL':true,') function CALL':true,', assignment':true,'end comma assignment':true}
 const noNeedToWhiteSpaceForConcat: stringIndexBool = {' ':true,'\t':true,'\n':true,',':true,'<':true,'>':true,'=':true,'!':true}
-const commaCommandObj: stringIndexBool = {', command whiteSpace':true,', command comma':true}
+const commaCommandObj: stringIndexBool = {', command whiteSpace':true,', command comma':true,', 1 (loop) idk':true,', 2 (loop) idk':true}
 //added 'start unit' for Param=Integer, 'String' for Param=""
 const startOfV1Expr: stringIndexBool = {'v1String findV1Expression':true,'%START %Var%':true,'v1String findPercentVarV1Expression':true,'start unit':true,'String':true}
 
-
 const typesThatAreVars: stringIndexBool = {'Param':true,'idkVariable':true,'assignment':true,'v1String findIdkVar':true,'var at v1Assignment':true}
+const varsThatArePath: stringIndexBool = {}
 
 export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
   const whichBuffer = is_AHK_H ? 'BufferAlloc' : 'Buffer'
@@ -632,8 +613,19 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
         return commandFirstParamToFunction('WinGetText')
       case 'sysget':
         return commandFirstParamToFunction('SysGet')
-      case 'envget':
-        return commandFirstParamToFunction('EnvGet')
+      case 'envget':{
+        const iBak = i
+        if (modV1StrToEdit(1)) { return 3 }
+        i = iBak
+        if (getCommandParams()) { return 2 }
+        a(1); p(':=EnvGet('); a(2); p(')')
+        // `argsArr` for before, `arrFromArgsToInsert` for after
+        if (arrFromArgsToInsert[2].text.toLowerCase() === '"systemroot"') {
+          varsThatArePath[arrFromArgsToInsert[0].text.toLowerCase()] = true //lololool
+        }
+        spaceIfComment(); s()
+        return 3
+      }
       case 'formattime':
         return commandFirstParamToFunction('FormatTime')
       case 'Sort':
@@ -875,7 +867,46 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
       }
       break
     }
-
+    case 'loop':{
+      if (skipFirstSeparatorOfCommand()) { return 3 }
+      let next = everything[i]
+      if (next && next.type === '% v1->v2 expr') {
+        next = everything[i + 2]
+        if (next && next.type === 'idkVariable') {
+          d(next)
+          if (varsThatArePath[next.text.toLowerCase()]) {
+            // everything.splice(i,0,{type:'loop Files',text:'Files,'})
+            // i++
+            commandAllEditChoose({2:true,3:true})
+            if (getCommandParams()) { return 2 }
+            let Mode = ''
+            if (argsArr.length > 1) {
+              const IncludeFoldersArg = removeWhiteSpaceAndStuff(argsArr[1])
+              if (IncludeFoldersArg.length) {
+                switch (IncludeFoldersArg[0].text) {
+                case '0':
+                  Mode = 'F'; break
+                case '1':
+                  Mode = 'FD'; break
+                case '2':
+                  Mode = 'D'
+                }
+              }
+              if (argsArr.length > 2) {
+                const RecurseArg = removeWhiteSpaceAndStuff(argsArr[2])
+                if (RecurseArg.length && RecurseArg[0].text === '1') {
+                  Mode += 'R'
+                }
+              }
+            }
+            p('Files, '); a(1)
+            Mode && (p(','),p(`"${Mode}"`))
+            spaceIfComment(); s(); break
+          }
+        }
+      }
+      break
+    }
     //#HERE
     default:
       return 0
@@ -1307,6 +1338,18 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
     }
   }
 
+  function removeWhiteSpaceAndStuff(paramArr: ExtendedEverythingType) {
+    const returnArr = []
+    let paramsLen
+    if (paramArr && (paramsLen = paramArr.length)) {
+      for (let n = 0; n < paramsLen; n++) {
+        if (!wsOrEmptyLine[paramArr[n].type]) {
+          returnArr.push(paramArr[n])
+        }
+      }
+    }
+    return returnArr
+  }
   function a(index: number) {
     const paramArr = argsArr[index - 1]
     let paramsLen
@@ -1371,41 +1414,35 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
     let paramStartIndex = i
     let next
     const localArgsArr = []
-    while (true) {
-      innerLoop:
-      while (true) {
-        next = everything[i]
-        if (!next) {
-          return true
-        }
-        const bType = next.type
+    innerLoop:
+    while ((next = everything[i])) {
+      const bType = next.type
 
-        const allReturn = all()
-        if (allReturn === 1) {
-          continue innerLoop
-        } else if (allReturn === 2) {
-          return true
-        } else if (allReturn === 3) {
-          i++
-          continue innerLoop
-        }
-
-        if (bType === 'end command') {
-          const spliceLen = i + 1 - functionStartIndex
-          localArgsArr.push(everything.slice(paramStartIndex,i))
-          everything.splice(functionStartIndex,spliceLen)
-          i -= spliceLen
-          argsArr = localArgsArr
-          gArgsEInsertIndex = functionStartIndex
-          arrFromArgsToInsert = []
-          return false
-        } else if (commaCommandObj[bType]) {
-          localArgsArr.push(everything.slice(paramStartIndex,i))
-          paramStartIndex = i + 1
-        }
+      switch (all()) {
+      case 3:
         i++
+      case 1:
+        continue innerLoop
+      case 2:
+        return true
       }
+
+      if (bType === 'end command') {
+        const spliceLen = i + 1 - functionStartIndex
+        localArgsArr.push(everything.slice(paramStartIndex,i))
+        everything.splice(functionStartIndex,spliceLen)
+        i -= spliceLen
+        argsArr = localArgsArr
+        gArgsEInsertIndex = functionStartIndex
+        arrFromArgsToInsert = []
+        return false
+      } else if (commaCommandObj[bType]) {
+        localArgsArr.push(everything.slice(paramStartIndex,i))
+        paramStartIndex = i + 1
+      }
+      i++
     }
+    return true
   }
   function getArgs() {
     const functionStartIndex = i
@@ -1580,3 +1617,23 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
     return false
   }
 }
+
+//challenge accepted
+// https://stackoverflow.com/questions/41253310/typescript-retrieve-element-type-information-from-array-type#51399781
+type ArrayElement<ArrayType extends readonly unknown[]> =
+  ArrayType extends readonly (infer ElementType)[] ? ElementType : never
+type EverythingElement = ArrayElement<EverythingType> |
+{
+  type: string;
+  text: string;
+  i1?: undefined;
+  c1?: undefined;
+  c2?: undefined;
+} | {
+  text: string;
+  type?: undefined;
+  i1?: undefined;
+  c1?: undefined;
+  c2?: undefined;
+}
+type ExtendedEverythingType = EverythingElement[]

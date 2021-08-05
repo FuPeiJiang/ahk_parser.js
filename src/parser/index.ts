@@ -1282,6 +1282,7 @@ export default (content: string,literalDoubleQuoteInContinuation = false): Every
           findCommaV1Expression(', 3 (loop) idk')
         }
       }
+      addEnd('end command')
 
       if (lines[i][c] === '{') {
         everything.push({type:'{ loop',text:'{',i1:i,c1:c})
