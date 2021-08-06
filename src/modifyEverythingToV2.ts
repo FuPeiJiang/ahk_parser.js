@@ -29,6 +29,10 @@ const startOfV1Expr: stringIndexBool = {'v1String findV1Expression':true,'%START
 const typesThatAreVars: stringIndexBool = {'Param':true,'idkVariable':true,'assignment':true,'v1String findIdkVar':true,'var at v1Assignment':true}
 const varsThatArePath: stringIndexBool = {}
 
+// const concatableTypes: stringIndexBool = {'v1String findPercentVarV1Expression':true,'percentVar v1Expression':true}
+const concatIgnoreThese: stringIndexBool = {'%START %Var%':true,'END% %Var%':true}
+const modV1StrEditThese: stringIndexBool = {'v1String findPercentVarV1Expression':true,'percentVar v1Expression':true,'%START %Var%':true,'END% %Var%':true,'v1String findV1Expression beforeSingleComma':true,'v1String findV1Expression':true}
+
 export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
   const whichBuffer = is_AHK_H ? 'BufferAlloc' : 'Buffer'
   // I'd never think I'd come to this day, but..
@@ -459,9 +463,25 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
     case 'v1String findV1Expression':
     case 'v1String findPercentVarV1Expression':
     case 'v1String findV1Expression beforeSingleComma':{
-      const theText = thisE.text
-      if (theText !== '' || eType === 'v1String findV1Expression') {
-        let next,putAtEnd = ''
+      if (thisE.text !== '' || eType === 'v1String findV1Expression') {
+        let next,putAtEnd = '',back,putAtFront = ''
+
+        b = i - 1
+        back = everything[b]
+        outerLoop:
+        while (true) {
+          while (back) {
+            if (back.text) {
+              if (!noNeedToWhiteSpaceForConcat[back.text.slice(-1)]) {
+                putAtFront = ' '
+              }
+              break outerLoop
+            }
+            back = everything[--b]
+          }
+          break outerLoop
+        }
+
         b = i + 1
         next = everything[b]
         // skip through stuff like 'end command' which .text === undefined
@@ -479,9 +499,68 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
           }
           break outerLoop
         }
-        thisE.text = `${noNeedToWhiteSpaceForConcat[everything[i - 1].text.slice(-1)] ? '' : ' '}"${theText.replace(/"/g,'`"')}"${putAtEnd}`
+
+        thisE.text = `${putAtFront}"${thisE.text.replace(/"/g,'`"')}"${putAtEnd}`
       }
       break
+    }
+    case 'percentVar v1Expression':{
+      let back,putAtFront = '',next,putAtEnd = ''
+
+      b = i - 1
+      back = everything[b]
+      outerLoop:
+      while (true) {
+        while (back) {
+          if (back.text && concatIgnoreThese[back.type]) {
+            if (!noNeedToWhiteSpaceForConcat[back.text.slice(-1)]) {
+              putAtFront = ' '
+            }
+            break outerLoop
+          }
+          back = everything[--b]
+        }
+        break outerLoop
+      }
+
+      /* i++
+      outerLoop:
+      while ((next = everything[i])) {
+        switch (all()) {
+        case 3:
+          i++
+        case 1:
+          if (next.text) {
+            const firstChar = next.text[0]
+            if (!noNeedToWhiteSpaceForConcat[firstChar]) {
+              putAtEnd = ' '
+            }
+            break outerLoop
+          }
+          continue outerLoop
+        case 2:
+          return 2
+        }
+        i++
+      } */
+      b = i + 1
+      next = everything[b]
+      outerLoop:
+      while (true) {
+        while (next) {
+          if (next.text && !concatIgnoreThese[next.type]) {
+            if (!noNeedToWhiteSpaceForConcat[next.text[0]]) {
+              putAtEnd = ' '
+            }
+            break outerLoop
+          }
+          next = everything[++b]
+        }
+        break outerLoop
+      }
+
+      thisE.text = `${putAtFront}${thisE.text}${putAtEnd}`
+      return 3
     }
     case '2operator':
       if (thisE.text === '<>') {
@@ -564,7 +643,7 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
         }
         break
       case 'splitpath':
-        if (modV1StrToEdit(5)) { return 3 } break
+        if (keepAsItIs(5)) { return 3 } break
       case 'stringtrimright':
         if (skipFirstSeparatorOfCommand()) { return 3 }
         // StringTrimRight, OutputVar, InputVar, Count
@@ -636,7 +715,7 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
       }
       case 'formattime':
         return commandFirstParamToFunction('FormatTime')
-      case 'Sort':
+      case 'sort':
         return commandFirstParamToFunction('Sort')
       case 'pixelgetcolor':{
         // PixelGetColor, OutputVar, X, Y , Mode
@@ -663,6 +742,21 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
         }
         p(')')
         spaceIfComment(); s(); break
+      }
+      case 'stringsplit':{
+        const iBak = i
+        if (modV1StrToEdit(2)) { return 3 }
+        i = iBak
+        if (getCommandParams()) { return 2 }
+        a(1); p(':=StrSplit(')
+        if (argsArr.length > 1) {
+          a(2)
+        }
+        for (let n = 3,lenPlusOne = argsArr.length + 1; n < lenPlusOne; n++) {
+          p(','); a(n)
+        }
+        p(')'); spaceIfComment(); s()
+        return 3
       }
       } //end of inner switch
       break //break outer switch
@@ -1021,39 +1115,30 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
       }
     }
   }
-  function modV1StrToEdit(howManyInteger: number) {
+  function keepAsItIs(howManyInteger: number) {
     if (skipFirstSeparatorOfCommand()) { return true }
     if (howManyInteger) {
       let whichParam = 0
       innerLoop:
-      while (true) {
-        next = everything[i]
-        if (!next) {
-          return true
-        }
-        const bType = next.type
-
-        if (v1Str[bType]) {
-          // if (!isNaN(Number(next.text))) {
+      while ((next = everything[i])) {
+        if (modV1StrEditThese[next.type]) {
           next.type = 'edit'
           i++
           continue innerLoop
-          // }
         }
 
-        const allReturn = all()
-        if (allReturn === 1) {
-          continue innerLoop
-        } else if (allReturn === 2) {
-          return true
-        } else if (allReturn === 3) {
+        switch (all()) {
+        case 3:
           i++
+        case 1:
           continue innerLoop
+        case 2:
+          return 2
         }
 
-        if (bType === 'end command') {
+        if (next.type === 'end command') {
           return false
-        } else if (commaCommandObj[bType]) {
+        } else if (commaCommandObj[next.type]) {
           whichParam++
           if (whichParam === howManyInteger) {
             return false
@@ -1062,6 +1147,42 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
         i++
         continue innerLoop
       }
+      return true
+    }
+  }
+  function modV1StrToEdit(howManyInteger: number) {
+    if (skipFirstSeparatorOfCommand()) { return true }
+    if (howManyInteger) {
+      let whichParam = 0
+      innerLoop:
+      while ((next = everything[i])) {
+        if (v1Str[next.type]) {
+          next.type = 'edit'
+          i++
+          continue innerLoop
+        }
+
+        switch (all()) {
+        case 3:
+          i++
+        case 1:
+          continue innerLoop
+        case 2:
+          return 2
+        }
+
+        if (next.type === 'end command') {
+          return false
+        } else if (commaCommandObj[next.type]) {
+          whichParam++
+          if (whichParam === howManyInteger) {
+            return false
+          }
+        }
+        i++
+        continue innerLoop
+      }
+      return true
     }
   }
   function modCommandOfVarnameThenXNum(howManyVarName: number,howManyNum: number) {

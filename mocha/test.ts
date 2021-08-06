@@ -28,7 +28,6 @@ describe('toV2(text)',function() {
   doItFiles('../tov2/RunCMD_mid.ahk','correct/RunCMD_mid.ah2')
   doItFiles('../tests3/numIfNum.ahk','correct/numIfNum.ah2')
   doItFiles('../tests3/listlines.ahk','correct/listlines.ah2')
-  doIt('SplitPath % ar[1],, Ou%t%Dir,,firstOutNameNoExt','SplitPath ar[1],, OutDir,,firstOutNameNoExt')
   doItFiles('../tests3/v1assign with whiteSpace then nothing.ahk','correct/v1assign with whiteSpace then nothing.ah2')
   doItFiles('../tests3/Renamed variables.ahk','correct/Renamed variables.ah2')
   doItFiles('../tests3/elseTryFinally.ahk','correct/elseTryFinally.ah2')
@@ -50,6 +49,8 @@ describe('toV2(text)',function() {
   doItFiles('../tests4/fix loop num bracket.ahk','correct/fix loop num bracket.ah2')
   doItFiles('../tests4/loop files EnvGet SystemRoot.ahk','correct/loop files EnvGet SystemRoot.ah2')
   doIt('loop % v\nMsgBox % A_Index}','loop v\nMsgBox A_Index}')
+  doItFiles('../tests4/v1 percent next to each other.ahk','correct/v1 percent next to each other.ah2')
+  doItFiles('../tests3/splitpath.ahk','correct/splitpath.ah2')
 })
 
 function toV2(text,is_AHK_H = true) {

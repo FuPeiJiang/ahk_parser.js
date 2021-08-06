@@ -7,3 +7,7 @@ commandFirstParamToFunction() :
 
 function findNext(stopAtThis: string)
 if (next.type === stopAtThis) {
+
+list of functions:
+keepAsItIs(): v1 %v% will stay %v%
+modV1StrToEdit(): v1Str won't be quoted
