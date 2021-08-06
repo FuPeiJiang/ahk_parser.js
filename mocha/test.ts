@@ -49,6 +49,7 @@ describe('toV2(text)',function() {
   doItFiles('../tests2/function definition fix.ahk','correct/function definition fix.ah2')
   doItFiles('../tests4/fix loop num bracket.ahk','correct/fix loop num bracket.ah2')
   doItFiles('../tests4/loop files EnvGet SystemRoot.ahk','correct/loop files EnvGet SystemRoot.ah2')
+  doIt('loop % v\nMsgBox % A_Index}','loop v\nMsgBox A_Index}')
 })
 
 function toV2(text,is_AHK_H = true) {

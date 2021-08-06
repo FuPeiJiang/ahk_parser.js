@@ -128,14 +128,13 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
   let next: EverythingElement,argsArr: ExtendedEverythingType[],gArgsEInsertIndex: number,arrFromArgsToInsert: ExtendedEverythingType
   outOfLen:
   while (i < everything.length) {
-    const allReturn = all()
-    if (allReturn === 1) {
-      continue outOfLen
-    } else if (allReturn === 2) {
-      break outOfLen
-    } else if (allReturn === 3) {
+    switch (all()) {
+    case 3:
       i++
+    case 1:
       continue outOfLen
+    case 2:
+      break outOfLen
     }
 
     i++
@@ -873,10 +872,7 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
       if (next && next.type === '% v1->v2 expr') {
         next = everything[i + 2]
         if (next && next.type === 'idkVariable') {
-          d(next)
           if (varsThatArePath[next.text.toLowerCase()]) {
-            // everything.splice(i,0,{type:'loop Files',text:'Files,'})
-            // i++
             commandAllEditChoose({2:true,3:true})
             if (getCommandParams()) { return 2 }
             let Mode = ''
@@ -905,7 +901,7 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
           }
         }
       }
-      break
+      return 1
     }
     //#HERE
     default:
