@@ -61,6 +61,7 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
   replaceReservedVar('case','dCase','_case')
   replaceReservedVar('object','dObject','_object')
   replaceReservedVar('array','dArray','_array')
+  replaceReservedVar('null','dNull','_null')
   //https://www.autohotkey.com/v2/v2-changes.htm#built-in-variables
   // this replaces: HERE:="" & v:=HERE & v=a%HERE%b
   // I mean, var being assigned, var in v2Expression, %var% in v1Expression
