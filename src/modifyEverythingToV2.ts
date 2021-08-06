@@ -164,40 +164,42 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
       const thisText = everything[i].text
       const back = everything[i - 1]
       const thisLowered = thisText.toLowerCase()
-      if (back) {
-        if (everything[i - 1].type === '. property') {
-          if (thisLowered === 'length') {
-            // .Length() -> .Length
-            thisE.type = 'v2: prop'
-            //splice off ( to )
-            const spliceStart = b = i + 1
-            if (nextSkipThrough(') function CALL','( function CALL')) { return 2 }
-            everything.splice(spliceStart,b - spliceStart + 1)
-          } else if (thisLowered === 'haskey') {
-            // .HasKey() -> .Has()
-            thisE.text = 'Has'
-          } else if (thisLowered === 'count') {
-            // a[k].count()
-            // (type(a[k])=="Array"?a[k].Length:a[k].Count)
-            b = i
-            if (!skipThroughSomethingMid('start unit','end unit')) { return 3 }
-            const spliceStart = b
-            b = i + 1
-            if (nextSkipThrough(') function CALL','( function CALL')) { return 2 }
-            arrFromArgsToInsert = []
-            // a[k] be the slice, make a(1) be a[k]
-            argsArr = [everything.slice(spliceStart + 1,i - 1 )]
-            // splice off and insert at same time
-            p('(Type('); a(1); p(')=="Array"?'); a(1); p('.Length:'); a(1); p('.Count)')
-            everything.splice(spliceStart,b - spliceStart + 1,...arrFromArgsToInsert)
-            // } else if (thisLowered === 'readline') {
-            // if (getArgs()) { return 2 }
-            // p('ReadLine() "`n"'); s()
-          }
-          return 3
+      if (back && back.type === '. property') {
+        switch (thisLowered) {
+        case 'length':{
+          // .Length() -> .Length
+          thisE.type = 'v2: prop'
+          //splice off ( to )
+          const spliceStart = b = i + 1
+          if (nextSkipThrough(') function CALL','( function CALL')) { return 2 }
+          everything.splice(spliceStart,b - spliceStart + 1); break
         }
+        case 'haskey':
+          // .HasKey() -> .Has()
+          thisE.text = 'Has'; break
+        case 'count':{
+          // a[k].count()
+          // (type(a[k])=="Array"?a[k].Length:a[k].Count)
+          b = i
+          if (!skipThroughSomethingMid('start unit','end unit')) { return 3 }
+          const spliceStart = b
+          b = i + 1
+          if (nextSkipThrough(') function CALL','( function CALL')) { return 2 }
+          arrFromArgsToInsert = []
+          // a[k] be the slice, make a(1) be a[k]
+          argsArr = [everything.slice(spliceStart + 1,i - 1 )]
+          // splice off and insert at same time
+          p('(Type('); a(1); p(')=="Array"?'); a(1); p('.Length:'); a(1); p('.Count)')
+          everything.splice(spliceStart,b - spliceStart + 1,...arrFromArgsToInsert)
+          // case 'readline':
+          // if (getArgs()) { return 2 }
+          // p('ReadLine() "`n"'); s()
+        }
+        }
+        return 3
       }
-      if (thisLowered === 'varsetcapacity') {
+      switch (thisLowered) {
+      case 'varsetcapacity':
         //#function
         if (getArgs()) { return 2 }
         if (argsArr.length === 1) {
@@ -209,15 +211,16 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
           // TargetVar:=BufferAlloc(RequestedCapacity,FillByte)
           a(1); p(`:=${whichBuffer}(`); a(2); o(',',3); a(3); p(')'); s()
         }
-      } else if (thisLowered === 'strreplace') {
+        break
+      case 'strreplace':
         // StrReplace(Haystack, Needle [, ReplaceText, OutputVarCount, Limit])
         // StrReplace(Haystack, Needle [, ReplaceText, CaseSense, OutputVarCount, Limit := -1])
         if (getArgs()) { return 2 }
-        p('StrReplace('); a(1); p(','); a(2); o(',',3); a(3); o(',0,',4); a(4); o(',',5); a(5); p(')'); s()
-      } else if (thisLowered === 'object') {
+        p('StrReplace('); a(1); p(','); a(2); o(',',3); a(3); o(',0,',4); a(4); o(',',5); a(5); p(')'); s(); break
+      case 'object':
         // Object() -> Map()  OR  Object("key",value) -> Map("key",value)
-        thisE.text = 'Map'
-      } else if (thisLowered === 'numput') {
+        thisE.text = 'Map'; break
+      case 'numput':{
         // NumPut(Number, VarOrAddress [, Offset := 0][, Type := "UPtr"])
         // NumPut Type, Number, [Type2, Number2, ...] VarOrAddress [, Offset]
         if (getArgs()) { return 2 }
@@ -234,18 +237,21 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
           a(3)
         }
         p(')'); s()
-      } else if (thisLowered === 'numget') {
+        break
+      }
+      case 'numget':{
         // Number := NumGet(Source [, Offset := 0][, Type := "UPtr"])
         // Number := NumGet(Source, [Offset,] Type)
         if (getArgs()) { return 2 }
         const len = argsArr.length
-        p('NumGet('); a(1); p(',');a(2); p(','); (len === 3 ? a(3) : p('"UPtr"')); p(')'); s()
-      } else if (thisLowered === 'objgetaddress') {
+        p('NumGet('); a(1); p(',');a(2); p(','); (len === 3 ? a(3) : p('"UPtr"')); p(')'); s(); break
+      }
+      case 'objgetaddress':
         // ObjGetAddress( this, "allData" )
         // this["allData"].Ptr
         if (getArgs()) { return 2 }
-        a(1); p('['); a(2); p('].Ptr'); s()
-      } else if (thisLowered === 'objsetcapacity') {
+        a(1); p('['); a(2); p('].Ptr'); s(); break
+      case 'objsetcapacity':
         if (getArgs()) { return 2 }
         if (argsArr.length === 3) {
           // ObjSetCapacity( this, "allData", newSize )
@@ -255,7 +261,8 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
         } else {
           p('ObjSetCapacity('); a(1); p(','); a(2); p(')'); s()
         }
-      } else if (thisLowered === 'objgetcapacity') {
+        break
+      case 'objgetcapacity':
         if (getArgs()) { return 2 }
         if (argsArr.length === 2) {
           // IF param1 is a [] and param2 === 1
@@ -286,21 +293,22 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
         } else {
           p('ObjGetCapacity('); a(1); p(')'); s()
         }
-      } else if (thisLowered === 'objhaskey') {
+        break
+      case 'objhaskey':
         // objhaskey(obj,key) -> obj.Has(key)
         if (getArgs()) { return 2 }
-        a(1); p('.Has('); a(2); p(')'); s()
-      } else if (thisLowered === 'objrawset') {
+        a(1); p('.Has('); a(2); p(')'); s(); break
+      case 'objrawset':
         // ObjRawSet(Object, Key, Value)
         // Object[Key]:=Value
         if (getArgs()) { return 2 }
-        a(1); p('['); a(2); p(']:='); a(3); s()
-      } else if (thisLowered === 'objrawget') {
+        a(1); p('['); a(2); p(']:='); a(3); s(); break
+      case 'objrawget':
         // ObjRawGet(Object, Key)
         // Object[Key]
         if (getArgs()) { return 2 }
-        a(1); p('['); a(2); p(']'); s()
-      } else {
+        a(1); p('['); a(2); p(']'); s(); break
+      default:
         while (true) {
           next = everything[++i]
           if (!next) {
@@ -319,9 +327,9 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
             return 3
           }
         }
-      }
-      break
-    }
+      } //inner switch end
+      break //break outer switch
+    } //scope create in outer switch
     case '(.) property findTrailingExpr':
       if (everything[i - 2].type !== 'Integer') {
         everything[i - 1].text = ''

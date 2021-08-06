@@ -2616,3 +2616,9 @@ EnvGet SystemRoot, SystemRoot
 
 todo:
 stringIndexBool to stringIndexTrue
+
+clr: manual convert:
+  CLR_CompileC# -> CLR_CompileC_Sharp
+  remove
+  	e := ComObjError(0)
+    ComObjError(e)
