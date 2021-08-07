@@ -51,6 +51,7 @@ describe('toV2(text)',function() {
   doIt('loop % v\nMsgBox % A_Index}','loop v\nMsgBox A_Index}')
   doItFiles('../tests4/v1 percent next to each other.ahk','correct/v1 percent next to each other.ah2')
   doItFiles('../tests3/splitpath.ahk','correct/splitpath.ah2')
+  doItFiles('../v2tests/NumGet.ahk','correct/NumGet.ah2')
 })
 
 function toV2(text,is_AHK_H = true) {

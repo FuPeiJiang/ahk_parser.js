@@ -4,6 +4,7 @@ import modifyEverythingToV2 from './modifyEverythingToV2'
 
 
 const content: Buffer =
+fs.readFileSync('v2tests/numget.ahk')
 // fs.readFileSync('tests4/v1 percent next to each other.ahk')
 // fs.readFileSync('tests4/loop files EnvGet SystemRoot.ahk')
 // fs.readFileSync('tests4/fix loop num bracket.ahk')
@@ -59,7 +60,7 @@ const content: Buffer =
 fs.readFileSync('tests3/recurse VarSetCapacity replacement.ahk')
 fs.readFileSync('tov2/OpenInAhkExplorer.ahk') */
 // fs.readFileSync('tov2/sortAr.ahk')
-fs.readFileSync('tests3/splitpath.ahk')
+// fs.readFileSync('tests3/splitpath.ahk')
 // fs.readFileSync('tests3/not assignment operatEor.ahk')
 // fs.readFileSync('tests3/idkAnymore23.ahk')
 // fs.readFileSync('tov2/jpgs to pdf.ahk')

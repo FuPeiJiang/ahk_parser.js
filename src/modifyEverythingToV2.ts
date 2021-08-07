@@ -248,7 +248,9 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
         // Number := NumGet(Source, [Offset,] Type)
         if (getArgs()) { return 2 }
         const len = argsArr.length
-        p('NumGet('); a(1); p(',');a(2); p(','); (len === 3 ? a(3) : p('"UPtr"')); p(')'); s(); break
+        p('NumGet('); a(1); p(',');
+        (argsArr[1] && argsArr[1].length > 1) ? a(2) : p('0')
+        p(','); (len === 3 ? a(3) : p('"UPtr"')); p(')'); s(); break
       }
       case 'objgetaddress':
         // ObjGetAddress( this, "allData" )
