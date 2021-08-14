@@ -2,9 +2,11 @@ import fs from 'fs'
 import ahkParser from './parser/index'
 import modifyEverythingToV2 from './modifyEverythingToV2'
 
+const d = console.log.bind(console)
 
 const content: Buffer =
-fs.readFileSync('v2tests/numget.ahk')
+fs.readFileSync('tests4/completion.ahk')
+// fs.readFileSync('v2tests/numget.ahk')
 // fs.readFileSync('tests4/v1 percent next to each other.ahk')
 // fs.readFileSync('tests4/loop files EnvGet SystemRoot.ahk')
 // fs.readFileSync('tests4/fix loop num bracket.ahk')
@@ -71,11 +73,24 @@ fs.readFileSync('tov2/OpenInAhkExplorer.ahk') */
 // fs.readFileSync('tov2/string.ahk')
 // fs.readFileSync('tests/ahk_explorer.ahk')
 
-const everything = ahkParser(content.toString().replace(/\r/g,''))
+const str = content.toString().replace(/\r/g,'')
+
+const startTime = process.hrtime()
+const everything = ahkParser(str)
+const diff = process.hrtime(startTime)
+d(HrTime_diffToMs(diff))
 // writeSync(arrOrObjToString(everything),'everything_before.txt')
 // const converted = modifyEverythingToV2(everything,false)
 const converted = modifyEverythingToV2(everything)
 
+
+
+
+function HrTime_diffToMs(diff) {
+  d(diff)
+  // return diff[0] * 1000000 + diff[1] / 1000000
+  return `${diff[0] * 1000 + diff[1] / 1000000}ms`
+}
 writeSync(converted,'reconstructed.ah2')
 writeSync(arrOrObjToString(everything),'everything.txt')
 
