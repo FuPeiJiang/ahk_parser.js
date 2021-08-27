@@ -875,7 +875,7 @@ _BITMAPtoDIB_cleanup:
         if !( out_size := this._getFormatData( out_data, clipData, clipSize, "HTML Format" ) )
             return ""
         return strget( out_data.Ptr, out_size, "CP0" )
-    }()
+    }
     
     static iGetHtml()
     {

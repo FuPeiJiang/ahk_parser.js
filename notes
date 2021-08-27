@@ -2622,3 +2622,6 @@ clr: manual convert:
   remove
   	e := ComObjError(0)
     ComObjError(e)
+
+https://github.com/helsmy/AHKNumberMusicSheet/tree/development
+helsmy use's Map instead of {}
