@@ -1,15 +1,15 @@
-if (var ~= "i)^(exe ,a,b| c|d,)$")
-if (var ~= "i)^(exe ,a,b| c)$")
-if (var ~= "i)^(a|b|c)$")
-if (var ~= "i)^(a)$")
+if (var ~= "Di)^(exe ,a,b| c|d,)$")
+if (var ~= "Di)^(exe ,a,b| c)$")
+if (var ~= "Di)^(a|b|c)$")
+if (var ~= "Di)^(a)$")
 
 ;['a', '']
-if (var ~= "i)^(a)$")
-if (var ~= "i)^(a)$") ;`s
-if (var ~= "i)^(a)$") 	;`s`t
+if (var ~= "Di)^(a)$")
+if (var ~= "Di)^(a)$") ;`s
+if (var ~= "Di)^(a)$") 	;`s`t
 
 if Var in "a"
 
-if (var ~= "i)^(a\\)$")
-if (var ~= "i)^(a\\\.\*\?\+\[\{\|\(\)\^\$)$")
-if (var ~= "i)^(a`")$")
+if (var ~= "Di)^(a\\)$")
+if (var ~= "Di)^(a\\\.\*\?\+\[\{\|\(\)\^\$)$")
+if (var ~= "Di)^(a`")$")

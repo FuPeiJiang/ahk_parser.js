@@ -964,7 +964,7 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
         // (var ~= "i)^(Mon|Tue|Wed|Thu|Fri|Sat|Sun)$")
         everything.splice(i - 4,b - i + 5,{
           type:'converted `if var in`',
-          text:`(var ~= "i)^(${escapedMatchArr.join('|')})$")`,
+          text:`(var ~= "Di)^(${escapedMatchArr.join('|')})$")`,
         })
       } else {
         return 1

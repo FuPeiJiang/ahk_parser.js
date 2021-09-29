@@ -2,6 +2,13 @@ import {strictEqual} from 'assert'
 import ahkParser from '../src/parser/index'
 import modifyEverythingToV2 from '../src/modifyEverythingToV2'
 import fs from 'fs'
+const d = console.log.bind(console)
+
+// https://stackoverflow.com/questions/16144455/mocha-tests-with-extra-options-or-parameters#16145019
+if (process.env.doFixTest) {
+  //replace the function
+  doItFiles = doItFilesDoFixTests
+}
 
 describe('toV2(text)',function() {
   describe('{} -> Map()',function() {
@@ -70,5 +77,16 @@ function readFileToString(path) {
 function doItFiles(path1,path2,is_AHK_H = true) {
   it(`FILE: '${path1}' vs '${path2}'`,function() {
     strictEqual(toV2(readFileToString(path1),is_AHK_H),readFileToString(path2))
+  })
+}
+function doItFilesDoFixTests(path1,path2,is_AHK_H = true) {
+  it(`FILE: '${path1}' vs '${path2}'`,function() {
+    const convertedToV2 = toV2(readFileToString(path1),is_AHK_H)
+    try {
+      strictEqual(convertedToV2,readFileToString(path2))
+    } catch (error) {
+      fs.writeFileSync(`${__dirname}/${path2}`,convertedToV2)
+      throw error
+    }
   })
 }
