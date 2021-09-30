@@ -1,3 +1,12 @@
+# If you're not using Zero-Installs:
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
+
 # don't ever lint node_modules
 node_modules
 # don't lint build output (make sure it's set to your correct build folder name)
