@@ -27,7 +27,7 @@ const commaCommandObj: stringIndexBool = {', command whiteSpace':true,', command
 const startOfV1Expr: stringIndexBool = {'v1String findV1Expression':true,'%START %Var%':true,'v1String findPercentVarV1Expression':true,'start unit':true,'String':true}
 
 const typesThatAreVars: stringIndexBool = {'Param':true,'idkVariable':true,'assignment':true,'v1String findIdkVar':true,'var at v1Assignment':true}
-const varsThatArePath: stringIndexBool = {}
+const varsThatArePath: stringIndexBool = {} //this WILL get dynamicly filled
 
 // const concatableTypes: stringIndexBool = {'v1String findPercentVarV1Expression':true,'percentVar v1Expression':true}
 const concatIgnoreThese: stringIndexBool = {'%START %Var%':true,'END% %Var%':true}
@@ -657,16 +657,17 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
         spaceIfComment(); s(); break
       case 'stringlower':
         // StringUpper, OutputVar, InputVar, T
-        // OutputVar:=StrUpper(InputVar,"T")
-        //#command
-        if (skipFirstSeparatorOfCommand()) { return 3 }
-        commandChooseEdit({1:true,2:true})
+        // OutputVar:=StrLower(InputVar,"T")
+        if (commandNEdit(2)) { return 3 }
+
         if (getCommandParams()) { return 2 }
         a(1); p(':=StrLower('); a(2); o(',',3); a(3); p(')')
         spaceIfComment(); s(); break
       case 'stringupper':
-        if (skipFirstSeparatorOfCommand()) { return 3 }
-        commandChooseEdit({1:true,2:true})
+        // StringUpper, OutputVar, InputVar, T
+        // OutputVar:=StrUpper(InputVar,"T")
+        if (commandNEdit(2)) { return 3 }
+
         if (getCommandParams()) { return 2 }
         a(1); p(':=StrUpper('); a(2); o(',',3); a(3); p(')')
         spaceIfComment(); s(); break
@@ -976,9 +977,15 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
       let next = everything[i]
       if (next && next.type === '% v1->v2 expr') {
         next = everything[i + 2]
+        // EnvGet SystemRootVar, SystemRoot
+        // Loop % SystemRootVar "\Microsoft.NET\Framework" (A_PtrSize=8?"64":"") "\*", 2, 1
         if (next && next.type === 'idkVariable') {
           if (varsThatArePath[next.text.toLowerCase()]) {
-            commandChooseEdit({2:true,3:true})
+
+            const iBak = i
+            if (skipToAfter(', 1 (loop) idk')) { return 3 }
+            if (commandNEdit(2)) { return 3 }
+            i = iBak
             if (getCommandParams()) { return 2 }
             let Mode = ''
             if (argsArr.length > 1) {
@@ -1001,7 +1008,9 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
               }
             }
             p('Files, '); a(1)
-            Mode && (p(','),p(`"${Mode}"`))
+            if (Mode) {
+              p(','),p(`"${Mode}"`)
+            }
             spaceIfComment(); s(); break
           }
         }
@@ -1278,96 +1287,28 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
     findNext('end command')
     spliceTillIndex(b + 2)
   }
+  // function commandChooseEdit(whichParamsObj: stringIndexBool) {
   function commandNEdit(howManyEdit: number) {
-    if (skipFirstSeparatorOfCommand()) { return true }
-    if (howManyEdit) {
-      let whichParam = 0
-      innerLoop:
-      while (true) {
-        next = everything[i]
-        if (!next) {
-          return true
-        }
-        const bType = next.type
-
-        if (v1Str[bType]) {
-          next.type = 'edit'
-          i++
-          continue innerLoop
-        }
-
-        const allReturn = all()
-        if (allReturn === 1) {
-          continue innerLoop
-        } else if (allReturn === 2) {
-          return true
-        } else if (allReturn === 3) {
-          i++
-          continue innerLoop
-        }
-
-        if (bType === 'end command') {
-          return false
-        } else if (commaCommandObj[bType]) {
-          whichParam++
-          if (whichParam === howManyEdit) {
-            break innerLoop
-          }
-        }
-        i++
-        continue innerLoop
-      }
-    }
-    innerLoop:
-    while (true) {
-      next = everything[i]
-      if (!next) {
-        return true
-      }
-      const bType = next.type
-
-      if (v1Str[bType]) {
-        if (!isNaN(Number(next.text))) {
-          next.type = 'edit'
-          i++
-          continue innerLoop
-        }
-      }
-
-      const allReturn = all()
-      if (allReturn === 1) {
-        continue innerLoop
-      } else if (allReturn === 2) {
-        return true
-      } else if (allReturn === 3) {
-        i++
-        continue innerLoop
-      }
-
-      if (bType === 'end command') {
-        return false
-      }
-      i++
-    }
-  }
-  function commandChooseEdit(whichParamsObj: stringIndexBool) {
     let paramNum = 1
-    while (true) {
-      next = everything[++b]
-      if (!next) {
-        return true
-      }
+    const len = everything.length
+    b = i
+    while (b < len) {
+      next = everything[b]
       const dType = next.type
-      if (v1Percent[dType] || v1Str[dType]) {
-        if (whichParamsObj[paramNum]) {
-          next.type = 'edit'
-        }
+      if (v1Str[dType] || v1Percent[dType]) {
+        next.type = 'edit'
       } else if (commaCommandObj[dType]) {
+        if (paramNum === howManyEdit) {
+          return false
+        }
         paramNum++
       } else if (dType === 'end command') {
-        return true
+        return false
       }
+      b++
     }
+    //out of length
+    return true
   }
   function commandAllEdit() {
     const len = everything.length
@@ -1391,29 +1332,30 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
 
 
   function skipFirstSeparatorOfCommand() {
-    next = everything[++i]
-    if (!next) {
+    const len = everything.length
+    if (i > len) {
       return true
     }
+    next = everything[++i]
     if (next.type === 'emptyLines') {
       next.text = ' '
-      next = everything[++i]
-      if (!next) {
+      if (i > len) {
         return true
       }
+      next = everything[++i]
     }
     if (next.type === '(statement) ,') {
       next.text = ' '
-      next = everything[++i]
-      if (!next) {
+      if (i > len) {
         return true
       }
+      next = everything[++i]
       if (next.type === 'whiteSpaces') {
         next.text = ''
-        next = everything[++i]
-        if (!next) {
+        if (i > len) {
           return true
         }
+        // next = everything[++i]
       }
     }
 
@@ -1708,6 +1650,18 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
       next = everything[++b]
     }
     return false
+  }
+  function skipToAfter(this_type: string) {
+    const len = everything.length
+    while (i < len) {
+      next = everything[i]
+      i++
+      if (next.type && next.type === this_type) {
+        return false
+      }
+    }
+    //out of length
+    return true
   }
   function nextSkipThrough(lookForThisToEnd: string,ohNoAddAnotherOne: string) {
     let next,arrAccessDepth = 1

@@ -61,6 +61,8 @@ describe('toV2(text)',function() {
   doItFiles('../v2tests/NumGet.ahk','correct/NumGet.ah2')
   describe('string',function() {
     doIt('StringTrimRight, OutputVar, InputVar, Count','OutputVar:=SubStr(InputVar,1,-Count)')
+    doIt('StringLower, OutputVar, InputVar, T','OutputVar:=StrLower(InputVar,"T")')
+    doIt('StringUpper, OutputVar, InputVar, T','OutputVar:=StrUpper(InputVar,"T")')
   })
 })
 
