@@ -59,6 +59,9 @@ describe('toV2(text)',function() {
   doItFiles('../tests4/v1 percent next to each other.ahk','correct/v1 percent next to each other.ah2')
   doItFiles('../tests3/splitpath.ahk','correct/splitpath.ah2')
   doItFiles('../v2tests/NumGet.ahk','correct/NumGet.ah2')
+  describe('string',function() {
+    doIt('StringTrimRight, OutputVar, InputVar, Count','OutputVar:=SubStr(InputVar,1,-Count)')
+  })
 })
 
 function toV2(text,is_AHK_H = true) {

@@ -612,7 +612,7 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
         if (modNumIfNum(1)) { return 3 } break
       case 'mousegetpos':
         // MouseGetPos [OutputVarX, OutputVarY, OutputVarWin, OutputVarControl, Flag]
-        if (modCommandOfVarnameAfterNum(4)) { return 3 } break
+        if (commandNEdit(4)) { return 3 } break
       case 'mousemove':
         // MouseMove X, Y [, Speed, Relative]
         if (modV1StrToEdit(3)) { return 3 } break
@@ -647,11 +647,11 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
       case 'splitpath':
         if (keepAsItIs(5)) { return 3 } break
       case 'stringtrimright':
-        if (skipFirstSeparatorOfCommand()) { return 3 }
         // StringTrimRight, OutputVar, InputVar, Count
         // OutputVar:=SubStr(InputVar,1,-Count)
         //#command
-        commandAllEdit()
+        if (commandAllEdit()) { return 3 }
+
         if (getCommandParams()) { return 2 }
         a(1); p(':=SubStr('); a(2); p(',1,-'); a(3); p(')')
         spaceIfComment(); s(); break
@@ -660,13 +660,13 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
         // OutputVar:=StrUpper(InputVar,"T")
         //#command
         if (skipFirstSeparatorOfCommand()) { return 3 }
-        commandAllEditChoose({1:true,2:true})
+        commandChooseEdit({1:true,2:true})
         if (getCommandParams()) { return 2 }
         a(1); p(':=StrLower('); a(2); o(',',3); a(3); p(')')
         spaceIfComment(); s(); break
       case 'stringupper':
         if (skipFirstSeparatorOfCommand()) { return 3 }
-        commandAllEditChoose({1:true,2:true})
+        commandChooseEdit({1:true,2:true})
         if (getCommandParams()) { return 2 }
         a(1); p(':=StrUpper('); a(2); o(',',3); a(3); p(')')
         spaceIfComment(); s(); break
@@ -978,7 +978,7 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
         next = everything[i + 2]
         if (next && next.type === 'idkVariable') {
           if (varsThatArePath[next.text.toLowerCase()]) {
-            commandAllEditChoose({2:true,3:true})
+            commandChooseEdit({2:true,3:true})
             if (getCommandParams()) { return 2 }
             let Mode = ''
             if (argsArr.length > 1) {
@@ -1278,9 +1278,9 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
     findNext('end command')
     spliceTillIndex(b + 2)
   }
-  function modCommandOfVarnameAfterNum(howManyVarName: number) {
+  function commandNEdit(howManyEdit: number) {
     if (skipFirstSeparatorOfCommand()) { return true }
-    if (howManyVarName) {
+    if (howManyEdit) {
       let whichParam = 0
       innerLoop:
       while (true) {
@@ -1310,7 +1310,7 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
           return false
         } else if (commaCommandObj[bType]) {
           whichParam++
-          if (whichParam === howManyVarName) {
+          if (whichParam === howManyEdit) {
             break innerLoop
           }
         }
@@ -1350,24 +1350,46 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
       i++
     }
   }
-  function printFromEverythingText(okArr: ExtendedEverythingType) {
-    const arrToJoin = []
-    for (let i = 0,len = okArr.length; i < len; i++) {
-      arrToJoin.push(okArr[i].text)
-    }
-    d(arrToJoin.join(''))
-  }
-  function spaceIfComment() {
-    const next = everything[i + 1]
-
-    if (next) {
-      if (next.type === 'emptyLines') {
-        if (next.text[0] === ';') {
-          p(' ')
+  function commandChooseEdit(whichParamsObj: stringIndexBool) {
+    let paramNum = 1
+    while (true) {
+      next = everything[++b]
+      if (!next) {
+        return true
+      }
+      const dType = next.type
+      if (v1Percent[dType] || v1Str[dType]) {
+        if (whichParamsObj[paramNum]) {
+          next.type = 'edit'
         }
+      } else if (commaCommandObj[dType]) {
+        paramNum++
+      } else if (dType === 'end command') {
+        return true
       }
     }
   }
+  function commandAllEdit() {
+    const len = everything.length
+    b = i
+    while (b < len) {
+      next = everything[b]
+      const dType = next.type
+      if (v1Percent[dType]) {
+        next.type = 'edit'
+      } else if (v1Str[dType]) {
+        next.type = 'edit'
+      } else if (dType === 'end command') {
+        return false
+      }
+      b++
+    }
+    //out of length
+    return true
+  }
+
+
+
   function skipFirstSeparatorOfCommand() {
     next = everything[++i]
     if (!next) {
@@ -1401,6 +1423,24 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
       d(everything[i + n])
     }
   }
+  function printFromEverythingText(okArr: ExtendedEverythingType) {
+    const arrToJoin = []
+    for (let i = 0,len = okArr.length; i < len; i++) {
+      arrToJoin.push(okArr[i].text)
+    }
+    d(arrToJoin.join(''))
+  }
+  function spaceIfComment() {
+    const next = everything[i + 1]
+
+    if (next) {
+      if (next.type === 'emptyLines') {
+        if (next.text[0] === ';') {
+          p(' ')
+        }
+      }
+    }
+  }
   function parseIdkVariable(text: string) {
     let startIndex = text.indexOf('%')
     let pVar,notVar,endIndex
@@ -1429,43 +1469,6 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
       return false
     }
   }
-
-  function commandAllEditChoose(whichParamsObj: stringIndexBool) {
-    let paramNum = 1
-    while (true) {
-      next = everything[++b]
-      if (!next) {
-        return true
-      }
-      const dType = next.type
-      if (v1Percent[dType] || v1Str[dType]) {
-        if (whichParamsObj[paramNum]) {
-          next.type = 'edit'
-        }
-      } else if (commaCommandObj[dType]) {
-        paramNum++
-      } else if (dType === 'end command') {
-        return true
-      }
-    }
-  }
-  function commandAllEdit() {
-    while (true) {
-      next = everything[++b]
-      if (!next) {
-        return true
-      }
-      const dType = next.type
-      if (v1Percent[dType]) {
-        next.type = 'edit'
-      } else if (v1Str[dType]) {
-        next.type = 'edit'
-      } else if (dType === 'end command') {
-        return true
-      }
-    }
-  }
-
   function removeWhiteSpaceAndStuff(paramArr: ExtendedEverythingType) {
     const returnArr = []
     let paramsLen
