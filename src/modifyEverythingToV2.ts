@@ -1355,7 +1355,7 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
         return true
       }
       next = everything[++i]
-      if (next.type === 'whiteSpaces') {
+      if (wsOrEmptyLine[next.type]) { //normally: 'whiteSpaces' ; 'loop' can be 'emptyLines'
         next.text = ''
         if (i > len) {
           return true
