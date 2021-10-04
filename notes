@@ -2627,3 +2627,13 @@ https://github.com/helsmy/AHKNumberMusicSheet/tree/development
 helsmy use's Map instead of {}
 
 commandChooseEdit
+
+
+Biga.ah2
+  p type(param_string) ;Integer
+  str:=String(param_string)
+  p type(str) ;String
+
+	; it was an Integer all along, not a string
+	; strings are always orange "2"
+	; integers are green and 2

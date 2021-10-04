@@ -211,9 +211,20 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
           // TargetVar.Size
           a(1); p('.Size'); s()
         } else {
-          // VarSetStrCapacity(TargetVar, RequestedCapacity, FillByte)
+          // VarSetCapacity(TargetVar[,RequestedCapacity,FillByte])
+          // VarSetStrCapacity(TargetVar[,RequestedCapacity])
+
+          // https://docs.microsoft.com/en-us/previous-versions/windows/desktop/legacy/aa366561(v=vs.85)
+          // https://www.autohotkey.com/board/topic/17289-a-faster-method-than-dllcallrtlfillmemory/#post_id_112306
+          p('VarSetStrCapacity('),a(1),o(',',2); a(2),p(')')
+          if (argsArr.length === 3) {
+          // 'DllCall("RtlFillMemory", "UInt", Pointer, Int, 1, UChar, Byte)
+            p(',DllCall("RtlFillMemory", "UInt",StrPtr('),a(1),p('), "Int",'),a(2),p(', "UChar",'),a(3),p(')')
+          }
+          s()
+
           // TargetVar:=BufferAlloc(RequestedCapacity,FillByte)
-          a(1); p(`:=${whichBuffer}(`); a(2); o(',',3); a(3); p(')'); s()
+          // a(1); p(`:=${whichBuffer}(`); a(2); o(',',3); a(3); p(')'); s()
         }
         break
       case 'strreplace':
@@ -256,7 +267,8 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
         // ObjGetAddress( this, "allData" )
         // this["allData"].Ptr
         if (getArgs()) { return 2 }
-        a(1); p('['); a(2); p('].Ptr'); s(); break
+        p('StrPtr('); a(1); p('['); a(2); p('])'); s(); break
+        // a(1); p('['); a(2); p('].Ptr'); s(); break
       case 'objsetcapacity':
         if (getArgs()) { return 2 }
         if (argsArr.length === 3) {
@@ -845,9 +857,10 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
         const validVarStr = allVariableCharsArr.join('')
         if (isNaN(Number(validVarStr))) {
           thisE.text = ''
-          everything.splice(b + 1,0,{type:'edit',text:'.Ptr'})
+          // everything.splice(b + 1,0,{type:'edit',text:'.Ptr'})
           // 'StrPtr('
-          // everything.splice(b + 1,0,{type:'edit',text:')'})
+          everything.splice(i,0,{type:'edit',text:'StrPtr('})
+          everything.splice(b + 1,0,{type:'edit',text:')'})
         }
       }
       break

@@ -1222,9 +1222,11 @@ class biga {
 		}
 		static MD5_DIGEST_LENGTH := 16
 		hModule := DllCall("LoadLibrary", "Str", "advapi32.dll", "Ptr")
-		, VarSetCapacity(MD5_CTX, 104, 0), DllCall("advapi32\MD5Init", "Ptr", &MD5_CTX)
-		, DllCall("advapi32\MD5Update", "Ptr", &MD5_CTX, "AStr", param_string, "UInt", StrLen(param_string))
-		, DllCall("advapi32\MD5Final", "Ptr", &MD5_CTX)
+		VarSetCapacity(MD5_CTX, 104, 0), DllCall("advapi32\MD5Init", "Ptr", &MD5_CTX)
+		; p(StrLen(param_string))
+		; DllCall("advapi32\MD5Update", "Ptr", &MD5_CTX, "AStr", param_string, "UInt", StrLen(param_string))
+		DllCall("advapi32\MD5Update", "Ptr", &MD5_CTX, "AStr", param_string, "UInt", 0)
+		DllCall("advapi32\MD5Final", "Ptr", &MD5_CTX)
 		loop % MD5_DIGEST_LENGTH {
 			o .= Format("{:02" (case ? "X" : "x") "}", NumGet(MD5_CTX, 87 + A_Index, "UChar"))
 		}

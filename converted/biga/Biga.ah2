@@ -1048,7 +1048,7 @@ class biga {
 		; create
 		l_index := (Type(l_array)=="Array"?l_array.Length:l_array.Count)
 		loop l_index - 1 {
-			randomIndex:=Random(1,l_index)
+			randomIndex:=Random("1",l_index)
 			l_tempVar := l_array[l_index]
 			l_array[l_index] := l_array[randomIndex]
 			l_array[randomIndex] := l_tempVar
@@ -1153,7 +1153,7 @@ class biga {
 			sortType := "N"
 		}
 		out:=SubStr(out,1,-1 ) ; remove trailing |
-		sort out, "D| " sortType
+		out:=Sort("D| " sortType)
 		arrStorage := []
 		loop parse, out, "|"
 		{
@@ -1209,12 +1209,36 @@ class biga {
 			param_string := this.print(param_string)
 		}
 		static MD5_DIGEST_LENGTH := 16
-		hModule := DllCall("LoadLibrary", "Str", "advapi32.dll", "Ptr")
-		, MD5_CTX:=BufferAlloc(104,0), DllCall("advapi32\MD5Init", "Ptr", MD5_CTX.Ptr)
-		, DllCall("advapi32\MD5Update", "Ptr", MD5_CTX.Ptr, "AStr", param_string, "UInt", StrLen(param_string))
-		, DllCall("advapi32\MD5Final", "Ptr", MD5_CTX.Ptr)
+		; hModule := DllCall("LoadLibrary", "Str", "advapi32.dll", "Ptr")
+		; if (!hModule) {
+			; p 12
+		; }
+		; VarSetStrCapacity(MD5_CTX,104)
+		; DllCall("RtlFillMemory", "UInt",StrPtr(MD5_CTX), "Int",104, "UChar",0)
+		; DllCall("advapi32\MD5Init", "Ptr", StrPtr(MD5_CTX))
+		; DllCall("advapi32\MD5Update", "Ptr", StrPtr(MD5_CTX), "AStr", param_string, "UInt", StrLen(param_string))
+
+
+		; MD5_CTX:=BufferAlloc(104,0)
+		; DllCall("advapi32\MD5Init", "Ptr", MD5_CTX)
+		; DllCall("advapi32\MD5Update", "Ptr", MD5_CTX, "AStr", param_string, "UInt", StrLen(param_string))
+		; DllCall("advapi32\MD5Final", "Ptr", MD5_CTX)
+
+		p type(param_string) ;Integer
+		str:=String(param_string)
+		p type(str) ;String
+
+	; it was an Integer all along, not a string
+	; strings are always orange "2"
+	; integers are green and 2
+
+    MD5_CTX := BufferAlloc(104,0)
+    DllCall("advapi32\MD5Init", "Ptr", MD5_CTX)
+    DllCall("advapi32\MD5Update", "Ptr", MD5_CTX, "AStr", str, "UInt", StrLen(str))
+    DllCall("advapi32\MD5Final", "Ptr", MD5_CTX)
+
 		loop MD5_DIGEST_LENGTH {
-			o .= Format("{:02" (dCase ? "X" : "x") "}", NumGet(MD5_CTX, 87 + A_Index, "UChar"))
+			o .= Format("{:02" (dCase ? "X" : "x") "}", NumGet(MD5_CTX,87+A_Index,"UChar"))
 		}
 		DllCall("FreeLibrary", "Ptr", hModule)
 		return o
@@ -1623,7 +1647,7 @@ class biga {
 		}
 
 		; create
-		vRandom:=Random(param_lower,param_upper)
+		vRandom:=Random("param_lower","param_upper")
 		return vRandom
 	}
 	static defaults(param_object,param_sources*) {

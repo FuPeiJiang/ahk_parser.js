@@ -5,33 +5,29 @@ SetWorkingDir A_ScriptDir  ; Ensures a consistent starting directory.
 #KeyHistory 0
 #Warn VarUnset, Off
 
-; d b:=array_p(A.chunk(["a", "b", "c", "d"], 2)), "`n==================`n", b=='[["a", "b"], ["c", "d"]]'
-
-; d b:=array_p(A.drop([1, 2, 3])), "`n==================`n", b=='[2, 3]'
-; d b:=array_p(A.drop([1, 2, 3], 5)), "`n==================`n", b=='[]'
-; d b:=array_p(A.drop([1, 2, 3], 3)), "`n==================`n", b=='[]'
-
-; d b:=array_p(A.dropRight([1, 2, 3])), "`n==================`n", b=='[1, 2]'
-; d b:=array_p(A.dropRight([1, 2, 3], 5)), "`n==================`n", b=='[]'
-; d b:=array_p(A.dropRight([1, 2, 3], 3)), "`n==================`n", b=='[]'
-
-; d b:=array_p(A.defaults(Map("a",1), Map("b",2), Map("a",3))), "`n==================`n", b=='{"a":1, "b":2}'
-
+assert(array_isNotEqual(A.chunk(["a", "b", "c", "d"], 2), [["a", "b"], ["c", "d"]]), false)
+assert(array_isNotEqual(A.drop([1, 2, 3]), [2, 3]), false)
+assert(array_isNotEqual(A.drop([1, 2, 3], 5), []), false)
+assert(array_isNotEqual(A.drop([1, 2, 3], 3), []), false)
+assert(array_isNotEqual(A.dropRight([1, 2, 3]), [1, 2]), false)
+assert(array_isNotEqual(A.dropRight([1, 2, 3], 5), []), false)
+assert(array_isNotEqual(A.dropRight([1, 2, 3], 3), []), false)
+assert(array_isNotEqual(A.defaults(Map("a",1), Map("b",2), Map("a",3)), Map("a",1, "b",2)), false)
 users := [ Map("user", "barney",     "active", false)
         , Map( "user", "fred",     "active", false )
         , Map( "user", "pebbles",     "active", true ) ]
-; d b:=array_p(A.dropWhile(users, "fn_dropWhile")), "`n==================`n", b=='[{"active":1, "user":"pebbles"}]'
+assert(array_isNotEqual(A.dropWhile(users, "fn_dropWhile"), [Map("active",1, "user","pebbles")]), false)
 ; => [{ "user": "pebbles", "active": true }]
-
 users := [ Map("user", "barney",     "active", true)
         , Map( "user", "fred",     "active", false )
         , Map( "user", "pebbles",     "active", false ) ]
-; d b:=array_p(A.dropRightWhile(users, "fn_dropRightWhile")), "`n==================`n", b=='[{"active":1, "user":"barney"}]'
+assert(array_isNotEqual(A.dropRightWhile(users, "fn_dropRightWhile"), [Map("active",1, "user","barney")]), false)
 ; => [{"user": "barney", "active": true }]
 
-p A_Clipboard:=b:=array_p(A.initial([1, 2, 3])), "`n==================`n", b=='[1, 2]'
-p A_Clipboard:=b:=array_p(A.initial("fred")), "`n==================`n", b=='["f", "r", "e"]'
+assert(array_isNotEqual(A.initial([1, 2, 3]), [1, 2]), false)
+assert(array_isNotEqual(A.initial("fred"), ["f", "r", "e"]), false)
 
+assert(array_isNotEqual(A.uniq([2, 1, 2]), [2, 1]), false)
 
 fn_dropWhile(o)
 {
@@ -65,7 +61,6 @@ fn_dropRightWhile(o)
 return
 
 #Include Biga.ah2
-
 
 
 
