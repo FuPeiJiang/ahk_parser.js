@@ -671,6 +671,11 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
         if (getCommandParams()) { return 2 }
         a(1); p(':=StrUpper('); a(2); o(',',3); a(3); p(')')
         spaceIfComment(); s(); break
+      case 'stringlen':
+        if (commandAllEdit()) { return 3 }
+        if (getCommandParams()) { return 2 }
+        a(1); p(':=StrLen('); a(2); p(')')
+        spaceIfComment(); s(); break
       case 'getkeystate':
         return commandFirstParamToFunction('GetKeyState')
       case 'controlgetfocus':

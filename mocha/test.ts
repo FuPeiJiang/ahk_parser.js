@@ -63,6 +63,7 @@ describe('toV2(text)',function() {
     doIt('StringTrimRight, OutputVar, InputVar, Count','OutputVar:=SubStr(InputVar,1,-Count)')
     doIt('StringLower, OutputVar, InputVar, T','OutputVar:=StrLower(InputVar,"T")')
     doIt('StringUpper, OutputVar, InputVar, T','OutputVar:=StrUpper(InputVar,"T")')
+    doIt('StringLen, OutputVar, InputVar','OutputVar:=StrLen(InputVar)')
   })
 })
 
