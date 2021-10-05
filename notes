@@ -2637,3 +2637,8 @@ Biga.ah2
 	; it was an Integer all along, not a string
 	; strings are always orange "2"
 	; integers are green and 2
+
+Buffer/VarSetStrCapacity
+.Size
+.Ptr
+

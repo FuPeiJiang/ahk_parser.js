@@ -1,3 +1,1 @@
-EnvGet SystemRootVar, SystemRoot
-Loop % SystemRootVar "\Microsoft.NET\Framework" (A_PtrSize=8?"64":"") "\*", 2, 1
-  msgbox 1
+size := VarSetCapacity( bufName, 255*( A_IsUnicode ? 2 : 1 ), 0 )

@@ -7,16 +7,16 @@ Global RunCMD_PID
 , DllCall("SetNamedPipeHandleState","Ptr",hPipeR, "UIntP",PIPE_NOWAIT:=1, "Ptr",0, "Ptr",0)
 
 , P8 := (A_PtrSize=8)
-, SI:=BufferAlloc(P8?104:68,0)                          ; STARTUPINFO structure      
+, VarSetStrCapacity(SI,P8?104:68),DllCall("RtlFillMemory", "UInt",StrPtr(SI), "Int",P8?104:68, "UChar",0)                          ; STARTUPINFO structure      
 , NumPut("UPtr",P8?104:68,SI)                                     ; size of STARTUPINFO
 , NumPut("UInt",STARTF_USESTDHANDLES:=0x100,SI,P8?60:44)  ; dwFlags
 , NumPut("UPtr",hPipeW,SI,P8?88:60)                              ; hStdOutput
 , NumPut("UPtr",hPipeW,SI,P8?96:64)                              ; hStdError
-, PI:=BufferAlloc(P8?24:16)                              ; PROCESS_INFORMATION structure
+, VarSetStrCapacity(PI,P8?24:16)                              ; PROCESS_INFORMATION structure
 
   If not DllCall("CreateProcess", "Ptr",0, "Str",CmdLine, "Ptr",0, "Int",0, "Int",True
                 ,"Int",0x08000000 | DllCall("GetPriorityClass", "Ptr",-1, "UInt"), "Int",0
-                ,"Ptr",WorkingDir ? WorkingDir.Ptr : 0, "Ptr",SI.Ptr, "Ptr",PI.Ptr)  
+                ,"Ptr",WorkingDir ? StrPtr(WorkingDir) : 0, "Ptr",StrPtr(SI), "Ptr",StrPtr(PI))  
      Return Format("{1:}", "", ErrorLevel := -1
                    ,DllCall("CloseHandle", "Ptr",hPipeW), DllCall("CloseHandle", "Ptr",hPipeR))
 

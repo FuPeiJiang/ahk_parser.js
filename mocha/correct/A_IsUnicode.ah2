@@ -1,4 +1,4 @@
-size := bufName:=BufferAlloc(255*2,0)
+size := VarSetStrCapacity(bufName,255*2),DllCall("RtlFillMemory", "UInt",StrPtr(bufName), "Int",255*2, "UChar",0)
 
 v:=25+255*2
 v:=a+25+255*2
@@ -6,14 +6,14 @@ v:=a+25+255*2
 static PTR:=A_PtrSize
     ,TBYTE:= 2,TCHAR:=2
 ; Acc.ahk
-sRole:=BufferAlloc(2*nSize)
+VarSetStrCapacity(sRole,2*nSize)
 v:=2*234
 ; AHK-Studio.ahk
-str:=BufferAlloc(cp*2)
+VarSetStrCapacity(str,cp*2)
 if ((A_PtrSize=8&&A_IsCompiled="")||!true){
 }
 ; ahk_explorer.ahk
-downloads:=BufferAlloc((261+!true)<<!!true)
+VarSetStrCapacity(downloads,(261+!true)<<!!true)
 DllCall("shlwapi\PathCreateFromUrl" "W", "Str",vPathUrl, "Str",vPath, "UInt*",vChars, "UInt",0)
 
 ; ahkdll-v2-release-master\Compiler\Lib\AHKType.ahk
@@ -21,7 +21,7 @@ DllCall("shlwapi\PathCreateFromUrl" "W", "Str",vPathUrl, "Str",vPath, "UInt*",vC
 Type["IsUnicode"] := (!RegExMatch(exeData, "MsgBox\0") = !true) ? 1 : ""
 
  ; Class_LV_InCellEdit.ahk
-SendMessage 0x1057, 0, EditText.Ptr, , "ahk_id " . This["HWND"]
+SendMessage 0x1057, 0, StrPtr(EditText), , "ahk_id " . This["HWND"]
 ; Gdip.ahk
 	return DllCall("gdiplus\GdipDrawString"
 					, Ptr, pGraphics

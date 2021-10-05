@@ -17,16 +17,19 @@ describe('toV2(text)',function() {
     doIt('v:={a:{a:{a:b, c:[]}}}','v:=Map("a",Map("a",Map("a",b, "c",[])))')
   })
   describe('VarSetCapacity()',function() {
-    doIt('VarSetCapacity(a,b,c)','a:=BufferAlloc(b,c)')
-    doIt('VarSetCapacity(a,VarSetCapacity(a,b,c),c)','a:=BufferAlloc(a:=BufferAlloc(b,c),c)')
-    doIt('VarSetCapacity(a,b,c)','a:=Buffer(b,c)',false)
+    // doIt('VarSetCapacity(a,b,c)','a:=BufferAlloc(b,c)')
+    // doIt('VarSetCapacity(a,VarSetCapacity(a,b,c),c)','a:=BufferAlloc(a:=BufferAlloc(b,c),c)')
+    // doIt('VarSetCapacity(a,b,c)','a:=Buffer(b,c)',false)
+    doIt('VarSetCapacity(a,b,c)','VarSetStrCapacity(a,b),DllCall("RtlFillMemory", "UInt",StrPtr(a), "Int",b, "UChar",c)')
+    // doIt('VarSetCapacity(a,VarSetCapacity(a,b,c),c)','VarSetStrCapacity(a,VarSetStrCapacity(a,b),DllCall("RtlFillMemory", "UInt",StrPtr(a), "Int",b, "UChar",c)),DllCall("RtlFillMemory", "UInt",StrPtr(a), "Int",VarSetStrCapacity(a,b),DllCall("RtlFillMemory", "UInt",StrPtr(a), "Int",b, "UChar",c), "UChar",c)')
   })
   // describe('v1 removed #DIRECTIVES',function() {
   // doIt('#NoEnv\n','')
   // })
   doItFiles('../tov2/jpgs to pdf.ahk','correct/jpgs to pdf.ah2')
   describe('A_IsUnicode',function() {
-    doIt('size := VarSetCapacity( bufName, 255*( A_IsUnicode ? 2 : 1 ), 0 )','size := bufName:=BufferAlloc(255*2,0)')
+    // doIt('size := VarSetCapacity( bufName, 255*( A_IsUnicode ? 2 : 1 ), 0 )','size := bufName:=BufferAlloc(255*2,0)')
+    doIt('size := VarSetCapacity( bufName, 255*( A_IsUnicode ? 2 : 1 ), 0 )','size := VarSetStrCapacity(bufName,255*2),DllCall("RtlFillMemory", "UInt",StrPtr(bufName), "Int",255*2, "UChar",0)')
     doIt('foo( bufName, 255*( A_IsUnicode ? 2 : 1 ), 0 )','foo( bufName, 255*2, 0 )')
     doIt('foo( bufName, A_IsUnicode ? 510 : 255 , 0 )','foo( bufName, 510, 0 )')
     doItFiles('../v2tests/A_IsUnicode.ahk','correct/A_IsUnicode.ah2')

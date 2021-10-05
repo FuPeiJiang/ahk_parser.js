@@ -209,14 +209,16 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
         if (argsArr.length === 1) {
           // VarSetCapacity(TargetVar)
           // TargetVar.Size
-          a(1); p('.Size'); s()
+          // a(1); p('.Size'); s()
+          // If omitted, the variable's current capacity will be returned and its contents will not be altered.
+          p('VarSetStrCapacity('),a(1),p(')'),s()
         } else {
           // VarSetCapacity(TargetVar[,RequestedCapacity,FillByte])
           // VarSetStrCapacity(TargetVar[,RequestedCapacity])
 
           // https://docs.microsoft.com/en-us/previous-versions/windows/desktop/legacy/aa366561(v=vs.85)
           // https://www.autohotkey.com/board/topic/17289-a-faster-method-than-dllcallrtlfillmemory/#post_id_112306
-          p('VarSetStrCapacity('),a(1),o(',',2); a(2),p(')')
+          p('VarSetStrCapacity('),a(1),o(',',2),a(2),p(')')
           if (argsArr.length === 3) {
           // 'DllCall("RtlFillMemory", "UInt", Pointer, Int, 1, UChar, Byte)
             p(',DllCall("RtlFillMemory", "UInt",StrPtr('),a(1),p('), "Int",'),a(2),p(', "UChar",'),a(3),p(')')
@@ -276,8 +278,15 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
           // NOPE: this["allData"].Size := newSize
           // this["allData"]:=BufferAlloc(newSize)
           a(1); p('['); a(2); p(`]:=${whichBuffer}(`); a(3); p(')'); s()
+          // If omitted, the variable's current capacity will be returned and its contents will not be altered.
+          // VarSetStrCapacity(this["allData"], newSize)
+          p('VarSetStrCapacity('),a(1),p('['),a(2),p(']')
+          p(',DllCall("RtlFillMemory", "UInt",StrPtr('),a(1),p('), "Int",'),a(2),p(', "UChar",'),a(3),p(')')
+          s()
         } else {
-          p('ObjSetCapacity('); a(1); p(','); a(2); p(')'); s()
+          // p('ObjSetCapacity('); a(1); p(','); a(2); p(')'); s()
+          // VarSetStrCapacity(this["allData"])
+          p('VarSetStrCapacity('),a(1),p('['),a(2),p('])'),s()
         }
         break
       case 'objgetcapacity':
@@ -454,7 +463,7 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
               }
               everything.splice(spliceStart,spliceLen,...(everything.slice(ifTrueStart,ifTrueEnd)))
 
-              return 3
+              return 1
             }
             break
           }
@@ -1541,41 +1550,38 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
     let paramStartIndex = i
     let next
     const localArgsArr = []
-    while (true) {
-      innerLoop:
-      while (true) {
-        next = everything[i]
-        if (!next) {
-          return true
-        }
-        const bType = next.type
+    innerLoop:
+    while (i < everything.length) {
+      next = everything[i]
+      const bType = next.type
 
-        const allReturn = all()
-        if (allReturn === 1) {
-          continue innerLoop
-        } else if (allReturn === 2) {
-          return true
-        } else if (allReturn === 3) {
-          i++
-          continue innerLoop
-        }
-
-        if (bType === ') function CALL') {
-          const spliceLen = i + 1 - functionStartIndex
-          localArgsArr.push(everything.slice(paramStartIndex,i))
-          everything.splice(functionStartIndex,spliceLen)
-          i -= spliceLen
-          argsArr = localArgsArr
-          gArgsEInsertIndex = functionStartIndex
-          arrFromArgsToInsert = []
-          return false
-        } else if (bType === ', function CALL') {
-          localArgsArr.push(everything.slice(paramStartIndex,i))
-          paramStartIndex = i + 1
-        }
+      const allReturn = all()
+      if (allReturn === 1) {
+        continue innerLoop
+      } else if (allReturn === 2) {
+        return true
+      } else if (allReturn === 3) {
         i++
+        continue innerLoop
       }
+
+      if (bType === ') function CALL') {
+        const spliceLen = i + 1 - functionStartIndex
+        localArgsArr.push(everything.slice(paramStartIndex,i))
+        everything.splice(functionStartIndex,spliceLen)
+        i -= spliceLen
+        argsArr = localArgsArr
+        gArgsEInsertIndex = functionStartIndex
+        arrFromArgsToInsert = []
+        return false
+      } else if (bType === ', function CALL') {
+        localArgsArr.push(everything.slice(paramStartIndex,i))
+        paramStartIndex = i + 1
+      }
+      i++
     }
+    //out of length
+    return true
   }
 
   function getNextFuncArgOmitWhitespaces() {
