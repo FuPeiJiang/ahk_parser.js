@@ -33,6 +33,9 @@ const varsThatArePath: stringIndexBool = {} //this WILL get dynamicly filled
 const concatIgnoreThese: stringIndexBool = {'%START %Var%':true,'END% %Var%':true}
 const modV1StrEditThese: stringIndexBool = {'v1String findPercentVarV1Expression':true,'percentVar v1Expression':true,'%START %Var%':true,'END% %Var%':true,'v1String findV1Expression beforeSingleComma':true,'v1String findV1Expression':true}
 
+//for 'dllcall'
+const dllcallStr: stringIndexBool = {'"str"':true,'"wstr"':true,'"astr"':true}
+
 export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
   const whichBuffer = is_AHK_H ? 'BufferAlloc' : 'Buffer'
   // I'd never think I'd come to this day, but..
@@ -203,6 +206,36 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
         return 3
       }
       switch (thisLowered) {
+      case 'dllcall':{
+        if (getArgs()) { return 2 }
+        // DllCall("[DllFile\]Function" [, Type1, Arg1, Type2, Arg2, "Cdecl ReturnType"])
+        // length 6 -> loop 2 times
+        // DllCall("[DllFile\]Function" [, Type1, Arg1, Type2, Arg2)
+        // length 5 -> loop 2 times
+        // length 7 -> loop 3 times, length 8 -> loop 3 times
+
+        // DllCall("advapi32\MD5Update", "Ptr", &MD5_CTX, "AStr", param_string, "UInt", 0)
+        // DllCall("advapi32\MD5Update",StrPtr(MD5_CTX),"AStr",String(param_string),"UInt",0,)
+
+        p('DllCall('),a(1)
+        const len = argsArr.length - 1
+        for (let n = 1; n < len; n += 2) {
+          const dllcallType = trimEmptyLinesWsFromArr(argsArr[n])[0]
+          p(','),a(n + 1)
+          if (dllcallType.type === 'String' && dllcallStr[dllcallType.text.toLowerCase()]) {
+            p(',String('),a(n + 2),p(')')
+          } else {
+            p(','),a(n + 2)
+          }
+        }
+        // if odd
+        if (len & 1) {
+          p(','),a(len + 1)
+        }
+        p(')'),s()
+        // p('DllCall('),a(1),p(')'),s()
+        break
+      }
       case 'varsetcapacity':
         //#function
         if (getArgs()) { return 2 }

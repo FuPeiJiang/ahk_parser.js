@@ -1209,38 +1209,14 @@ class biga {
 			param_string := this.print(param_string)
 		}
 		static MD5_DIGEST_LENGTH := 16
-		; hModule := DllCall("LoadLibrary", "Str", "advapi32.dll", "Ptr")
-		; if (!hModule) {
-			; p 12
-		; }
-		; VarSetStrCapacity(MD5_CTX,104)
-		; DllCall("RtlFillMemory", "UInt",StrPtr(MD5_CTX), "Int",104, "UChar",0)
-		; DllCall("advapi32\MD5Init", "Ptr", StrPtr(MD5_CTX))
-		; DllCall("advapi32\MD5Update", "Ptr", StrPtr(MD5_CTX), "AStr", param_string, "UInt", StrLen(param_string))
-
-
-		; MD5_CTX:=BufferAlloc(104,0)
-		; DllCall("advapi32\MD5Init", "Ptr", MD5_CTX)
-		; DllCall("advapi32\MD5Update", "Ptr", MD5_CTX, "AStr", param_string, "UInt", StrLen(param_string))
-		; DllCall("advapi32\MD5Final", "Ptr", MD5_CTX)
-
-		p type(param_string) ;Integer
-		str:=String(param_string)
-		p type(str) ;String
-
-	; it was an Integer all along, not a string
-	; strings are always orange "2"
-	; integers are green and 2
-
-    MD5_CTX := BufferAlloc(104,0)
-    DllCall("advapi32\MD5Init", "Ptr", MD5_CTX)
-    DllCall("advapi32\MD5Update", "Ptr", MD5_CTX, "AStr", str, "UInt", StrLen(str))
-    DllCall("advapi32\MD5Final", "Ptr", MD5_CTX)
-
+		hModule := DllCall("LoadLibrary","Str",String("advapi32.dll"),"Ptr")
+		, VarSetStrCapacity(MD5_CTX,104),DllCall("RtlFillMemory", "UInt",StrPtr(MD5_CTX), "Int",104, "UChar",0), DllCall("advapi32\MD5Init","Ptr",StrPtr(MD5_CTX))
+		, DllCall("advapi32\MD5Update","Ptr",StrPtr(MD5_CTX),"AStr",String(param_string),"UInt",StrLen(param_string))
+		, DllCall("advapi32\MD5Final","Ptr",StrPtr(MD5_CTX))
 		loop MD5_DIGEST_LENGTH {
 			o .= Format("{:02" (dCase ? "X" : "x") "}", NumGet(MD5_CTX,87+A_Index,"UChar"))
 		}
-		DllCall("FreeLibrary", "Ptr", hModule)
+		DllCall("FreeLibrary","Ptr",hModule)
 		return o
 	}
 
