@@ -2642,3 +2642,5 @@ Buffer/VarSetStrCapacity
 .Size
 .Ptr
 
+you need to run: Run Program first,
+then you can run Run Script: convertTov2

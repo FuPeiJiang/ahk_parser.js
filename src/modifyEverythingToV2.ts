@@ -233,7 +233,7 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
           p(','),a(len + 1)
         }
         p(')'),s()
-        // p('DllCall('),a(1),p(')'),s()
+        // p('DllC2all('),a(1),p(')'),s()
         break
       }
       case 'varsetcapacity':
