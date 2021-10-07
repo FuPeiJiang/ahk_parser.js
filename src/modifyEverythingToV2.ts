@@ -133,7 +133,7 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
   }
 
   let i = 0,b: number
-  let next: EverythingElement,argsArr: ExtendedEverythingType[],gArgsEInsertIndex: number,arrFromArgsToInsert: ExtendedEverythingType
+  let next: EverythingElement,argsArr: ExtendedEverythingType[],noWsStart = 0,noWsEnd = 0,gArgsEInsertIndex: number,arrFromArgsToInsert: ExtendedEverythingType
   outOfLen:
   while (i < everything.length) {
     switch (all()) {
@@ -220,9 +220,11 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
         p('DllCall('),a(1)
         const len = argsArr.length - 1
         for (let n = 1; n < len; n += 2) {
-          const dllcallType = trimEmptyLinesWsFromArr(argsArr[n])[0]
-          p(','),a(n + 1)
-          if (dllcallType.type === 'String' && dllcallStr[dllcallType.text.toLowerCase()]) {
+          const arr = arrIdkVarToString(argsArr[n])
+          const dllcallTypeArg = arr[0]
+
+          p(', '),a(n + 1)
+          if (dllcallTypeArg.type === 'String' && dllcallStr[dllcallTypeArg.text.toLowerCase()]) {
             p(',String('),a(n + 2),p(')')
           } else {
             p(','),a(n + 2)
@@ -230,7 +232,8 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
         }
         // if odd
         if (len & 1) {
-          p(','),a(len + 1)
+          arrIdkVarToString(argsArr[len])
+          p(', '),a(len + 1)
         }
         p(')'),s()
         // p('DllCall('),a(1),p(')'),s()
@@ -493,7 +496,7 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
                 spliceLen--
               }
               everything.splice(spliceStart,spliceLen,...(everything.slice(ifTrueStart,ifTrueEnd)))
-
+              i = spliceStart
               return 1
             }
             break
@@ -1486,9 +1489,14 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
     let paramsLen
     if (paramArr && (paramsLen = paramArr.length)) {
       for (let n = 0; n < paramsLen; n++) {
-        if (!wsOrEmptyLine[paramArr[n].type]) {
-          arrFromArgsToInsert.push(paramArr[n])
+
+        if (wsOrEmptyLine[paramArr[n].type]) {
+          if (-1 === paramArr[n].text.indexOf('\n')) {
+            continue
+          }
         }
+
+        arrFromArgsToInsert.push(paramArr[n])
       }
     }
   }
@@ -1522,6 +1530,32 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
             { type: 'emptyLines'},
             { type: 'ok'},
           ]) */
+  function arrIdkVarToString(paramArr) {
+    //this RETURNS the inside no whitespace
+    let n = 0
+    for (let len = paramArr.length; n < len; n++) {
+
+      if (!wsOrEmptyLine[paramArr[n].type]) {
+        break
+      }
+    }
+    noWsStart = n
+    for (n = paramArr.length - 1; n > noWsStart; n--) {
+      if (!wsOrEmptyLine[paramArr[n].type]) {
+        break
+      }
+    }
+    //length 3 and 'start unit' 'idkVar' 'end unit'
+    noWsEnd = n + 1
+    if (3 === n + 1 - noWsStart) {
+      const second = paramArr[noWsStart + 1]
+      if (second.type === 'idkVariable') {
+        paramArr.splice(noWsStart,3,{type:'String',text:`"${second.text}"`})
+        return paramArr.slice(noWsStart,noWsStart + 1)
+      }
+    }
+    return paramArr.slice(noWsStart,noWsEnd)
+  }
   function trimEmptyLinesWsFromArr(paramArr: ExtendedEverythingType) {
     let n = 0
     for (let len = paramArr.length; n < len; n++) {

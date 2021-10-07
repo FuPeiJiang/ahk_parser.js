@@ -1,1 +1,12 @@
-VarSetCapacity( XML, Round( StrLen( XML ) * ( A_IsUnicode ? 2.3 : 1.15 ) ), 0 )
+DllCall("gdiplus\GdipDrawString"					, Ptr, pGraphics					, Ptr, A_IsUnicode ? &sString : &wString					, Ptr, A_IsUnicode ? &sString : &wString)
+
+DllCall("gdiplus\GdipDrawString"
+					, Ptr, pGraphics
+					, Ptr, A_IsUnicode ? &sString : &wString
+					, Ptr, A_IsUnicode ? &sString : &wString)
+
+DllCall("gdiplus\GdipDrawString"
+					, Ptr, pGraphics
+					, Ptr, A_IsUnicode ? &sString : &wString
+					, Ptr, A_IsUnicode ? &sString : &wString
+          ,ptr)
