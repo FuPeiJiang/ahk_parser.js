@@ -233,7 +233,7 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
           p(','),a(len + 1)
         }
         p(')'),s()
-        // p('DllC2all('),a(1),p(')'),s()
+        // p('DllCall('),a(1),p(')'),s()
         break
       }
       case 'varsetcapacity':
@@ -369,24 +369,22 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
         if (getArgs()) { return 2 }
         a(1); p('['); a(2); p(']'); s(); break
       default:
-        while (true) {
-          next = everything[++i]
-          if (!next) {
-            return 2
-          }
-          const bType = next.type
-
-          const allReturn = all()
-          if (allReturn === 3) {
-            continue
-          } else if (allReturn) {
-            return allReturn
-          }
-
-          if (bType === ') function CALL') {
+        while (++i < everything.length) {
+          next = everything[i]
+          if (next.type === ') function CALL') {
             return 3
           }
+
+          switch (all()) {
+          case 3:
+          case 1:
+            continue
+          case 2:
+            return 2
+          }
         }
+        //out of length
+        return 2
       } //inner switch end
       break //break outer switch
     } //scope create in outer switch
@@ -1586,19 +1584,8 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
     innerLoop:
     while (i < everything.length) {
       next = everything[i]
-      const bType = next.type
-
-      const allReturn = all()
-      if (allReturn === 1) {
-        continue innerLoop
-      } else if (allReturn === 2) {
-        return true
-      } else if (allReturn === 3) {
-        i++
-        continue innerLoop
-      }
-
-      if (bType === ') function CALL') {
+      switch (next.type) {
+      case ') function CALL':{
         const spliceLen = i + 1 - functionStartIndex
         localArgsArr.push(everything.slice(paramStartIndex,i))
         everything.splice(functionStartIndex,spliceLen)
@@ -1607,10 +1594,22 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
         gArgsEInsertIndex = functionStartIndex
         arrFromArgsToInsert = []
         return false
-      } else if (bType === ', function CALL') {
+      }
+      case ', function CALL':
         localArgsArr.push(everything.slice(paramStartIndex,i))
         paramStartIndex = i + 1
       }
+
+
+      switch (all()) {
+      case 3:
+        i++
+      case 1:
+        continue innerLoop
+      case 2:
+        return true
+      }
+
       i++
     }
     //out of length
