@@ -21,7 +21,7 @@ Global RunCMD_PID
                    ,DllCall("CloseHandle", "Ptr",hPipeW), DllCall("CloseHandle", "Ptr",hPipeR))
 
   DllCall("CloseHandle", "Ptr",hPipeW)
-, RunCMD_PID := NumGet(PI,P8?16:8,"UInt")
+, RunCMD_PID := NumGet(StrPtr(PI),P8?16:8,"UInt")
 , File := FileOpen(hPipeR, "h", Codepage)
 
 , LineNum := 1,  sOutput := ""
@@ -31,8 +31,8 @@ Global RunCMD_PID
           sOutput .= Fn ? Fn.Call(Line, LineNum++) : Line
 
   RunCMD_PID := 0
-, hProcess := NumGet(PI,0,"UPtr")
-, hThread  := NumGet(PI,A_PtrSize,"UPtr")
+, hProcess := NumGet(StrPtr(PI),0,"UPtr")
+, hThread  := NumGet(StrPtr(PI),A_PtrSize,"UPtr")
 
 , DllCall("GetExitCodeProcess", "Ptr",hProcess, "PtrP",ExitCode:=0)
 , DllCall("CloseHandle", "Ptr",hProcess)
