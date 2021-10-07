@@ -1205,18 +1205,19 @@ class biga {
 	}
 
 	static _internal_MD5(param_string, dCase := 0) {
+		o:=""
 		if (isObject(param_string)) {
 			param_string := this.print(param_string)
 		}
 		static MD5_DIGEST_LENGTH := 16
-		hModule := DllCall("LoadLibrary","Str",String("advapi32.dll"),"Ptr")
-		, VarSetStrCapacity(MD5_CTX,104),DllCall("RtlFillMemory", "UInt",StrPtr(MD5_CTX), "Int",104, "UChar",0), DllCall("advapi32\MD5Init","Ptr",StrPtr(MD5_CTX))
-		, DllCall("advapi32\MD5Update","Ptr",StrPtr(MD5_CTX),"AStr",String(param_string),"UInt",StrLen(param_string))
-		, DllCall("advapi32\MD5Final","Ptr",StrPtr(MD5_CTX))
+		hModule := DllCall("LoadLibrary", "Str",String("advapi32.dll"), "Ptr")
+		, VarSetStrCapacity(MD5_CTX,104),DllCall("RtlFillMemory", "UInt",StrPtr(MD5_CTX), "Int",104, "UChar",0), DllCall("advapi32\MD5Init", "Ptr",StrPtr(MD5_CTX))
+		, DllCall("advapi32\MD5Update", "Ptr",StrPtr(MD5_CTX), "AStr",String(param_string), "UInt",StrLen(param_string))
+		, DllCall("advapi32\MD5Final", "Ptr",StrPtr(MD5_CTX))
 		loop MD5_DIGEST_LENGTH {
-			o .= Format("{:02" (dCase ? "X" : "x") "}", NumGet(MD5_CTX,87+A_Index,"UChar"))
+			o .= Format("{:02" (dCase ? "X" : "x") "}", NumGet(StrPtr(MD5_CTX),87+A_Index,"UChar"))
 		}
-		DllCall("FreeLibrary","Ptr",hModule)
+		DllCall("FreeLibrary", "Ptr",hModule)
 		return o
 	}
 

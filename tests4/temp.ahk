@@ -1,12 +1,4 @@
-DllCall("gdiplus\GdipDrawString"					, Ptr, pGraphics					, Ptr, A_IsUnicode ? &sString : &wString					, Ptr, A_IsUnicode ? &sString : &wString)
-
-DllCall("gdiplus\GdipDrawString"
-					, Ptr, pGraphics
-					, Ptr, A_IsUnicode ? &sString : &wString
-					, Ptr, A_IsUnicode ? &sString : &wString)
-
-DllCall("gdiplus\GdipDrawString"
-					, Ptr, pGraphics
-					, Ptr, A_IsUnicode ? &sString : &wString
-					, Ptr, A_IsUnicode ? &sString : &wString
-          ,ptr)
+NumGet(1,2)
+NumGet(Var2,2)
+VarSetCapacity(Var2)
+NumGet(Var2,2)

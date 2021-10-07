@@ -28,6 +28,7 @@ const startOfV1Expr: stringIndexBool = {'v1String findV1Expression':true,'%START
 
 const typesThatAreVars: stringIndexBool = {'Param':true,'idkVariable':true,'assignment':true,'v1String findIdkVar':true,'var at v1Assignment':true}
 const varsThatArePath: stringIndexBool = {} //this WILL get dynamicly filled
+const varsThatAreVarSetCapacity: stringIndexBool = {} //this WILL get dynamicly filled
 
 // const concatableTypes: stringIndexBool = {'v1String findPercentVarV1Expression':true,'percentVar v1Expression':true}
 const concatIgnoreThese: stringIndexBool = {'%START %Var%':true,'END% %Var%':true}
@@ -242,6 +243,9 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
       case 'varsetcapacity':
         //#function
         if (getArgs()) { return 2 }
+        if (argsArr[0].length === 3 && argsArr[0][1].type === 'idkVariable') {
+          varsThatAreVarSetCapacity[argsArr[0][1].text] = true
+        }
         if (argsArr.length === 1) {
           // VarSetCapacity(TargetVar)
           // TargetVar.Size
@@ -297,9 +301,16 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
         // Number := NumGet(Source, [Offset,] Type)
         if (getArgs()) { return 2 }
         const len = argsArr.length
-        p('NumGet('); a(1); p(',');
+
+        p('NumGet(')
+        if (argsArr[0].length === 3 && argsArr[0][1].type === 'idkVariable' && varsThatAreVarSetCapacity[argsArr[0][1].text]) {
+          p('StrPtr('),a(1),p(')')
+        } else {
+          a(1)
+        }
+        p(','),
         (argsArr[1] && argsArr[1].length > 1) ? a(2) : p('0')
-        p(','); (len === 3 ? a(3) : p('"UPtr"')); p(')'); s(); break
+        p(','),(len === 3 ? a(3) : p('"UPtr"')),p(')'),s(); break
       }
       case 'objgetaddress':
         // ObjGetAddress( this, "allData" )
@@ -1545,7 +1556,7 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
         break
       }
     }
-    //length 3 and 'start unit' 'idkVar' 'end unit'
+    //length 3 and 'start unit' 'idkVariable' 'end unit'
     noWsEnd = n + 1
     if (3 === n + 1 - noWsStart) {
       const second = paramArr[noWsStart + 1]
