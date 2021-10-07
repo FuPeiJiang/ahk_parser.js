@@ -14,7 +14,7 @@ if ((A_PtrSize=8&&A_IsCompiled="")||!true){
 }
 ; ahk_explorer.ahk
 VarSetStrCapacity(downloads,(261+!true)<<!!true)
-DllCall("shlwapi\PathCreateFromUrl" "W", "Str",vPathUrl, "Str",vPath, "UInt*",vChars, "UInt",0)
+DllCall("shlwapi\PathCreateFromUrl" "W", "Str",String(vPathUrl), "Str",String(vPath), "UInt*",vChars, "UInt",0)
 
 ; ahkdll-v2-release-master\Compiler\Lib\AHKType.ahk
 ; Get IsUnicode based on the presence of a string matching our encoding
@@ -24,9 +24,9 @@ Type["IsUnicode"] := (!RegExMatch(exeData, "MsgBox\0") = !true) ? 1 : ""
 SendMessage 0x1057, 0, StrPtr(EditText), , "ahk_id " . This["HWND"]
 ; Gdip.ahk
 	return DllCall("gdiplus\GdipDrawString"
-					, Ptr, pGraphics
-					, Ptr, &sString
-					, Ptr, &sString)
+					, "Ptr",pGraphics
+					, "Ptr",StrPtr(sString)
+					, "Ptr",StrPtr(sString))
 v:=255*2
 v:=2
 foo( bufName, 255*2, 0 )
