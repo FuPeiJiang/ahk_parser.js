@@ -1,4 +1,3 @@
-NumGet(1,2)
-NumGet(Var2,2)
-VarSetCapacity(Var2)
-NumGet(Var2,2)
+; comments
+; a:=2
+sort, out, % "D| " sortType

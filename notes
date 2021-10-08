@@ -2644,3 +2644,8 @@ Buffer/VarSetStrCapacity
 
 you need to run: Run Program first,
 then you can run Run Script: convertTov2
+
+undefined variables scope to function definition
+default to var:=""
+
+do 'sort' callback function

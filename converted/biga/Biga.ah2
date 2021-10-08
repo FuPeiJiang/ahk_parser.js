@@ -81,6 +81,7 @@ class biga {
 		return param_depth
 	}
 	static difference(param_array,param_values*) {
+foundIndex:="" ;declareVar
 		if (!isObject(param_array)) {
 			this._internal_ThrowException()
 		}
@@ -103,6 +104,7 @@ class biga {
 		return l_array
 	}
 	static drop(param_array,param_n:=1) {
+l_array:="" ;declareVar
 		if (!this.isNumber(param_n)) {
 			this._internal_ThrowException()
 		}
@@ -120,6 +122,7 @@ class biga {
 		return l_array
 	}
 	static dropRight(param_array,param_n:=1) {
+l_array:="" ;declareVar
 		if (!this.isNumber(param_n)) {
 			this._internal_ThrowException()
 		}
@@ -227,6 +230,7 @@ class biga {
 		return -1
 	}
 	static findLastIndex(param_array,param_value,param_fromIndex:=1) {
+finalIndex:="" ;declareVar
 		if (!isObject(param_array)) {
 			this._internal_ThrowException()
 		}
@@ -333,6 +337,7 @@ class biga {
 		return -1
 	}
 	static initial(param_array) {
+l_array:="" ;declareVar
 
 		; prepare
 		if (isObject(param_array)) {
@@ -351,6 +356,7 @@ class biga {
 
 	}
 	static intersection(param_arrays*) {
+found:="" ;declareVar
 		for key, value in param_arrays {
 			if (!isObject(value)) {
 				this._internal_ThrowException()
@@ -380,6 +386,7 @@ class biga {
 		return l_array
 	}
 	static join(param_array,param_sepatator:=",") {
+l_string:="" ;declareVar
 		if (!isObject(param_array) || isObject(param_sepatator)) {
 			this._internal_ThrowException()
 		}
@@ -429,6 +436,7 @@ class biga {
 		return -1
 	}
 	static nth(param_array,param_n:=1) {
+l_array:="" ;declareVar
 		if (!this.isNumber(param_n)) {
 			this._internal_ThrowException()
 		}
@@ -516,6 +524,7 @@ class biga {
 		return (Type(param_array)=="Array"?param_array.Length:param_array.Count) + 1
 	}
 	static sortedUniq(param_collection) {
+l_temp:="" ;declareVar
 		if (!isObject(param_collection)) {
 			this._internal_ThrowException()
 		}
@@ -740,6 +749,7 @@ class biga {
 		return true
 	}
 	static filter(param_collection,param_predicate:="__identity") {
+collectionClone:="" ;declareVar
 		if (!isObject(param_collection)) {
 			this._internal_ThrowException()
 		}
@@ -793,6 +803,10 @@ class biga {
 		return this.find(this.reverse(param_collection), param_predicate)
 	}
 	static forEach(param_collection,param_iteratee:="__identity") {
+l_paramAmmount:="" ;declareVar
+boundFunc:="" ;declareVar
+collectionClone:="" ;declareVar
+vIteratee:="" ;declareVar
 		if (!isObject(param_collection)) {
 			this._internal_ThrowException()
 		}
@@ -854,6 +868,8 @@ class biga {
 		return l_array
 	}
 	static includes(param_collection,param_value,param_fromIndex:=1) {
+RE:="" ;declareVar
+StringCaseSense:="" ;declareVar
 		if (!this.isNumber(param_fromIndex)) {
 			this._internal_ThrowException()
 		}
@@ -888,6 +904,10 @@ class biga {
 		}
 	}
 	static keyBy(param_collection,param_iteratee:="__identity") {
+l_paramAmmount:="" ;declareVar
+boundFunc:="" ;declareVar
+collectionClone:="" ;declareVar
+vIteratee:="" ;declareVar
 		if (!isObject(param_collection)) {
 			this._internal_ThrowException()
 		}
@@ -911,12 +931,12 @@ class biga {
 				if (!boundFunc.call(value, key, collectionClone)) {
 					vIteratee := param_iteratee.call(value, key, collectionClone)
 				}
-			}
-			l_obj[vIteratee]:=value
+			}l_obj[,vIteratee]:=value
 		}
 		return l_obj
 	}
 	static map(param_collection,param_iteratee:="__identity") {
+guarded:="" ;declareVar
 		if (!isObject(param_collection)) {
 			this._internal_ThrowException()
 		}
@@ -999,6 +1019,7 @@ class biga {
 		return l_array
 	}
 	static sample(param_collection) {
+l_array:="" ;declareVar
 		if (!isObject(param_collection)) {
 			this._internal_ThrowException()
 		}
@@ -1038,6 +1059,7 @@ class biga {
 		return l_array
 	}
 	static shuffle(param_collection) {
+randomIndex:="" ;declareVar
 		if (!isObject(param_collection)) {
 			this._internal_ThrowException()
 		}
@@ -1132,6 +1154,9 @@ class biga {
 	}
 
 	static _internal_sort(param_collection,param_iteratees:="") {
+out:="" ;declareVar
+lastvalue:="" ;declareVar
+sortType:="" ;declareVar
 		l_array := this.cloneDeep(param_collection)
 
 		; associative arrays
@@ -1153,7 +1178,7 @@ class biga {
 			sortType := "N"
 		}
 		out:=SubStr(out,1,-1 ) ; remove trailing |
-		out:=Sort("D| " sortType)
+		out:=Sort(out,"D| " sortType)
 		arrStorage := []
 		loop parse, out, "|"
 		{
@@ -1166,6 +1191,7 @@ class biga {
 	; \--/--\--/--\--/--\--/--\--/
 
 	static _printObj(param_obj) {
+Output:="" ;declareVar
 		if (!isObject(param_obj)) {
 			return "`"" param_obj "`""
 		}
@@ -1205,7 +1231,7 @@ class biga {
 	}
 
 	static _internal_MD5(param_string, dCase := 0) {
-		o:=""
+o:="" ;declareVar
 		if (isObject(param_string)) {
 			param_string := this.print(param_string)
 		}
@@ -1268,6 +1294,7 @@ class biga {
 	}
 
 	static _internal_inStr(param_haystack,param_needle,param_fromIndex:=1,param_occurance:=1) {
+StringCaseSense:="" ;declareVar
 		; used inplace of inStr to follow A_StringCaseSense
 		if (A_StringCaseSense == "On") {
 			StringCaseSense := 1
@@ -1330,6 +1357,7 @@ class biga {
 		return isFunc(param)
 	}
 	static isEqual(param_value,param_other*) {
+l_array:="" ;declareVar
 
 		; prepare
 		if (isObject(param_value)) {
@@ -1496,6 +1524,8 @@ class biga {
 		return l_sum / this.size(param_array)
 	}
 	static meanBy(param_array,param_iteratee:="__identity") {
+l_paramAmmount:="" ;declareVar
+l_iteratee:="" ;declareVar
 		if (!isObject(param_array)) {
 			this._internal_ThrowException()
 		}
@@ -1608,6 +1638,7 @@ class biga {
 		return false
 	}
 	static random(param_lower:=0,param_upper:=1,param_floating:=false) {
+vRandom:="" ;declareVar
 		if (!this.isNumber(param_lower) || !this.isNumber(param_upper) || !this.isNumber(param_floating)) {
 			this._internal_ThrowException()
 		}
@@ -1687,6 +1718,7 @@ class biga {
 		return l_newObj
 	}
 	static invertBy(param_object,param_iteratee:="__identity") {
+vkey:="" ;declareVar
 		if (!isObject(param_object)) {
 			this._internal_ThrowException()
 		}
@@ -1958,6 +1990,7 @@ class biga {
 		return l_start param_string l_end
 	}
 	static padEnd(param_string:="",param_length:=0,param_chars:=" ") {
+l_pos:="" ;declareVar
 		if (!this.isStringLike(param_string) || !this.isNumber(param_length) || !this.isStringLike(param_chars)) {
 			this._internal_ThrowException()
 		}
@@ -1980,6 +2013,8 @@ class biga {
 		return l_string
 	}
 	static padStart(param_string:="",param_length:=0,param_chars:=" ") {
+l_padding:="" ;declareVar
+l_pos:="" ;declareVar
 		if (!this.isStringLike(param_string) || !this.isNumber(param_length) || !this.isStringLike(param_chars)) {
 			this._internal_ThrowException()
 		}
@@ -2047,6 +2082,7 @@ class biga {
 		return l_string
 	}
 	static split(param_string:="",param_separator:=",",param_limit:=0) {
+oReducedArray:="" ;declareVar
 		if (!this.isStringLike(param_string) || !this.isStringLike(param_separator) || !this.isNumber(param_limit)) {
 			this._internal_ThrowException()
 		}
@@ -2072,6 +2108,7 @@ class biga {
 		return oReducedArray
 	}
 	static startCase(param_string:="") {
+RE_Match:="" ;declareVar
 		if (!this.isStringLike(param_string)) {
 			this._internal_ThrowException()
 		}
@@ -2112,6 +2149,7 @@ class biga {
 		return false
 	}
 	static toLower(param_string) {
+OutputVar:="" ;declareVar
 		if (!this.isString(param_string)) {
 			this._internal_ThrowException()
 		}
@@ -2121,6 +2159,7 @@ class biga {
 		return  OutputVar
 	}
 	static toUpper(param_string) {
+OutputVar:="" ;declareVar
 		if (!this.isString(param_string)) {
 			this._internal_ThrowException()
 		}
@@ -2146,6 +2185,7 @@ class biga {
 		}
 	}
 	static trimEnd(param_string,param_chars:="") {
+l_removechars:="" ;declareVar
 		if (!this.isStringLike(param_string) || !this.isStringLike(param_chars)) {
 			this._internal_ThrowException()
 		}
@@ -2169,6 +2209,7 @@ class biga {
 		}
 	}
 	static trimStart(param_string,param_chars:="") {
+l_removechars:="" ;declareVar
 		if (!this.isStringLike(param_string) || !this.isStringLike(param_chars)) {
 			this._internal_ThrowException()
 		}
@@ -2254,6 +2295,7 @@ class biga {
 		return l_string
 	}
 	static words(param_string,param_pattern:="/[^\W]+/") {
+RE_Match:="" ;declareVar
 		if (!this.isString(param_string) || !this.isString(param_pattern)) {
 			this._internal_ThrowException()
 		}
@@ -2341,6 +2383,7 @@ class biga {
 	}
 
 	static internal_property(param_property,param_itaree) {
+rvalue:="" ;declareVar
 		if (isObject(param_property)) {
 			for key, value in param_property {
 				if ((Type(param_property)=="Array"?param_property.Length:param_property.Count) == 1) {
@@ -2374,6 +2417,10 @@ class biga {
 		return this.take(param_array)[1]
 	}
 	static each(param_collection,param_iteratee:="__identity") {
+l_paramAmmount:="" ;declareVar
+boundFunc:="" ;declareVar
+collectionClone:="" ;declareVar
+vIteratee:="" ;declareVar
 		if (!isObject(param_collection)) {
 			this._internal_ThrowException()
 		}

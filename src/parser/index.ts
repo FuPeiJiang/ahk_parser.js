@@ -1,5 +1,5 @@
 import {trace} from 'console'
-import {whiteSpaceObj,variableCharsObj,operatorsObj,legacyIfOperators,v1Continuator,typeOfValidVarName,whiteSpaceOverrideAssign,propCharsObj,namedIf,assignmentOperators,elseLoopReturn,v2Continuator,thisCouldBeFuncName,emptyLinesObj,elseTryFinally} from './tokens'
+import {whiteSpaceObj,variableCharsObj,operatorsObj,legacyIfOperators,v1Continuator,typeOfValidVarName,whiteSpaceOverrideAssign,propCharsObj,namedIf,assignmentOperators,elseLoopReturn,v2Continuator,thisCouldBeFuncName,emptyLinesObj,elseTryFinally,A_VarsObj} from './tokens'
 import type {stringIndexBool} from './tokens'
 const d = console.debug.bind(console)
 
@@ -113,6 +113,7 @@ export default (content: string,literalDoubleQuoteInContinuation = false): Every
   let i = 0,c = 0,numberOfChars = 0,b = 0,validName = '',strStartLine: number,strStartPos: number,insideContinuation = false,beforeConcat: number,nonWhiteSpaceStart: number,exprFoundLine = -1,colonDeep = 0,usingStartOfLineLoop = false,variadicAsterisk = false,lineWhereCanConcat = -1,v1ExpressionC1: number,cNotWhiteSpace: number,percentVarStart: number,propertyC1 = -1,lookingForAnd = false,doubleComma = false,singleComma = false,insideV1Continuation = false,strContiStartPos: number,strContiStartLine: number,eLenBeforeV1Str: number
   let everythingPushCounter: number; everythingPushCounter = 0
   let spliceStartIndex: number,validNameStart: number,validNameLine: number,validNameEnd: number,findingVarName = false,varNameCanLtrimSpaces: false,idkVarC1 = 0,legalObjLine = -1,lastTrailingWasFunc: boolean|number = false,spliceIndexEverythingAtHotkeyLine: number|boolean = false,operatorAtHotkeyLine = -1,v1StartLine = -1,funcParenStartIndex = -1
+  let altV1StringFindIdkVar: string|false = false
 
   let endStringContinuation: {(): boolean}
   if (literalDoubleQuoteInContinuation) {
@@ -426,7 +427,7 @@ export default (content: string,literalDoubleQuoteInContinuation = false): Every
                 continue startOfLineLoop
               //#whiteSpace v1 expression
               } else if (c < numberOfChars && lines[i][c] === '=') {
-                everything.splice(spliceStartIndex,0,{type:'var at whiteSpace v1Assignment',text:validName,i1:i,c1:nonWhiteSpaceStart,c2:c})
+                everything.splice(spliceStartIndex,0,{type:'var at v1Assignment',text:validName,i1:i,c1:nonWhiteSpaceStart,c2:c})
                 everything.push({type:'= whiteSpace v1Assignment',text:'=',i1:i,c1:c})
                 c++
                 findV1Expression()
@@ -462,11 +463,16 @@ export default (content: string,literalDoubleQuoteInContinuation = false): Every
 
                 if (validName.toLowerCase() === 'for') {
                   everything.splice(spliceStartIndex,0,{type:'for',text:validName,i1:validNameLine,c1:nonWhiteSpaceStart,c2:validNameEnd})
+                  altV1StringFindIdkVar = 'forVar1'
                   findVariableName()
+                  altV1StringFindIdkVar = false
+                  everything[everything.length - 1].type = 'forVar1'
                   if (lines[i][c] === ',') {
                     everything.push({type:', for',text:',',i1:i,c1:c})
                     c++
+                    altV1StringFindIdkVar = 'forVar2'
                     findVariableName()
+                    altV1StringFindIdkVar = false
                   }
                   // lookForIn
                   let text,cPlusLen,wsText
@@ -523,7 +529,7 @@ export default (content: string,literalDoubleQuoteInContinuation = false): Every
                 if (!skipThroughEmptyLines()) { break lineLoop }
                 let extendsText
                 if ((extendsText = lines[i].slice(c,c + 7)).toLowerCase() === 'extends') {
-                  everything.push({type:'className',text:extendsText,i1:i,c1:c,c2:c + 7})
+                  everything.push({type:'extends class',text:extendsText,i1:i,c1:c,c2:c + 7})
                   c += 7
                   skipThroughWhiteSpaces()
                   const extendedClassNameStart = c
@@ -2376,7 +2382,26 @@ export default (content: string,literalDoubleQuoteInContinuation = false): Every
           c++
           return false
         } else {
-          everything.push({type:'idkVariable',text:fEvalidName,i1:i,c1:nonWhiteSpaceStart,c2:c})
+          const fEvalidNameLower = fEvalidName.toLowerCase()
+          const A_Var = A_VarsObj[fEvalidNameLower]
+          if (A_Var) {
+            everything.push({type:'A_Var',text:A_Var,i1:i,c1:nonWhiteSpaceStart,c2:c})
+          } else {
+            switch (fEvalidNameLower) {
+            case 'true':
+              everything.push({type:'true',text:fEvalidName,i1:i,c1:nonWhiteSpaceStart,c2:c})
+              break
+            case 'false':
+              everything.push({type:'false',text:fEvalidName,i1:i,c1:nonWhiteSpaceStart,c2:c})
+              break
+            case 'this':
+              everything.push({type:'this',text:fEvalidName,i1:i,c1:nonWhiteSpaceStart,c2:c})
+              break
+            default:
+              everything.push({type:'idkVariable',text:fEvalidName,i1:i,c1:nonWhiteSpaceStart,c2:c})
+            }
+          }
+
           lineWhereCanConcat = i
         }
       } else {
@@ -2919,7 +2944,9 @@ export default (content: string,literalDoubleQuoteInContinuation = false): Every
     }
     const text = lines[i].slice(idkVarC1,c)
     if (text) {
-      everything.push({type:'v1String findIdkVar',text:text,i1:i,c1:idkVarC1,c2:c})
+      everything.push({
+        type:altV1StringFindIdkVar ? altV1StringFindIdkVar : 'v1String findIdkVar'
+        ,text:text,i1:i,c1:idkVarC1,c2:c})
     }
     return true
   }
