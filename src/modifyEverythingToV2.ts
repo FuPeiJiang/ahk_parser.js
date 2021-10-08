@@ -28,12 +28,6 @@ const commaCommandObj: stringIndexBool = {', command whiteSpace':true,', command
 const startOfV1Expr: stringIndexBool = {'v1String findV1Expression':true,'%START %Var%':true,'v1String findPercentVarV1Expression':true,'start unit':true,'String':true}
 
 // const typesThatAreVars: stringIndexBool = {'Param':true,'idkVariable':true,'assignment':true,'v1String findIdkVar':true,'var at v1Assignment':true}
-const varsThatArePath: stringIndexBool = {} //this WILL get dynamicly filled
-const varsThatAreVarSetCapacity: stringIndexBool = {} //this WILL get dynamicly filled
-// const varsThatAreDeclared: stringIndexBool = {} //this WILL get dynamicly filled
-// const assignmenType: stringIndexBool = {}
-const scopeVarsThatAreDeclared: stringIndexBool[] = [{'a_index':true,'a_space':true,'a_tab':true,'a_workingdir':true,'a_scriptdir':true,'a_scriptname':true,'a_yyyy':true,'a_mm':true,'a_dd':true,'a_hour':true,'a_min':true,'a_sec':true,'a_issuspended':true,'a_batchlines':true,'a_listlines':true,'a_titlematchmode':true,'a_timeidle':true,'a_timeidlephysical':true,'a_timeidlekeyboard':true,'a_timeidlemouse':true,'a_gui':true,'a_guicontrol':true,'a_guievent':true,'a_eventinfo':true,'a_thishotkey':true,'a_endchar':true,'a_thismenuitem':true,'a_osversion':true,'a_screenwidth':true,'a_screenheight':true,'a_cursor':true,'a_caretx':true,'a_carety':true,'a_args':true,'a_scriptfullpath':true,'a_scripthwnd':true,'a_linenumber':true,'a_linefile':true,'a_thisfunc':true,'a_thislabel':true,'a_ahkversion':true,'a_ahkpath':true,'a_isunicode':true,'a_iscompiled':true,'a_exitreason':true,'a_year':true,'a_mon':true,'a_mday':true,'a_mmmm':true,'a_mmm':true,'a_dddd':true,'a_ddd':true,'a_wday':true,'a_yday':true,'a_yweek':true,'a_msec':true,'a_now':true,'a_nowutc':true,'a_tickcount':true,'a_ispaused':true,'a_iscritical':true,'a_numbatchlines':true,'a_titlematchmodespeed':true,'a_detecthiddenwindows':true,'a_detecthiddentext':true,'a_autotrim':true,'a_stringcasesense':true,'a_fileencoding':true,'a_formatinteger':true,'a_formatfloat':true,'a_sendmode':true,'a_sendlevel':true,'a_storecapslockmode':true,'a_keydelay':true,'a_keyduration':true,'a_keydelayplay':true,'a_keydurationplay':true,'a_windelay':true,'a_controldelay':true,'a_mousedelay':true,'a_mousedelayplay':true,'a_defaultmousespeed':true,'a_coordmodetooltip':true,'a_coordmodepixel':true,'a_coordmodemouse':true,'a_coordmodecaret':true,'a_coordmodemenu':true,'a_regview':true,'a_iconhidden':true,'a_icontip':true,'a_iconfile':true,'a_iconnumber':true,'a_defaultgui':true,'a_defaultlistview':true,'a_defaulttreeview':true,'a_guiwidth':true,'a_guiheight':true,'a_guix':true,'a_guiy':true,'a_guicontrolevent':true,'a_thismenu':true,'a_thismenuitempos':true,'a_priorhotkey':true,'a_priorkey':true,'a_timesincethishotkey':true,'a_timesincepriorhotkey':true,'a_comspec':true,'a_temp':true,'a_ostype':true,'a_is64bitos':true,'a_ptrsize':true,'a_language':true,'a_computername':true,'a_username':true,'a_windir':true,'a_programfiles':true,'a_':true,'a_appdata':true,'a_appdatacommon':true,'a_desktop':true,'a_desktopcommon':true,'a_startmenu':true,'a_startmenucommon':true,'a_programs':true,'a_programscommon':true,'a_startup':true,'a_startupcommon':true,'a_mydocuments':true,'a_isadmin':true,'a_screendpi':true,'a_ipaddress1':true,'a_lasterror':true,'a_loopfilename':true,'a_loopregname':true,'a_loopreadline':true,'a_loopfield':true,'a_loopfileext':true,'a_loopfileshortpath':true,'a_loopfileshortname':true,'a_loopfiledir':true,'a_loopfiletimemodified':true,'a_loopfiletimecreated':true,'a_loopfiletimeaccessed':true,'a_loopfileattrib':true,'a_loopfilesize':true,'a_loopfilesizekb':true,'a_loopfilesizemb':true,'a_loopregtype':true,'a_loopregkey':true,'a_loopregsubkey':true,'a_loopregtimemodified':true,'a_loopfilepath':true,'a_loopfilefullpath':true,'a_clipboard':true}] //to be filled
-let functionScopeDepthIndex = 0
 
 // const concatableTypes: stringIndexBool = {'v1String findPercentVarV1Expression':true,'percentVar v1Expression':true}
 const concatIgnoreThese: stringIndexBool = {'%START %Var%':true,'END% %Var%':true}
@@ -48,6 +42,14 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
   // preprocessing..
   const varNames: {[key: string]: true} = {}
   const lowerVarNames: {[key: string]: number[]} = {}
+
+  const varsThatArePath: stringIndexBool = {} //this WILL get dynamicly filled
+  const varsThatAreVarSetCapacity: stringIndexBool = {} //this WILL get dynamicly filled
+  // const varsThatAreDeclared: stringIndexBool = {} //this WILL get dynamicly filled
+  // const assignmenType: stringIndexBool = {}
+  const scopeVarsThatAreDeclared: stringIndexBool[] = [{'a_index':true,'a_space':true,'a_tab':true,'a_workingdir':true,'a_scriptdir':true,'a_scriptname':true,'a_yyyy':true,'a_mm':true,'a_dd':true,'a_hour':true,'a_min':true,'a_sec':true,'a_issuspended':true,'a_batchlines':true,'a_listlines':true,'a_titlematchmode':true,'a_timeidle':true,'a_timeidlephysical':true,'a_timeidlekeyboard':true,'a_timeidlemouse':true,'a_gui':true,'a_guicontrol':true,'a_guievent':true,'a_eventinfo':true,'a_thishotkey':true,'a_endchar':true,'a_thismenuitem':true,'a_osversion':true,'a_screenwidth':true,'a_screenheight':true,'a_cursor':true,'a_caretx':true,'a_carety':true,'a_args':true,'a_scriptfullpath':true,'a_scripthwnd':true,'a_linenumber':true,'a_linefile':true,'a_thisfunc':true,'a_thislabel':true,'a_ahkversion':true,'a_ahkpath':true,'a_isunicode':true,'a_iscompiled':true,'a_exitreason':true,'a_year':true,'a_mon':true,'a_mday':true,'a_mmmm':true,'a_mmm':true,'a_dddd':true,'a_ddd':true,'a_wday':true,'a_yday':true,'a_yweek':true,'a_msec':true,'a_now':true,'a_nowutc':true,'a_tickcount':true,'a_ispaused':true,'a_iscritical':true,'a_numbatchlines':true,'a_titlematchmodespeed':true,'a_detecthiddenwindows':true,'a_detecthiddentext':true,'a_autotrim':true,'a_stringcasesense':true,'a_fileencoding':true,'a_formatinteger':true,'a_formatfloat':true,'a_sendmode':true,'a_sendlevel':true,'a_storecapslockmode':true,'a_keydelay':true,'a_keyduration':true,'a_keydelayplay':true,'a_keydurationplay':true,'a_windelay':true,'a_controldelay':true,'a_mousedelay':true,'a_mousedelayplay':true,'a_defaultmousespeed':true,'a_coordmodetooltip':true,'a_coordmodepixel':true,'a_coordmodemouse':true,'a_coordmodecaret':true,'a_coordmodemenu':true,'a_regview':true,'a_iconhidden':true,'a_icontip':true,'a_iconfile':true,'a_iconnumber':true,'a_defaultgui':true,'a_defaultlistview':true,'a_defaulttreeview':true,'a_guiwidth':true,'a_guiheight':true,'a_guix':true,'a_guiy':true,'a_guicontrolevent':true,'a_thismenu':true,'a_thismenuitempos':true,'a_priorhotkey':true,'a_priorkey':true,'a_timesincethishotkey':true,'a_timesincepriorhotkey':true,'a_comspec':true,'a_temp':true,'a_ostype':true,'a_is64bitos':true,'a_ptrsize':true,'a_language':true,'a_computername':true,'a_username':true,'a_windir':true,'a_programfiles':true,'a_':true,'a_appdata':true,'a_appdatacommon':true,'a_desktop':true,'a_desktopcommon':true,'a_startmenu':true,'a_startmenucommon':true,'a_programs':true,'a_programscommon':true,'a_startup':true,'a_startupcommon':true,'a_mydocuments':true,'a_isadmin':true,'a_screendpi':true,'a_ipaddress1':true,'a_lasterror':true,'a_loopfilename':true,'a_loopregname':true,'a_loopreadline':true,'a_loopfield':true,'a_loopfileext':true,'a_loopfileshortpath':true,'a_loopfileshortname':true,'a_loopfiledir':true,'a_loopfiletimemodified':true,'a_loopfiletimecreated':true,'a_loopfiletimeaccessed':true,'a_loopfileattrib':true,'a_loopfilesize':true,'a_loopfilesizekb':true,'a_loopfilesizemb':true,'a_loopregtype':true,'a_loopregkey':true,'a_loopregsubkey':true,'a_loopregtimemodified':true,'a_loopfilepath':true,'a_loopfilefullpath':true,'a_clipboard':true}] //to be filled
+  let functionScopeDepthIndex = 0
+  let inAutoExecuteOrDepth1Label = true
 
   let scopeFunctionStartIndex = -1
   let commandStartIndex = 0,commandArgStartIndex = 0
@@ -486,11 +488,15 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
       break
     case '} unknown':
       scopeVarsThatAreDeclared.pop()
+      if (scopeVarsThatAreDeclared.length === 1) {
+        inAutoExecuteOrDepth1Label = true
+      }
       break
     case '{ function DEFINITION':
       scopeFunctionStartIndex = i
       functionScopeDepthIndex = scopeVarsThatAreDeclared.length
       scopeVarsThatAreDeclared.push({})
+      inAutoExecuteOrDepth1Label = false
       break
     case 'forVar1':
     case 'forVar2':
@@ -1201,7 +1207,7 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
     const varNameLower = varName.toLowerCase()
     let len = scopeVarsThatAreDeclared.length
     //don't add global vars, we can't handle if else branching yet
-    if (len === 1) {
+    if (inAutoExecuteOrDepth1Label === true) {
       return false
     }
     while (--len > -1) {

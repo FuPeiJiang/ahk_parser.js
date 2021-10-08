@@ -5,10 +5,10 @@ import modifyEverythingToV2 from './modifyEverythingToV2'
 const d = console.log.bind(console)
 
 const content: Buffer =
-fs.readFileSync('tov2/jpgs to pdf.ahk')
+// fs.readFileSync('tov2/jpgs to pdf.ahk')
 // fs.readFileSync('tov2/Biga_mid.ahk')
 // fs.readFileSync('tov2/sXML_Pretty.ahk')
-// fs.readFileSync('tests4/temp.ahk')
+fs.readFileSync('tests4/temp.ahk')
 
 const str = content.toString().replace(/\r/g,'')
 
