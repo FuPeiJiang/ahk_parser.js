@@ -199,13 +199,14 @@ export default (content: string,literalDoubleQuoteInContinuation = false): Every
         // spliceIndexEverythingAtHotkeyLine = false
 
         //#function DEFINITION END
-        if (lines[i][c] === '}') {
+        switch (lines[i][c]) {
+        case '}':
             // d(`} Function DEFINITION ${char()}`)
             everything.push({type:'} unknown',text:'}',i1:i,c1:c})
             c++
             if (!skipThroughEmptyLines()) { break startOfLineLoop }
             continue startOfLineLoop
-        } else if (lines[i][c] === '{') {
+        case '{':
             everything.push({type:'perhaps { namedIf',text:'{',i1:i,c1:c})
             c++
             if (!skipThroughEmptyLines()) { break startOfLineLoop }
@@ -229,350 +230,353 @@ export default (content: string,literalDoubleQuoteInContinuation = false): Every
             if (idkType) {
                 v1StartLine = i
                 const lenghtBeforeSkipLine = everything.length
-                if (skipThroughEmptyLines()) {
-                    if (lines[i][c] === ',') {
-                        everything.push({type:'(statement) ,',text:',',i1:i,c1:c})
-                        c++
 
-                        // directive or command
-                        if (idkType === 1 || idkType === 4) {
-                            // d(validName, 'comma DIRECTIVE OR COMMAND', char())
-                            // #validName = lines[validNameLine].slice(validNameStart, validNameEnd)
-                            // everything.push({ type: 'newLine comma DIRECTIVE OR COMMAND', text: '\n', i1: i, c1: c + 1 })
-                            switch (sameCommaOrWhitespaceCommand()) {
-                            case 1:
-                                continue startOfLineLoop
-                            case 2:
-                                break startOfLineLoop
-                            }
+                if (!skipThroughEmptyLines()) { break startOfLineLoop }
 
-                            everything.splice(spliceStartIndex,0,{type:'DIRECTIVE OR COMMAND comma',text:validName,i1:validNameLine,c1:validNameStart,c2:validNameEnd})
-                            singleComma = true
-                            findV1Expression()
-                            singleComma = false
-                            if (i === howManyLines) { break startOfLineLoop }
-                            recurseFindCommaV1Expression(', command comma')
+                if (lines[i][c] === ',') {
+                    everything.push({type:'(statement) ,',text:',',i1:i,c1:c})
+                    c++
 
-                            addEnd('end command')
-
-                            continue startOfLineLoop
-                        }
-
-                        continue startOfLineLoop
-                    } else if (i === validNameLine && whiteSpaceObj[lines[validNameLine][validNameEnd]]) {
-                        // only directives and "if" override assignment and ONLY when there's a whiteSpace
-                        switch (idkType) {
+                    // directive or command
+                    if (idkType === 1 || idkType === 4) {
+                        // d(validName, 'comma DIRECTIVE OR COMMAND', char())
+                        // #validName = lines[validNameLine].slice(validNameStart, validNameEnd)
+                        // everything.push({ type: 'newLine comma DIRECTIVE OR COMMAND', text: '\n', i1: i, c1: c + 1 })
+                        switch (sameCommaOrWhitespaceCommand()) {
                         case 1:
-                            // d(validName, 'whiteSpace DIRECTIVE', char())
-                            everything.splice(spliceStartIndex,0,{type:'directive',text:validName,i1:validNameLine,c1:validNameStart,c2:validNameEnd})
-                            const text = lines[i].slice(c,numberOfChars)
-                            everything.push({type:'directive to EOL',text:text,i1:i,c1:nonWhiteSpaceStart,c2:numberOfChars})
-                            everything.push({type:'newLine directive',text:'\n',i1:i,c1:c})
-                            i++
                             continue startOfLineLoop
                         case 2:
-                            everything.splice(spliceStartIndex,0,{type:'if',text:validName,i1:validNameLine,c1:validNameStart,c2:validNameEnd})
-                            spliceStartIndex = everything.length
-                            breakToGoFindV2:
-                            while (variableCharsObj[lines[i][c]]) {
-                                const saveC = c,saveI = i,saveNumChars = numberOfChars
-                                while (findPercentVar() || variableCharsObj[lines[i][c]]) {
-                                    c++
-                                }
-                                const cendOfLegacyIfVar = c
-                                while (c < numberOfChars && whiteSpaceObj[lines[i][c]]) {
-                                    c++
-                                }
-                                const whiteSpacesTextc = c
+                            break startOfLineLoop
+                        }
 
-                                let validNamestart = c,spliceStartIndex = everything.length
-                                skipValidChar()
-                                validNameEnd = c,validNameLine = i
-                                let validName = lines[validNameLine].slice(validNamestart,validNameEnd)
-                                findV1ExpressiondummyLoop:
-                                while (true) {
-                                    if (!validName) {
+                        everything.splice(spliceStartIndex,0,{type:'DIRECTIVE OR COMMAND comma',text:validName,i1:validNameLine,c1:validNameStart,c2:validNameEnd})
+                        singleComma = true
+                        findV1Expression()
+                        singleComma = false
+                        if (i === howManyLines) { break startOfLineLoop }
+                        recurseFindCommaV1Expression(', command comma')
 
-                                        if (c < numberOfChars - 1 && legacyIfOperators[lines[i].slice(c,c + 2)]) {
-                                            everything.push({type:'2legacyIfOperators',text:lines[i].slice(c,c + 2),i1:i,c1:c,c2:c + 2})
-                                            c += 2
-                                            break findV1ExpressiondummyLoop
-                                        } else if (c < numberOfChars && legacyIfOperators[lines[i][c]]) {
-                                            everything.push({type:'1legacyIfOperators',text:lines[i][c],i1:i,c1:c})
-                                            c++
-                                            break findV1ExpressiondummyLoop
-                                        }
+                        addEnd('end command')
 
-                                        c = saveC,i = saveI,numberOfChars = saveNumChars
-                                        break breakToGoFindV2
-                                    }
-                                    const lowerValidName = validName.toLowerCase()
-                                    let checkThese = false,cPlusLen
-                                    if (lowerValidName === 'not' && (c === numberOfChars || whiteSpaceObj[lines[i][c]])) {
-                                        everything.push({type:'legacyIf not',text:validName,i1:i,c1:validNamestart,c2:c})
-                                        skipThroughWhiteSpaces()
-                                        validNamestart = c,spliceStartIndex = everything.length
-                                        skipValidChar()
-                                        validNameEnd = c,validNameLine = i
-                                        validName = lines[validNameLine].slice(validNamestart,validNameEnd)
-                                    } else {
-                                        checkThese = true
-                                    }
+                        continue startOfLineLoop
+                    }
 
-                                    if (lowerValidName === 'in' && (c === numberOfChars || whiteSpaceObj[lines[i][c]])) {
-                                        everything.push({type:'legacyIf in',text:validName,i1:i,c1:validNamestart,c2:c})
-                                        doubleComma = true
+                    continue startOfLineLoop
+                } else if (i === validNameLine && whiteSpaceObj[lines[validNameLine][validNameEnd]]) {
+                    // only directives and "if" override assignment and ONLY when there's a whiteSpace
+                    switch (idkType) {
+                    case 1:
+                        // d(validName, 'whiteSpace DIRECTIVE', char())
+                        everything.splice(spliceStartIndex,0,{type:'directive',text:validName,i1:validNameLine,c1:validNameStart,c2:validNameEnd})
+                        singleComma = true
+                        findV1Expression()
+                        singleComma = false
+                        if (i === howManyLines) { break startOfLineLoop }
+                        recurseFindCommaV1Expression(', command comma')
+
+                        addEnd('end command')
+                        continue startOfLineLoop
+                    case 2:
+                        everything.splice(spliceStartIndex,0,{type:'if',text:validName,i1:validNameLine,c1:validNameStart,c2:validNameEnd})
+                        spliceStartIndex = everything.length
+                        breakToGoFindV2:
+                        while (variableCharsObj[lines[i][c]]) {
+                            const saveC = c,saveI = i,saveNumChars = numberOfChars
+                            while (findPercentVar() || variableCharsObj[lines[i][c]]) {
+                                c++
+                            }
+                            const cendOfLegacyIfVar = c
+                            while (c < numberOfChars && whiteSpaceObj[lines[i][c]]) {
+                                c++
+                            }
+                            const whiteSpacesTextc = c
+
+                            let validNamestart = c,spliceStartIndex = everything.length
+                            skipValidChar()
+                            validNameEnd = c,validNameLine = i
+                            let validName = lines[validNameLine].slice(validNamestart,validNameEnd)
+                            findV1ExpressiondummyLoop:
+                            while (true) {
+                                if (!validName) {
+
+                                    if (c < numberOfChars - 1 && legacyIfOperators[lines[i].slice(c,c + 2)]) {
+                                        everything.push({type:'2legacyIfOperators',text:lines[i].slice(c,c + 2),i1:i,c1:c,c2:c + 2})
+                                        c += 2
                                         break findV1ExpressiondummyLoop
-                                    } else if (lowerValidName === 'contains' && (c === numberOfChars || whiteSpaceObj[lines[i][c]])) {
-                                        everything.push({type:'legacyIf contains',text:validName,i1:i,c1:validNamestart,c2:c})
-                                        doubleComma = true
+                                    } else if (c < numberOfChars && legacyIfOperators[lines[i][c]]) {
+                                        everything.push({type:'1legacyIfOperators',text:lines[i][c],i1:i,c1:c})
+                                        c++
                                         break findV1ExpressiondummyLoop
-                                    } else if (lowerValidName === 'between' && (c === numberOfChars || whiteSpaceObj[lines[i][c]])) {
-                                        everything.push({type:'legacyIf between',text:validName,i1:i,c1:validNamestart,c2:c})
-                                        lookingForAnd = true
-                                        break findV1ExpressiondummyLoop
-                                    }
-
-                                    if (checkThese) {
-                                        if (lowerValidName === 'is' && (c === numberOfChars || whiteSpaceObj[lines[i][c]])) {
-                                            everything.push({type:'legacyIf is',text:validName,i1:i,c1:validNamestart,c2:c})
-                                            skipThroughWhiteSpaces()
-
-                                            validName = lines[i].slice(c,cPlusLen = c + 3)
-                                            if (validName.toLowerCase() === 'not' && !variableCharsObj[lines[i][cPlusLen]]) {
-                                                everything.push({type:'legacyIf (is) not',text:validName,i1:i,c1:c,c2:c + 3})
-                                                c += 3
-                                                skipThroughWhiteSpaces()
-                                            }
-                                            break findV1ExpressiondummyLoop
-                                        }
-                                    }
-
-                                    const cBeforeSkipLines = c,iBeforeSkipLines = i
-                                    if (!skipThroughEmptyLines()) {
-                                        c = saveC,i = saveI,numberOfChars = saveNumChars
-                                        everything.splice(everything.length - 1,1)
-                                        break breakToGoFindV2
-                                    }
-                                    let removeTheEmptyLines = true
-                                    if (c === cBeforeSkipLines && i === iBeforeSkipLines) {
-                                        removeTheEmptyLines = false
                                     }
 
                                     c = saveC,i = saveI,numberOfChars = saveNumChars
-                                    if (removeTheEmptyLines) {
-                                        everything.splice(everything.length - 1,1)
-                                    }
                                     break breakToGoFindV2
                                 }
-
-                                const whiteSpacesText = lines[saveI].slice(cendOfLegacyIfVar,whiteSpacesTextc)
-                                if (whiteSpacesText) {
-                                    everything.splice(spliceStartIndex,0,{type:'whiteSpaces',text:whiteSpacesText,i1:i,c1:cendOfLegacyIfVar,c2:c})
-                                }
-                                everything.splice(spliceStartIndex,0,{type:'legacyIf var',text:lines[saveI].slice(saveC,cendOfLegacyIfVar),i1:saveI,c1:saveC,c2:cendOfLegacyIfVar})
-                                findV1Expression()
-                                doubleComma = false
-
-                                let eLen = everything.length - 1
-                                emptyLinesObj[everything[eLen].type] && eLen--
-                                everything[eLen].type === 'endingWhiteSpaces v1Expression findV1Expression' && eLen--
-                                everything.splice(eLen + 1,0,{type:'end legacyIf'})
-                                if (i === howManyLines) { break startOfLineLoop }
-                                if (lines[i][c] === '{') {
-                                    everything.push({type:'{ legacyIf',text:'{',i1:i,c1:c})
-                                    c++
-                                    if (!skipThroughEmptyLines()) { break startOfLineLoop }
+                                const lowerValidName = validName.toLowerCase()
+                                let checkThese = false,cPlusLen
+                                if (lowerValidName === 'not' && (c === numberOfChars || whiteSpaceObj[lines[i][c]])) {
+                                    everything.push({type:'legacyIf not',text:validName,i1:i,c1:validNamestart,c2:c})
+                                    skipThroughWhiteSpaces()
+                                    validNamestart = c,spliceStartIndex = everything.length
+                                    skipValidChar()
+                                    validNameEnd = c,validNameLine = i
+                                    validName = lines[validNameLine].slice(validNamestart,validNameEnd)
+                                } else {
+                                    checkThese = true
                                 }
 
-                                continue startOfLineLoop
+                                if (lowerValidName === 'in' && (c === numberOfChars || whiteSpaceObj[lines[i][c]])) {
+                                    everything.push({type:'legacyIf in',text:validName,i1:i,c1:validNamestart,c2:c})
+                                    doubleComma = true
+                                    break findV1ExpressiondummyLoop
+                                } else if (lowerValidName === 'contains' && (c === numberOfChars || whiteSpaceObj[lines[i][c]])) {
+                                    everything.push({type:'legacyIf contains',text:validName,i1:i,c1:validNamestart,c2:c})
+                                    doubleComma = true
+                                    break findV1ExpressiondummyLoop
+                                } else if (lowerValidName === 'between' && (c === numberOfChars || whiteSpaceObj[lines[i][c]])) {
+                                    everything.push({type:'legacyIf between',text:validName,i1:i,c1:validNamestart,c2:c})
+                                    lookingForAnd = true
+                                    break findV1ExpressiondummyLoop
+                                }
+
+                                if (checkThese) {
+                                    if (lowerValidName === 'is' && (c === numberOfChars || whiteSpaceObj[lines[i][c]])) {
+                                        everything.push({type:'legacyIf is',text:validName,i1:i,c1:validNamestart,c2:c})
+                                        skipThroughWhiteSpaces()
+
+                                        validName = lines[i].slice(c,cPlusLen = c + 3)
+                                        if (validName.toLowerCase() === 'not' && !variableCharsObj[lines[i][cPlusLen]]) {
+                                            everything.push({type:'legacyIf (is) not',text:validName,i1:i,c1:c,c2:c + 3})
+                                            c += 3
+                                            skipThroughWhiteSpaces()
+                                        }
+                                        break findV1ExpressiondummyLoop
+                                    }
+                                }
+
+                                const cBeforeSkipLines = c,iBeforeSkipLines = i
+                                if (!skipThroughEmptyLines()) {
+                                    c = saveC,i = saveI,numberOfChars = saveNumChars
+                                    everything.splice(everything.length - 1,1)
+                                    break breakToGoFindV2
+                                }
+                                let removeTheEmptyLines = true
+                                if (c === cBeforeSkipLines && i === iBeforeSkipLines) {
+                                    removeTheEmptyLines = false
+                                }
+
+                                c = saveC,i = saveI,numberOfChars = saveNumChars
+                                if (removeTheEmptyLines) {
+                                    everything.splice(everything.length - 1,1)
+                                }
+                                break breakToGoFindV2
                             }
 
-                            // if (lines[i][c] === '(') {
-                            // everything.push({ type: '( if', text: '(', i1: i, c1: c })
-                            // c++
-                            if (!recurseBetweenExpression()) { findExpression() }
+                            const whiteSpacesText = lines[saveI].slice(cendOfLegacyIfVar,whiteSpacesTextc)
+                            if (whiteSpacesText) {
+                                everything.splice(spliceStartIndex,0,{type:'whiteSpaces',text:whiteSpacesText,i1:i,c1:cendOfLegacyIfVar,c2:c})
+                            }
+                            everything.splice(spliceStartIndex,0,{type:'legacyIf var',text:lines[saveI].slice(saveC,cendOfLegacyIfVar),i1:saveI,c1:saveC,c2:cendOfLegacyIfVar})
+                            findV1Expression()
+                            doubleComma = false
 
-                            //YOLO
-                            // let endIfIndex = everything.length - 1
-                            // if (everything[endIfIndex].type === 'emptyLines') {
-                            // endIfIndex--
-                            // }
-                            everything.splice(everything.length - 1,0,{type:'end if'})
-                            // d(') group', char())
-                            // everything.push({ type: ') if', text: ')', i1: i, c1: c })
-                            // c++
+                            let eLen = everything.length - 1
+                            emptyLinesObj[everything[eLen].type] && eLen--
+                            everything[eLen].type === 'endingWhiteSpaces v1Expression findV1Expression' && eLen--
+                            everything.splice(eLen + 1,0,{type:'end legacyIf'})
                             if (i === howManyLines) { break startOfLineLoop }
-                            // I don't need to skip empty lines because the above does it for me
                             if (lines[i][c] === '{') {
-                                everything.push({type:'{ if',text:'{',i1:i,c1:c})
-                                // d(lines[i][c])
-
+                                everything.push({type:'{ legacyIf',text:'{',i1:i,c1:c})
                                 c++
                                 if (!skipThroughEmptyLines()) { break startOfLineLoop }
-                                // d(numberOfChars, lines[i].length)
                             }
+
                             continue startOfLineLoop
-                            //#whiteSpace v1 expression
                         }
 
-                        //# = whiteSpace v1Assignment
-                        if (c < numberOfChars && lines[i][c] === '=') {
-                            everything.splice(spliceStartIndex,0,{type:'var at v1Assignment',text:validName,i1:i,c1:nonWhiteSpaceStart,c2:c})
-                            everything.push({type:'= whiteSpace v1Assignment',text:'=',i1:i,c1:c})
+                        // if (lines[i][c] === '(') {
+                        // everything.push({ type: '( if', text: '(', i1: i, c1: c })
+                        // c++
+                        if (!recurseBetweenExpression()) { findExpression() }
+
+                        //YOLO
+                        // let endIfIndex = everything.length - 1
+                        // if (everything[endIfIndex].type === 'emptyLines') {
+                        // endIfIndex--
+                        // }
+                        everything.splice(everything.length - 1,0,{type:'end if'})
+                        // d(') group', char())
+                        // everything.push({ type: ') if', text: ')', i1: i, c1: c })
+                        // c++
+                        if (i === howManyLines) { break startOfLineLoop }
+                        // I don't need to skip empty lines because the above does it for me
+                        if (lines[i][c] === '{') {
+                            everything.push({type:'{ if',text:'{',i1:i,c1:c})
+                            // d(lines[i][c])
+
                             c++
-                            findV1Expression()
-                            continue startOfLineLoop
-                        } //# := whitespace ASSIGNMENT
-                        // found, not found, break startOfLineLoop
-                        switch (doAssignment()) {
+                            if (!skipThroughEmptyLines()) { break startOfLineLoop }
+                            // d(numberOfChars, lines[i].length)
+                        }
+                        continue startOfLineLoop
+                            //#whiteSpace v1 expression
+                    }
+
+                    //# = whiteSpace v1Assignment
+                    if (c < numberOfChars && lines[i][c] === '=') {
+                        everything.splice(spliceStartIndex,0,{type:'var at v1Assignment',text:validName,i1:i,c1:nonWhiteSpaceStart,c2:c})
+                        everything.push({type:'= whiteSpace v1Assignment',text:'=',i1:i,c1:c})
+                        c++
+                        findV1Expression()
+                        continue startOfLineLoop
+                    } //# := whitespace ASSIGNMENT
+                    // found, not found, break startOfLineLoop
+                    switch (doAssignment()) {
+                    case 1:
+                        continue startOfLineLoop
+                    case 2:
+                        break startOfLineLoop
+                    }
+
+                    switch (idkType) {
+                    case 3:
+                        // d(validName, 'global local or static', char())
+                        everything.splice(spliceStartIndex,0,{type:'global local or static{ws}',text:validName,i1:validNameLine,c1:validNameStart,c2:validNameEnd})
+
+                        findVariableName()
+                        recurseBetweenExpression()
+                        if (skipCommaV2Expr()) { break startOfLineLoop }
+                        continue startOfLineLoop
+                        // return everything
+                    case 4:
+                        // d(validName, 'whiteSpace COMMAND', nonWhiteSpaceStart + 1, lineBeforeSkip + 1, 'line')
+                        // statement can't have Expr if line changed...
+                        switch (sameCommaOrWhitespaceCommand()) {
                         case 1:
                             continue startOfLineLoop
                         case 2:
                             break startOfLineLoop
                         }
 
-                        switch (idkType) {
-                        case 3:
-                            // d(validName, 'global local or static', char())
-                            everything.splice(spliceStartIndex,0,{type:'global local or static{ws}',text:validName,i1:validNameLine,c1:validNameStart,c2:validNameEnd})
-
+                        if (validName.toLowerCase() === 'for') {
+                            everything.splice(spliceStartIndex,0,{type:'for',text:validName,i1:validNameLine,c1:nonWhiteSpaceStart,c2:validNameEnd})
+                            altV1StringFindIdkVar = 'forVar1'
                             findVariableName()
-                            recurseBetweenExpression()
-                            if (skipCommaV2Expr()) { break startOfLineLoop }
-                            continue startOfLineLoop
-                            // return everything
-                        case 4:
-                            // d(validName, 'whiteSpace COMMAND', nonWhiteSpaceStart + 1, lineBeforeSkip + 1, 'line')
-                            // statement can't have Expr if line changed...
-                            switch (sameCommaOrWhitespaceCommand()) {
-                            case 1:
-                                continue startOfLineLoop
-                            case 2:
-                                break startOfLineLoop
-                            }
-
-                            if (validName.toLowerCase() === 'for') {
-                                everything.splice(spliceStartIndex,0,{type:'for',text:validName,i1:validNameLine,c1:nonWhiteSpaceStart,c2:validNameEnd})
-                                altV1StringFindIdkVar = 'forVar1'
+                            altV1StringFindIdkVar = false
+                            everything[everything.length - 1].type = 'forVar1'
+                            if (lines[i][c] === ',') {
+                                everything.push({type:', for',text:',',i1:i,c1:c})
+                                c++
+                                altV1StringFindIdkVar = 'forVar2'
                                 findVariableName()
                                 altV1StringFindIdkVar = false
-                                everything[everything.length - 1].type = 'forVar1'
-                                if (lines[i][c] === ',') {
-                                    everything.push({type:', for',text:',',i1:i,c1:c})
-                                    c++
-                                    altV1StringFindIdkVar = 'forVar2'
-                                    findVariableName()
-                                    altV1StringFindIdkVar = false
-                                }
-                                // lookForIn
-                                let text,cPlusLen,wsText
-                                if ((text = lines[i].slice(c,cPlusLen = c + 2)).toLowerCase() === 'in' && (cPlusLen === numberOfChars || whiteSpaceObj[wsText = lines[i][cPlusLen]])) {
-                                    everything.push({type:'in{ws} lookForIn',text:`${text}${wsText || ''}`,i1:i,c1:c,c2:cPlusLen})
-                                } else {
-                                    d('ILLEGAL, (for) is missing `in`')
-                                }
-                                c += 3
-
-                                if (!recurseBetweenExpression()) { findExpression() }
-                                if (i === howManyLines) { break startOfLineLoop }
-
-                                addEnd('end command')
-
-                                if (lines[i][c] === '{') {
-                                    everything.push({type:'{ for',text:'{',i1:i,c1:c})
-                                    c++
-                                    if (!skipThroughEmptyLines()) { break startOfLineLoop }
-                                }
-                                continue startOfLineLoop
                             }
-
-                            let whichElseTryFinally
-                            if ((whichElseTryFinally = elseTryFinally[validName.toLowerCase()])) {
-                                everything.splice(spliceStartIndex,0,{type:`${whichElseTryFinally} whiteSpace`,text:validName,i1:validNameLine,c1:nonWhiteSpaceStart,c2:validNameEnd})
-                                if (lines[i][c] === '{') {
-                                    everything.push({type:`{ ${whichElseTryFinally}`,text:'{',i1:i,c1:c})
-                                    c++
-                                    if (!skipThroughEmptyLines()) { break startOfLineLoop }
-                                }
-                                continue startOfLineLoop
+                            // lookForIn
+                            let text,cPlusLen,wsText
+                            if ((text = lines[i].slice(c,cPlusLen = c + 2)).toLowerCase() === 'in' && (cPlusLen === numberOfChars || whiteSpaceObj[wsText = lines[i][cPlusLen]])) {
+                                everything.push({type:'in{ws} lookForIn',text:`${text}${wsText || ''}`,i1:i,c1:c,c2:cPlusLen})
+                            } else {
+                                d('ILLEGAL, (for) is missing `in`')
                             }
+                            c += 3
 
-                            everything.splice(spliceStartIndex,0,{type:'command',text:validName,i1:validNameLine,c1:nonWhiteSpaceStart,c2:validNameEnd})
-                            singleComma = true
-                            findV1Expression()
-                            singleComma = false
+                            if (!recurseBetweenExpression()) { findExpression() }
                             if (i === howManyLines) { break startOfLineLoop }
-                            recurseFindCommaV1Expression(', command whiteSpace')
 
                             addEnd('end command')
 
+                            if (lines[i][c] === '{') {
+                                everything.push({type:'{ for',text:'{',i1:i,c1:c})
+                                c++
+                                if (!skipThroughEmptyLines()) { break startOfLineLoop }
+                            }
                             continue startOfLineLoop
-                            //class
-                        case 5:
-                            everything.splice(spliceStartIndex,0,{type:'class',text:validName,i1:validNameLine,c1:nonWhiteSpaceStart,c2:validNameEnd})
-                            const classNameStart = c
+                        }
+
+                        let whichElseTryFinally
+                        if ((whichElseTryFinally = elseTryFinally[validName.toLowerCase()])) {
+                            everything.splice(spliceStartIndex,0,{type:`${whichElseTryFinally} whiteSpace`,text:validName,i1:validNameLine,c1:nonWhiteSpaceStart,c2:validNameEnd})
+                            if (lines[i][c] === '{') {
+                                everything.push({type:`{ ${whichElseTryFinally}`,text:'{',i1:i,c1:c})
+                                c++
+                                if (!skipThroughEmptyLines()) { break startOfLineLoop }
+                            }
+                            continue startOfLineLoop
+                        }
+
+                        everything.splice(spliceStartIndex,0,{type:'command',text:validName,i1:validNameLine,c1:nonWhiteSpaceStart,c2:validNameEnd})
+                        singleComma = true
+                        findV1Expression()
+                        singleComma = false
+                        if (i === howManyLines) { break startOfLineLoop }
+                        recurseFindCommaV1Expression(', command whiteSpace')
+
+                        addEnd('end command')
+
+                        continue startOfLineLoop
+                        //class
+                    case 5:
+                        everything.splice(spliceStartIndex,0,{type:'class',text:validName,i1:validNameLine,c1:nonWhiteSpaceStart,c2:validNameEnd})
+                        const classNameStart = c
+                        skipValidChar()
+                        everything.push({type:'className',text:lines[i].slice(classNameStart,c),i1:i,c1:classNameStart,c2:c})
+                        if (!skipThroughEmptyLines()) { break startOfLineLoop }
+                        let extendsText
+                        if ((extendsText = lines[i].slice(c,c + 7)).toLowerCase() === 'extends') {
+                            everything.push({type:'extends class',text:extendsText,i1:i,c1:c,c2:c + 7})
+                            c += 7
+                            skipThroughWhiteSpaces()
+                            const extendedClassNameStart = c
                             skipValidChar()
-                            everything.push({type:'className',text:lines[i].slice(classNameStart,c),i1:i,c1:classNameStart,c2:c})
+                            const extendedClassName = lines[i].slice(extendedClassNameStart,c)
+                            if (extendedClassName) {
+                                everything.push({type:'extendedClassName',text:extendedClassName,i1:i,c1:extendedClassNameStart,c2:c})
+                            }
                             if (!skipThroughEmptyLines()) { break startOfLineLoop }
-                            let extendsText
-                            if ((extendsText = lines[i].slice(c,c + 7)).toLowerCase() === 'extends') {
-                                everything.push({type:'extends class',text:extendsText,i1:i,c1:c,c2:c + 7})
-                                c += 7
-                                skipThroughWhiteSpaces()
-                                const extendedClassNameStart = c
-                                skipValidChar()
-                                const extendedClassName = lines[i].slice(extendedClassNameStart,c)
-                                if (extendedClassName) {
-                                    everything.push({type:'extendedClassName',text:extendedClassName,i1:i,c1:extendedClassNameStart,c2:c})
-                                }
-                                if (!skipThroughEmptyLines()) { break startOfLineLoop }
-                            }
-                            if (lines[i][c] === '{') {
-                                everything.push({type:'{ class',text:'{',i1:i,c1:c})
-                                c++
-                                if (!skipThroughEmptyLines()) { break startOfLineLoop }
-                            } else {
-                                d('illegal class name',linesPlusChar())
-                            }
-                            continue startOfLineLoop
-                        default:
-                            d('this cannot happen because idkType must be in 1,2,3,4,5',linesPlusChar())
                         }
-
-                    } else if (lines[i][c] === '(') {
-                        if (idkType === 2) {
-                            everything.splice(spliceStartIndex,0,{type:'if',text:validName,i1:validNameLine,c1:validNameStart,c2:validNameEnd})
-                            if (!recurseBetweenExpression()) { findExpression() }
-                            everything.splice(everything.length - 1,0,{type:'end if'})
-                            if (i === howManyLines) { break startOfLineLoop }
-                            if (lines[i][c] === '{') {
-                                everything.push({type:'{ if',text:'{',i1:i,c1:c})
-                                c++
-                                if (!skipThroughEmptyLines()) { break startOfLineLoop }
-                            }
-                            continue startOfLineLoop
-                        }
-
-                        switch (findWhile()) {
-                        case 1:
-                            continue startOfLineLoop
-                        case 2:
-                            break startOfLineLoop
-                        }
-
-                    } else if (lines[i][c] === '{') {
-                        if (validName.toLowerCase() === 'loop') {
-                            everything.splice(spliceStartIndex,0,{type:'loop',text:validName,i1:validNameLine,c1:nonWhiteSpaceStart,c2:validNameEnd})
-                            everything.push({type:'{ loop',text:'{',i1:i,c1:c})
+                        if (lines[i][c] === '{') {
+                            everything.push({type:'{ class',text:'{',i1:i,c1:c})
                             c++
                             if (!skipThroughEmptyLines()) { break startOfLineLoop }
-                            continue startOfLineLoop
+                        } else {
+                            d('illegal class name',linesPlusChar())
                         }
+                        continue startOfLineLoop
+                    default:
+                        d('this cannot happen because idkType must be in 1,2,3,4,5',linesPlusChar())
                     }
 
+                } else if (lines[i][c] === '(') {
+                    if (idkType === 2) {
+                        everything.splice(spliceStartIndex,0,{type:'if',text:validName,i1:validNameLine,c1:validNameStart,c2:validNameEnd})
+                        if (!recurseBetweenExpression()) { findExpression() }
+                        everything.splice(everything.length - 1,0,{type:'end if'})
+                        if (i === howManyLines) { break startOfLineLoop }
+                        if (lines[i][c] === '{') {
+                            everything.push({type:'{ if',text:'{',i1:i,c1:c})
+                            c++
+                            if (!skipThroughEmptyLines()) { break startOfLineLoop }
+                        }
+                        continue startOfLineLoop
+                    }
+
+                    switch (findWhile()) {
+                    case 1:
+                        continue startOfLineLoop
+                    case 2:
+                        break startOfLineLoop
+                    }
+
+                } else if (lines[i][c] === '{') {
+                    if (validName.toLowerCase() === 'loop') {
+                        everything.splice(spliceStartIndex,0,{type:'loop',text:validName,i1:validNameLine,c1:nonWhiteSpaceStart,c2:validNameEnd})
+                        everything.push({type:'{ loop',text:'{',i1:i,c1:c})
+                        c++
+                        if (!skipThroughEmptyLines()) { break startOfLineLoop }
+                        continue startOfLineLoop
+                    }
                 }
-                //can only be from skipThroughEmptyLines()
+
                 if (everything.length === lenghtBeforeSkipLine + 1 || i === howManyLines) {
                     //EOL: ???    OR COMMENT ?????
                     everything.splice(spliceStartIndex,0,{type:'command EOL or comment',text:validName,i1:validNameLine,c1:nonWhiteSpaceStart,c2:validNameEnd})
@@ -605,8 +609,9 @@ export default (content: string,literalDoubleQuoteInContinuation = false): Every
                     }
 
                     continue startOfLineLoop
-                    //end of is statement
                 }
+
+
             }
             if (i === validNameLine && lines[i][c] === ':' && (c + 1 === numberOfChars || whiteSpaceObj[lines[i][c + 1]])) {
                 c++
