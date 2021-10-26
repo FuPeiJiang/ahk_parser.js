@@ -20,5 +20,17 @@
       "program": "${workspaceFolder}/src/convertTov2.ts",
       "outFiles": ["${workspaceFolder}/out/**/*.js"]
     },
+    {
+      // it will run "yarn watchBuild" FOR YOU
+      // https://code.visualstudio.com/docs/editor/tasks#_can-a-background-task-be-used-as-a-prelaunchtask-in-launchjson
+      "name": "debug convertTov2 OK",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/src/convertTov2.ts",
+      // "stopOnEntry": false,
+      "sourceMaps": true,
+      "outFiles": ["${workspaceRoot}/out/src/**/*.js"],
+      "preLaunchTask": "npm: watchBuild"
+    }
   ]
 }
