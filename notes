@@ -2649,3 +2649,6 @@ undefined variables scope to function definition
 default to var:=""
 
 do 'sort' callback function
+
+31 passing (93ms)
+5 failing

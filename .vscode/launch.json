@@ -11,6 +11,14 @@
       "program": "${workspaceFolder}/src/reconstruct.ts",
       "preLaunchTask": "tsc: build - tsconfig.json",
       "outFiles": ["${workspaceFolder}/out/**/*.js"]
-    }
+    },
+    {
+      // always run "yarn watchBuild",
+      "type": "node",
+      "request": "launch",
+      "name": "debug convertTov2",
+      "program": "${workspaceFolder}/src/convertTov2.ts",
+      "outFiles": ["${workspaceFolder}/out/**/*.js"]
+    },
   ]
 }

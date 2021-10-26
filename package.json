@@ -41,7 +41,9 @@
     "bundleDeclarations": "yarn declarations && yarn dtsBundle && yarn unlink_d.ts",
     "declarations": "tsc --emitDeclarationOnly",
     "dtsBundle": "node build/dtsBundle.js",
-    "unlink_d.ts": "node build/unlink_d.ts.js"
+    "unlink_d.ts": "node build/unlink_d.ts.js",
+    "build" : "yarn tsc",
+    "watchBuild" : "yarn tsc -w"
   },
   "packageManager": "yarn@3.0.2"
 }
