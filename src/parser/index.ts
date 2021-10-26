@@ -1127,7 +1127,10 @@ export default (content: string,literalDoubleQuoteInContinuation = false): Every
       }
       everything.push({type:', assignment',text:',',i1:i,c1:c})
       c++
-      if (!recurseBetweenExpression()) { findExpression() }
+      // if (!recurseBetweenExpression()) { findExpression() }
+      while (findExpression()) {
+        skipCommaV2Expr()
+      }
       addEnd('end assignment')
     }
     return true

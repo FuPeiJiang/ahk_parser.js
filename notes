@@ -2649,3 +2649,29 @@ undefined variables scope to function definition
 default to var:=""
 
 do 'sort' callback function
+
+somehow, while isn't detected
+follow string
+
+anything can go into a comma recurse...
+so we do it for all.
+after comma, it doesn't have to be statement, it can be any expression
+
+the structure of the code is confusing...
+
+#structure
+command or assignment ???
+check if there's an := (check only)
+  assignment, then break down into comma recurse
+  check for commas.
+else:
+  command
+
+findExpression
+  # ( could be (ok=="2" && ok())
+  # always check for :=
+  # () function call, etc..
+
+then, check for comma.
+there's no one crazy enough to chain comma command
+msgbox hello, msgbox hello

@@ -507,35 +507,46 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
     case 'v1String findIdkVar':
     case 'assignment':
     case 'idkVariable':{
-      loopOnce:
-      while (true) {
-        b = i
-        if (getBackNotWsOrEmpty()) {
-          const back = getBackNotWsOrEmpty()
-          if (back) {
-            if (back.type === 'functionName' && 'varsetcapacity' === back.text.toLowerCase()) {
-              addVarToDeclared(thisE.text)
-              break loopOnce
-            }
+      b = i
+      const back1 = getBackNotWsOrEmpty()
+      if (back1) {
+        if (back1.type === 'global local or static{ws}') {
+          const textLower = back1.text.toLowerCase()
+          switch (textLower) {
+          case 'global':
+            scopeVarsThatAreDeclared[0][textLower] = true
+            return 3
+          case 'local':
+          case 'static':
+            addVarToDeclared(textLower)
+            return 3
           }
         }
-        const nextNotEmpty = getNextNotWsOrEmpty()
-        if (nextNotEmpty) {
-          if (nextNotEmpty.type === '2operator' && nextNotEmpty.text === ':=' ) {
-            addVarToDeclared(thisE.text)
-            break loopOnce
-          }
-        }
-        break
-      }
 
+        const back2 = getBackNotWsOrEmpty()
+        if (back2) {
+          if (back2.type === 'functionName' && 'varsetcapacity' === back2.text.toLowerCase()) {
+            addVarToDeclared(thisE.text)
+            return 3
+          }
+        }
+      }
+      const nextNotEmpty = getNextNotWsOrEmpty()
+      if (nextNotEmpty) {
+        if (nextNotEmpty.type === '2operator' && nextNotEmpty.text === ':=' ) {
+          addVarToDeclared(thisE.text)
+          return 3
+        }
+      }
 
       if (varNotDeclared(thisE.text)) {
         declareVar(thisE.text)
       }
-      const theText = thisE.text
-      if (theText.indexOf('%') === -1) {
-        if (theText.toLowerCase() === 'a_isunicode') {
+      return 3
+    }
+    case 'A_Var':
+      if (thisE.text.indexOf('%') === -1) {
+        if (thisE.text.toLowerCase() === 'a_isunicode') {
 
           while (true) {
             b = i
@@ -597,7 +608,6 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
         }
       }
       break
-    }
     case '(statement) ,':{
       thisE.text = ' '
       const next = everything[i + 1]
