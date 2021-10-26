@@ -1,3 +1,6 @@
-SetBatchLines, -1
-#KeyHistory 0
-ListLines Off
+LineNum := 1,  sOutput := ""
+While (true)
+    and DllCall()
+      Msgbox 1
+        While (false)
+          sOutput .= "ok"

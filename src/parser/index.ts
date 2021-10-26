@@ -449,7 +449,6 @@ export default (content: string,literalDoubleQuoteInContinuation = false): Every
                             break startOfLineLoop
                         }
 
-                        // Unreachable code detected.ts(7027)
                         switch (idkType) {
                         case 3:
                         // d(validName, 'global local or static', char())
@@ -457,7 +456,7 @@ export default (content: string,literalDoubleQuoteInContinuation = false): Every
 
                             findVariableName()
                             recurseBetweenExpression()
-                            if (skipCommaV2Expr()) { break startOfLineLoop }
+                            if (skipCommaV2Expr()) { break startOfLineLoop } //OUT OF LINES
                             continue startOfLineLoop
                         // return everything
                         case 4:
@@ -745,19 +744,16 @@ export default (content: string,literalDoubleQuoteInContinuation = false): Every
 
                   } */
 
-
-            //#ASSIGNMENT
-            let doAssignmentReturned = doAssignment()
-            if (doAssignmentReturned === 1) {
+            // .= is an assignment and recurseFindTrailingExpr() will WRONGLY catch .= as a obj.property
+            switch (doAssignment()) {
+            case 1:
                 continue startOfLineLoop
-            } else if (doAssignmentReturned === 2) {
+            case 2:
                 break startOfLineLoop
             }
-
             recurseFindTrailingExpr()
 
             //out of lines
-
             if (i === howManyLines || !skipThroughEmptyLines()) {
                 if (lastTrailingWasFunc) {
                     everything.splice(spliceStartIndex,0,{type:'functionName',text:validName,i1:validNameLine,c1:validNameStart,c2:validNameEnd})
@@ -775,10 +771,10 @@ export default (content: string,literalDoubleQuoteInContinuation = false): Every
                 continue startOfLineLoop
             }
 
-            doAssignmentReturned = doAssignment()
-            if (doAssignmentReturned === 1) {
+            switch (doAssignment()) {
+            case 1:
                 continue startOfLineLoop
-            } else if (doAssignmentReturned === 2) {
+            case 2:
                 break startOfLineLoop
             }
 
@@ -862,17 +858,17 @@ export default (content: string,literalDoubleQuoteInContinuation = false): Every
 
 
                 everything.splice(spliceStartIndex,0,{type:'functionName',text:validName,i1:validNameLine,c1:validNameStart,c2:validNameEnd})
-                if (skipCommaV2Expr()) { break startOfLineLoop }
+                if (skipCommaV2Expr()) { break startOfLineLoop } //OUT OF LINES
                 continue startOfLineLoop
             }
 
 
         }
         //only for ++var or --var
-        const doAssignmentReturned = doAssignment()
-        if (doAssignmentReturned === 1) {
+        switch (doAssignment()) {
+        case 1:
             continue startOfLineLoop
-        } else if (doAssignmentReturned === 2) {
+        case 2:
             break startOfLineLoop
         }
 
@@ -973,15 +969,15 @@ export default (content: string,literalDoubleQuoteInContinuation = false): Every
             everything.splice(spliceStartIndex,0,{type:'assignment',text:validName,i1:validNameLine,c1:validNameStart,c2:validNameEnd})
             const legalExprLine = i
             maybePercentV1ToV2()
-            if (!recurseBetweenExpression()) {
-                if (i === legalExprLine) {
-                    findExpression()
-                }
-            }
+
+            findExpression()
             addEnd('end assignment')
-            if (skipCommaV2Expr()) { return 2 }
-            return 1
+
+            if (skipCommaV2Expr()) { return 2 } //OUT OF LINES
+
+            return 1 //found Operator
         }
+        return 0 //didn't find Operator
     }
     function functionMid(which: string) {
         const parenStartIndex = everything.length
@@ -1108,27 +1104,16 @@ export default (content: string,literalDoubleQuoteInContinuation = false): Every
     //true if out of lines
     function skipCommaV2Expr() {
         while (i < howManyLines) {
-            if (lines[i][c] !== ',') {
-                return false
+            if (c < numberOfChars && lines[i][c] === ',') {
+                everything.push({type:', skipCommaV2Expr',text:',',i1:i,c1:c})
+                c++
+                findExpression()
+                addEnd('end comma Expression')
+                continue
             }
-            everything.push({type:', assignment',text:',',i1:i,c1:c})
-            c++
-            if (!recurseBetweenExpression()) { findExpression() }
-            addEnd('end assignment')
+            return false
         }
-        return true
-    }
-    function skipCommaAssignment() {
-        while (i < howManyLines) {
-            if (lines[i][c] !== ',') {
-                return false
-            }
-            everything.push({type:', assignment',text:',',i1:i,c1:c})
-            c++
-            findVariableName()
-            recurseBetweenExpression()
-        }
-        return true
+        return true //OUT OF LINES
     }
     function findVariableName() {
         //if whiteSpace in v1String, then illegal var Name

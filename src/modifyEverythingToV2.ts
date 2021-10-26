@@ -21,7 +21,7 @@ const funcCallDelim: stringIndexBool = {', function CALL':true,') function CALL'
 const wsOrEmptyLine: stringIndexBool = {'whiteSpaces':true,'emptyLines':true}
 const startGroupOrUnit: stringIndexString = {'( group':') group','start unit':'end unit'}
 const on1off0: stringIndexString = {'on':'1','off':'0'}
-const ternaryColonEndDelim: stringIndexBool = {'end assignment':true,', function CALL':true,') function CALL':true,', assignment':true,'end comma assignment':true}
+const ternaryColonEndDelim: stringIndexBool = {'end assignment':true,', function CALL':true,') function CALL':true,', skipCommaV2Expr':true,'end comma assignment':true}
 const noNeedToWhiteSpaceForConcat: stringIndexBool = {' ':true,'\t':true,'\n':true,',':true,'<':true,'>':true,'=':true,'!':true}
 const commaCommandObj: stringIndexBool = {', command whiteSpace':true,', command comma':true,', 1 (loop) idk':true,', 2 (loop) idk':true}
 //added 'start unit' for Param=Integer, 'String' for Param=""
