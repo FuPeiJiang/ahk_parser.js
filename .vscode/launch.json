@@ -31,6 +31,6 @@
       "sourceMaps": true,
       "outFiles": ["${workspaceRoot}/out/src/**/*.js"],
       "preLaunchTask": "npm: watchBuild"
-    }
+    },
   ]
 }
