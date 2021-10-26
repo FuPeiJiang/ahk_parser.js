@@ -1,4 +1,3 @@
-import {LargeNumberLike} from 'crypto'
 import type {EverythingType} from './parser/index'
 
 import type {stringIndexBool,stringIndexString} from './parser/tokens'
@@ -32,6 +31,7 @@ const startOfV1Expr: stringIndexBool = {'v1String findV1Expression':true,'%START
 // const concatableTypes: stringIndexBool = {'v1String findPercentVarV1Expression':true,'percentVar v1Expression':true}
 const concatIgnoreThese: stringIndexBool = {'%START %Var%':true,'END% %Var%':true}
 const modV1StrEditThese: stringIndexBool = {'v1String findPercentVarV1Expression':true,'percentVar v1Expression':true,'%START %Var%':true,'END% %Var%':true,'v1String findV1Expression beforeSingleComma':true,'v1String findV1Expression':true}
+const globalLocalStatic: stringIndexBool = {'global local or static{ws}':true,'global local or static{EOL}':true}
 
 //for 'dllcall'
 const dllcallStr: stringIndexBool = {'"str"':true,'"wstr"':true,'"astr"':true}
@@ -493,7 +493,10 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
             }
             break
         case '{ function DEFINITION':
-            scopeFunctionStartIndex = i
+            b = i + 2
+            if (skipThroughGlobalLocalStatic()) { return 2 }
+            scopeFunctionStartIndex = b
+
             functionScopeDepthIndex = scopeVarsThatAreDeclared.length
             scopeVarsThatAreDeclared.push({})
             inAutoExecuteOrDepth1Label = false
@@ -539,7 +542,7 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
 
                     while (true) {
                         b = i
-                        if (!skipEmptyLinesEmptyText()) {break}
+                        if (skipEmptyLinesEmptyText()) {break}
                         let spliceStart = i - 1
                         if (everything[b].type === '? ternary') {
                             next = everything[b + 1]
@@ -562,7 +565,7 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
                                 break
                             }
                             b = ifTrueStart
-                            if (!findNext(': ternary')) {break}
+                            if (findNext(': ternary')) {break}
                             const colonIndex = b
                             const back = everything[b - 1]
                             if (back) {
@@ -1079,7 +1082,7 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
         case '3operator':
             if (thisE.text.toLowerCase() === 'new') {
                 const iBak = i
-                if (skipEmpty()) { return 2 }
+                if (skipEmptyWsOrEmptyLineText()) { return 2 }
                 if (next.type === 'idkVariable') {
                     everything.splice(iBak,i - iBak + 1,next,
                         (is_AHK_H ? {type:'.New()',text:'.New()'} : {type:'() new',text:'()'})
@@ -1183,29 +1186,44 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
         return 3 //this will execute if it doesn't go to else
     }
     // functions start of functions
-    function addVarToDeclared(varName) {
+    function skipThroughGlobalLocalStatic() {
+        // b
+        while (b < everything.length) {
+            if (globalLocalStatic[everything[b].type]) {
+                if (findNext('end command')) { return true }
+                b++
+                if (skipEmptyLines()) { return true }
+                continue
+            }
+            return false
+        }
+        return true
+    }
+    function addVarToDeclared(varName: string) {
         scopeVarsThatAreDeclared[scopeVarsThatAreDeclared.length - 1][varName.toLowerCase()] = true
     }
-    function declareVar(varName) {
+    function declareVar(varName: string) {
         scopeVarsThatAreDeclared[functionScopeDepthIndex][varName.toLowerCase()] = true
-        scopeFunctionStartIndex++
+
         //if comment, add a newline
-        let newlineOrNot = ''
-        if (scopeFunctionStartIndex < everything.length) {
-            b = scopeFunctionStartIndex - 1
-            const next = getNextWithText()
-            if (next) {
-                if (next.text[0] !== '\n') {
-                    newlineOrNot = '\n'
-                }
-            }
-        }
-        everything.splice(scopeFunctionStartIndex,0,{type:'undeclared var',text:`\n${varName}:="" ;declareVar${newlineOrNot}`})
+        // const newlineOrNot = ''
+        // if (scopeFunctionStartIndex < everything.length) {
+        // b = scopeFunctionStartIndex - 1
+        // const next = getNextWithText()
+        // if (next) {
+        // if (next.text[0] !== '\n') {
+        // newlineOrNot = '\n'
+        // }
+        // }
+        // }
+        // everything.splice(scopeFunctionStartIndex,0,{type:'undeclared var',text:`\n${varName}:="" ;declareVar${newlineOrNot}`})
+
+        everything.splice(scopeFunctionStartIndex,0,{type:'undeclared var',text:`${varName}:="" ;declareVar\n`})
         i++
         commandStartIndex++
         commandArgStartIndex++
     }
-    function varNotDeclared(varName) {
+    function varNotDeclared(varName: string) {
         const varNameLower = varName.toLowerCase()
         let len = scopeVarsThatAreDeclared.length
         //don't add global vars, we can't handle if else branching yet
@@ -1238,17 +1256,6 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
         }
         p(')'); spaceIfComment(); s()
         return 3
-    }
-    function skipEmpty() {
-        next = everything[++i]
-        while (next) {
-            const bType = next.type
-            if (next.text && !wsOrEmptyLine[bType]) {
-                return false
-            }
-            next = everything[++i]
-        }
-        return true
     }
     function varnameTill(eType: string) {
         i++
@@ -1864,15 +1871,12 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
         return false
     }
     function findNext(stopAtThis: string) {
-        let next
-        next = everything[++b]
-        while (next) {
-            if (next.type === stopAtThis) {
-                return true
+        while (++b < everything.length) {
+            if (everything[b].type === stopAtThis) {
+                return false
             }
-            next = everything[++b]
         }
-        return false
+        return true
     }
     function backFindWithText() {
         let next
@@ -1897,16 +1901,32 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
         }
         return false
     }
-    function skipEmptyLinesEmptyText() {
-        let next
-        next = everything[++b]
-        while (next) {
-            if (next.type !== 'emptyLines' && next.text !== undefined) {
-                return true
+    function skipEmptyLines() {
+        if (b < everything.length) {
+            if (everything[b].type === 'emptyLines') {
+                b++
             }
-            next = everything[++b]
+            return false
         }
-        return false
+        return true
+    }
+    function skipEmptyWsOrEmptyLineText() {
+        while (++b < everything.length) {
+            if (wsOrEmptyLine[everything[b].type] || everything[b].text === undefined) {
+                continue
+            }
+            return false
+        }
+        return true
+    }
+    function skipEmptyLinesEmptyText() {
+        while (++b < everything.length) {
+            if (everything[b].type === 'emptyLines' || everything[b].text === undefined) {
+                continue
+            }
+            return false
+        }
+        return true
     }
     function skipToAfter(this_type: string) {
         const len = everything.length

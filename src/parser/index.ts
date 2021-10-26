@@ -236,20 +236,20 @@ export default (content: string,literalDoubleQuoteInContinuation = false): Every
 
                 if (skipThroughEmptyLines()) {
                     // msgbox can have MsgBox {
-                // if (lines[i][c] === ',') {
-                // check whitespace directive/commands
-                // switch
-                // case '(':
-                // case '{':
+                    // if (lines[i][c] === ',') {
+                    // check whitespace directive/commands
+                    // switch
+                    // case '(':
+                    // case '{':
                     if (lines[i][c] === ',') {
                         everything.push({type:'(statement) ,',text:',',i1:i,c1:c})
                         c++
 
                         // directive or command
                         if (idkType === 1 || idkType === 4) {
-                        // d(validName, 'comma DIRECTIVE OR COMMAND', char())
-                        // #validName = lines[validNameLine].slice(validNameStart, validNameEnd)
-                        // everything.push({ type: 'newLine comma DIRECTIVE OR COMMAND', text: '\n', i1: i, c1: c + 1 })
+                            // d(validName, 'comma DIRECTIVE OR COMMAND', char())
+                            // #validName = lines[validNameLine].slice(validNameStart, validNameEnd)
+                            // everything.push({ type: 'newLine comma DIRECTIVE OR COMMAND', text: '\n', i1: i, c1: c + 1 })
                             switch (sameCommaOrWhitespaceCommand()) {
                             case 1:
                                 continue startOfLineLoop
@@ -274,10 +274,10 @@ export default (content: string,literalDoubleQuoteInContinuation = false): Every
 
                     // check whitespace directive/commands
                     if (i === validNameLine && whiteSpaceObj[lines[validNameLine][validNameEnd]]) {
-                    // only directives and "if" override assignment and ONLY when there's a whiteSpace
+                        // only directives and "if" override assignment and ONLY when there's a whiteSpace
                         switch (idkType) {
                         case 1:
-                        // d(validName, 'whiteSpace DIRECTIVE', char())
+                            // d(validName, 'whiteSpace DIRECTIVE', char())
                             everything.splice(spliceStartIndex,0,{type:'directive',text:validName,i1:validNameLine,c1:validNameStart,c2:validNameEnd})
                             singleComma = true
                             findV1Expression()
@@ -427,7 +427,7 @@ export default (content: string,literalDoubleQuoteInContinuation = false): Every
 
                                 c++
                                 if (!skipThroughEmptyLines()) { break startOfLineLoop }
-                            // d(numberOfChars, lines[i].length)
+                                // d(numberOfChars, lines[i].length)
                             }
                             continue startOfLineLoop
                             //#whiteSpace v1 expression
@@ -451,17 +451,18 @@ export default (content: string,literalDoubleQuoteInContinuation = false): Every
 
                         switch (idkType) {
                         case 3:
-                        // d(validName, 'global local or static', char())
+                            // d(validName, 'global local or static', char())
                             everything.splice(spliceStartIndex,0,{type:'global local or static{ws}',text:validName,i1:validNameLine,c1:validNameStart,c2:validNameEnd})
 
                             findVariableName()
                             recurseBetweenExpression()
+                            addEnd('end command')
                             if (skipCommaV2Expr()) { break startOfLineLoop } //OUT OF LINES
                             continue startOfLineLoop
-                        // return everything
+                            // return everything
                         case 4:
-                        // d(validName, 'whiteSpace COMMAND', nonWhiteSpaceStart + 1, lineBeforeSkip + 1, 'line')
-                        // statement can't have Expr if line changed...
+                            // d(validName, 'whiteSpace COMMAND', nonWhiteSpaceStart + 1, lineBeforeSkip + 1, 'line')
+                            // statement can't have Expr if line changed...
                             switch (sameCommaOrWhitespaceCommand()) {
                             case 1:
                                 continue startOfLineLoop
@@ -525,7 +526,7 @@ export default (content: string,literalDoubleQuoteInContinuation = false): Every
                             addEnd('end command')
 
                             continue startOfLineLoop
-                        //class
+                            //class
                         case 5:
                             everything.splice(spliceStartIndex,0,{type:'class',text:validName,i1:validNameLine,c1:nonWhiteSpaceStart,c2:validNameEnd})
                             const classNameStart = c
@@ -592,9 +593,15 @@ export default (content: string,literalDoubleQuoteInContinuation = false): Every
                 }
 
                 //END OF FILE, we don't break, since f3:ExitApp
+                // or could be simply we went through all of the above without continue
                 if (everything.length === lenghtBeforeSkipLine + 1 || i === howManyLines) {
                     //EOL: ???    OR COMMENT ?????
-                    everything.splice(spliceStartIndex,0,{type:'command EOL or comment',text:validName,i1:validNameLine,c1:nonWhiteSpaceStart,c2:validNameEnd})
+                    if (idkType === 3) {
+                        everything.splice(spliceStartIndex,0,{type:'global local or static{EOL}',text:validName,i1:validNameLine,c1:nonWhiteSpaceStart,c2:validNameEnd})
+                    } else {
+                        everything.splice(spliceStartIndex,0,{type:'command EOL or comment',text:validName,i1:validNameLine,c1:nonWhiteSpaceStart,c2:validNameEnd})
+                    }
+
                     spliceIndexEverythingAtHotkeyLine = everything.length
                     // operatorAtHotkeyLine = i
                     // i = v1StartLine, c = validNameEnd

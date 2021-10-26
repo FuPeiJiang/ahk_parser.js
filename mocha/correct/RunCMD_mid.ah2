@@ -1,7 +1,8 @@
 RunCMD(CmdLine, WorkingDir:="", Codepage:="CP0", Fn:="RunCMD_Output") {  ;         RunCMD v0.94        
 Local         ; RunCMD v0.94 by SKAN on D34E/D37C @ autohotkey.com/boards/viewtopic.php?t=74647                                                             
 Global RunCMD_PID
-  Fn := IsFunc(Fn) ? Func(Fn) : 0
+  RunCMD_PID:="" ;declareVar
+Fn := IsFunc(Fn) ? Func(Fn) : 0
 , DllCall("CreatePipe", "PtrP",hPipeR:=0, "PtrP",hPipeW:=0, "Ptr",0, "Int",0)
 , DllCall("SetHandleInformation", "Ptr",hPipeW, "Int",1, "Int",1)
 , DllCall("SetNamedPipeHandleState", "Ptr",hPipeR, "UIntP",PIPE_NOWAIT:=1, "Ptr",0, "Ptr",0)
