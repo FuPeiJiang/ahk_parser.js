@@ -55,7 +55,7 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
     let commandStartIndex = 0,commandArgStartIndex = 0
     let i = 0,b: number
 
-    for (const len = everything.length; i < len;i++) {
+    for (;i < everything.length; i++) {
         const theText = everything[i].text
         switch (everything[i].type) {
 
@@ -66,7 +66,7 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
         case 'idkVariable':
         case 'assignment':
         case 'v1String findIdkVar':
-        case 'var at v1Assignment':{
+        case 'var at v1Assignment': {
             const parsedIdkVar = parseIdkVariable(theText)
             if (parsedIdkVar) {
                 for (let n = 0,len2 = parsedIdkVar.length; n < len2; n++) {
@@ -83,6 +83,8 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
                 const dLowered = theText.toLowerCase()
                 lowerVarNames[dLowered] = lowerVarNames[dLowered] || []
                 lowerVarNames[dLowered].push(i)
+
+                dealWithA_IsUnicode(dLowered)
             }
             continue
         }
@@ -108,7 +110,7 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
         const thisName = namesArr[n]
         const loweredName = thisName.toLowerCase()
         if ((loweredName.startsWith('true') && loweredName !== 'true')
-     || (loweredName.startsWith('false') && loweredName !== 'false')) {
+            || (loweredName.startsWith('false') && loweredName !== 'false')) {
 
             const eIndexArr = lowerVarNames[loweredName]
             for (let i = 0,len2 = eIndexArr.length; i < len2; i++) {
@@ -152,9 +154,9 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
         var result = []
         var characters = 'abcdefghijklmnopqrstuvwxyz'
         var charactersLength = characters.length
-        for ( var i = 0; i < length; i++ ) {
+        for (var i = 0; i < length; i++) {
             result.push(characters.charAt(Math.floor(Math.random() *
-  charactersLength)))
+                charactersLength)))
         }
         return result.join('')
     }
@@ -194,13 +196,13 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
             thisE.text = `"${everything[i].text}"`; break
         case '% v1->v2 expr':
             thisE.text = ''; break
-        case 'functionName':{
+        case 'functionName': {
             const thisText = everything[i].text
             const back = everything[i - 1]
             const thisLowered = thisText.toLowerCase()
             if (back && back.type === '. property') {
                 switch (thisLowered) {
-                case 'length':{
+                case 'length': {
                     // .Length() -> .Length
                     thisE.type = 'v2: prop'
                     //splice off ( to )
@@ -211,7 +213,7 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
                 case 'haskey':
                     // .HasKey() -> .Has()
                     thisE.text = 'Has'; break
-                case 'count':{
+                case 'count': {
                     // a[k].count()
                     // (type(a[k])=="Array"?a[k].Length:a[k].Count)
                     b = i
@@ -221,7 +223,7 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
                     if (nextSkipThrough(') function CALL','( function CALL')) { return 2 }
                     arrFromArgsToInsert = []
                     // a[k] be the slice, make a(1) be a[k]
-                    argsArr = [everything.slice(spliceStart + 1,i - 1 )]
+                    argsArr = [everything.slice(spliceStart + 1,i - 1)]
                     // splice off and insert at same time
                     p('(Type('); a(1); p(')=="Array"?'); a(1); p('.Length:'); a(1); p('.Count)')
                     everything.splice(spliceStart,b - spliceStart + 1,...arrFromArgsToInsert)
@@ -233,7 +235,7 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
                 return 3
             }
             switch (thisLowered) {
-            case 'dllcall':{
+            case 'dllcall': {
                 if (getArgs()) { return 2 }
                 // DllCall("[DllFile\]Function" [, Type1, Arg1, Type2, Arg2, "Cdecl ReturnType"])
                 // length 6 -> loop 2 times
@@ -304,7 +306,7 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
             case 'object':
                 // Object() -> Map()  OR  Object("key",value) -> Map("key",value)
                 thisE.text = 'Map'; break
-            case 'numput':{
+            case 'numput': {
                 // NumPut(Number, VarOrAddress [, Offset := 0][, Type := "UPtr"])
                 // NumPut Type, Number, [Type2, Number2, ...] VarOrAddress [, Offset]
                 if (getArgs()) { return 2 }
@@ -323,7 +325,7 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
                 p(')'); s()
                 break
             }
-            case 'numget':{
+            case 'numget': {
                 // Number := NumGet(Source [, Offset := 0][, Type := "UPtr"])
                 // Number := NumGet(Source, [Offset,] Type)
                 if (getArgs()) { return 2 }
@@ -436,7 +438,7 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
                 thisE.type = 'v2: arrAccess'
             }
             break
-        case 'if':{
+        case 'if': {
 
             //skip 'emptyLines' after if
             //'if' (single unit ending with access), transform into .Has()
@@ -509,7 +511,7 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
             break
         case 'v1String findIdkVar':
         case 'assignment':
-        case 'idkVariable':{
+        case 'idkVariable': {
             loopOnce:
             while (true) {
                 b = i
@@ -524,7 +526,7 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
                 }
                 const nextNotEmpty = getNextNotWsOrEmpty()
                 if (nextNotEmpty) {
-                    if (nextNotEmpty.type === '2operator' && nextNotEmpty.text === ':=' ) {
+                    if (nextNotEmpty.type === '2operator' && nextNotEmpty.text === ':=') {
                         addVarToDeclared(thisE.text)
                         break loopOnce
                     }
@@ -536,72 +538,10 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
             if (varNotDeclared(thisE.text)) {
                 declareVar(thisE.text)
             }
-            const theText = thisE.text
-            if (theText.indexOf('%') === -1) {
-                if (theText.toLowerCase() === 'a_isunicode') {
 
-                    while (true) {
-                        b = i
-                        if (skipEmptyLinesEmptyText()) {break}
-                        let spliceStart = i - 1
-                        if (everything[b].type === '? ternary') {
-                            next = everything[b + 1]
-                            if (next) {
-                                if (next.type === 'emptyLines' && !next.text.includes('\n')) {
-                                    b++
-                                }
-                            }
-                            const ifTrueStart = b + 1
-                            let findGroupEnd = false
-                            let spliceEnd
-                            //splice off start to end and insert the ifTrue
-                            while (true) {
-                                b = i
-                                if (!backEmptyLinesEmptyText()) {break}
-                                if (everything[b].type === '( group') {
-                                    findGroupEnd = true
-                                    spliceStart = b
-                                }
-                                break
-                            }
-                            b = ifTrueStart
-                            if (findNext(': ternary')) {break}
-                            const colonIndex = b
-                            const back = everything[b - 1]
-                            if (back) {
-                                if (back.type === 'emptyLines' && !back.text.includes('\n')) {
-                                    b--
-                                }
-                            }
-                            const ifTrueEnd = b
-                            b = colonIndex
-                            if (findGroupEnd) {
-                                if (nextSkipThrough(') group','( group')) {break}
-                                spliceEnd = b + 1
-                            } else {
-                                if (!findNextAnyInObj(ternaryColonEndDelim)) {break}
-                                spliceEnd = b
-                            }
-
-                            // A_IsUnicode doesn't delete multiline emptyLines
-                            let spliceLen = spliceEnd - spliceStart
-                            b = spliceEnd
-                            backFindWithText()
-                            if (everything[b].text.includes('\n')) {
-                                spliceLen--
-                            }
-                            everything.splice(spliceStart,spliceLen,...(everything.slice(ifTrueStart,ifTrueEnd)))
-                            i = spliceStart
-                            return 1
-                        }
-                        break
-                    }
-                    thisE.text = 'true'
-                }
-            }
             break
         }
-        case '(statement) ,':{
+        case '(statement) ,': {
             thisE.text = ' '
             const next = everything[i + 1]
             if (wsOrEmptyLine[next.type]) {
@@ -614,7 +554,7 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
             thisE.text = ''; break
         case 'v1String findV1Expression':
         case 'v1String findPercentVarV1Expression':
-        case 'v1String findV1Expression beforeSingleComma':{
+        case 'v1String findV1Expression beforeSingleComma': {
             if (thisE.text !== '' || eType === 'v1String findV1Expression') {
                 let next,putAtEnd = '',back,putAtFront = ''
 
@@ -656,7 +596,7 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
             }
             break
         }
-        case 'percentVar v1Expression':{
+        case 'percentVar v1Expression': {
             let back,putAtFront = '',next,putAtEnd = ''
 
             b = i - 1
@@ -676,25 +616,25 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
             }
 
             /* i++
-      outerLoop:
-      while ((next = everything[i])) {
-        switch (all()) {
-        case 3:
-          i++
-        case 1:
-          if (next.text) {
-            const firstChar = next.text[0]
-            if (!noNeedToWhiteSpaceForConcat[firstChar]) {
-              putAtEnd = ' '
-            }
-            break outerLoop
-          }
-          continue outerLoop
-        case 2:
-          return 2
-        }
-        i++
-      } */
+              outerLoop:
+              while ((next = everything[i])) {
+                switch (all()) {
+                case 3:
+                  i++
+                case 1:
+                  if (next.text) {
+                    const firstChar = next.text[0]
+                    if (!noNeedToWhiteSpaceForConcat[firstChar]) {
+                      putAtEnd = ' '
+                    }
+                    break outerLoop
+                  }
+                  continue outerLoop
+                case 2:
+                  return 2
+                }
+                i++
+              } */
             b = i + 1
             next = everything[b]
             outerLoop:
@@ -719,7 +659,7 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
                 thisE.text = '!='
             }
             break
-        case '= v1Assignment':{
+        case '= v1Assignment': {
             thisE.text = ':='
             let next = everything[++i]
             //# var = -> var:=""
@@ -860,7 +800,7 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
                 return commandFirstParamToFunction('WinGetText')
             case 'sysget':
                 return commandFirstParamToFunction('SysGet')
-            case 'envget':{
+            case 'envget': {
                 const iBak = i
                 if (modV1StrToEdit(1)) { return 3 }
                 i = iBak
@@ -881,7 +821,7 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
                 if (getCommandParams()) { return 2 }
                 a(1); p(':=Sort('); a(1); o(',',2); a(2); p(')')
                 spaceIfComment(); s(); break
-            case 'pixelgetcolor':{
+            case 'pixelgetcolor': {
                 // PixelGetColor, OutputVar, X, Y , Mode
                 // Color := PixelGetColor(X, Y [, Mode])
                 const iBak = i
@@ -907,7 +847,7 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
                 p(')')
                 spaceIfComment(); s(); break
             }
-            case 'stringsplit':{
+            case 'stringsplit': {
                 const iBak = i
                 if (modV1StrToEdit(2)) { return 3 }
                 i = iBak
@@ -924,7 +864,7 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
             }
             } //end of inner switch
             break //break outer switch
-        case 'command EOL or comment':{
+        case 'command EOL or comment': {
             const dTextLowered = everything[i].text.toLowerCase()
             if (dTextLowered === '#noenv') {
                 deleteCommand()
@@ -932,7 +872,7 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
             }
             break
         }
-        case 'legacyIf var':{
+        case 'legacyIf var': {
             b = i + 2
             let next = everything[b]
             dummyLoopNotIs:
@@ -941,13 +881,13 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
                     if (next.type === 'legacyIf is') {
                         b += 2
                         next = everything[b]
-                        if (!next) {break dummyLoopNotIs}
+                        if (!next) { break dummyLoopNotIs }
                         let hasNot = false
                         if (next.type === 'legacyIf (is) not') {
                             hasNot = true
                             b += 2
                             next = everything[b]
-                            if (!next) {break dummyLoopNotIs}
+                            if (!next) { break dummyLoopNotIs }
                         }
                         if (next.type === 'v1String findV1Expression') {
                             let typeCheckFunc
@@ -1008,7 +948,7 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
                 }
             }
             break
-        case 'hotkey':{
+        case 'hotkey': {
 
             const hotkeyLine = thisE.i1
             b = i
@@ -1091,7 +1031,7 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
                 }
             }
             break
-        case 'legacyIf in':{
+        case 'legacyIf in': {
             i += 2
             const nextType = everything[i].type
             const escapedMatchArr = []
@@ -1134,7 +1074,7 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
             }
             break
         }
-        case 'loop':{
+        case 'loop': {
             if (skipFirstSeparatorOfCommand()) { return 3 }
             let next = everything[i]
             if (next && next.type === '% v1->v2 expr') {
@@ -1186,6 +1126,68 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
         return 3 //this will execute if it doesn't go to else
     }
     // functions start of functions
+    function dealWithA_IsUnicode(dLowered: string) {
+        if (dLowered === 'a_isunicode') {
+            let next
+            b = i
+            if (skipEmptyLinesEmptyText()) { return true }
+            let spliceStart = i - 1
+
+            if (everything[b].type === '? ternary') {
+                next = everything[b + 1]
+                if (next) {
+                    if (next.type === 'emptyLines' && !next.text.includes('\n')) {
+                        b++
+                    }
+                }
+                const ifTrueStart = b + 1
+                let findGroupEnd = false
+                let spliceEnd
+                //splice off start to end and insert the ifTrue
+                while (true) {
+                    b = i
+                    if (!backEmptyLinesEmptyText()) { return true }
+                    if (everything[b].type === '( group') {
+                        findGroupEnd = true
+                        spliceStart = b
+                    }
+                    break
+                }
+                b = ifTrueStart
+                if (findNext(': ternary')) { return true }
+                const colonIndex = b
+                const back = everything[b - 1]
+                if (back) {
+                    if (back.type === 'emptyLines' && !back.text.includes('\n')) {
+                        b--
+                    }
+                }
+                const ifTrueEnd = b
+                b = colonIndex
+                if (findGroupEnd) {
+                    if (nextSkipThrough(') group','( group')) { return true }
+                    spliceEnd = b + 1
+                } else {
+                    if (!findNextAnyInObj(ternaryColonEndDelim)) { return true }
+                    spliceEnd = b
+                }
+
+                // A_IsUnicode doesn't delete multiline emptyLines
+                let spliceLen = spliceEnd - spliceStart
+                b = spliceEnd
+                backFindWithText()
+                if (everything[b].text.includes('\n')) {
+                    spliceLen--
+                }
+                everything.splice(spliceStart,spliceLen,...(everything.slice(ifTrueStart,ifTrueEnd)))
+                i = spliceStart
+            } else {
+                everything[i].text = 'true'
+                everything[i].type = 'A_Unicode always true'
+            }
+        }
+        return false
+    }
     function skipThroughGlobalLocalStatic() {
         // b
         while (b < everything.length) {
@@ -1673,7 +1675,7 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
             { type: 'ok'},
           ]) */
     function arrIdkVarToString(paramArr) {
-    //this RETURNS the inside no whitespace
+        //this RETURNS the inside no whitespace
         let n = 0
         for (let len = paramArr.length; n < len; n++) {
 
@@ -1764,7 +1766,7 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
         while (i < everything.length) {
             next = everything[i]
             switch (next.type) {
-            case ') function CALL':{
+            case ') function CALL': {
                 const spliceLen = i + 1 - functionStartIndex
                 localArgsArr.push(everything.slice(paramStartIndex,i))
                 everything.splice(functionStartIndex,spliceLen)
@@ -1858,7 +1860,7 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
             }
         }
     }
-    function findNextAnyInObj(insideThisObj: stringIndexBool|stringIndexString): string|false {
+    function findNextAnyInObj(insideThisObj: stringIndexBool | stringIndexString): string | false {
         let next
         next = everything[++b]
         while (next) {
@@ -1983,19 +1985,19 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
 //challenge accepted
 // https://stackoverflow.com/questions/41253310/typescript-retrieve-element-type-information-from-array-type#51399781
 type ArrayElement<ArrayType extends readonly unknown[]> =
-  ArrayType extends readonly (infer ElementType)[] ? ElementType : never
+    ArrayType extends readonly (infer ElementType)[] ? ElementType : never
 type EverythingElement = ArrayElement<EverythingType> |
 {
-  type: string;
-  text: string;
-  i1?: undefined;
-  c1?: undefined;
-  c2?: undefined;
+    type: string
+    text: string
+    i1?: undefined
+    c1?: undefined
+    c2?: undefined
 } | {
-  text: string;
-  type?: undefined;
-  i1?: undefined;
-  c1?: undefined;
-  c2?: undefined;
+    text: string
+    type?: undefined
+    i1?: undefined
+    c1?: undefined
+    c2?: undefined
 }
 type ExtendedEverythingType = EverythingElement[]
