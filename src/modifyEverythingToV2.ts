@@ -36,6 +36,13 @@ const globalLocalStatic: stringIndexBool = {'global local or static{ws}':true,'g
 //for 'dllcall'
 const dllcallStr: stringIndexBool = {'"str"':true,'"wstr"':true,'"astr"':true}
 
+declare const enum OK {
+    pass = 0,
+    continueLoop = 1,
+    outOfLen = 2,
+    incrementAndContinueLoop = 3,
+}
+
 export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
     const whichBuffer = is_AHK_H ? 'BufferAlloc' : 'Buffer'
     // I'd never think I'd come to this day, but..
@@ -166,11 +173,11 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
     outOfLen:
     while (i < everything.length) {
         switch (all()) {
-        case 3:
+        case OK.incrementAndContinueLoop:
             i++
-        case 1:
+        case OK.continueLoop:
             continue outOfLen
-        case 2:
+        case OK.outOfLen:
             break outOfLen
         }
 
@@ -207,7 +214,7 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
                     thisE.type = 'v2: prop'
                     //splice off ( to )
                     const spliceStart = b = i + 1
-                    if (nextSkipThrough(') function CALL','( function CALL')) { return 2 }
+                    if (nextSkipThrough(') function CALL','( function CALL')) { return OK.outOfLen }
                     everything.splice(spliceStart,b - spliceStart + 1); break
                 }
                 case 'haskey':
@@ -217,10 +224,10 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
                     // a[k].count()
                     // (type(a[k])=="Array"?a[k].Length:a[k].Count)
                     b = i
-                    if (!skipThroughSomethingMid('start unit','end unit')) { return 3 }
+                    if (!skipThroughSomethingMid('start unit','end unit')) { return OK.incrementAndContinueLoop }
                     const spliceStart = b
                     b = i + 1
-                    if (nextSkipThrough(') function CALL','( function CALL')) { return 2 }
+                    if (nextSkipThrough(') function CALL','( function CALL')) { return OK.outOfLen }
                     arrFromArgsToInsert = []
                     // a[k] be the slice, make a(1) be a[k]
                     argsArr = [everything.slice(spliceStart + 1,i - 1)]
@@ -228,15 +235,15 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
                     p('(Type('); a(1); p(')=="Array"?'); a(1); p('.Length:'); a(1); p('.Count)')
                     everything.splice(spliceStart,b - spliceStart + 1,...arrFromArgsToInsert)
                     // case 'readline':
-                    // if (getArgs()) { return 2 }
+                    // if (getArgs()) { return OK.outOfLen }
                     // p('ReadLine() "`n"'); s()
                 }
                 }
-                return 3
+                return OK.incrementAndContinueLoop
             }
             switch (thisLowered) {
             case 'dllcall': {
-                if (getArgs()) { return 2 }
+                if (getArgs()) { return OK.outOfLen }
                 // DllCall("[DllFile\]Function" [, Type1, Arg1, Type2, Arg2, "Cdecl ReturnType"])
                 // length 6 -> loop 2 times
                 // DllCall("[DllFile\]Function" [, Type1, Arg1, Type2, Arg2)
@@ -270,7 +277,7 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
             }
             case 'varsetcapacity':
                 //#function
-                if (getArgs()) { return 2 }
+                if (getArgs()) { return OK.outOfLen }
                 if (argsArr[0].length === 3 && argsArr[0][1].type === 'idkVariable') {
                     varsThatAreVarSetCapacity[argsArr[0][1].text] = true
                     addVarToDeclared(argsArr[0][1].text)
@@ -301,7 +308,7 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
             case 'strreplace':
                 // StrReplace(Haystack, Needle [, ReplaceText, OutputVarCount, Limit])
                 // StrReplace(Haystack, Needle [, ReplaceText, CaseSense, OutputVarCount, Limit := -1])
-                if (getArgs()) { return 2 }
+                if (getArgs()) { return OK.outOfLen }
                 p('StrReplace('); a(1); p(','); a(2); o(',',3); a(3); o(',0,',4); a(4); o(',',5); a(5); p(')'); s(); break
             case 'object':
                 // Object() -> Map()  OR  Object("key",value) -> Map("key",value)
@@ -309,7 +316,7 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
             case 'numput': {
                 // NumPut(Number, VarOrAddress [, Offset := 0][, Type := "UPtr"])
                 // NumPut Type, Number, [Type2, Number2, ...] VarOrAddress [, Offset]
-                if (getArgs()) { return 2 }
+                if (getArgs()) { return OK.outOfLen }
                 const len = argsArr.length
                 p('NumPut(')
                 if (len === 4) {
@@ -328,7 +335,7 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
             case 'numget': {
                 // Number := NumGet(Source [, Offset := 0][, Type := "UPtr"])
                 // Number := NumGet(Source, [Offset,] Type)
-                if (getArgs()) { return 2 }
+                if (getArgs()) { return OK.outOfLen }
                 const len = argsArr.length
 
                 p('NumGet(')
@@ -344,11 +351,11 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
             case 'objgetaddress':
                 // ObjGetAddress( this, "allData" )
                 // this["allData"].Ptr
-                if (getArgs()) { return 2 }
+                if (getArgs()) { return OK.outOfLen }
                 p('StrPtr('); a(1); p('['); a(2); p('])'); s(); break
                 // a(1); p('['); a(2); p('].Ptr'); s(); break
             case 'objsetcapacity':
-                if (getArgs()) { return 2 }
+                if (getArgs()) { return OK.outOfLen }
                 if (argsArr.length === 3) {
                     // ObjSetCapacity( this, "allData", newSize )
                     // NOPE: this["allData"].Size := newSize
@@ -366,7 +373,7 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
                 }
                 break
             case 'objgetcapacity':
-                if (getArgs()) { return 2 }
+                if (getArgs()) { return OK.outOfLen }
                 if (argsArr.length === 2) {
                     // IF param1 is a [] and param2 === 1
                     // ObjGetCapacity( [ param ] , 1)
@@ -383,7 +390,7 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
                                             //slice: don't take the [ ]
                                             argsArr[0] = param1.slice(1,-1)
                                             p('VarSetStrCapacity('); a(1); p(')'); s()
-                                            return 3
+                                            return OK.incrementAndContinueLoop
                                         }
                                     }
                                 }
@@ -399,23 +406,23 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
                 break
             case 'objhaskey':
                 // objhaskey(obj,key) -> obj.Has(key)
-                if (getArgs()) { return 2 }
+                if (getArgs()) { return OK.outOfLen }
                 a(1); p('.Has('); a(2); p(')'); s(); break
             case 'objrawset':
                 // ObjRawSet(Object, Key, Value)
                 // Object[Key]:=Value
-                if (getArgs()) { return 2 }
+                if (getArgs()) { return OK.outOfLen }
                 a(1); p('['); a(2); p(']:='); a(3); s(); break
             case 'objrawget':
                 // ObjRawGet(Object, Key)
                 // Object[Key]
-                if (getArgs()) { return 2 }
+                if (getArgs()) { return OK.outOfLen }
                 a(1); p('['); a(2); p(']'); s(); break
             default:
                 while (++i < everything.length) {
                     next = everything[i]
                     if (next.type === ') function CALL') {
-                        return 3
+                        return OK.incrementAndContinueLoop
                     }
 
                     switch (all()) {
@@ -423,11 +430,11 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
                     case 1:
                         continue
                     case 2:
-                        return 2
+                        return OK.outOfLen
                     }
                 }
                 //out of length
-                return 2
+                return OK.outOfLen
             } //inner switch end
             break //break outer switch
         } //scope create in outer switch
@@ -451,12 +458,12 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
                     b++
                     next = everything[b]
                     if (!next) {
-                        return 3
+                        return OK.incrementAndContinueLoop
                     }
                     hasParen = true
                 }
                 if (next.type === 'start unit') {
-                    if (nextSkipThrough('end unit','start unit')) { return 2 }
+                    if (nextSkipThrough('end unit','start unit')) { return OK.outOfLen }
                 }
                 next = everything[b + (hasParen ? 2 : 1)]
                 if (next) {
@@ -466,12 +473,12 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
                         if (next.type === '] ArrAccess') {
                             next.type = 'edit'
                             next.text = ')'
-                            if (!skipThroughSomethingMid('[ ArrAccess','] ArrAccess')) { return 2 }
+                            if (!skipThroughSomethingMid('[ ArrAccess','] ArrAccess')) { return OK.outOfLen }
                             const back = everything[b]
                             back.type = 'edit'
                             back.text = '.Has('
                         }
-                        return 3
+                        return OK.incrementAndContinueLoop
                     }
                 }
 
@@ -496,7 +503,7 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
             break
         case '{ function DEFINITION':
             b = i + 2
-            if (skipThroughGlobalLocalStatic()) { return 2 }
+            if (skipThroughGlobalLocalStatic()) { return OK.outOfLen }
             scopeFunctionStartIndex = b
 
             functionScopeDepthIndex = scopeVarsThatAreDeclared.length
@@ -631,7 +638,7 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
                   }
                   continue outerLoop
                 case 2:
-                  return 2
+                  return OK.outOfLen
                 }
                 i++
               } */
@@ -652,7 +659,7 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
             }
 
             thisE.text = `${putAtFront}${thisE.text}${putAtEnd}`
-            return 3
+            return OK.incrementAndContinueLoop
         }
         case '2operator':
             if (thisE.text === '<>') {
@@ -679,7 +686,7 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
                 // while ((next = everything[++i])) {
                 // if (next.type === 'end unit') {
                 // everything.splice(i,0,{type:'start wrap Integer "',text:'"'})
-                // i += 2; return 1
+                // i += 2; return OK.continueLoop
                 // }
                 // }
                 ///it will never come here
@@ -687,7 +694,7 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
                 // }
                 everything.splice(i,0,{type:'v1String findV1Expression',text:''})
             }
-            return 1 //to actually parse the fake added 'v1String findV1Expression' to get correct trailing whiteSpace : ex if comments after.
+            return OK.continueLoop //to actually parse the fake added 'v1String findV1Expression' to get correct trailing whiteSpace : ex if comments after.
             //and to not skip the '%START %Var%'
         }
         case 'String':
@@ -700,26 +707,26 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
             //if breakOrContinue, if is number, don't surround with quotes
             switch (thisE.text.toLowerCase()) {
             case 'settitlematchmode':
-                if (modNumIfNum(1)) { return 3 } break
+                if (modNumIfNum(1)) { return OK.incrementAndContinueLoop } break
             case 'mousegetpos':
                 // MouseGetPos [OutputVarX, OutputVarY, OutputVarWin, OutputVarControl, Flag]
-                if (commandNEdit(4)) { return 3 } break
+                if (commandNEdit(4)) { return OK.incrementAndContinueLoop } break
             case 'mousemove':
                 // MouseMove X, Y [, Speed, Relative]
-                if (modV1StrToEdit(3)) { return 3 } break
+                if (modV1StrToEdit(3)) { return OK.incrementAndContinueLoop } break
             case 'pixelsearch':
-                if (modCommandOfVarnameThenXNum(2,6)) { return 3 } break
+                if (modCommandOfVarnameThenXNum(2,6)) { return OK.incrementAndContinueLoop } break
             case 'setbatchlines':
                 deleteCommand()
-                return 1
+                return OK.continueLoop
             case 'goto':
             case '#singleinstance':
             case '#keyhistory':
             case 'break':
             case 'continue':
-                if (modV1StrToEdit(1)) { return 3 } break
+                if (modV1StrToEdit(1)) { return OK.incrementAndContinueLoop } break
             case 'listlines':
-                if (skipFirstSeparatorOfCommand()) { return 3 }
+                if (skipFirstSeparatorOfCommand()) { return OK.incrementAndContinueLoop }
                 if (next.type === 'v1String findV1Expression') {
                     const dText = next.text
                     if (on1off0[dText.toLowerCase()]) {
@@ -733,39 +740,39 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
                         next.text = '0'
                     }
                 } else {
-                    return 1 //for ex: '%START %Var%'
+                    return OK.continueLoop //for ex: '%START %Var%'
                 }
                 break
             case 'splitpath':
-                if (keepAsItIs(5)) { return 3 } break
+                if (keepAsItIs(5)) { return OK.incrementAndContinueLoop } break
             case 'stringtrimright':
                 // StringTrimRight, OutputVar, InputVar, Count
                 // OutputVar:=SubStr(InputVar,1,-Count)
                 //#command
-                if (commandAllEdit()) { return 3 }
+                if (commandAllEdit()) { return OK.incrementAndContinueLoop }
 
-                if (getCommandParams()) { return 2 }
+                if (getCommandParams()) { return OK.outOfLen }
                 a(1); p(':=SubStr('); a(2); p(',1,-'); a(3); p(')')
                 spaceIfComment(); s(); break
             case 'stringlower':
                 // StringUpper, OutputVar, InputVar, T
                 // OutputVar:=StrLower(InputVar,"T")
-                if (commandNEdit(2)) { return 3 }
+                if (commandNEdit(2)) { return OK.incrementAndContinueLoop }
 
-                if (getCommandParams()) { return 2 }
+                if (getCommandParams()) { return OK.outOfLen }
                 a(1); p(':=StrLower('); a(2); o(',',3); a(3); p(')')
                 spaceIfComment(); s(); break
             case 'stringupper':
                 // StringUpper, OutputVar, InputVar, T
                 // OutputVar:=StrUpper(InputVar,"T")
-                if (commandNEdit(2)) { return 3 }
+                if (commandNEdit(2)) { return OK.incrementAndContinueLoop }
 
-                if (getCommandParams()) { return 2 }
+                if (getCommandParams()) { return OK.outOfLen }
                 a(1); p(':=StrUpper('); a(2); o(',',3); a(3); p(')')
                 spaceIfComment(); s(); break
             case 'stringlen':
-                if (commandAllEdit()) { return 3 }
-                if (getCommandParams()) { return 2 }
+                if (commandAllEdit()) { return OK.incrementAndContinueLoop }
+                if (getCommandParams()) { return OK.outOfLen }
                 a(1); p(':=StrLen('); a(2); p(')')
                 spaceIfComment(); s(); break
             case 'getkeystate':
@@ -802,32 +809,32 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
                 return commandFirstParamToFunction('SysGet')
             case 'envget': {
                 const iBak = i
-                if (modV1StrToEdit(1)) { return 3 }
+                if (modV1StrToEdit(1)) { return OK.incrementAndContinueLoop }
                 i = iBak
-                if (getCommandParams()) { return 2 }
+                if (getCommandParams()) { return OK.outOfLen }
                 a(1); p(':=EnvGet('); a(2); p(')')
                 // `argsArr` for before, `arrFromArgsToInsert` for after
                 if (arrFromArgsToInsert[2].text.toLowerCase() === '"systemroot"') {
                     varsThatArePath[arrFromArgsToInsert[0].text.toLowerCase()] = true //lololool
                 }
                 spaceIfComment(); s()
-                return 3
+                return OK.incrementAndContinueLoop
             }
             case 'formattime':
                 return commandFirstParamToFunction('FormatTime')
             case 'sort':
-                if (commandNEdit(2)) { return 3 }
+                if (commandNEdit(2)) { return OK.incrementAndContinueLoop }
 
-                if (getCommandParams()) { return 2 }
+                if (getCommandParams()) { return OK.outOfLen }
                 a(1); p(':=Sort('); a(1); o(',',2); a(2); p(')')
                 spaceIfComment(); s(); break
             case 'pixelgetcolor': {
                 // PixelGetColor, OutputVar, X, Y , Mode
                 // Color := PixelGetColor(X, Y [, Mode])
                 const iBak = i
-                if (modV1StrToEdit(3)) { return 3 }
+                if (modV1StrToEdit(3)) { return OK.incrementAndContinueLoop }
                 i = iBak
-                if (getCommandParams()) { return 2 }
+                if (getCommandParams()) { return OK.outOfLen }
                 a(1); p(':=PixelGetColor('); a(2); o(',',3); a(3); o(',',4)
                 //Alt RGB -> Alt
                 //RGB Alt  -> Alt
@@ -849,9 +856,9 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
             }
             case 'stringsplit': {
                 const iBak = i
-                if (modV1StrToEdit(2)) { return 3 }
+                if (modV1StrToEdit(2)) { return OK.incrementAndContinueLoop }
                 i = iBak
-                if (getCommandParams()) { return 2 }
+                if (getCommandParams()) { return OK.outOfLen }
                 a(1); p(':=StrSplit(')
                 if (argsArr.length > 1) {
                     a(2)
@@ -860,7 +867,7 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
                     p(','); a(n)
                 }
                 p(')'); spaceIfComment(); s()
-                return 3
+                return OK.incrementAndContinueLoop
             }
             } //end of inner switch
             break //break outer switch
@@ -868,7 +875,7 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
             const dTextLowered = everything[i].text.toLowerCase()
             if (dTextLowered === '#noenv') {
                 deleteCommand()
-                return 1
+                return OK.continueLoop
             }
             break
         }
@@ -907,7 +914,7 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
                                 typeCheckFunc = `Is${lowerText.charAt(0).toUpperCase()}${lowerText.slice(1)}`
                             }
                             everything.splice(i,b - i + 1,{text:`${hasNot ? '!' : ''}${typeCheckFunc}(${everything[i].text})`,type:'v2: if is type'})
-                            return 3
+                            return OK.incrementAndContinueLoop
                         }
                     }
                 }
@@ -920,8 +927,8 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
                 let bType
                 b = i
                 const bSave = b
-                if (!(bType = findNextAnyInObj(startGroupOrUnit))) { return 2 }
-                if (nextSkipThrough(startGroupOrUnit[bType],bType)) { return 2 }
+                if (!(bType = findNextAnyInObj(startGroupOrUnit))) { return OK.outOfLen }
+                if (nextSkipThrough(startGroupOrUnit[bType],bType)) { return OK.outOfLen }
                 //find ') group' or 'end unit'
                 const sliced = everything.slice(bSave + 1,b)
                 const allVariableCharsArr = []
@@ -959,7 +966,7 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
             while (true) {
                 next = everything[++b]
                 if (!next) {
-                    return 3
+                    return OK.incrementAndContinueLoop
                 }
                 if (next.i1 !== hotkeyLine) {
                     b--
@@ -969,7 +976,7 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
             while (true) {
                 next = everything[++b]
                 if (!next) {
-                    return 3
+                    return OK.incrementAndContinueLoop
                 }
                 const dType = next.type
                 if (startingBlock[dType]) {
@@ -977,7 +984,7 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
                 } else if (dType === '} unknown') {
                     blockDepth--
                 } else if (dType === 'hotkey') {
-                    return 3
+                    return OK.incrementAndContinueLoop
                 } else if (dType === 'command EOL or comment') {
                     if (blockDepth === 0) {
                         const lText = next.text.toLowerCase()
@@ -985,7 +992,7 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
                             next.type = 'edit'
                             next.text = '}'
                             everything.splice(hotkeyI + 1,0,{text:'{',type:'edit'})
-                            return 3
+                            return OK.incrementAndContinueLoop
                         } else if (lText === 'exitapp') {
                             next.type = 'edit'
                             next.text = 'ExitApp\n}'
@@ -1005,7 +1012,7 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
                     if (bType === '} unknown') {
                         arrAccessDepth--
                         if (arrAccessDepth === 0) {
-                            return 3
+                            return OK.incrementAndContinueLoop
                         }
                     } else if (startingBlockForClass[bType]) {
                         arrAccessDepth++
@@ -1018,11 +1025,11 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
             }
             break
         case ', 1 (loop) parse':
-            if (varnameTill(', 2 (loop) parse')) { return 3 } break
+            if (varnameTill(', 2 (loop) parse')) { return OK.incrementAndContinueLoop } break
         case '3operator':
             if (thisE.text.toLowerCase() === 'new') {
                 const iBak = i
-                if (skipEmptyWsOrEmptyLineText()) { return 2 }
+                if (skipEmptyWsOrEmptyLineText()) { return OK.outOfLen }
                 if (next.type === 'idkVariable') {
                     everything.splice(iBak,i - iBak + 1,next,
                         (is_AHK_H ? {type:'.New()',text:'.New()'} : {type:'() new',text:'()'})
@@ -1070,12 +1077,12 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
                     text:`(var ~= "Di)^(${escapedMatchArr.join('|')})$")`,
                 })
             } else {
-                return 1
+                return OK.continueLoop
             }
             break
         }
         case 'loop': {
-            if (skipFirstSeparatorOfCommand()) { return 3 }
+            if (skipFirstSeparatorOfCommand()) { return OK.incrementAndContinueLoop }
             let next = everything[i]
             if (next && next.type === '% v1->v2 expr') {
                 next = everything[i + 2]
@@ -1085,10 +1092,10 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
                     if (varsThatArePath[next.text.toLowerCase()]) {
 
                         const iBak = i
-                        if (skipToAfter(', 1 (loop) idk')) { return 3 }
-                        if (commandNEdit(2)) { return 3 }
+                        if (skipToAfter(', 1 (loop) idk')) { return OK.incrementAndContinueLoop }
+                        if (commandNEdit(2)) { return OK.incrementAndContinueLoop }
                         i = iBak
-                        if (getCommandParams()) { return 2 }
+                        if (getCommandParams()) { return OK.outOfLen }
                         let Mode = ''
                         if (argsArr.length > 1) {
                             const IncludeFoldersArg = removeWhiteSpaceAndStuff(argsArr[1])
@@ -1117,13 +1124,13 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
                     }
                 }
             }
-            return 1
+            return OK.continueLoop
         }
         //#HERE
         default:
-            return 0
+            return OK.pass
         }
-        return 3 //this will execute if it doesn't go to else
+        return OK.incrementAndContinueLoop //this will execute if it doesn't go to else
     }
     // functions start of functions
     function dealWithA_IsUnicode(dLowered: string) {
@@ -1132,6 +1139,15 @@ export default (everything: ExtendedEverythingType,is_AHK_H = true): string => {
             b = i
             if (skipEmptyLinesEmptyText()) { return true }
             let spliceStart = i - 1
+
+            //choose the true part of ternary
+            //I'll implement this in the parser
+            //weird ternary is wrapped in paren
+            // (condition ? true : false)
+            //with an AST it would be outside too..
+            //but only need to check parent
+            //count all paren left, then get these many from the right
+            //splice
 
             if (everything[b].type === '? ternary') {
                 next = everything[b + 1]

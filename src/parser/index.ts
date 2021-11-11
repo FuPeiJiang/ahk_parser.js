@@ -92,6 +92,17 @@ export type {EverythingType}
 // c1?: undefined;
 // c2?: undefined;
 
+export declare const enum OK {
+    pass = 0,
+    continueLoop = 1,
+    outOfLen = 2,
+}
+
+export declare const enum myEnum {
+    outOfLines = true,
+    pass = false,
+}
+
 export default (content: string,literalDoubleQuoteInContinuation = false): EverythingType => {
     // https://stackoverflow.com/questions/6784799/what-is-this-char-65279#answer-6784805
     // https://stackoverflow.com/questions/13024978/removing-bom-characters-from-ajax-posted-string#answer-13027802

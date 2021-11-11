@@ -2652,3 +2652,6 @@ do 'sort' callback function
 
 31 passing (93ms)
 5 failing
+
+//AST is just clean, it's the natural way to do it
+//how will you represent objects ?
